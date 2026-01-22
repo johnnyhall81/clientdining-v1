@@ -254,7 +254,7 @@ export default function AdminSlotsPage() {
                       <button
                         onClick={() => {
                           setSelectedSlot(slot.id)
-                          setNewTier(slot.slot_tier)
+                          setNewTier(slot.slot_tier as 'free' | 'premium')
                         }}
                         className="text-sm text-blue-600 hover:text-blue-700"
                       >
