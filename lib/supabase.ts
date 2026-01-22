@@ -39,10 +39,11 @@ export interface Venue {
   id: string
   name: string
   area: string
-  venue_type: VenueType
-  description: string | null
+  venue_type: 'restaurant' | 'club'
+  description: string
   is_active: boolean
   created_at: string
+  image?: string
 }
 
 export interface Slot {
