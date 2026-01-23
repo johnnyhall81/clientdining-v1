@@ -70,7 +70,7 @@ export default function HomePage() {
     <div className="space-y-8">
       <div className="border-b pb-6">
         <p className="text-gray-600">
-          The best tables in London
+          London's best tables
         </p>
       </div>
       
