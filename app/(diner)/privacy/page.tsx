@@ -139,7 +139,7 @@ export default function PrivacyPage() {
             </p>
             <p className="mt-2">
               Email: support@clientdining.com<br />
-              Address: [Business Address]
+              Address: 2 The Topiary, Ashtead, Surrey, KT21 2TE
             </p>
           </section>
         </div>
