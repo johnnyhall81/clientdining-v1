@@ -4,7 +4,7 @@ export default function AboutPage() {
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">About ClientDining</h1>
           <p className="text-xl text-gray-600">
-            Access London's most sought-after reservations.
+            London's best tables
           </p>
         </div>
   
