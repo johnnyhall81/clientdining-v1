@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'ClientDining',
-  description: 'Access London\'s most sought-after reservations',
+  description: 'Access to London\'s best tables',
 }
 
 export default function DinerLayout({
