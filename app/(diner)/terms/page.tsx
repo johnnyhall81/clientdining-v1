@@ -184,8 +184,8 @@ export default function TermsPage() {
               For questions about these Terms, contact us at:
             </p>
             <p className="mt-2">
-              Email: legal@clientdining.com<br />
-              Address: [Your Business Address]
+              Email: support@clientdining.com<br />
+              Address: [Business Address]
             </p>
           </section>
         </div>

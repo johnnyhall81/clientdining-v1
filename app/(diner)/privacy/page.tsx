@@ -138,8 +138,8 @@ export default function PrivacyPage() {
               If you have questions about this Privacy Policy, please contact us at:
             </p>
             <p className="mt-2">
-              Email: privacy@clientdining.com<br />
-              Address: [Your Business Address]
+              Email: support@clientdining.com<br />
+              Address: [Business Address]
             </p>
           </section>
         </div>

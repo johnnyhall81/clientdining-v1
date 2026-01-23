@@ -81,7 +81,7 @@ export default function Footer() {
             © {new Date().getFullYear()} ClientDining. All rights reserved.
           </p>
           <p className="text-gray-600 text-sm mt-4 md:mt-0">
-            Contact: <a href="mailto:hello@clientdining.com" className="hover:text-gray-900">hello@clientdining.com</a>
+            Contact: <a href="mailto:support@clientdining.com" className="hover:text-gray-900">hello@clientdining.com</a>
           </p>
         </div>
       </div>
