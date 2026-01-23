@@ -70,7 +70,7 @@ export default function HomePage() {
     <div className="space-y-8">
       <div>
         <p className="text-xl text-gray-600">
-          Access to London's best tables
+          Access London's best tables
         </p>
       </div>
       
