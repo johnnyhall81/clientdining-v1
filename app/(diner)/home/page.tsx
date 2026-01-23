@@ -67,14 +67,6 @@ const MOCK_VENUES: Venue[] = [
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
-      <div className="border-b pb-6">
-        <p className="text-gray-600">
-          London's best tables
-        </p>
-      </div>
-      
-      <VenueGrid venues={MOCK_VENUES} />
-    </div>
+    <VenueGrid venues={MOCK_VENUES} />
   )
 }

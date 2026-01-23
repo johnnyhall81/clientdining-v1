@@ -3,9 +3,6 @@ export default function AboutPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">About ClientDining</h1>
-          <p className="text-xl text-gray-600">
-            London's best tables
-          </p>
         </div>
   
         <div className="prose prose-lg max-w-none">
