@@ -9,7 +9,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold mb-4 text-gray-900">ClientDining</h3>
             <p className="text-gray-600 text-sm">
-              Access London's most sought-after reservations.
+              Access to London's best tables.
             </p>
           </div>
 
