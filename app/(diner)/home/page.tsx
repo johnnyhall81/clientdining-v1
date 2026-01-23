@@ -67,27 +67,23 @@ const MOCK_VENUES: Venue[] = [
 
 export default function HomePage() {
   return (
-    export default function HomePage() {
-      return (
-        <div className="space-y-12">
-          {/* Hero Section */}
-          <div className="text-center py-8">
-            <h1 className="text-5xl font-bold text-gray-900 mb-4">
-              ClientDining
-            </h1>
-            <p className="text-xl text-gray-600 mb-2">
-              Access London's best tables.
-            </p>
-            <p className="text-base text-gray-500 max-w-2xl mx-auto">
-              Premium dining reservations at London's finest restaurants and exclusive private clubs. 
-              For verified City professionals.
-            </p>
-          </div>
-          
-          {/* Venue Grid */}
-          <VenueGrid venues={MOCK_VENUES} />
-        </div>
-      )
-    }
+    <div className="space-y-12">
+      {/* Hero Section */}
+      <div className="text-center py-8">
+        <h1 className="text-5xl font-bold text-gray-900 mb-4">
+          ClientDining
+        </h1>
+        <p className="text-xl text-gray-600 mb-2">
+          Access London's best tables.
+        </p>
+        <p className="text-base text-gray-500 max-w-2xl mx-auto">
+          Premium dining reservations at London's finest restaurants and exclusive private clubs. 
+          For verified City professionals.
+        </p>
+      </div>
+      
+      {/* Venue Grid */}
+      <VenueGrid venues={MOCK_VENUES} />
+    </div>
   )
 }
