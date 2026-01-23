@@ -17,7 +17,7 @@ const ALL_RESULTS = [
     partyMin: 2,
     partyMax: 4,
     slotTier: 'free',
-    image: '/venues/ledbury-exterior.jpg'
+    image: '/venues/ledbury-venue.jpg'
   },
   {
     id: 'r2',
@@ -30,7 +30,7 @@ const ALL_RESULTS = [
     partyMin: 2,
     partyMax: 6,
     slotTier: 'premium',
-    image: '/venues/gymkhana-exterior.jpg'
+    image: '/venues/gymkhana-venue.jpg'
   },
   {
     id: 'r3',
@@ -43,7 +43,7 @@ const ALL_RESULTS = [
     partyMin: 2,
     partyMax: 4,
     slotTier: 'free',
-    image: '/venues/wolseley-exterior.jpg'
+    image: '/venues/wolseley-venue.jpg'
   },
   {
     id: 'r4',
@@ -56,7 +56,7 @@ const ALL_RESULTS = [
     partyMin: 4,
     partyMax: 6,
     slotTier: 'premium',
-    image: '/venues/annabels-exterior.jpg'
+    image: '/venues/annabels-venue.jpg'
   },
   {
     id: 'r5',
@@ -69,7 +69,7 @@ const ALL_RESULTS = [
     partyMin: 2,
     partyMax: 4,
     slotTier: 'premium',
-    image: '/venues/core-exterior.jpg'
+    image: '/venues/core-venue.jpg'
   },
   {
     id: 'r6',
@@ -82,7 +82,7 @@ const ALL_RESULTS = [
     partyMin: 4,
     partyMax: 8,
     slotTier: 'premium',
-    image: '/venues/hertford-exterior.jpg'
+    image: '/venues/hertford-venue.jpg'
   },
   {
     id: 'r7',
@@ -95,7 +95,7 @@ const ALL_RESULTS = [
     partyMin: 2,
     partyMax: 6,
     slotTier: 'free',
-    image: '/venues/ledbury-exterior.jpg'
+    image: '/venues/ledbury-venue.jpg'
   },
   {
     id: 'r8',
@@ -108,7 +108,7 @@ const ALL_RESULTS = [
     partyMin: 2,
     partyMax: 6,
     slotTier: 'free',
-    image: '/venues/wolseley-exterior.jpg'
+    image: '/venues/wolseley-venue.jpg'
   }
 ]
 
