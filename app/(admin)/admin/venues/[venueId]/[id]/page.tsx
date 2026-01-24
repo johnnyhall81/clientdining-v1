@@ -8,7 +8,7 @@ import { Venue } from '@/lib/supabase'
 export default function EditVenuePage() {
   const router = useRouter()
   const params = useParams()
-  const venueId = params.venueId as string
+  const venueId = params.id as string
   
   const [venue, setVenue] = useState<Venue | null>(null)
   const [formData, setFormData] = useState({
@@ -79,7 +79,7 @@ export default function EditVenuePage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this venue?')) {
+    if (!confirm('Are you sure you want to delete this venue? This action cannot be undone.')) {
       return
     }
 
@@ -91,87 +91,128 @@ export default function EditVenuePage() {
 
       if (error) throw error
 
-      alert('Venue deleted!')
+      alert('Venue deleted successfully!')
       router.push('/admin/venues')
     } catch (error: any) {
-      alert('Failed to delete: ' + error.message)
+      console.error('Error deleting venue:', error)
+      alert('Failed to delete venue: ' + error.message)
     }
   }
 
   if (loading) {
-    return <div className="text-center py-12">Loading...</div>
+    return <div className="text-center py-12">Loading venue...</div>
   }
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-3xl font-bold">Edit Venue</h1>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Edit Venue</h1>
+        <p className="text-gray-600 mt-2">Update venue information</p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg border p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
         <div>
-          <label className="block text-sm font-medium mb-2">Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Venue Name *
+          </label>
           <input
             type="text"
             required
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Slug</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Slug *
+          </label>
           <input
             type="text"
             required
             value={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Area</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Area *
+            </label>
             <input
               type="text"
               required
               value={formData.area}
               onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Type *
+            </label>
             <select
+              required
               value={formData.venue_type}
-              onChange={(e) => setFormData({ ...formData, venue_type: e.target.value as any })}
-              className="w-full px-3 py-2 border rounded-md"
+              onChange={(e) => setFormData({ ...formData, venue_type: e.target.value as 'restaurant' | 'club' })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
             >
               <option value="restaurant">Restaurant</option>
-              <option value="club">Club</option>
+              <option value="club">Private Club</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Description</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Description *
+          </label>
           <textarea
             required
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
             rows={3}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Address</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Address
+          </label>
           <input
             type="text"
             value={formData.address}
             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Venue Image URL
+          </label>
+          <input
+            type="text"
+            value={formData.image_venue}
+            onChange={(e) => setFormData({ ...formData, image_venue: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Food Image URL
+          </label>
+          <input
+            type="text"
+            value={formData.image_food}
+            onChange={(e) => setFormData({ ...formData, image_food: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
         </div>
 
@@ -179,14 +220,14 @@ export default function EditVenuePage() {
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 bg-gray-900 text-white py-2 rounded-lg hover:bg-gray-800 disabled:opacity-50"
+            className="flex-1 bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
           <button
             type="button"
             onClick={() => router.push('/admin/venues')}
-            className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             Cancel
           </button>
