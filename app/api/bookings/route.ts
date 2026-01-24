@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get slot to get venue_id
+    // Get slot details
     const { data: slot, error: slotError } = await supabase
       .from('slots')
       .select('venue_id, party_min, status, slot_tier, start_at')
@@ -59,8 +59,15 @@ export async function POST(request: Request) {
       .eq('id', user.id)
       .single()
 
+    if (!profile) {
+      return NextResponse.json(
+        { error: 'Profile not found' },
+        { status: 404 }
+      )
+    }
+
     // Check tier restrictions for premium slots
-    if (slot.slot_tier === 'premium' && profile?.tier === 'free') {
+    if (slot.slot_tier === 'premium' && profile.tier === 'free') {
       const slotTime = new Date(slot.start_at)
       const now = new Date()
       const hoursUntilSlot = (slotTime.getTime() - now.getTime()) / (1000 * 60 * 60)
@@ -72,6 +79,25 @@ export async function POST(request: Request) {
           { status: 403 }
         )
       }
+    }
+
+    // Check booking limits
+    const { count: currentBookings } = await supabase
+      .from('bookings')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .gte('slots.start_at', new Date().toISOString())
+
+    const maxBookings = profile.tier === 'premium' ? 10 : 3
+
+    if ((currentBookings || 0) >= maxBookings) {
+      return NextResponse.json(
+        { 
+          error: `Booking limit reached. ${profile.tier === 'free' ? 'Free users can have up to 3 future bookings. Upgrade to Premium for 10 bookings.' : 'Premium users can have up to 10 future bookings.'}` 
+        },
+        { status: 403 }
+      )
     }
 
     // Call the database function to create booking atomically
