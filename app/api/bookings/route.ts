@@ -8,7 +8,6 @@ export async function POST(request: Request) {
     
     const cookieStore = cookies()
     
-    // Create authenticated server client
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -31,10 +30,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get slot details
+    // Get slot to get venue_id
     const { data: slot, error: slotError } = await supabase
       .from('slots')
-      .select('*')
+      .select('venue_id, party_min')
       .eq('id', slotId)
       .single()
 
@@ -45,26 +44,14 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if slot is still available
-    if (slot.status !== 'available') {
-      return NextResponse.json(
-        { error: 'Slot is no longer available' },
-        { status: 400 }
-      )
-    }
-
-    // Create booking
-    const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
-      .insert({
-        slot_id: slotId,
-        user_id: user.id,
-        venue_id: slot.venue_id,
-        party_size: slot.party_min,
-        status: 'active',
+    // Call the database function to create booking atomically
+    const { data, error: bookingError } = await supabase
+      .rpc('create_booking', {
+        p_slot_id: slotId,
+        p_user_id: user.id,
+        p_venue_id: slot.venue_id,
+        p_party_size: slot.party_min,
       })
-      .select()
-      .single()
 
     if (bookingError) {
       console.error('Booking error:', bookingError)
@@ -74,13 +61,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Update slot status
-    await supabase
-      .from('slots')
-      .update({ status: 'booked' })
-      .eq('id', slotId)
-
-    return NextResponse.json({ booking })
+    return NextResponse.json({ booking: data })
   } catch (error: any) {
     console.error('Booking error:', error)
     return NextResponse.json(
