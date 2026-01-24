@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Venue, Slot } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 import SlotRow from '@/components/slots/SlotRow'
 
 interface VenueClientProps {
@@ -10,14 +12,52 @@ interface VenueClientProps {
 }
 
 export default function VenueClient({ venue, slots }: VenueClientProps) {
+  const router = useRouter()
+  const { user } = useAuth()
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
+  const [bookingSlot, setBookingSlot] = useState<string | null>(null)
   
   const handleBook = async (slotId: string) => {
-    console.log('Booking slot:', slotId)
-    // Will implement in next phase
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    setBookingSlot(slotId)
+
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ slotId }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.error || 'Failed to create booking')
+        return
+      }
+
+      alert('Booking confirmed!')
+      router.push('/bookings')
+      router.refresh()
+    } catch (error) {
+      console.error('Booking error:', error)
+      alert('Failed to create booking')
+    } finally {
+      setBookingSlot(null)
+    }
   }
   
   const handleToggleAlert = async (slotId: string) => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
     const newAlerts = new Set(alerts)
     if (newAlerts.has(slotId)) {
       newAlerts.delete(slotId)
@@ -25,12 +65,10 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       newAlerts.add(slotId)
     }
     setAlerts(newAlerts)
-    // Will implement in next phase
   }
   
   return (
     <div className="space-y-8">
-      {/* Hero header with image */}
       <div className="bg-gray-200 rounded-lg aspect-[21/9] overflow-hidden">
         <img 
           src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
@@ -39,7 +77,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         />
       </div>
       
-      {/* Venue details */}
       <div>
         <div className="flex items-start justify-between mb-4">
           <div>
@@ -66,7 +103,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         )}
       </div>
       
-      {/* Available slots */}
       <div className="card">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           Available Tables

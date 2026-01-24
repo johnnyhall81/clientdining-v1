@@ -32,25 +32,34 @@ export default function SignupPage() {
 
       if (authError) throw authError
 
-      if (authData.user) {
-        // Create profile in database
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            email: email,
-            full_name: fullName,
-            role: 'diner',
-            tier: 'free',
-          })
-
-        if (profileError) throw profileError
-
-        // Redirect to home
-        router.push('/home')
-        router.refresh()
+      if (!authData.user) {
+        throw new Error('User creation failed')
       }
+
+      // Wait a moment for auth to complete
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Create profile in database
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: authData.user.id,
+          email: email,
+          full_name: fullName,
+          role: 'diner',
+          tier: 'free',
+        })
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError)
+        // Profile might already exist from trigger, continue anyway
+      }
+
+      // Success - redirect to home
+      router.push('/home')
+      router.refresh()
     } catch (err: any) {
+      console.error('Signup error:', err)
       setError(err.message || 'Failed to create account')
     } finally {
       setLoading(false)
