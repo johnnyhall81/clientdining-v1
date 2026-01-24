@@ -2,6 +2,8 @@ import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import VenueClient from './VenueClient'
 
+export const revalidate = 0 // Disable caching for this page
+
 export default async function VenuePage({ params }: { params: { venueId: string } }) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
