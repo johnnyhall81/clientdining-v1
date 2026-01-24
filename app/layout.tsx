@@ -1,22 +1,24 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
+import type { Metadata } from "next";
+import "./globals.css";
+import { AuthProvider } from '@/contexts/AuthContext'
 
 export const metadata: Metadata = {
-  title: 'ClientDining - Premium Dining Availability',
-  description: 'Private dining availability platform for City professionals',
-}
+  title: "ClientDining",
+  description: "London's best tables",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
-  )
+  );
 }
