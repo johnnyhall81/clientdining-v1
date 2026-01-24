@@ -12,7 +12,9 @@ export function formatSlotTime(dateString: string): string {
 
 export function formatFullDateTime(dateString: string): string {
   const date = new Date(dateString)
-  return format(date, 'EEE, MMM d, yyyy at h:mm a')
+  const datePart = format(date, 'EEE, MMM d, yyyy')
+  const timePart = format(date, 'h:mm a')
+  return `${datePart} at ${timePart}`
 }
 
 export function getRelativeTime(dateString: string): string {
@@ -21,19 +23,9 @@ export function getRelativeTime(dateString: string): string {
 }
 
 export function isWithin24Hours(dateString: string): boolean {
-  const slotDate = new Date(dateString)
   const now = new Date()
-  const twentyFourHoursFromNow = addHours(now, 24)
+  const slotTime = new Date(dateString)
+  const in24Hours = addHours(now, 24)
   
-  return isWithinInterval(slotDate, {
-    start: now,
-    end: twentyFourHoursFromNow
-  })
-}
-
-export function getHoursUntilSlot(dateString: string): number {
-  const slotDate = new Date(dateString)
-  const now = new Date()
-  const diff = slotDate.getTime() - now.getTime()
-  return diff / (1000 * 60 * 60)
+  return isWithinInterval(slotTime, { start: now, end: in24Hours })
 }

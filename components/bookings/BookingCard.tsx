@@ -11,6 +11,8 @@ interface BookingCardProps {
 }
 
 export default function BookingCard({ booking, venue, slot, onCancel }: BookingCardProps) {
+  console.log('Slot start_at:', slot.start_at, 'Type:', typeof slot.start_at)
+  console.log('Formatted:', formatFullDateTime(slot.start_at))
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
   
