@@ -80,18 +80,23 @@ export default function BookingsPage() {
     }
 
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ status: 'cancelled' })
-        .eq('id', bookingId)
+      // Call the cancel API endpoint
+      const response = await fetch('/api/bookings/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId }),
+      })
 
-      if (error) throw error
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to cancel booking')
+      }
 
-      alert('Booking cancelled successfully')
-      fetchBookings() // Refresh the list
-    } catch (error) {
+      alert('Booking cancelled successfully. A confirmation email has been sent.')
+      fetchBookings()
+    } catch (error: any) {
       console.error('Error cancelling booking:', error)
-      alert('Failed to cancel booking')
+      alert('Failed to cancel booking: ' + error.message)
     }
   }
 
