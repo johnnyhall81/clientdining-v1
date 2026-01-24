@@ -1,72 +1,23 @@
 import VenueGrid from '@/components/venues/VenueGrid'
-import { Venue } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 
-// This would normally fetch from Supabase
-const MOCK_VENUES: Venue[] = [
-  {
-    id: '1',
-    name: 'The Ledbury',
-    area: 'Notting Hill',
-    venue_type: 'restaurant',
-    description: 'Two Michelin-starred fine dining',
-    is_active: true,
-    created_at: new Date().toISOString(),
-    image: '/venues/ledbury-venue.jpg'
-  },
-  {
-    id: '2',
-    name: 'Core by Clare Smyth',
-    area: 'Notting Hill',
-    venue_type: 'restaurant',
-    description: 'Three Michelin-starred British cuisine',
-    is_active: true,
-    created_at: new Date().toISOString(),
-    image: '/venues/core-venue.jpg'
-  },
-  {
-    id: '3',
-    name: "Annabel's",
-    area: 'Mayfair',
-    venue_type: 'club',
-    description: 'Exclusive members club',
-    is_active: true,
-    created_at: new Date().toISOString(),
-    image: '/venues/annabels-venue.jpg'
-  },
-  {
-    id: '4',
-    name: 'Gymkhana',
-    area: 'Mayfair',
-    venue_type: 'restaurant',
-    description: 'Michelin-starred Indian cuisine',
-    is_active: true,
-    created_at: new Date().toISOString(),
-    image: '/venues/gymkhana-venue.jpg'
-  },
-  {
-    id: '5',
-    name: 'The Wolseley',
-    area: 'Piccadilly',
-    venue_type: 'restaurant',
-    description: 'Grand European café-restaurant',
-    is_active: true,
-    created_at: new Date().toISOString(),
-    image: '/venues/wolseley-venue.jpg'
-  },
-  {
-    id: '6',
-    name: "5 Hertford Street",
-    area: 'Mayfair',
-    venue_type: 'club',
-    description: 'Private members club',
-    is_active: true,
-    created_at: new Date().toISOString(),
-    image: '/venues/hertford-venue.jpg'
-  }
-]
-
-export default function HomePage() {
-  return (
-    <VenueGrid venues={MOCK_VENUES} />
+export default async function HomePage() {
+  // Create server-side client
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
+  
+  // Fetch active venues from database
+  const { data: venues, error } = await supabase
+    .from('venues')
+    .select('*')
+    .eq('is_active', true)
+    .order('name')
+
+  if (error) {
+    console.error('Error fetching venues:', error)
+  }
+
+  return <VenueGrid venues={venues || []} />
 }

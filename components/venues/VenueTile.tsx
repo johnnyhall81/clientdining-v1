@@ -14,9 +14,9 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
     <Link href={`/venues/${venue.id}`}>
       <div className="group cursor-pointer">
         <div className="aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden mb-3">
-          {venue.image ? (
+          {(venue.image_venue || venue.image) ? (
             <img 
-              src={venue.image}
+              src={venue.image_venue || venue.image}
               alt={venue.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
