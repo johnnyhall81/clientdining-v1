@@ -39,10 +39,10 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           <span className="text-gray-900">{booking.party_size} guests</span>
         </div>
         
-        {booking.notes_private && (
+        {booking.notes && (
           <div className="flex items-start gap-2 text-sm">
             <span className="text-gray-600">📝</span>
-            <span className="text-gray-700">{booking.notes_private}</span>
+            <span className="text-gray-700">{booking.notes}</span>
           </div>
         )}
       </div>
