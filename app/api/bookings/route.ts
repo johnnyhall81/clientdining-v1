@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     // Get slot to get venue_id
     const { data: slot, error: slotError } = await supabase
       .from('slots')
-      .select('venue_id, party_min')
+      .select('venue_id, party_min, status, slot_tier, start_at')
       .eq('id', slotId)
       .single()
 
@@ -42,6 +42,36 @@ export async function POST(request: Request) {
         { error: 'Slot not found' },
         { status: 404 }
       )
+    }
+
+    // Check if slot is still available
+    if (slot.status !== 'available') {
+      return NextResponse.json(
+        { error: 'Slot is no longer available' },
+        { status: 400 }
+      )
+    }
+
+    // Get user's profile to check tier
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('tier')
+      .eq('id', user.id)
+      .single()
+
+    // Check tier restrictions for premium slots
+    if (slot.slot_tier === 'premium' && profile?.tier === 'free') {
+      const slotTime = new Date(slot.start_at)
+      const now = new Date()
+      const hoursUntilSlot = (slotTime.getTime() - now.getTime()) / (1000 * 60 * 60)
+      
+      // Free users can only book premium slots within 24 hours
+      if (hoursUntilSlot > 24) {
+        return NextResponse.json(
+          { error: 'Premium membership required to book this slot in advance. Upgrade to Premium or book within 24 hours.' },
+          { status: 403 }
+        )
+      }
     }
 
     // Call the database function to create booking atomically
