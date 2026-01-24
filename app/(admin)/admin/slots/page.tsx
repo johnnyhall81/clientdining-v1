@@ -68,7 +68,7 @@ export default function AdminSlotsPage() {
     try {
       const start = new Date(bulkForm.startDate)
       const end = new Date(bulkForm.endDate)
-      const slotsToCreate = []
+      const slotsToCreate: any[] = []
 
       // Loop through each day in range
       for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
