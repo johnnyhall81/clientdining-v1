@@ -1,316 +1,251 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase-client'
 
-// Mock user data
-const MOCK_USERS = [
-  {
-    id: 'u1',
-    email: 'john.smith@example.com',
-    name: 'John Smith',
-    role: 'diner',
-    diner_tier: 'premium',
-    is_professionally_verified: true,
-    is_disabled: false,
-    created_at: '2025-01-10T10:00:00Z'
-  },
-  {
-    id: 'u2',
-    email: 'sarah.jones@example.com',
-    name: 'Sarah Jones',
-    role: 'diner',
-    diner_tier: 'free',
-    is_professionally_verified: true,
-    is_disabled: false,
-    created_at: '2025-01-12T14:30:00Z'
-  },
-  {
-    id: 'u3',
-    email: 'michael.brown@example.com',
-    name: 'Michael Brown',
-    role: 'diner',
-    diner_tier: 'free',
-    is_professionally_verified: false,
-    is_disabled: false,
-    created_at: '2025-01-15T09:20:00Z'
-  },
-  {
-    id: 'u4',
-    email: 'gm@ledbury.com',
-    name: 'General Manager',
-    role: 'venue_admin',
-    diner_tier: 'free',
-    is_professionally_verified: true,
-    is_disabled: false,
-    created_at: '2025-01-05T08:00:00Z'
-  },
-  {
-    id: 'u5',
-    email: 'reservations@ledbury.com',
-    name: 'Reservations Lead',
-    role: 'venue_admin',
-    diner_tier: 'free',
-    is_professionally_verified: true,
-    is_disabled: false,
-    created_at: '2025-01-05T08:00:00Z'
-  },
-  {
-    id: 'u6',
-    email: 'emma.wilson@example.com',
-    name: 'Emma Wilson',
-    role: 'diner',
-    diner_tier: 'premium',
-    is_professionally_verified: true,
-    is_disabled: false,
-    created_at: '2025-01-18T16:45:00Z'
-  }
-]
+interface User {
+  id: string
+  email: string
+  full_name: string | null
+  role: string
+  tier: string
+  is_professionally_verified: boolean
+  subscription_status: string | null
+  created_at: string
+}
 
 export default function AdminUsersPage() {
-  const [filter, setFilter] = useState('all')
-  const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<'all' | 'free' | 'premium'>('all')
 
-  const handleVerify = (userId: string) => {
-    console.log('Verifying user:', userId)
-    setSelectedUser(null)
+  useEffect(() => {
+    loadUsers()
+  }, [filter])
+
+  const loadUsers = async () => {
+    setLoading(true)
+
+    let query = supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (filter === 'free') {
+      query = query.eq('tier', 'free')
+    } else if (filter === 'premium') {
+      query = query.eq('tier', 'premium')
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Error loading users:', error)
+    } else {
+      setUsers(data || [])
+    }
+
+    setLoading(false)
   }
 
-  const handleDisable = (userId: string) => {
-    console.log('Disabling user:', userId)
-    setSelectedUser(null)
+  const updateUserTier = async (userId: string, newTier: 'free' | 'premium') => {
+    if (!confirm(`Change user tier to ${newTier}?`)) return
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ tier: newTier })
+      .eq('id', userId)
+
+    if (error) {
+      alert('Failed to update tier: ' + error.message)
+    } else {
+      alert('User tier updated successfully')
+      loadUsers()
+    }
   }
 
-  const filteredUsers = MOCK_USERS.filter(user => {
-    if (filter === 'all') return true
-    if (filter === 'diners') return user.role === 'diner'
-    if (filter === 'venue_admins') return user.role === 'venue_admin'
-    if (filter === 'premium') return user.diner_tier === 'premium'
-    if (filter === 'unverified') return !user.is_professionally_verified
-    return true
-  })
+  const updateUserRole = async (userId: string, newRole: string) => {
+    if (!confirm(`Change user role to ${newRole}?`)) return
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ role: newRole })
+      .eq('id', userId)
+
+    if (error) {
+      alert('Failed to update role: ' + error.message)
+    } else {
+      alert('User role updated successfully')
+      loadUsers()
+    }
+  }
+
+  const toggleVerification = async (userId: string, currentStatus: boolean) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ 
+        is_professionally_verified: !currentStatus,
+        verified_at: !currentStatus ? new Date().toISOString() : null
+      })
+      .eq('id', userId)
+
+    if (error) {
+      alert('Failed to update verification: ' + error.message)
+    } else {
+      loadUsers()
+    }
+  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Users</h1>
-        <p className="text-gray-600">Manage all users on the platform</p>
+        <h1 className="text-3xl font-bold">User Management</h1>
+        <p className="text-gray-600 mt-2">View and manage all platform users</p>
       </div>
 
-      {/* Filters */}
-      <div className="card">
-        <div className="flex gap-2 flex-wrap">
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white rounded-lg border p-4">
+          <div className="text-sm text-gray-600">Total Users</div>
+          <div className="text-2xl font-bold">{users.length}</div>
+        </div>
+        <div className="bg-white rounded-lg border p-4">
+          <div className="text-sm text-gray-600">Premium Users</div>
+          <div className="text-2xl font-bold text-orange-600">
+            {users.filter(u => u.tier === 'premium').length}
+          </div>
+        </div>
+        <div className="bg-white rounded-lg border p-4">
+          <div className="text-sm text-gray-600">Free Users</div>
+          <div className="text-2xl font-bold text-green-600">
+            {users.filter(u => u.tier === 'free').length}
+          </div>
+        </div>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
               filter === 'all'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'border-gray-900 text-gray-900'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            All Users ({MOCK_USERS.length})
-          </button>
-          <button
-            onClick={() => setFilter('diners')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              filter === 'diners'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Diners
-          </button>
-          <button
-            onClick={() => setFilter('venue_admins')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              filter === 'venue_admins'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Venue Admins
+            All Users
           </button>
           <button
             onClick={() => setFilter('premium')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
               filter === 'premium'
-                ? 'bg-amber-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'border-gray-900 text-gray-900'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
             Premium
           </button>
           <button
-            onClick={() => setFilter('unverified')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              filter === 'unverified'
-                ? 'bg-red-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            onClick={() => setFilter('free')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              filter === 'free'
+                ? 'border-gray-900 text-gray-900'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            Unverified
+            Free
           </button>
-        </div>
+        </nav>
       </div>
 
-      {/* User Detail Modal */}
-      {selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">User Details</h2>
-            
-            <div className="space-y-3 mb-6">
-              <div>
-                <span className="text-sm font-medium text-gray-600">Name:</span>
-                <p className="text-gray-900">{selectedUser.name}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-gray-600">Email:</span>
-                <p className="text-gray-900">{selectedUser.email}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-gray-600">Role:</span>
-                <p className="text-gray-900 capitalize">{selectedUser.role.replace('_', ' ')}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-gray-600">Tier:</span>
-                <p className="text-gray-900 capitalize">{selectedUser.diner_tier}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-gray-600">Professionally Verified:</span>
-                <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                  selectedUser.is_professionally_verified
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
-                }`}>
-                  {selectedUser.is_professionally_verified ? 'Yes' : 'No'}
-                </span>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-gray-600">Account Status:</span>
-                <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                  selectedUser.is_disabled
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-green-100 text-green-700'
-                }`}>
-                  {selectedUser.is_disabled ? 'Disabled' : 'Active'}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              {!selectedUser.is_professionally_verified && (
-                <button
-                  onClick={() => handleVerify(selectedUser.id)}
-                  className="btn-primary w-full"
-                >
-                  ✓ Verify Professionally
-                </button>
-              )}
-              
-              {!selectedUser.is_disabled ? (
-                <button
-                  onClick={() => handleDisable(selectedUser.id)}
-                  className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                >
-                  Disable Account
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleDisable(selectedUser.id)}
-                  className="btn-primary w-full"
-                >
-                  Enable Account
-                </button>
-              )}
-              
-              <button
-                onClick={() => setSelectedUser(null)}
-                className="btn-secondary w-full"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Users Table */}
-      <div className="card">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="border-b border-gray-200">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        {loading ? (
+          <p className="text-center py-12">Loading users...</p>
+        ) : users.length === 0 ? (
+          <p className="text-center py-12 text-gray-500">No users found</p>
+        ) : (
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="text-left py-3 px-4 font-semibold text-gray-900">Name</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-900">Email</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-900">Role</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-900">Tier</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-900">Verified</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-900">Status</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-900">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  User
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Role
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Tier
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Verified
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Joined
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Actions
+                </th>
               </tr>
             </thead>
-            <tbody>
-              {filteredUsers.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-8 text-center text-gray-500">
-                    No users found matching the filter
+            <tbody className="bg-white divide-y divide-gray-200">
+              {users.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-medium text-gray-900">{user.full_name || 'N/A'}</div>
+                    <div className="text-sm text-gray-500">{user.email}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <select
+                      value={user.role}
+                      onChange={(e) => updateUserRole(user.id, e.target.value)}
+                      className="text-sm border border-gray-300 rounded px-2 py-1"
+                    >
+                      <option value="diner">Diner</option>
+                      <option value="venue_admin">Venue Admin</option>
+                      <option value="platform_admin">Platform Admin</option>
+                    </select>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <select
+                      value={user.tier}
+                      onChange={(e) => updateUserTier(user.id, e.target.value as any)}
+                      className={`text-sm border rounded px-2 py-1 ${
+                        user.tier === 'premium'
+                          ? 'border-orange-300 text-orange-700'
+                          : 'border-green-300 text-green-700'
+                      }`}
+                    >
+                      <option value="free">Free</option>
+                      <option value="premium">Premium</option>
+                    </select>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => toggleVerification(user.id, user.is_professionally_verified)}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        user.is_professionally_verified
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      {user.is_professionally_verified ? 'Verified' : 'Unverified'}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(user.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                    <span className="text-xs text-gray-400">
+                      {user.subscription_status || 'N/A'}
+                    </span>
                   </td>
                 </tr>
-              ) : (
-                filteredUsers.map((user) => (
-                  <tr key={user.id} className="border-b border-gray-100">
-                    <td className="py-3 px-4 font-medium text-gray-900">{user.name}</td>
-                    <td className="py-3 px-4 text-gray-600">{user.email}</td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        user.role === 'platform_admin'
-                          ? 'bg-purple-100 text-purple-700'
-                          : user.role === 'venue_admin'
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'bg-gray-100 text-gray-700'
-                      }`}>
-                        {user.role.replace('_', ' ')}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-1 text-xs rounded-full capitalize ${
-                        user.diner_tier === 'premium'
-                          ? 'bg-amber-100 text-amber-700'
-                          : 'bg-green-100 text-green-700'
-                      }`}>
-                        {user.diner_tier}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      {user.is_professionally_verified ? (
-                        <span className="text-green-600">✓</span>
-                      ) : (
-                        <span className="text-red-600">✗</span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        user.is_disabled
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-green-100 text-green-700'
-                      }`}>
-                        {user.is_disabled ? 'Disabled' : 'Active'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <button
-                        onClick={() => setSelectedUser(user)}
-                        className="text-sm text-blue-600 hover:text-blue-700"
-                      >
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
-        </div>
+        )}
       </div>
     </div>
   )
