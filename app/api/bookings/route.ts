@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { sendBookingConfirmation } from '@/lib/email/send-booking-confirmation'
+import { formatFullDateTime } from '@/lib/date-utils'
 
 export async function POST(request: Request) {
   try {
@@ -20,7 +22,6 @@ export async function POST(request: Request) {
       }
     )
     
-    // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {
@@ -30,10 +31,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get slot details
+    // Get slot details with venue info
     const { data: slot, error: slotError } = await supabase
       .from('slots')
-      .select('venue_id, party_min, status, slot_tier, start_at')
+      .select('venue_id, party_min, status, slot_tier, start_at, venues(name, address)')
       .eq('id', slotId)
       .single()
 
@@ -44,7 +45,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if slot is still available
     if (slot.status !== 'available') {
       return NextResponse.json(
         { error: 'Slot is no longer available' },
@@ -52,10 +52,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get user's profile to check tier
+    // Get user's profile
     const { data: profile } = await supabase
       .from('profiles')
-      .select('tier')
+      .select('tier, email, full_name')
       .eq('id', user.id)
       .single()
 
@@ -72,7 +72,6 @@ export async function POST(request: Request) {
       const now = new Date()
       const hoursUntilSlot = (slotTime.getTime() - now.getTime()) / (1000 * 60 * 60)
       
-      // Free users can only book premium slots within 24 hours
       if (hoursUntilSlot > 24) {
         return NextResponse.json(
           { error: 'Premium membership required to book this slot in advance. Upgrade to Premium or book within 24 hours.' },
@@ -87,7 +86,6 @@ export async function POST(request: Request) {
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id)
       .eq('status', 'active')
-      .gte('slots.start_at', new Date().toISOString())
 
     const maxBookings = profile.tier === 'premium' ? 10 : 3
 
@@ -100,8 +98,8 @@ export async function POST(request: Request) {
       )
     }
 
-    // Call the database function to create booking atomically
-    const { data, error: bookingError } = await supabase
+    // Create booking
+    const { data: booking, error: bookingError } = await supabase
       .rpc('create_booking', {
         p_slot_id: slotId,
         p_user_id: user.id,
@@ -117,7 +115,19 @@ export async function POST(request: Request) {
       )
     }
 
-    return NextResponse.json({ booking: data })
+    // Send confirmation email (async, don't wait for it)
+    const venue = (slot as any).venues
+    sendBookingConfirmation({
+      userEmail: profile.email,
+      userName: profile.full_name || 'Guest',
+      venueName: venue?.name || 'Venue',
+      venueAddress: venue?.address || 'London',
+      slotTime: formatFullDateTime(slot.start_at),
+      partySize: slot.party_min,
+      bookingId: booking.id || slotId,
+    }).catch(err => console.error('Email send failed:', err))
+
+    return NextResponse.json({ booking })
   } catch (error: any) {
     console.error('Booking error:', error)
     return NextResponse.json(
