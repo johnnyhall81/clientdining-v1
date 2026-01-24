@@ -1,5 +1,3 @@
-'use client'
-
 import { Slot, DinerTier } from '@/lib/supabase'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import { checkBookingEligibility, getSlotAccessLabel, getSlotAccessColor } from '@/lib/booking-rules'
@@ -30,8 +28,7 @@ export default function SlotRow({
     currentFutureBookings
   )
   
-  const isBooked = slot.status === 'booked'
-  const isReserved = slot.reserved_for_user_id !== null
+  const isAvailable = slot.status === 'available'
   
   return (
     <div className="flex items-center justify-between py-4 border-b border-gray-200 last:border-b-0">
@@ -66,10 +63,8 @@ export default function SlotRow({
         </div>
         
         <div className="flex items-center gap-2 justify-end">
-          {isBooked ? (
+          {!isAvailable ? (
             <span className="text-sm text-gray-500">Unavailable</span>
-          ) : isReserved ? (
-            <span className="text-sm text-orange-600">Reserved</span>
           ) : eligibility.canBook ? (
             <BookButton onBook={() => onBook(slot.id)} />
           ) : (
