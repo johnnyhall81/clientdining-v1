@@ -22,7 +22,7 @@ export default function TopNav() {
     if (!user) return
     const { data } = await supabase
       .from('profiles')
-      .select('full_name, avatar_url')
+      .select('full_name, avatar_url, role')
       .eq('id', user.id)
       .single()
     setProfile(data)
@@ -34,6 +34,7 @@ export default function TopNav() {
   }
 
   const isActive = (path: string) => pathname === path
+  const isAdmin = profile?.role === 'platform_admin'
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -99,12 +100,22 @@ export default function TopNav() {
 
                 {/* Dropdown */}
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <Link
-                    href="/account"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
-                  >
-                    Account
-                  </Link>
+                  {!isAdmin && (
+                    <Link
+                      href="/account"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+                    >
+                      Account
+                    </Link>
+                  )}
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <button
                     onClick={handleSignOut}
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg"
