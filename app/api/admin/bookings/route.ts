@@ -21,7 +21,7 @@ export async function GET(request: Request) {
             area
           )
         ),
-        profiles!inner (
+        profiles!bookings_user_id_fkey (
           full_name,
           email
         )
