@@ -35,7 +35,16 @@ export async function sendAlertNotification(data: AlertEmailData) {
               .detail-label { font-weight: 600; color: #666; }
               .detail-value { color: #1a1a1a; }
               .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-              .button { background: #2563eb; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0; font-weight: 600; }
+              .button { 
+                background: #2563eb; 
+                color: white !important; 
+                padding: 14px 32px; 
+                text-decoration: none; 
+                border-radius: 6px; 
+                display: inline-block; 
+                margin: 20px 0; 
+                font-weight: 600; 
+              }
               .urgent { color: #dc2626; font-weight: 600; }
             </style>
           </head>
@@ -75,7 +84,7 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 <p><strong>Important:</strong> This is a FIFO (First In, First Out) system. You were first to set an alert, so you get first chance to book. If you don't book within 15 minutes, the next person in the queue will be notified.</p>
                 
                 <center>
-                  <a href="https://clientdining.com/venues/${data.venueId}?slot=${data.slotId}" class="button">Book This Slot Now</a>
+                  <a href="https://clientdining.com/api/bookings/quick?slot=${data.slotId}&redirect=/bookings" class="button" style="color: white;">Book This Slot Now</a>
                 </center>
                 
                 <p style="margin-top: 30px; font-size: 14px; color: #666;">
