@@ -231,59 +231,49 @@ export default function SearchPage() {
         <div className="grid grid-cols-1 gap-4">
           {results.map(({ slot, venue }) => (
             <div key={slot.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-4">
-                    {venue.image_venue && (
-                      <img
-                        src={venue.image_venue}
-                        alt={venue.name}
-                        className="w-16 h-16 rounded object-cover"
-                      />
-                    )}
-                    <div>
-                      <h3 className="font-semibold text-lg text-gray-900">{venue.name}</h3>
-                      <p className="text-sm text-gray-600">{venue.area}</p>
-                      <div className="flex items-center gap-3 mt-1 text-sm">
-                        <span className="text-gray-700">
-                          {formatSlotDate(slot.start_at)} • {formatSlotTime(slot.start_at)}
+              <div className="flex items-center justify-between gap-4">
+                <Link href={`/venues/${venue.id}`} className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity">
+                  {venue.image_venue && (
+                    <img
+                      src={venue.image_venue}
+                      alt={venue.name}
+                      className="w-16 h-16 rounded object-cover"
+                    />
+                  )}
+                  <div>
+                    <h3 className="font-semibold text-lg text-gray-900 hover:underline">{venue.name}</h3>
+                    <p className="text-sm text-gray-600">{venue.area}</p>
+                    <div className="flex items-center gap-3 mt-1 text-sm">
+                      <span className="text-gray-700">
+                        {formatSlotDate(slot.start_at)} • {formatSlotTime(slot.start_at)}
+                      </span>
+                      <span className="text-gray-600">
+                        {slot.party_min}-{slot.party_max} guests
+                      </span>
+                      {slot.slot_tier === 'premium' && (
+                        <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
+                          Premium
                         </span>
-                        <span className="text-gray-600">
-                          {slot.party_min}-{slot.party_max} guests
-                        </span>
-                        {slot.slot_tier === 'premium' && (
-                          <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
-                            Premium
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
-                </div>
+                </Link>
 
-                <div className="flex flex-col gap-2">
-                  {slot.status === 'available' ? (
-                    <button
-                      onClick={() => handleBook(slot.id)}
-                      className="bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 font-medium"
-                    >
-                      Book Now
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleAlert(slot.id)}
-                      className="bg-white border-2 border-gray-900 text-gray-900 px-6 py-2 rounded-lg hover:bg-gray-50 font-medium"
-                    >
-                      Alert Me
-                    </button>
-                  )}
-                  <Link
-                    href={`/venues/${venue.id}`}
-                    className="text-sm text-gray-600 hover:text-gray-900 text-center"
+                {slot.status === 'available' ? (
+                  <button
+                    onClick={() => handleBook(slot.id)}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium whitespace-nowrap"
                   >
-                    View Venue
-                  </Link>
-                </div>
+                    Book
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleAlert(slot.id)}
+                    className="bg-white border-2 border-blue-600 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-50 font-medium whitespace-nowrap"
+                  >
+                    Alert Me
+                  </button>
+                )}
               </div>
             </div>
           ))}
