@@ -93,21 +93,26 @@ export default function AlertsPage() {
     }
   }
 
-  const handleRemoveAlert = async (alertId: string, slotId: string) => {
+  const handleRemoveAlert = async (alertId: string) => {
     if (!confirm('Remove this alert?')) return
 
     try {
-      const response = await fetch('/api/alerts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId }),
-      })
+      const { error } = await supabase
+        .from('alerts')
+        .delete()
+        .eq('id', alertId)
 
-      if (response.ok) {
-        loadAlerts()
+      if (error) {
+        console.error('Error removing alert:', error)
+        alert('Failed to remove alert')
+        return
       }
+
+      // Reload alerts
+      loadAlerts()
     } catch (error) {
       console.error('Error removing alert:', error)
+      alert('Failed to remove alert')
     }
   }
 
@@ -208,7 +213,7 @@ export default function AlertsPage() {
                 </Link>
 
                 <button
-                  onClick={() => handleRemoveAlert(alert.id, alert.slot_id)}
+                  onClick={() => handleRemoveAlert(alert.id)}
                   className="text-sm text-red-600 hover:text-red-700 font-medium"
                 >
                   Remove
