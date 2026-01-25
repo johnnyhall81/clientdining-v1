@@ -40,23 +40,13 @@ export default function TopNav() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href={user ? "/home" : "/"} className="text-xl font-bold text-gray-900">
+          <Link href={user ? "/search" : "/"} className="text-xl font-bold text-gray-900">
             ClientDining
           </Link>
 
           {/* Navigation */}
           {user ? (
             <nav className="flex items-center gap-6">
-              <Link
-                href="/home"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/home')
-                    ? 'text-gray-900'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Home
-              </Link>
               <Link
                 href="/search"
                 className={`text-sm font-medium transition-colors ${
@@ -75,7 +65,7 @@ export default function TopNav() {
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                My Bookings
+                Bookings
               </Link>
               <Link
                 href="/alerts"
@@ -85,10 +75,10 @@ export default function TopNav() {
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                My Alerts
+                Alerts
               </Link>
 
-              {/* User Menu */}
+              {/* User Menu with Chevron */}
               <div className="relative group">
                 <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                   {profile?.avatar_url ? (
@@ -102,6 +92,9 @@ export default function TopNav() {
                       {profile?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}
                     </div>
                   )}
+                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
 
                 {/* Dropdown */}
@@ -110,7 +103,7 @@ export default function TopNav() {
                     href="/account"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
                   >
-                    Account Settings
+                    Account
                   </Link>
                   <button
                     onClick={handleSignOut}
