@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -15,7 +18,9 @@ export async function GET(request: Request) {
 
     if (error) throw error
 
-    return NextResponse.json({ users: users || [] })
+    const response = NextResponse.json({ users: users || [] })
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
+    return response
   } catch (error: any) {
     console.error('Error fetching users:', error)
     return NextResponse.json(
