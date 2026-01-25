@@ -239,3 +239,4 @@ Proprietary - All rights reserved
 # Cron configured
 # Alert system with automated cron processing
 # Service role key updated
+# Force clean build
