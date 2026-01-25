@@ -1,129 +1,176 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
-import { formatSlotDate, formatSlotTime, isWithin24Hours } from '@/lib/date-utils'
+import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
+import Link from 'next/link'
 
 interface SearchResult {
-  id: string
-  venue_id: string
-  venue_name: string
-  venue_area: string
-  venue_type: string
-  venue_image: string
-  start_at: string
-  party_min: number
-  party_max: number
-  slot_tier: string
+  slot: {
+    id: string
+    start_at: string
+    party_min: number
+    party_max: number
+    slot_tier: 'free' | 'premium'
+    status: string
+  }
+  venue: {
+    id: string
+    name: string
+    area: string
+    venue_type: string
+    image_venue: string | null
+  }
 }
 
 export default function SearchPage() {
-  const [date, setDate] = useState('')
-  const [area, setArea] = useState('all')
-  const [partySize, setPartySize] = useState('2')
-  const [within24h, setWithin24h] = useState(false)
+  const router = useRouter()
+  const { user } = useAuth()
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
-  const [searched, setSearched] = useState(false)
+  
+  const [filters, setFilters] = useState({
+    date: '',
+    area: '',
+    partySize: 2,
+    within24h: false,
+  })
+
+  useEffect(() => {
+    handleSearch()
+  }, [filters.date, filters.area, filters.partySize, filters.within24h])
 
   const handleSearch = async () => {
     setLoading(true)
-    setSearched(true)
+
+    let query = supabase
+      .from('slots')
+      .select(`
+        id,
+        start_at,
+        party_min,
+        party_max,
+        slot_tier,
+        status,
+        venues!inner (
+          id,
+          name,
+          area,
+          venue_type,
+          image_venue
+        )
+      `)
+      .gte('start_at', new Date().toISOString())
+      .order('start_at', { ascending: true })
+      .limit(50)
+
+    if (filters.date) {
+      const startOfDay = new Date(filters.date)
+      startOfDay.setHours(0, 0, 0, 0)
+      const endOfDay = new Date(filters.date)
+      endOfDay.setHours(23, 59, 59, 999)
+      
+      query = query
+        .gte('start_at', startOfDay.toISOString())
+        .lte('start_at', endOfDay.toISOString())
+    }
+
+    if (filters.area) {
+      query = query.eq('venues.area', filters.area)
+    }
+
+    if (filters.partySize) {
+      query = query
+        .lte('party_min', filters.partySize)
+        .gte('party_max', filters.partySize)
+    }
+
+    if (filters.within24h) {
+      const in24h = new Date()
+      in24h.setHours(in24h.getHours() + 24)
+      query = query.lte('start_at', in24h.toISOString())
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Search error:', error)
+    } else {
+      const transformed: SearchResult[] = (data || []).map((item: any) => ({
+        slot: {
+          id: item.id,
+          start_at: item.start_at,
+          party_min: item.party_min,
+          party_max: item.party_max,
+          slot_tier: item.slot_tier,
+          status: item.status,
+        },
+        venue: item.venues,
+      }))
+      setResults(transformed)
+    }
+
+    setLoading(false)
+  }
+
+  const handleBook = async (slotId: string) => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
 
     try {
-      let query = supabase
-        .from('slots')
-        .select(`
-          id,
-          venue_id,
-          start_at,
-          party_min,
-          party_max,
-          slot_tier,
-          venues (
-            name,
-            area,
-            venue_type,
-            image_venue
-          )
-        `)
-        .eq('status', 'available')
-        .gte('start_at', new Date().toISOString())
-        .lte('party_min', parseInt(partySize))
-        .gte('party_max', parseInt(partySize))
-        .order('start_at')
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slotId }),
+      })
 
-      // Filter by area if not "all"
-      if (area !== 'all') {
-        query = query.eq('venues.area', area)
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.error || 'Failed to create booking')
+        return
       }
 
-      // Filter by date if provided
-      if (date) {
-        const startOfDay = new Date(date)
-        startOfDay.setHours(0, 0, 0, 0)
-        const endOfDay = new Date(date)
-        endOfDay.setHours(23, 59, 59, 999)
-        
-        query = query
-          .gte('start_at', startOfDay.toISOString())
-          .lte('start_at', endOfDay.toISOString())
-      }
-
-      // Filter by within 24h if checked
-      if (within24h) {
-        const in24h = new Date()
-        in24h.setHours(in24h.getHours() + 24)
-        query = query.lte('start_at', in24h.toISOString())
-      }
-
-      const { data, error } = await query
-
-      if (error) throw error
-
-      // Transform the data
-      const transformed = (data || []).map((slot: any) => ({
-        id: slot.id,
-        venue_id: slot.venue_id,
-        venue_name: slot.venues.name,
-        venue_area: slot.venues.area,
-        venue_type: slot.venues.venue_type,
-        venue_image: slot.venues.image_venue,
-        start_at: slot.start_at,
-        party_min: slot.party_min,
-        party_max: slot.party_max,
-        slot_tier: slot.slot_tier,
-      }))
-
-      setResults(transformed)
+      alert('Booking confirmed! Check your email for details.')
+      router.push('/bookings')
     } catch (error) {
-      console.error('Search error:', error)
-      setResults([])
-    } finally {
-      setLoading(false)
+      console.error('Booking error:', error)
+      alert('Failed to create booking')
     }
   }
 
+  const handleAlert = async (slotId: string) => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    alert('Alert feature coming soon! You will be notified when this slot becomes available.')
+  }
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Search Availability</h1>
-        <p className="text-gray-600">Find your perfect dining experience</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Search Available Tables</h1>
+        <p className="text-gray-600">Find and book your perfect dining experience</p>
       </div>
 
-      {/* Search Form */}
+      {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="grid md:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Date
             </label>
             <input
               type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={filters.date}
+              onChange={(e) => setFilters({ ...filters, date: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             />
           </div>
 
@@ -132,14 +179,15 @@ export default function SearchPage() {
               Area
             </label>
             <select
-              value={area}
-              onChange={(e) => setArea(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={filters.area}
+              onChange={(e) => setFilters({ ...filters, area: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             >
-              <option value="all">All areas</option>
+              <option value="">All Areas</option>
               <option value="Mayfair">Mayfair</option>
               <option value="Notting Hill">Notting Hill</option>
               <option value="Piccadilly">Piccadilly</option>
+              <option value="Soho">Soho</option>
             </select>
           </div>
 
@@ -148,100 +196,97 @@ export default function SearchPage() {
               Party Size
             </label>
             <select
-              value={partySize}
-              onChange={(e) => setPartySize(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={filters.partySize}
+              onChange={(e) => setFilters({ ...filters, partySize: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             >
-              <option value="2">2 guests</option>
-              <option value="4">4 guests</option>
-              <option value="6">6 guests</option>
-              <option value="8">8 guests</option>
+              {[2, 3, 4, 5, 6, 7, 8].map(size => (
+                <option key={size} value={size}>{size} guests</option>
+              ))}
             </select>
           </div>
 
           <div className="flex items-end">
-            <label className="flex items-center">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                checked={within24h}
-                onChange={(e) => setWithin24h(e.target.checked)}
-                className="mr-2"
+                checked={filters.within24h}
+                onChange={(e) => setFilters({ ...filters, within24h: e.target.checked })}
+                className="w-4 h-4"
               />
-              <span className="text-sm text-gray-700">Within 24 hours only</span>
+              <span className="text-sm text-gray-700">Within 24 hours</span>
             </label>
           </div>
         </div>
-
-        <button
-          onClick={handleSearch}
-          disabled={loading}
-          className="w-full bg-gray-900 text-white py-2 px-4 rounded-md hover:bg-gray-800 disabled:opacity-50"
-        >
-          {loading ? 'Searching...' : 'Search Availability'}
-        </button>
       </div>
 
       {/* Results */}
-      {searched && (
-        <div>
-          {loading ? (
-            <p className="text-center text-gray-500">Searching...</p>
-          ) : results.length === 0 ? (
-            <p className="text-center text-gray-500">
-              Use the filters above and click "Search Availability" to find available tables
-            </p>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600">
-                Found {results.length} available {results.length === 1 ? 'slot' : 'slots'}
-              </p>
-              
-              {results.map((result) => (
-                <Link
-                  key={result.id}
-                  href={`/venues/${result.venue_id}`}
-                  className="block bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex gap-4">
-                    <div className="w-24 h-24 bg-gray-200 rounded flex-shrink-0">
+      {loading ? (
+        <div className="text-center py-12">Loading...</div>
+      ) : results.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-lg border">
+          <p className="text-gray-500">No available slots found. Try adjusting your filters.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4">
+          {results.map(({ slot, venue }) => (
+            <div key={slot.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-4">
+                    {venue.image_venue && (
                       <img
-                        src={result.venue_image || '/placeholder-venue.jpg'}
-                        alt={result.venue_name}
-                        className="w-full h-full object-cover rounded"
+                        src={venue.image_venue}
+                        alt={venue.name}
+                        className="w-16 h-16 rounded object-cover"
                       />
-                    </div>
-                    
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                        {result.venue_name}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-2">
-                        {result.venue_area} • {result.venue_type}
-                      </p>
-                      <div className="flex items-center gap-4 text-sm">
-                        <span className="font-medium text-gray-900">
-                          {formatSlotDate(result.start_at)} at {formatSlotTime(result.start_at)}
+                    )}
+                    <div>
+                      <h3 className="font-semibold text-lg text-gray-900">{venue.name}</h3>
+                      <p className="text-sm text-gray-600">{venue.area}</p>
+                      <div className="flex items-center gap-3 mt-1 text-sm">
+                        <span className="text-gray-700">
+                          {formatSlotDate(slot.start_at)} • {formatSlotTime(slot.start_at)}
                         </span>
                         <span className="text-gray-600">
-                          {result.party_min}-{result.party_max} guests
+                          {slot.party_min}-{slot.party_max} guests
                         </span>
-                        <span className={`text-xs font-medium ${
-                          result.slot_tier === 'premium' ? 'text-orange-600' : 'text-green-600'
-                        }`}>
-                          {result.slot_tier === 'premium' ? 'Premium' : 'Free'}
-                        </span>
-                        {isWithin24Hours(result.start_at) && (
-                          <span className="text-xs font-medium text-blue-600">
-                            Last minute
+                        {slot.slot_tier === 'premium' && (
+                          <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
+                            Premium
                           </span>
                         )}
                       </div>
                     </div>
                   </div>
-                </Link>
-              ))}
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  {slot.status === 'available' ? (
+                    <button
+                      onClick={() => handleBook(slot.id)}
+                      className="bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 font-medium"
+                    >
+                      Book Now
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleAlert(slot.id)}
+                      className="bg-white border-2 border-gray-900 text-gray-900 px-6 py-2 rounded-lg hover:bg-gray-50 font-medium"
+                    >
+                      Alert Me
+                    </button>
+                  )}
+                  <Link
+                    href={`/venues/${venue.id}`}
+                    className="text-sm text-gray-600 hover:text-gray-900 text-center"
+                  >
+                    View Venue
+                  </Link>
+                </div>
+              </div>
             </div>
-          )}
+          ))}
         </div>
       )}
     </div>
