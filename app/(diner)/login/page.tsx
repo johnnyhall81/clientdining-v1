@@ -34,10 +34,14 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
+    const redirectUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+      ? 'http://localhost:3000/home'
+      : 'https://clientdining.com/home'
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',
       options: {
-        redirectTo: `${window.location.origin}/home`,
+        redirectTo: redirectUrl,
       },
     })
 
