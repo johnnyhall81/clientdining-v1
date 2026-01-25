@@ -30,6 +30,7 @@ export default function SearchPage() {
   const { user } = useAuth()
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
+  const [alerts, setAlerts] = useState<Set<string>>(new Set())
   
   const [filters, setFilters] = useState({
     date: '',
@@ -40,7 +41,26 @@ export default function SearchPage() {
 
   useEffect(() => {
     handleSearch()
-  }, [filters.date, filters.area, filters.partySize, filters.within24h])
+    if (user) {
+      loadAlerts()
+    }
+  }, [filters.date, filters.area, filters.partySize, filters.within24h, user])
+
+  const loadAlerts = async () => {
+    try {
+      const response = await fetch('/api/alerts')
+      const data = await response.json()
+      
+      if (data.alerts) {
+        const activeAlertSlotIds = data.alerts
+          .filter((a: any) => a.status === 'active')
+          .map((a: any) => a.slot_id)
+        setAlerts(new Set(activeAlertSlotIds))
+      }
+    } catch (error) {
+      console.error('Error loading alerts:', error)
+    }
+  }
 
   const handleSearch = async () => {
     setLoading(true)
@@ -143,13 +163,40 @@ export default function SearchPage() {
     }
   }
 
-  const handleAlert = async (slotId: string) => {
+  const handleToggleAlert = async (slotId: string) => {
     if (!user) {
       router.push('/login')
       return
     }
 
-    alert('Alert feature coming soon! You will be notified when this slot becomes available.')
+    try {
+      const response = await fetch('/api/alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slotId }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.error || 'Failed to toggle alert')
+        return
+      }
+
+      // Update local state
+      const newAlerts = new Set(alerts)
+      if (data.active) {
+        newAlerts.add(slotId)
+        alert('Alert set! You will be notified when this slot becomes available.')
+      } else {
+        newAlerts.delete(slotId)
+        alert('Alert removed.')
+      }
+      setAlerts(newAlerts)
+    } catch (error) {
+      console.error('Alert toggle error:', error)
+      alert('Failed to toggle alert')
+    }
   }
 
   const isLastMinute = (startAt: string) => {
@@ -238,6 +285,7 @@ export default function SearchPage() {
         <div className="grid grid-cols-1 gap-4">
           {results.map(({ slot, venue }) => {
             const lastMinute = isLastMinute(slot.start_at)
+            const hasAlert = alerts.has(slot.id)
             
             return (
               <div key={slot.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
@@ -292,11 +340,15 @@ export default function SearchPage() {
                           <span className="text-sm text-gray-500">🔒 Premium</span>
                         )}
                         <button
-                          onClick={() => handleAlert(slot.id)}
-                          className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 font-medium whitespace-nowrap flex items-center gap-2"
+                          onClick={() => handleToggleAlert(slot.id)}
+                          className={`border px-4 py-2 rounded-lg font-medium whitespace-nowrap flex items-center gap-2 ${
+                            hasAlert
+                              ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
+                              : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                          }`}
                         >
-                          <span>🔔</span>
-                          Alert Me
+                          <span>{hasAlert ? '🔔' : '🔕'}</span>
+                          {hasAlert ? 'Alert Set' : 'Alert Me'}
                         </button>
                       </div>
                     )}
