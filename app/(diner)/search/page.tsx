@@ -260,28 +260,25 @@ export default function SearchPage() {
                         <span className="text-gray-600">
                           {slot.party_min}-{slot.party_max} guests
                         </span>
-                        <div className="flex items-center gap-2">
-                          {slot.slot_tier === 'premium' && (
-                            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
-                              Premium
-                            </span>
-                          )}
-                          {slot.slot_tier === 'free' && (
-                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
-                              Free
-                            </span>
-                          )}
-                          {lastMinute && (
-                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
-                              Last minute
-                            </span>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </Link>
 
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex items-center gap-3">
+                    {/* Tier badges */}
+                    <div className="flex items-center gap-2 text-sm">
+                      {slot.slot_tier === 'premium' && (
+                        <span className="text-orange-600 font-medium">Premium</span>
+                      )}
+                      {slot.slot_tier === 'free' && (
+                        <span className="text-green-600 font-medium">Free</span>
+                      )}
+                      {lastMinute && (
+                        <span className="text-blue-600 font-medium">Last minute</span>
+                      )}
+                    </div>
+
+                    {/* Action button */}
                     {slot.status === 'available' ? (
                       <button
                         onClick={() => handleBook(slot.id)}
@@ -290,20 +287,18 @@ export default function SearchPage() {
                         Book
                       </button>
                     ) : (
-                      <>
+                      <div className="flex items-center gap-2">
+                        {slot.slot_tier === 'premium' && (
+                          <span className="text-sm text-gray-500">🔒 Premium</span>
+                        )}
                         <button
                           onClick={() => handleAlert(slot.id)}
-                          className="bg-white border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 font-medium whitespace-nowrap flex items-center gap-2"
+                          className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 font-medium whitespace-nowrap flex items-center gap-2"
                         >
                           <span>🔔</span>
                           Alert Me
                         </button>
-                        {slot.slot_tier === 'premium' && (
-                          <span className="text-xs text-gray-500">
-                            🔓 Premium unlock available
-                          </span>
-                        )}
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
