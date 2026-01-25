@@ -77,6 +77,16 @@ export default function TopNav() {
               >
                 My Bookings
               </Link>
+              <Link
+                href="/alerts"
+                className={`text-sm font-medium transition-colors ${
+                  isActive('/alerts')
+                    ? 'text-gray-900'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                My Alerts
+              </Link>
 
               {/* User Menu */}
               <div className="relative group">
