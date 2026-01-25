@@ -79,6 +79,13 @@ export default function UsersPage() {
   }
 
   const toggleVerification = async (userId: string, currentStatus: boolean) => {
+    // Optimistic update
+    setUsers(users.map(u => 
+      u.id === userId 
+        ? { ...u, is_professionally_verified: !currentStatus } 
+        : u
+    ))
+
     try {
       const response = await fetch('/api/admin/users/toggle-verification', {
         method: 'POST',
@@ -86,12 +93,22 @@ export default function UsersPage() {
         body: JSON.stringify({ userId, verified: !currentStatus }),
       })
 
-      if (response.ok) {
-        loadUsers()
-      } else {
+      if (!response.ok) {
+        // Revert on failure
+        setUsers(users.map(u => 
+          u.id === userId 
+            ? { ...u, is_professionally_verified: currentStatus } 
+            : u
+        ))
         alert('Failed to update verification')
       }
     } catch (error) {
+      // Revert on error
+      setUsers(users.map(u => 
+        u.id === userId 
+          ? { ...u, is_professionally_verified: currentStatus } 
+          : u
+      ))
       console.error('Error updating verification:', error)
       alert('Failed to update verification')
     }
@@ -190,10 +207,10 @@ export default function UsersPage() {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     onClick={() => toggleVerification(user.id, user.is_professionally_verified)}
-                    className={`text-sm px-3 py-1 rounded-full ${
+                    className={`text-sm px-3 py-1 rounded-full cursor-pointer transition-colors ${
                       user.is_professionally_verified
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-600'
+                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
                     {user.is_professionally_verified ? '✓ Verified' : 'Not Verified'}
