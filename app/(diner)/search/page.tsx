@@ -152,6 +152,13 @@ export default function SearchPage() {
     alert('Alert feature coming soon! You will be notified when this slot becomes available.')
   }
 
+  const isLastMinute = (startAt: string) => {
+    const slotTime = new Date(startAt)
+    const now = new Date()
+    const hoursUntil = (slotTime.getTime() - now.getTime()) / (1000 * 60 * 60)
+    return hoursUntil <= 24
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -229,54 +236,80 @@ export default function SearchPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
-          {results.map(({ slot, venue }) => (
-            <div key={slot.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between gap-4">
-                <Link href={`/venues/${venue.id}`} className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity">
-                  {venue.image_venue && (
-                    <img
-                      src={venue.image_venue}
-                      alt={venue.name}
-                      className="w-16 h-16 rounded object-cover"
-                    />
-                  )}
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-900 hover:underline">{venue.name}</h3>
-                    <p className="text-sm text-gray-600">{venue.area}</p>
-                    <div className="flex items-center gap-3 mt-1 text-sm">
-                      <span className="text-gray-700">
-                        {formatSlotDate(slot.start_at)} • {formatSlotTime(slot.start_at)}
-                      </span>
-                      <span className="text-gray-600">
-                        {slot.party_min}-{slot.party_max} guests
-                      </span>
-                      {slot.slot_tier === 'premium' && (
-                        <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
-                          Premium
+          {results.map(({ slot, venue }) => {
+            const lastMinute = isLastMinute(slot.start_at)
+            
+            return (
+              <div key={slot.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between gap-4">
+                  <Link href={`/venues/${venue.id}`} className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity">
+                    {venue.image_venue && (
+                      <img
+                        src={venue.image_venue}
+                        alt={venue.name}
+                        className="w-16 h-16 rounded object-cover"
+                      />
+                    )}
+                    <div>
+                      <h3 className="font-semibold text-lg text-gray-900 hover:underline">{venue.name}</h3>
+                      <p className="text-sm text-gray-600">{venue.area}</p>
+                      <div className="flex items-center gap-3 mt-1 text-sm">
+                        <span className="text-gray-700">
+                          {formatSlotDate(slot.start_at)} • {formatSlotTime(slot.start_at)}
                         </span>
-                      )}
+                        <span className="text-gray-600">
+                          {slot.party_min}-{slot.party_max} guests
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {slot.slot_tier === 'premium' && (
+                            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
+                              Premium
+                            </span>
+                          )}
+                          {slot.slot_tier === 'free' && (
+                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                              Free
+                            </span>
+                          )}
+                          {lastMinute && (
+                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+                              Last minute
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
 
-                {slot.status === 'available' ? (
-                  <button
-                    onClick={() => handleBook(slot.id)}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium whitespace-nowrap"
-                  >
-                    Book
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleAlert(slot.id)}
-                    className="bg-white border-2 border-blue-600 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-50 font-medium whitespace-nowrap"
-                  >
-                    Alert Me
-                  </button>
-                )}
+                  <div className="flex flex-col items-end gap-2">
+                    {slot.status === 'available' ? (
+                      <button
+                        onClick={() => handleBook(slot.id)}
+                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium whitespace-nowrap"
+                      >
+                        Book
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleAlert(slot.id)}
+                          className="bg-white border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 font-medium whitespace-nowrap flex items-center gap-2"
+                        >
+                          <span>🔔</span>
+                          Alert Me
+                        </button>
+                        {slot.slot_tier === 'premium' && (
+                          <span className="text-xs text-gray-500">
+                            🔓 Premium unlock available
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
