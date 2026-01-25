@@ -237,3 +237,4 @@ For issues or questions, contact the platform admin.
 
 Proprietary - All rights reserved
 # Cron configured
+# Alert system with automated cron processing
