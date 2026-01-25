@@ -236,3 +236,4 @@ For issues or questions, contact the platform admin.
 ## 📄 License
 
 Proprietary - All rights reserved
+# Cron configured
