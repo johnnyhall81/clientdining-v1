@@ -15,7 +15,8 @@ export default function UsersPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/admin/users')
+      // Add timestamp to prevent caching
+      const response = await fetch(`/api/admin/users?t=${Date.now()}`)
       const data = await response.json()
       
       if (data.users) {
@@ -46,7 +47,7 @@ export default function UsersPage() {
 
       if (response.ok) {
         alert('User tier updated successfully')
-        loadUsers()
+        await loadUsers()
       } else {
         alert('Failed to update tier')
       }
@@ -68,7 +69,7 @@ export default function UsersPage() {
 
       if (response.ok) {
         alert('User role updated successfully')
-        loadUsers()
+        await loadUsers()
       } else {
         alert('Failed to update role')
       }
@@ -79,13 +80,6 @@ export default function UsersPage() {
   }
 
   const toggleVerification = async (userId: string, currentStatus: boolean) => {
-    // Optimistic update
-    setUsers(users.map(u => 
-      u.id === userId 
-        ? { ...u, is_professionally_verified: !currentStatus } 
-        : u
-    ))
-
     try {
       const response = await fetch('/api/admin/users/toggle-verification', {
         method: 'POST',
@@ -93,22 +87,12 @@ export default function UsersPage() {
         body: JSON.stringify({ userId, verified: !currentStatus }),
       })
 
-      if (!response.ok) {
-        // Revert on failure
-        setUsers(users.map(u => 
-          u.id === userId 
-            ? { ...u, is_professionally_verified: currentStatus } 
-            : u
-        ))
+      if (response.ok) {
+        await loadUsers()
+      } else {
         alert('Failed to update verification')
       }
     } catch (error) {
-      // Revert on error
-      setUsers(users.map(u => 
-        u.id === userId 
-          ? { ...u, is_professionally_verified: currentStatus } 
-          : u
-      ))
       console.error('Error updating verification:', error)
       alert('Failed to update verification')
     }
