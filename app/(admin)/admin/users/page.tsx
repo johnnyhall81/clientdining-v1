@@ -110,7 +110,6 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* Filter Tabs */}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           <button
@@ -146,7 +145,6 @@ export default function UsersPage() {
         </nav>
       </div>
 
-      {/* Users Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -192,7 +190,7 @@ export default function UsersPage() {
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:text-blue-800 text-xs"
                         >
-                          View Profile →
+                          View →
                         </a>
                       )}
                     </div>
