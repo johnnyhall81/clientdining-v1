@@ -1,15 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
+import Link from 'next/link'
 
 export default function AdminDashboard() {
-  const router = useRouter()
-  const { user } = useAuth()
   const [stats, setStats] = useState({
     totalVenues: 0,
+    activeVenues: 0,
     totalSlots: 0,
     availableSlots: 0,
     totalBookings: 0,
@@ -17,146 +15,135 @@ export default function AdminDashboard() {
     totalUsers: 0,
     premiumUsers: 0,
   })
+  const [processing, setProcessing] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
-    if (user) {
-      checkAdminAndLoadStats()
+    loadStats()
+  }, [])
+
+  const loadStats = async () => {
+    try {
+      const [venues, slots, bookings, users] = await Promise.all([
+        supabase.from('venues').select('id, is_active', { count: 'exact' }),
+        supabase.from('slots').select('id, status', { count: 'exact' }),
+        supabase.from('bookings').select('id, status', { count: 'exact' }),
+        supabase.from('profiles').select('id, tier', { count: 'exact' }),
+      ])
+
+      setStats({
+        totalVenues: venues.count || 0,
+        activeVenues: venues.data?.filter(v => v.is_active).length || 0,
+        totalSlots: slots.count || 0,
+        availableSlots: slots.data?.filter(s => s.status === 'available').length || 0,
+        totalBookings: bookings.count || 0,
+        activeBookings: bookings.data?.filter(b => b.status === 'active').length || 0,
+        totalUsers: users.count || 0,
+        premiumUsers: users.data?.filter(u => u.tier === 'premium').length || 0,
+      })
+    } catch (error) {
+      console.error('Error loading stats:', error)
+    } finally {
+      setLoading(false)
     }
-  }, [user])
-
-  const checkAdminAndLoadStats = async () => {
-    if (!user) return
-
-    // Check if user is admin
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.role !== 'platform_admin') {
-      router.push('/home')
-      return
-    }
-
-    setIsAdmin(true)
-
-    // Load stats
-    const [venues, slots, bookings, users] = await Promise.all([
-      supabase.from('venues').select('id', { count: 'exact', head: true }),
-      supabase.from('slots').select('id, status', { count: 'exact' }),
-      supabase.from('bookings').select('id, status', { count: 'exact' }),
-      supabase.from('profiles').select('id, tier', { count: 'exact' }),
-    ])
-
-    setStats({
-      totalVenues: venues.count || 0,
-      totalSlots: slots.data?.length || 0,
-      availableSlots: slots.data?.filter(s => s.status === 'available').length || 0,
-      totalBookings: bookings.count || 0,
-      activeBookings: bookings.data?.filter(b => b.status === 'active').length || 0,
-      totalUsers: users.count || 0,
-      premiumUsers: users.data?.filter(u => u.tier === 'premium').length || 0,
-    })
-
-    setLoading(false)
   }
 
-  if (loading || !isAdmin) {
-    return <div className="text-center py-12">Loading...</div>
+  const handleProcessAlerts = async () => {
+    if (!confirm('Process all pending alert notifications?')) return
+
+    setProcessing(true)
+    try {
+      const response = await fetch('/api/alerts/process')
+      const data = await response.json()
+      
+      if (response.ok) {
+        alert(`Success! ${data.message}`)
+      } else {
+        alert(`Error: ${data.error || 'Failed to process alerts'}`)
+      }
+    } catch (error) {
+      console.error('Error processing alerts:', error)
+      alert('Failed to process alerts')
+    } finally {
+      setProcessing(false)
+    }
+  }
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Platform Dashboard</h1>
-        <p className="text-gray-600 mt-2">Overview of your platform</p>
+        <p className="text-gray-600 mt-2">Overview of your dining platform</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Venues"
-          value={stats.totalVenues}
-          subtitle="Total venues"
-          color="blue"
-        />
-        <StatCard
-          title="Slots"
-          value={`${stats.availableSlots} / ${stats.totalSlots}`}
-          subtitle="Available / Total"
-          color="green"
-        />
-        <StatCard
-          title="Bookings"
-          value={`${stats.activeBookings} / ${stats.totalBookings}`}
-          subtitle="Active / Total"
-          color="purple"
-        />
-        <StatCard
-          title="Users"
-          value={`${stats.premiumUsers} / ${stats.totalUsers}`}
-          subtitle="Premium / Total"
-          color="orange"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="text-sm text-gray-600 mb-1">Total Venues</div>
+          <div className="text-3xl font-bold text-gray-900">{stats.totalVenues}</div>
+          <div className="text-sm text-gray-500 mt-1">{stats.activeVenues} active</div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="text-sm text-gray-600 mb-1">Available Slots</div>
+          <div className="text-3xl font-bold text-blue-600">{stats.availableSlots}</div>
+          <div className="text-sm text-gray-500 mt-1">of {stats.totalSlots} total</div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="text-sm text-gray-600 mb-1">Active Bookings</div>
+          <div className="text-3xl font-bold text-green-600">{stats.activeBookings}</div>
+          <div className="text-sm text-gray-500 mt-1">of {stats.totalBookings} total</div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="text-sm text-gray-600 mb-1">Premium Users</div>
+          <div className="text-3xl font-bold text-orange-600">{stats.premiumUsers}</div>
+          <div className="text-sm text-gray-500 mt-1">of {stats.totalUsers} users</div>
+        </div>
       </div>
 
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
-            onClick={() => router.push('/admin/venues')}
-            className="p-4 border-2 border-gray-200 rounded-lg hover:border-gray-900 transition-colors text-left"
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Link
+            href="/admin/venues"
+            className="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium"
           >
-            <div className="text-2xl mb-2">🏢</div>
-            <div className="font-semibold text-gray-900">Manage Venues</div>
-            <div className="text-sm text-gray-600">Add or edit venues</div>
-          </button>
-
-          <button
-            onClick={() => router.push('/admin/slots')}
-            className="p-4 border-2 border-gray-200 rounded-lg hover:border-gray-900 transition-colors text-left"
+            Manage Venues
+          </Link>
+          <Link
+            href="/admin/slots"
+            className="flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-medium"
           >
-            <div className="text-2xl mb-2">📅</div>
-            <div className="font-semibold text-gray-900">Manage Slots</div>
-            <div className="text-sm text-gray-600">Create availability</div>
-          </button>
-
-          <button
-            onClick={() => router.push('/admin/bookings')}
-            className="p-4 border-2 border-gray-200 rounded-lg hover:border-gray-900 transition-colors text-left"
+            Manage Slots
+          </Link>
+          <Link
+            href="/admin/bookings"
+            className="flex items-center justify-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 font-medium"
           >
-            <div className="text-2xl mb-2">📋</div>
-            <div className="font-semibold text-gray-900">View Bookings</div>
-            <div className="text-sm text-gray-600">All platform bookings</div>
+            View Bookings
+          </Link>
+          <Link
+            href="/admin/users"
+            className="flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 font-medium"
+          >
+            Manage Users
+          </Link>
+          <button
+            onClick={handleProcessAlerts}
+            disabled={processing}
+            className="flex items-center justify-center gap-2 bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 font-medium disabled:opacity-50"
+          >
+            {processing ? 'Processing...' : '🔔 Process Alerts'}
           </button>
         </div>
       </div>
-    </div>
-  )
-}
-
-function StatCard({ title, value, subtitle, color }: {
-  title: string
-  value: string | number
-  subtitle: string
-  color: 'blue' | 'green' | 'purple' | 'orange'
-}) {
-  const colorClasses = {
-    blue: 'bg-blue-50 text-blue-700',
-    green: 'bg-green-50 text-green-700',
-    purple: 'bg-purple-50 text-purple-700',
-    orange: 'bg-orange-50 text-orange-700',
-  }
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div className="text-sm font-medium text-gray-600 mb-1">{title}</div>
-      <div className="text-3xl font-bold text-gray-900 mb-1">{value}</div>
-      <div className="text-sm text-gray-500">{subtitle}</div>
     </div>
   )
 }
