@@ -1,95 +1,146 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { supabase } from '@/lib/supabase-client'
 
 export default function TopNav() {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, loading, signOut } = useAuth()
+  const { user } = useAuth()
+  const [profile, setProfile] = useState<any>(null)
 
-  const navigation = [
-    { name: 'Home', href: '/home' },
-    { name: 'Search', href: '/search' },
-    { name: 'My Bookings', href: '/bookings' },
-    { name: 'My Alerts', href: '/alerts' },
-    { name: 'About', href: '/about' },
-    { name: 'FAQ', href: '/faq' },
-  ]
+  useEffect(() => {
+    if (user) {
+      loadProfile()
+    }
+  }, [user])
 
-  const handleSignOut = async () => {
-    await signOut()
-    router.push('/login')
+  const loadProfile = async () => {
+    if (!user) return
+    const { data } = await supabase
+      .from('profiles')
+      .select('full_name, avatar_url')
+      .eq('id', user.id)
+      .single()
+    setProfile(data)
   }
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+
+  const isActive = (path: string) => pathname === path
+
   return (
-    <header className="bg-white border-b sticky top-0 z-50">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link 
-            href="/home" 
-            className="text-xl font-semibold text-gray-900 hover:text-gray-700"
-          >
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link href={user ? "/home" : "/"} className="text-xl font-bold text-gray-900">
             ClientDining
           </Link>
 
-          <div className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`text-sm ${
-                    isActive
-                      ? 'text-gray-900 font-medium'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              )
-            })}
-          </div>
+          {/* Navigation */}
+          {user ? (
+            <nav className="flex items-center gap-6">
+              <Link
+                href="/home"
+                className={`text-sm font-medium transition-colors ${
+                  isActive('/home')
+                    ? 'text-gray-900'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Home
+              </Link>
+              <Link
+                href="/search"
+                className={`text-sm font-medium transition-colors ${
+                  isActive('/search')
+                    ? 'text-gray-900'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Search
+              </Link>
+              <Link
+                href="/bookings"
+                className={`text-sm font-medium transition-colors ${
+                  isActive('/bookings')
+                    ? 'text-gray-900'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                My Bookings
+              </Link>
 
-          <div className="flex items-center space-x-4">
-            {loading ? (
-              <div className="text-sm text-gray-500">Loading...</div>
-            ) : user ? (
-              <>
-                <Link
-                  href="/account"
-                  className="text-sm text-gray-600 hover:text-gray-900"
-                >
-                  Account
-                </Link>
-                <button
-                  onClick={handleSignOut}
-                  className="text-sm text-gray-600 hover:text-gray-900"
-                >
-                  Sign Out
+              {/* User Menu */}
+              <div className="relative group">
+                <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                  {profile?.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt={profile.full_name || 'Profile'}
+                      className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-600">
+                      {profile?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                 </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="text-sm text-gray-600 hover:text-gray-900"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="text-sm bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800"
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </div>
+
+                {/* Dropdown */}
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                  <Link
+                    href="/account"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+                  >
+                    Account Settings
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </nav>
+          ) : (
+            <nav className="flex items-center gap-4">
+              <Link
+                href="/about"
+                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+              >
+                About
+              </Link>
+              <Link
+                href="/faq"
+                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+              >
+                FAQ
+              </Link>
+              <Link
+                href="/login"
+                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="btn-primary text-sm"
+              >
+                Sign Up
+              </Link>
+            </nav>
+          )}
         </div>
-      </nav>
+      </div>
     </header>
   )
 }

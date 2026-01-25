@@ -57,10 +57,10 @@ export default function AccountPage() {
         throw new Error(data.error)
       }
 
-// Redirect to Stripe Checkout
-if (data.url) {
-  window.location.href = data.url
-}
+      const stripe = await stripePromise
+      if (stripe && data.url) {
+        window.location.href = data.url
+      }
     } catch (error: any) {
       console.error('Upgrade error:', error)
       alert('Failed to start checkout: ' + error.message)
@@ -90,18 +90,35 @@ if (data.url) {
       {/* Profile Info */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Profile Information</h2>
-        <div className="space-y-3">
-          <div>
-            <label className="text-sm text-gray-600">Name</label>
-            <p className="text-gray-900">{profile.full_name || 'Not set'}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-600">Email</label>
-            <p className="text-gray-900">{profile.email}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-600">Member Since</label>
-            <p className="text-gray-900">{new Date(profile.created_at).toLocaleDateString()}</p>
+        
+        <div className="flex items-start gap-6">
+          {/* Avatar */}
+          {profile.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt={profile.full_name || 'Profile'}
+              className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-semibold text-gray-600">
+              {profile.full_name?.charAt(0) || profile.email?.charAt(0).toUpperCase()}
+            </div>
+          )}
+
+          {/* Info */}
+          <div className="flex-1 space-y-3">
+            <div>
+              <label className="text-sm text-gray-600">Name</label>
+              <p className="text-gray-900 font-medium">{profile.full_name || 'Not set'}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-600">Email</label>
+              <p className="text-gray-900">{profile.email}</p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-600">Member Since</label>
+              <p className="text-gray-900">{new Date(profile.created_at).toLocaleDateString()}</p>
+            </div>
           </div>
         </div>
       </div>

@@ -53,6 +53,7 @@ export interface Profile {
   full_name?: string
   role: 'diner' | 'venue_admin' | 'platform_admin'
   tier: DinerTier
+  avatar_url?: string
   stripe_customer_id?: string
   stripe_subscription_id?: string
   subscription_status?: string
