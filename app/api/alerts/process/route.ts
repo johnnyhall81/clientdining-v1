@@ -71,7 +71,7 @@ export async function GET(request: Request) {
           userEmail: profile.email,
           userName: profile.full_name || 'Guest',
           venueName: venue.name,
-          venueAddress: venue.address || 'London',
+          venueAddress: venue.area || 'London',
           slotTime: formatFullDateTime(slot.start_at),
           partySize: `${slot.party_min}-${slot.party_max} guests`,
           slotId: alert.slot_id,
