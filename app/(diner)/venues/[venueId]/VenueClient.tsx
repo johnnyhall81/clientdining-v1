@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Venue, Slot } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { supabase } from '@/lib/supabase-client'
 import SlotRow from '@/components/slots/SlotRow'
 
 interface VenueClientProps {
@@ -16,6 +17,29 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const { user } = useAuth()
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlot, setBookingSlot] = useState<string | null>(null)
+  
+  // Load existing alerts when component mounts
+  useEffect(() => {
+    if (!user) return
+    
+    const loadAlerts = async () => {
+      try {
+        const { data } = await supabase
+          .from('slot_alerts')
+          .select('slot_id')
+          .eq('diner_user_id', user.id)
+          .eq('status', 'active')
+        
+        if (data) {
+          setAlerts(new Set(data.map(alert => alert.slot_id)))
+        }
+      } catch (error) {
+        console.error('Error loading alerts:', error)
+      }
+    }
+    
+    loadAlerts()
+  }, [user])
   
   const handleBook = async (slotId: string) => {
     if (!user) {
