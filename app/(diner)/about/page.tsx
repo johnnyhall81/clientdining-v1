@@ -133,7 +133,7 @@ export default function AboutPage() {
             We launch and grow deliberately, working with a small number of carefully selected restaurants and private members’ clubs to ensure consistent availability and a high-quality experience.
           </p>
           <p className="text-gray-700">
-            Professional verification helps protect the integrity and exclusivity of the ClientDining community.
+            Access to ClientDining is verified via LinkedIn to confirm professional background and maintain a discreet, high-quality network.
           </p>
         </section>
 
