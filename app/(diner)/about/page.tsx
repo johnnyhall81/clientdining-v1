@@ -9,55 +9,74 @@ export default function AboutPage() {
 
       <div className="prose prose-lg max-w-none space-y-16">
         <section className="space-y-6">
-          <h2 className="text-2xl font-bold text-gray-900">What is ClientDining?</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            What is ClientDining?
+          </h2>
           <p className="text-gray-700">
-            ClientDining is a private, members-only platform that gives City professionals exclusive access to premium dining reservations across London's finest restaurants and private members' clubs.
+            ClientDining is a private, members-only platform providing City professionals with exclusive access to premium dining reservations across London’s leading restaurants and private members’ clubs.
           </p>
           <p className="text-gray-700">
-            We curate availability from the most sought-after venues, allowing our members to secure tables that would otherwise be impossible to book.
+            We curate live availability from London’s most sought-after venues, giving members access to tables that are typically unavailable to the public.
           </p>
         </section>
 
         <section className="space-y-8">
-          <h2 className="text-2xl font-bold text-gray-900">How It Works</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            How It Works
+          </h2>
+
           <div className="space-y-4">
             <div className="bg-gray-50 p-6 rounded-xl">
-              <h3 className="font-semibold text-gray-900 mb-2">1. Browse Premium Venues</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                1. Browse Premium Venues
+              </h3>
               <p className="text-gray-700">
-                Explore our carefully curated selection of Michelin-starred restaurants and exclusive private members' clubs across London.
+                Browse a curated selection of Michelin-starred restaurants and exclusive private members’ clubs across London.
               </p>
             </div>
 
             <div className="bg-gray-50 p-6 rounded-xl">
-              <h3 className="font-semibold text-gray-900 mb-2">2. View Real Availability</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                2. View Real Availability
+              </h3>
               <p className="text-gray-700">
-                See actual available time slots in real-time. No more calling around or waiting on endless reservation lists.
+                View genuine, real-time availability — no waiting lists, no back-and-forth.
               </p>
             </div>
 
             <div className="bg-gray-50 p-6 rounded-xl">
-              <h3 className="font-semibold text-gray-900 mb-2">3. Book Instantly</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                3. Book Instantly
+              </h3>
               <p className="text-gray-700">
-                Reserve your table with a single click. Manage all your bookings in one place.
+                Secure your table instantly and manage all bookings in one place.
               </p>
             </div>
 
             <div className="bg-gray-50 p-6 rounded-xl">
-              <h3 className="font-semibold text-gray-900 mb-2">4. Set Smart Alerts</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                4. Set Smart Alerts
+              </h3>
               <p className="text-gray-700">
-                Can't find the slot you want? Set an alert and we'll notify you the moment it becomes available.
+                If your preferred time isn’t available, set a smart alert and be notified the moment it opens.
               </p>
             </div>
           </div>
         </section>
 
         <section className="space-y-8">
-          <h2 className="text-2xl font-bold text-gray-900">Membership Tiers</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Membership Tiers
+          </h2>
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="border-2 border-gray-200 rounded-xl p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Free</h3>
-              <p className="text-gray-600 mb-6">Perfect for occasional diners</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Free
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Ideal for occasional dining and last-minute bookings
+              </p>
               <ul className="space-y-2 text-gray-700">
                 <li>✓ Browse all venues</li>
                 <li>✓ Book standard restaurant tables</li>
@@ -68,8 +87,12 @@ export default function AboutPage() {
             </div>
 
             <div className="border-2 border-blue-600 rounded-xl p-8 bg-blue-50">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Premium - £49/month</h3>
-              <p className="text-gray-600 mb-6">For serious food enthusiasts</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Premium – £49/month
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Designed for frequent diners and client entertaining
+              </p>
               <ul className="space-y-2 text-gray-700">
                 <li>✓ Everything in Free, plus:</li>
                 <li>✓ Book premium restaurant slots in advance</li>
@@ -81,9 +104,11 @@ export default function AboutPage() {
         </section>
 
         <section className="space-y-6">
-          <h2 className="text-2xl font-bold text-gray-900">Who Is This For?</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Who Is This For?
+          </h2>
           <p className="text-gray-700">
-            ClientDining is designed for City professionals who value exceptional dining experiences but don't have time to hunt for reservations. Our members include:
+            ClientDining is designed for City professionals who value exceptional dining but don’t have time to chase reservations. Our members include:
           </p>
           <ul className="space-y-2 text-gray-700 ml-6">
             <li>• Finance and legal professionals entertaining clients</li>
@@ -94,19 +119,23 @@ export default function AboutPage() {
         </section>
 
         <section className="space-y-6">
-          <h2 className="text-2xl font-bold text-gray-900">Our Commitment</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Our Commitment
+          </h2>
           <p className="text-gray-700">
-            We prioritize quality over quantity. Every venue on our platform is carefully curated, and we maintain close relationships with each establishment to ensure our members receive exceptional service.
+            We prioritise quality over quantity. Every venue is personally vetted, and we work closely with each establishment to ensure members receive a consistently high standard of service.
           </p>
           <p className="text-gray-700">
-            Professional verification is required for all members to maintain the integrity and exclusivity of our community.
+            Professional verification helps protect the integrity and exclusivity of the ClientDining community.
           </p>
         </section>
 
         <section className="bg-gray-900 text-white p-10 rounded-2xl">
-          <h2 className="text-2xl font-bold mb-4">Ready to Get Started?</h2>
+          <h2 className="text-2xl font-bold mb-4">
+            Ready to Get Started?
+          </h2>
           <p className="text-gray-300 mb-8">
-            Join ClientDining today and gain access to London's most exclusive dining experiences.
+            Join ClientDining and unlock access to London’s most sought-after dining reservations.
           </p>
           <a
             href="/signup"
