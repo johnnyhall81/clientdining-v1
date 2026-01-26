@@ -18,6 +18,9 @@ export default function AboutPage() {
           <p className="text-gray-700">
             We curate live availability from London’s most sought-after venues, giving members access to tables that are typically unavailable to the public.
           </p>
+          <p className="text-gray-700">
+            Bookings on ClientDining are typical City business dinners — one host entertaining clients, standard menus and service, and a single bill settled at the end of the meal. These are not promotions or discounted experiences, but intentional reservations placed at higher-than-average spend levels.
+          </p>
         </section>
 
         <section className="space-y-8">
@@ -108,7 +111,7 @@ export default function AboutPage() {
             Who Is This For?
           </h2>
           <p className="text-gray-700">
-            ClientDining is designed for City professionals who value exceptional dining but don’t have time to chase reservations. Our members include:
+            ClientDining is designed for City professionals who regularly host business dinners and value exceptional dining without the friction of chasing reservations. Our members include:
           </p>
           <ul className="space-y-2 text-gray-700 ml-6">
             <li>• Finance and legal professionals entertaining clients</li>
@@ -124,6 +127,12 @@ export default function AboutPage() {
           </h2>
           <p className="text-gray-700">
             We prioritise quality over quantity. Every venue is personally vetted, and we work closely with each establishment to ensure members receive a consistently high standard of service.
+          </p>
+          <p className="text-gray-700">
+            ClientDining is designed to sit quietly alongside existing reservation channels. The emphasis is on discretion, quality, and operational ease — not marketing, discounts, or volume for its own sake.
+          </p>
+          <p className="text-gray-700">
+            We launch and grow deliberately, working with a small number of carefully selected restaurants and private members’ clubs to ensure consistent availability and a high-quality experience on both sides of the table.
           </p>
           <p className="text-gray-700">
             Professional verification helps protect the integrity and exclusivity of the ClientDining community.
