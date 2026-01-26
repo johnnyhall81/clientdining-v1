@@ -16,7 +16,7 @@ export async function POST(request: Request) {
         is_professionally_verified: verified,
         verified_at: verified ? new Date().toISOString() : null
       })
-      .eq('id', userId)
+      .eq('user_id', userId)
 
     if (error) throw error
 

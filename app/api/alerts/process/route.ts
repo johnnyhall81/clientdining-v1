@@ -55,7 +55,7 @@ export async function GET(request: Request) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('email, full_name')
-          .eq('id', alert.user_id)
+          .eq('user_id', alert.user_id)
           .single()
 
         if (!slot || !venue || !profile) {

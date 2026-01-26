@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('email, stripe_customer_id')
-      .eq('id', user.id)
+      .eq('user_id', user.id)
       .single()
 
     if (!profile) {
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       await supabase
         .from('profiles')
         .update({ stripe_customer_id: customerId })
-        .eq('id', user.id)
+        .eq('user_id', user.id)
     }
 
     const session = await stripe.checkout.sessions.create({

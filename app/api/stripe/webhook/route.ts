@@ -39,11 +39,11 @@ export async function POST(request: Request) {
           await supabase
             .from('profiles')
             .update({
-              tier: 'premium',
+              diner_tier: 'premium',
               stripe_subscription_id: session.subscription as string,
               subscription_status: 'active',
             })
-            .eq('id', userId)
+            .eq('user_id', userId)
 
           console.log('✅ User upgraded to premium:', userId)
         }
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
         await supabase
           .from('profiles')
           .update({
-            tier: 'free',
+            diner_tier: 'free',
             subscription_status: 'cancelled',
           })
           .eq('stripe_subscription_id', subscription.id)

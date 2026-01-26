@@ -2,7 +2,7 @@
 
 export type DinerTier = 'free' | 'premium'
 export type SlotTier = 'free' | 'premium'
-export type SlotStatus = 'available' | 'booked' | 'cancelled'
+export type SlotStatus = 'available' | 'booked'  // Matches database enum
 
 export interface Venue {
   id: string
@@ -48,11 +48,11 @@ export interface Booking {
 }
 
 export interface Profile {
-  id: string
+  user_id: string  // Changed from 'id' to match database schema
   email: string
   full_name?: string
   role: 'diner' | 'venue_admin' | 'platform_admin'
-  tier: DinerTier
+  diner_tier: DinerTier  // Changed from 'tier' to match database schema
   avatar_url?: string
   stripe_customer_id?: string
   stripe_subscription_id?: string

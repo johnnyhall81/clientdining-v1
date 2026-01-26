@@ -32,7 +32,7 @@ export default function AccountPage() {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', user.id)
+      .eq('user_id', user.id)
       .single()
 
     if (error) {
@@ -77,8 +77,8 @@ export default function AccountPage() {
     return <div className="text-center py-12">Profile not found</div>
   }
 
-  const isFree = profile.tier === 'free'
-  const isPremium = profile.tier === 'premium'
+  const isFree = profile.diner_tier === 'free'
+  const isPremium = profile.diner_tier === 'premium'
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -130,7 +130,7 @@ export default function AccountPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <p className="text-sm text-gray-600">Current Plan</p>
-            <p className="text-2xl font-bold text-gray-900 capitalize">{profile.tier}</p>
+            <p className="text-2xl font-bold text-gray-900 capitalize">{profile.diner_tier}</p>
           </div>
           {isPremium && (
             <span className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium">

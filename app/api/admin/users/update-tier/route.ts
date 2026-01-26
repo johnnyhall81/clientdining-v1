@@ -12,8 +12,8 @@ export async function POST(request: Request) {
 
     const { error } = await supabaseAdmin
       .from('profiles')
-      .update({ tier })
-      .eq('id', userId)
+      .update({ diner_tier: tier })
+      .eq('user_id', userId)
 
     if (error) throw error
 

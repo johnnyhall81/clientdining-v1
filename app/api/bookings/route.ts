@@ -55,8 +55,8 @@ export async function POST(request: Request) {
     // Get user's profile
     const { data: profile } = await supabase
       .from('profiles')
-      .select('tier, email, full_name')
-      .eq('id', user.id)
+      .select('diner_tier, email, full_name')
+      .eq('user_id', user.id)
       .single()
 
     if (!profile) {
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     }
 
     // Check tier restrictions for premium slots
-    if (slot.slot_tier === 'premium' && profile.tier === 'free') {
+    if (slot.slot_tier === 'premium' && profile.diner_tier === 'free') {
       const slotTime = new Date(slot.start_at)
       const now = new Date()
       const hoursUntilSlot = (slotTime.getTime() - now.getTime()) / (1000 * 60 * 60)
@@ -87,12 +87,12 @@ export async function POST(request: Request) {
       .eq('user_id', user.id)
       .eq('status', 'active')
 
-    const maxBookings = profile.tier === 'premium' ? 10 : 3
+    const maxBookings = profile.diner_tier === 'premium' ? 10 : 3
 
     if ((currentBookings || 0) >= maxBookings) {
       return NextResponse.json(
         { 
-          error: `Booking limit reached. ${profile.tier === 'free' ? 'Free users can have up to 3 future bookings. Upgrade to Premium for 10 bookings.' : 'Premium users can have up to 10 future bookings.'}` 
+          error: `Booking limit reached. ${profile.diner_tier === 'free' ? 'Free users can have up to 3 future bookings. Upgrade to Premium for 10 bookings.' : 'Premium users can have up to 10 future bookings.'}` 
         },
         { status: 403 }
       )

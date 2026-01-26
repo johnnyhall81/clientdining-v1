@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const { error } = await supabaseAdmin
       .from('profiles')
       .update({ role })
-      .eq('id', userId)
+      .eq('user_id', userId)
 
     if (error) throw error
 
