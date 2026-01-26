@@ -19,7 +19,7 @@ export default function AboutPage() {
             We curate live availability from London’s most sought-after venues, giving members access to tables that are typically unavailable to the public.
           </p>
           <p className="text-gray-700">
-            Bookings on ClientDining are typical City business dinners — one host entertaining clients, standard menus and service, and a single bill settled at the end of the meal. These are not promotions or discounted experiences, but intentional reservations placed at higher-than-average spend levels.
+            ClientDining is built around intentional business dining — discreet reservations made for hosting clients, rather than promotional or discounted experiences.
           </p>
         </section>
 
@@ -34,7 +34,7 @@ export default function AboutPage() {
                 1. Browse Premium Venues
               </h3>
               <p className="text-gray-700">
-                Browse a curated selection of Michelin-starred restaurants and exclusive private members’ clubs across London.
+                Browse a curated selection of leading restaurants and private members’ clubs across London.
               </p>
             </div>
 
@@ -111,13 +111,11 @@ export default function AboutPage() {
             Who Is This For?
           </h2>
           <p className="text-gray-700">
-            ClientDining is designed for City professionals who regularly host business dinners and value exceptional dining without the friction of chasing reservations. Our members include:
+            ClientDining is designed for City professionals who regularly host business dinners and value exceptional dining without the friction of chasing reservations.
           </p>
           <ul className="space-y-2 text-gray-700 ml-6">
             <li>• Finance and legal professionals entertaining clients</li>
-            <li>• Food enthusiasts seeking the best tables in London</li>
-            <li>• Busy professionals who want guaranteed access to top venues</li>
-            <li>• Anyone who appreciates fine dining and exclusive experiences</li>
+            <li>• Busy professionals who want reliable access to top venues</li>
           </ul>
         </section>
 
@@ -132,7 +130,7 @@ export default function AboutPage() {
             ClientDining is designed to sit quietly alongside existing reservation channels. The emphasis is on discretion, quality, and operational ease — not marketing, discounts, or volume for its own sake.
           </p>
           <p className="text-gray-700">
-            We launch and grow deliberately, working with a small number of carefully selected restaurants and private members’ clubs to ensure consistent availability and a high-quality experience on both sides of the table.
+            We launch and grow deliberately, working with a small number of carefully selected restaurants and private members’ clubs to ensure consistent availability and a high-quality experience.
           </p>
           <p className="text-gray-700">
             Professional verification helps protect the integrity and exclusivity of the ClientDining community.
