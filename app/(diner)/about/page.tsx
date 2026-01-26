@@ -43,7 +43,7 @@ export default function AboutPage() {
                 2. View Real Availability
               </h3>
               <p className="text-gray-700">
-                View genuine, real-time availability — no waiting lists, no back-and-forth.
+                View genuine, real-time availability.  No waiting lists, no back-and-forth.
               </p>
             </div>
 
