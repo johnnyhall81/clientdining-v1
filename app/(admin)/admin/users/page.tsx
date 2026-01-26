@@ -22,9 +22,9 @@ export default function UsersPage() {
       if (data.users) {
         let filtered = data.users
         if (filter === 'free') {
-          filtered = filtered.filter((u: any) => u.tier === 'free')
+          filtered = filtered.filter((u: any) => u.diner_tier === 'free')
         } else if (filter === 'premium') {
-          filtered = filtered.filter((u: any) => u.tier === 'premium')
+          filtered = filtered.filter((u: any) => u.diner_tier === 'premium')
         }
         setUsers(filtered)
       }
@@ -162,15 +162,15 @@ export default function UsersPage() {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {users.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
+              <tr key={user.user_id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="font-medium text-gray-900">{user.full_name || 'N/A'}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600">{user.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <select
-                    value={user.tier}
-                    onChange={(e) => updateUserTier(user.id, e.target.value as 'free' | 'premium')}
+                    value={user.diner_tier}
+                    onChange={(e) => updateUserTier(user.user_id, e.target.value as 'free' | 'premium')}
                     className="text-sm border border-gray-300 rounded px-2 py-1"
                   >
                     <option value="free">Free</option>
@@ -180,7 +180,7 @@ export default function UsersPage() {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <select
                     value={user.role}
-                    onChange={(e) => updateUserRole(user.id, e.target.value as any)}
+                    onChange={(e) => updateUserRole(user.user_id, e.target.value as any)}
                     className="text-sm border border-gray-300 rounded px-2 py-1"
                   >
                     <option value="diner">Diner</option>
@@ -190,7 +190,7 @@ export default function UsersPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
-                    onClick={() => toggleVerification(user.id, user.is_professionally_verified)}
+                    onClick={() => toggleVerification(user.user_id, user.is_professionally_verified)}
                     className={`text-sm px-3 py-1 rounded-full cursor-pointer transition-colors ${
                       user.is_professionally_verified
                         ? 'bg-green-100 text-green-700 hover:bg-green-200'

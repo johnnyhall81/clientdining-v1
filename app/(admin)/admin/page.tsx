@@ -28,7 +28,7 @@ export default function AdminDashboard() {
         supabase.from('venues').select('id, is_active', { count: 'exact' }),
         supabase.from('slots').select('id, status', { count: 'exact' }),
         supabase.from('bookings').select('id, status', { count: 'exact' }),
-        supabase.from('profiles').select('id, tier', { count: 'exact' }),
+        supabase.from('profiles').select('user_id, diner_tier', { count: 'exact' }),
       ])
 
       setStats({
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
         totalBookings: bookings.count || 0,
         activeBookings: bookings.data?.filter(b => b.status === 'active').length || 0,
         totalUsers: users.count || 0,
-        premiumUsers: users.data?.filter(u => u.tier === 'premium').length || 0,
+        premiumUsers: users.data?.filter(u => u.diner_tier === 'premium').length || 0,
       })
     } catch (error) {
       console.error('Error loading stats:', error)

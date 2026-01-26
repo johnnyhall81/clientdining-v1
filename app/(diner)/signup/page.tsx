@@ -37,11 +37,11 @@ export default function SignupPage() {
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({
-            id: authData.user.id,
+            user_id: authData.user.id,
             email: authData.user.email,
             full_name: fullName,
             role: 'diner',
-            tier: 'free',
+            diner_tier: 'free',
           })
 
         if (profileError) {
