@@ -17,8 +17,8 @@ export async function GET(request: Request) {
     
     // Get all notified alerts that haven't been emailed yet
     const { data: alerts, error } = await supabase
-      .from('alerts')
-      .select('id, slot_id, user_id, venue_id')
+      .from('slot_alerts')
+      .select('id, slot_id, diner_user_id, slots!inner(venue_id)')
       .eq('status', 'notified')
       .is('notified_at', null)
 
@@ -44,18 +44,19 @@ export async function GET(request: Request) {
           .eq('id', alert.slot_id)
           .single()
 
-        // Get venue details
+        // Get venue details (venue_id comes from joined slots table)
+        const venueId = (alert.slots as any).venue_id
         const { data: venue } = await supabase
           .from('venues')
-          .select('id, name, address')
-          .eq('id', alert.venue_id)
+          .select('id, name, area, venue_type, description')
+          .eq('id', venueId)
           .single()
 
         // Get user details
         const { data: profile } = await supabase
           .from('profiles')
           .select('email, full_name')
-          .eq('user_id', alert.user_id)
+          .eq('user_id', alert.diner_user_id)
           .single()
 
         if (!slot || !venue || !profile) {
@@ -79,7 +80,7 @@ export async function GET(request: Request) {
 
         // Mark as emailed
         await supabase
-          .from('alerts')
+          .from('slot_alerts')
           .update({ notified_at: new Date().toISOString() })
           .eq('id', alert.id)
 

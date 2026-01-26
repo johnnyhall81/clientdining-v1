@@ -58,13 +58,37 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       return
     }
 
-    const newAlerts = new Set(alerts)
-    if (newAlerts.has(slotId)) {
-      newAlerts.delete(slotId)
-    } else {
-      newAlerts.add(slotId)
+    const isCurrentlyAlerted = alerts.has(slotId)
+
+    try {
+      const response = await fetch('/api/alerts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ slotId }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        alert(data.error || 'Failed to update alert')
+        return
+      }
+
+      const data = await response.json()
+
+      // Update local state only after successful API call
+      const newAlerts = new Set(alerts)
+      if (data.active) {
+        newAlerts.add(slotId)
+      } else {
+        newAlerts.delete(slotId)
+      }
+      setAlerts(newAlerts)
+    } catch (error) {
+      console.error('Alert error:', error)
+      alert('Failed to update alert')
     }
-    setAlerts(newAlerts)
   }
   
   return (

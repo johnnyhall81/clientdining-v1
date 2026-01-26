@@ -39,16 +39,16 @@ export async function POST(request: Request) {
 
     // Check if alert already exists
     const { data: existingAlert } = await supabase
-      .from('alerts')
+      .from('slot_alerts')
       .select('id, status')
-      .eq('user_id', user.id)
+      .eq('diner_user_id', user.id)
       .eq('slot_id', slotId)
       .single()
 
     if (existingAlert) {
       // Toggle off - delete the alert
       const { error: deleteError } = await supabase
-        .from('alerts')
+        .from('slot_alerts')
         .delete()
         .eq('id', existingAlert.id)
 
@@ -58,11 +58,10 @@ export async function POST(request: Request) {
     } else {
       // Toggle on - create the alert
       const { error: insertError } = await supabase
-        .from('alerts')
+        .from('slot_alerts')
         .insert({
-          user_id: user.id,
+          diner_user_id: user.id,
           slot_id: slotId,
-          venue_id: slot.venue_id,
           status: 'active',
         })
 
@@ -103,16 +102,15 @@ export async function GET(request: Request) {
     }
 
     const { data: alerts, error } = await supabase
-      .from('alerts')
+      .from('slot_alerts')
       .select(`
         id,
         slot_id,
         status,
         created_at,
-        notified_at,
-        expires_at
+        notified_at
       `)
-      .eq('user_id', user.id)
+      .eq('diner_user_id', user.id)
       .order('created_at', { ascending: false })
 
     if (error) throw error

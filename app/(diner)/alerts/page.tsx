@@ -52,7 +52,7 @@ export default function AlertsPage() {
 
     try {
       const { data, error } = await supabase
-        .from('alerts')
+        .from('slot_alerts')
         .select(`
           *,
           slots!inner (
@@ -60,16 +60,17 @@ export default function AlertsPage() {
             party_min,
             party_max,
             slot_tier,
-            status
-          ),
-          venues!inner (
-            id,
-            name,
-            area,
-            image_venue
+            status,
+            venue_id,
+            venues!inner (
+              id,
+              name,
+              area,
+              image_venue
+            )
           )
         `)
-        .eq('user_id', user.id)
+        .eq('diner_user_id', user.id)
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -82,7 +83,7 @@ export default function AlertsPage() {
         notified_at: item.notified_at,
         expires_at: item.expires_at,
         slot: item.slots,
-        venue: item.venues,
+        venue: item.slots.venues,
       }))
 
       setAlerts(transformed)
@@ -98,7 +99,7 @@ export default function AlertsPage() {
 
     try {
       const { error } = await supabase
-        .from('alerts')
+        .from('slot_alerts')
         .delete()
         .eq('id', alertId)
 
