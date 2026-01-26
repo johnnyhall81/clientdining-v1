@@ -79,7 +79,7 @@ export default function FAQPage() {
         },
         {
           q: 'Can I modify a booking?',
-          a: 'If you need to change a booking, cancel and rebook if availability allows. Any requests related to the booking should be handled through ClientDining.'
+          a: 'If you need to change a booking, cancel and rebook if availability allows. Any booking-related requests should be handled via support@clientdining.com.'
         }
       ]
     },
