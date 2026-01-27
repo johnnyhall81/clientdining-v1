@@ -220,17 +220,11 @@ export default function SearchPage() {
 
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
-
-        // Popup ONLY for booking-limit case
-        if (response.status === 403 && message.startsWith('Booking limit reached')) {
-          alert(message)
-        } else {
-          setBookingError(message)
-        }
-
+        alert(message)
         setBookingSlotId(null)
         return
       }
+      
 
       // flip this slot immediately to "Going / Cancel"
       setBookedSlots((prev) => {
