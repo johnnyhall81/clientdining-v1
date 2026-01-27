@@ -61,7 +61,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         const { data, error } = await supabase
           .from('bookings')
           .select('slot_id, status')
-          .eq('user_id', user.id)
+          .eq('diner_user_id', user.id)
           .in('status', ['active', 'confirmed'])
           .in('slot_id', slotIds)
 
