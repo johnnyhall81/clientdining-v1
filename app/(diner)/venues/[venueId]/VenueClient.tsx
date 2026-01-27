@@ -15,45 +15,44 @@ interface VenueClientProps {
 export default function VenueClient({ venue, slots }: VenueClientProps) {
   const router = useRouter()
   const { user } = useAuth()
+
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlot, setBookingSlot] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
 
-  // Load existing alerts when component mounts
+  // Load existing alerts
+  useEffect(() => {
+    if (!user) {
+      setAlerts(new Set())
+      return
+    }
+
+    const loadAlerts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('slot_alerts')
+          .select('slot_id')
+          .eq('diner_user_id', user.id)
+          .eq('status', 'active')
+
+        if (error) throw error
+
+        setAlerts(new Set((data || []).map((a: any) => a.slot_id)))
+      } catch (e) {
+        console.error('Error loading alerts:', e)
+      }
+    }
+
+    loadAlerts()
+  }, [user])
+
+  // Load my bookings for the slots on this venue page
   useEffect(() => {
     if (!user) {
       setBookedSlots(new Set())
       return
     }
     if (!slots?.length) return
-  
-    const loadMyBookings = async () => {
-      try {
-        const slotIds = slots.map((s) => s.id)
-  
-        const { data, error } = await supabase
-          .from('bookings')
-          .select('slot_id')
-          .eq('user_id', user.id)
-          .eq('status', 'active')
-          .in('slot_id', slotIds)
-  
-        if (error) throw error
-  
-        setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
-      } catch (e) {
-        console.error('Error loading bookings:', e)
-      }
-    }
-  
-    loadMyBookings()
-  }, [user, slots])
-  
-
-  // Load bookings for the slots on this venue page
-  useEffect(() => {
-    if (!user) return
-    if (!slots?.length) return
 
     const loadMyBookings = async () => {
       try {
@@ -61,9 +60,9 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
         const { data, error } = await supabase
           .from('bookings')
-          .select('slot_id')
+          .select('slot_id, status')
           .eq('user_id', user.id)
-          .eq('status', 'active')
+          .in('status', ['active', 'confirmed'])
           .in('slot_id', slotIds)
 
         if (error) throw error
@@ -130,7 +129,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     }
 
     try {
-      // Uses your existing cancel API (adjust if your endpoint differs)
       const response = await fetch('/api/bookings/cancel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -175,7 +173,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       throw new Error(data?.error || 'Failed to update alert')
     }
 
-    // Update local state only after successful API call
     const newAlerts = new Set(alerts)
     if (data.active) newAlerts.add(slotId)
     else newAlerts.delete(slotId)
@@ -232,7 +229,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 onCancel={handleCancel}
               />
             ))}
-
           </div>
         )}
       </div>
