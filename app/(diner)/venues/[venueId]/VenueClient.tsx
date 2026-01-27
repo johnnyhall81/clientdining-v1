@@ -17,6 +17,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const { user } = useAuth()
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlot, setBookingSlot] = useState<string | null>(null)
+  const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
 
   // Load existing alerts when component mounts
   useEffect(() => {
@@ -41,36 +42,70 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     loadAlerts()
   }, [user])
 
+  // Load bookings for the slots on this venue page
+  useEffect(() => {
+    if (!user) return
+    if (!slots?.length) return
+
+    const loadMyBookings = async () => {
+      try {
+        const slotIds = slots.map((s) => s.id)
+
+        const { data, error } = await supabase
+          .from('bookings')
+          .select('slot_id')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .in('slot_id', slotIds)
+
+        if (error) throw error
+
+        setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
+      } catch (e) {
+        console.error('Error loading bookings:', e)
+      }
+    }
+
+    loadMyBookings()
+  }, [user, slots])
+
   const handleBook = async (slotId: string) => {
     if (!user) {
       router.push('/login')
       return
     }
-  
+
     setBookingSlot(slotId)
-  
+
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slotId }),
       })
-  
+
       const data = await response.json().catch(() => ({}))
-  
+
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
-  
+
         // Popup ONLY for booking-limit case
         if (response.status === 403 && message.startsWith('Booking limit reached')) {
           alert(message)
         } else {
           console.error('Booking failed:', message)
         }
-  
+
         return
       }
-  
+
+      // Mark as booked locally so the row flips to Going/Cancel immediately
+      setBookedSlots((prev) => {
+        const next = new Set(prev)
+        next.add(slotId)
+        return next
+      })
+
       router.push('/bookings')
       router.refresh()
     } catch (error) {
@@ -79,7 +114,39 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       setBookingSlot(null)
     }
   }
-  
+
+  const handleCancel = async (slotId: string) => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    try {
+      // Uses your existing cancel API (adjust if your endpoint differs)
+      const response = await fetch('/api/bookings/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slotId }),
+      })
+
+      const data = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        console.error('Cancel failed:', data?.error || 'Failed to cancel booking')
+        return
+      }
+
+      setBookedSlots((prev) => {
+        const next = new Set(prev)
+        next.delete(slotId)
+        return next
+      })
+
+      router.refresh()
+    } catch (error) {
+      console.error('Cancel error:', error)
+    }
+  }
 
   const handleToggleAlert = async (slotId: string) => {
     if (!user) {
@@ -153,6 +220,8 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 onBook={handleBook}
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}
+                isBookedByMe={bookedSlots.has(slot.id)}
+                onCancel={handleCancel}
               />
             ))}
           </div>

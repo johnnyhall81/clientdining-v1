@@ -34,6 +34,7 @@ export default function SearchPage() {
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
+  const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
 
   const [filters, setFilters] = useState({
     date: '',
@@ -51,6 +52,65 @@ export default function SearchPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.date, filters.area, filters.partySize, filters.within24h, user])
+
+  useEffect(() => {
+    if (!user) {
+      setBookedSlots(new Set())
+      return
+    }
+    if (!results.length) return
+
+    const loadMyBookings = async () => {
+      try {
+        const slotIds = results.map((r) => r.slot.id)
+
+        const { data, error } = await supabase
+          .from('bookings')
+          .select('slot_id')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .in('slot_id', slotIds)
+
+        if (error) throw error
+
+        setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
+      } catch (e) {
+        console.error('Error loading bookings:', e)
+      }
+    }
+
+    loadMyBookings()
+  }, [user, results])
+
+  const handleCancel = async (slotId: string) => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/bookings/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slotId }),
+      })
+
+      const data = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        console.error('Cancel failed:', data?.error || 'Failed to cancel booking')
+        return
+      }
+
+      setBookedSlots((prev) => {
+        const next = new Set(prev)
+        next.delete(slotId)
+        return next
+      })
+    } catch (e) {
+      console.error('Cancel error:', e)
+    }
+  }
 
   const loadAlerts = async () => {
     try {
@@ -73,7 +133,8 @@ export default function SearchPage() {
 
     let query = supabase
       .from('slots')
-      .select(`
+      .select(
+        `
         id,
         start_at,
         party_min,
@@ -87,7 +148,8 @@ export default function SearchPage() {
           venue_type,
           image_venue
         )
-      `)
+      `
+      )
       .gte('start_at', new Date().toISOString())
       .order('start_at', { ascending: true })
       .limit(50)
@@ -98,9 +160,7 @@ export default function SearchPage() {
       const endOfDay = new Date(filters.date)
       endOfDay.setHours(23, 59, 59, 999)
 
-      query = query
-        .gte('start_at', startOfDay.toISOString())
-        .lte('start_at', endOfDay.toISOString())
+      query = query.gte('start_at', startOfDay.toISOString()).lte('start_at', endOfDay.toISOString())
     }
 
     if (filters.area) {
@@ -108,9 +168,7 @@ export default function SearchPage() {
     }
 
     if (filters.partySize) {
-      query = query
-        .lte('party_min', filters.partySize)
-        .gte('party_max', filters.partySize)
+      query = query.lte('party_min', filters.partySize).gte('party_max', filters.partySize)
     }
 
     if (filters.within24h) {
@@ -146,40 +204,46 @@ export default function SearchPage() {
       router.push('/login')
       return
     }
-  
+
     setBookingError(null)
     setBookingSlotId(slotId)
-  
+
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slotId }),
       })
-  
+
       const data = await response.json().catch(() => ({}))
-  
+
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
-  
+
         // Popup ONLY for booking-limit case
         if (response.status === 403 && message.startsWith('Booking limit reached')) {
           alert(message)
         } else {
           setBookingError(message)
         }
-  
+
         setBookingSlotId(null)
         return
       }
-  
+
+      // flip this slot immediately to "Going / Cancel"
+      setBookedSlots((prev) => {
+        const next = new Set(prev)
+        next.add(slotId)
+        return next
+      })
+
       router.push('/bookings')
     } catch (error) {
       console.error('Booking error:', error)
       setBookingSlotId(null)
     }
   }
-  
 
   const isLastMinute = (startAt: string) => {
     const slotTime = new Date(startAt)
@@ -199,9 +263,7 @@ export default function SearchPage() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Date
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
             <input
               type="date"
               value={filters.date}
@@ -211,9 +273,7 @@ export default function SearchPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Area
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Area</label>
             <select
               value={filters.area}
               onChange={(e) => setFilters({ ...filters, area: e.target.value })}
@@ -228,16 +288,16 @@ export default function SearchPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Party Size
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Party Size</label>
             <select
               value={filters.partySize}
               onChange={(e) => setFilters({ ...filters, partySize: parseInt(e.target.value) })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             >
               {[2, 3, 4, 5, 6, 7, 8].map((size) => (
-                <option key={size} value={size}>{size} guests</option>
+                <option key={size} value={size}>
+                  {size} guests
+                </option>
               ))}
             </select>
           </div>
@@ -268,6 +328,7 @@ export default function SearchPage() {
           {results.map(({ slot, venue }) => {
             const lastMinute = isLastMinute(slot.start_at)
             const hasAlert = alerts.has(slot.id)
+            const isBookedByMe = bookedSlots.has(slot.id)
 
             return (
               <div
@@ -301,43 +362,54 @@ export default function SearchPage() {
                   </Link>
 
                   <div className="flex items-center gap-3">
-                    {/* Tier badges */}
+                    {/* Tier badges OR Going */}
                     <div className="flex items-center gap-2 text-sm">
-                      {slot.slot_tier === 'premium' && (
-                        <span className="text-orange-600 font-medium">Premium</span>
-                      )}
-                      {slot.slot_tier === 'free' && (
-                        <span className="text-green-600 font-medium">Free</span>
-                      )}
-                      {lastMinute && (
-                        <span className="text-blue-600 font-medium">Last minute</span>
-                      )}
-                    </div>
-
-                    {/* Action button */}
-                    {slot.status === 'available' ? (
-                    <div className="flex flex-col items-end">
-                    <button
-                      onClick={() => handleBook(slot.id)}
-                      disabled={bookingSlotId === slot.id}
-                      className={[
-                        'px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-colors',
-                        bookingSlotId === slot.id
-                          ? 'bg-blue-400 text-white cursor-not-allowed'
-                          : 'bg-blue-600 text-white hover:bg-blue-700',
-                      ].join(' ')}
-                    >
-                      {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
-                    </button>
-
-
-                      {bookingError && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          {bookingError}
-                        </div>
+                      {isBookedByMe ? (
+                        <span className="text-gray-700 font-medium">Going</span>
+                      ) : (
+                        <>
+                          {slot.slot_tier === 'premium' && (
+                            <span className="text-orange-600 font-medium">Premium</span>
+                          )}
+                          {slot.slot_tier === 'free' && (
+                            <span className="text-green-600 font-medium">Free</span>
+                          )}
+                          {lastMinute && (
+                            <span className="text-blue-600 font-medium">Last minute</span>
+                          )}
+                        </>
                       )}
                     </div>
-                     ) : (
+
+                    {/* Action button: Cancel OR Book OR Alert */}
+                    {isBookedByMe ? (
+                      <button
+                        type="button"
+                        onClick={() => handleCancel(slot.id)}
+                        className="border px-4 py-2 rounded-lg font-medium whitespace-nowrap bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                    ) : slot.status === 'available' ? (
+                      <div className="flex flex-col items-end">
+                        <button
+                          onClick={() => handleBook(slot.id)}
+                          disabled={bookingSlotId === slot.id}
+                          className={[
+                            'px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-colors',
+                            bookingSlotId === slot.id
+                              ? 'bg-blue-400 text-white cursor-not-allowed'
+                              : 'bg-blue-600 text-white hover:bg-blue-700',
+                          ].join(' ')}
+                        >
+                          {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
+                        </button>
+
+                        {bookingError && (
+                          <div className="text-xs text-gray-500 mt-1">{bookingError}</div>
+                        )}
+                      </div>
+                    ) : (
                       <div className="flex items-center gap-2">
                         {slot.slot_tier === 'premium' && (
                           <span className="text-sm text-gray-500">🔒 Premium</span>
