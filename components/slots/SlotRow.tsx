@@ -1,6 +1,10 @@
 import { Slot, DinerTier } from '@/lib/supabase'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
-import { checkBookingEligibility, getSlotAccessLabel, getSlotAccessColor } from '@/lib/booking-rules'
+import {
+  checkBookingEligibility,
+  getSlotAccessLabel,
+  getSlotAccessColor,
+} from '@/lib/booking-rules'
 import AlertToggle from './AlertToggle'
 
 interface SlotRowProps {
@@ -36,6 +40,7 @@ export default function SlotRow({
   return (
     <div className="flex items-center justify-between py-4 border-b border-gray-200 last:border-b-0">
       <div className="flex-1 grid grid-cols-4 gap-4">
+        {/* Date / time */}
         <div>
           <p className="text-sm font-medium text-gray-900">
             {formatSlotDate(slot.start_at)}
@@ -45,6 +50,7 @@ export default function SlotRow({
           </p>
         </div>
 
+        {/* Party size */}
         <div>
           <p className="text-sm text-gray-600">
             {slot.party_min === slot.party_max
@@ -53,12 +59,17 @@ export default function SlotRow({
           </p>
         </div>
 
+        {/* Access / status */}
         <div>
           {isBookedByMe ? (
             <span className="text-xs font-medium text-gray-700">Going</span>
           ) : (
             <>
-              <span className={`text-xs font-medium ${getSlotAccessColor(slot.slot_tier)}`}>
+              <span
+                className={`text-xs font-medium ${getSlotAccessColor(
+                  slot.slot_tier
+                )}`}
+              >
                 {getSlotAccessLabel(slot.slot_tier)}
               </span>
               {eligibility.isWithin24h && (
@@ -70,6 +81,7 @@ export default function SlotRow({
           )}
         </div>
 
+        {/* Action */}
         <div className="flex items-center gap-2 justify-end">
           {isBookedByMe ? (
             <button
@@ -90,15 +102,10 @@ export default function SlotRow({
               Book
             </button>
           ) : (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">
-                {eligibility.requiresPremium ? '🔒 Premium' : 'Unavailable'}
-              </span>
-              <AlertToggle
-                isActive={isAlertActive}
-                onToggle={() => onToggleAlert(slot.id)}
-              />
-            </div>
+            <AlertToggle
+              isActive={isAlertActive}
+              onToggle={() => onToggleAlert(slot.id)}
+            />
           )}
         </div>
       </div>
