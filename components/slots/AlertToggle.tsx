@@ -97,7 +97,7 @@ export default function AlertToggle(props: AlertToggleProps) {
             : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50',
           isLoading ? 'opacity-60 cursor-not-allowed' : '',
         ].join(' ')}
-        title={isActive ? 'Watching this slot' : 'Set an alert for this slot'}
+        title={isActive ? 'Alert is on for this slot' : 'Set alert for this slot'}
       >
         {isLoading ? '…' : isActive ? '✓ Alert on' : 'Alert me'}
       </button>

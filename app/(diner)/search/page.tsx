@@ -32,6 +32,7 @@ export default function SearchPage() {
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
+  const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
 
   const [filters, setFilters] = useState({
     date: '',
@@ -145,6 +146,8 @@ export default function SearchPage() {
       return
     }
 
+    setBookingSlotId(slotId)
+
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
@@ -155,15 +158,14 @@ export default function SearchPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        alert(data.error || 'Failed to create booking')
+        setBookingSlotId(null)
         return
       }
 
-      alert('Booking confirmed! Check your email for details.')
       router.push('/bookings')
     } catch (error) {
       console.error('Booking error:', error)
-      alert('Failed to create booking')
+      setBookingSlotId(null)
     }
   }
 
@@ -304,9 +306,10 @@ export default function SearchPage() {
                     {slot.status === 'available' ? (
                       <button
                         onClick={() => handleBook(slot.id)}
+                        disabled={bookingSlotId === slot.id}
                         className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium whitespace-nowrap"
                       >
-                        Book
+                        {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
                       </button>
                     ) : (
                       <div className="flex items-center gap-2">
