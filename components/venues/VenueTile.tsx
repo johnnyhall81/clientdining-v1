@@ -13,7 +13,11 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
   const imageSrc = venue.image_venue || venue.image
 
   return (
-    <Link href={`/venues/${venue.id}`} className="group block cursor-pointer">
+      <Link
+        href={`/venues/${venue.id}`}
+        className="group block cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg"
+      >
+
       <div>
         <div className="relative aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden mb-3">
           {imageSrc ? (
