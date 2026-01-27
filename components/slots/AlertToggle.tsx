@@ -2,38 +2,82 @@
 
 import { useEffect, useState } from 'react'
 
-interface AlertToggleProps {
+type LegacyProps = {
   isActive: boolean
   onToggle: () => Promise<void> | void
 }
 
-export default function AlertToggle({ isActive, onToggle }: AlertToggleProps) {
+type ApiProps = {
+  isActive: boolean
+  slotId: string
+  requireLogin?: boolean
+  onRequireLogin?: () => void
+  onStateChange?: (nextActive: boolean) => void
+}
+
+type AlertToggleProps = LegacyProps | ApiProps
+
+function isApiProps(props: AlertToggleProps): props is ApiProps {
+  return 'slotId' in props
+}
+
+export default function AlertToggle(props: AlertToggleProps) {
+  const { isActive } = props
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [justActivated, setJustActivated] = useState(false)
 
-  // If the parent updates isActive to true, we can show a brief reassurance line
   useEffect(() => {
-    if (!isActive) return
-    if (!justActivated) return
-
+    if (!isActive || !justActivated) return
     const t = setTimeout(() => setJustActivated(false), 2200)
     return () => clearTimeout(t)
   }, [isActive, justActivated])
 
   const handleClick = async () => {
     setError(null)
+
+    // New API-driven mode (used by Search page)
+    if (isApiProps(props)) {
+      if (props.requireLogin) {
+        props.onRequireLogin?.()
+        return
+      }
+
+      setIsLoading(true)
+      try {
+        const response = await fetch('/api/alerts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slotId: props.slotId }),
+        })
+
+        const data = await response.json().catch(() => ({}))
+
+        if (!response.ok) {
+          setError(data?.error || 'Couldn’t update alert')
+          return
+        }
+
+        const nextActive = Boolean(data?.active)
+        props.onStateChange?.(nextActive)
+
+        if (nextActive) setJustActivated(true)
+      } catch {
+        setError('Couldn’t update alert')
+      } finally {
+        setIsLoading(false)
+      }
+
+      return
+    }
+
+    // Legacy mode (used elsewhere): parent handles fetch/state
     setIsLoading(true)
-
     try {
-      await onToggle()
-
-      // If we just turned an alert on, show a small reassurance line
-      // (We can't perfectly know “on vs off” without changing props,
-      // but this feels right in practice.)
+      await props.onToggle()
       setJustActivated(true)
     } catch (e: any) {
-      setError(e?.message || 'Could not update alert')
+      setError(e?.message || 'Couldn’t update alert')
     } finally {
       setIsLoading(false)
     }
@@ -51,7 +95,7 @@ export default function AlertToggle({ isActive, onToggle }: AlertToggleProps) {
           isActive
             ? 'bg-gray-50 border-gray-200 text-gray-900 hover:bg-gray-100'
             : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50',
-          isLoading ? 'opacity-60 cursor-not-allowed' : ''
+          isLoading ? 'opacity-60 cursor-not-allowed' : '',
         ].join(' ')}
         title={isActive ? 'Watching this slot' : 'Set an alert for this slot'}
       >
@@ -59,7 +103,7 @@ export default function AlertToggle({ isActive, onToggle }: AlertToggleProps) {
       </button>
 
       {error ? (
-        <span className="mt-1 text-xs text-red-600">Couldn’t set alert</span>
+        <span className="mt-1 text-xs text-red-600">{error}</span>
       ) : isActive && justActivated ? (
         <span className="mt-1 text-xs text-gray-500">We’ll email you if it opens.</span>
       ) : null}
