@@ -98,7 +98,22 @@ export default function SearchPage() {
       const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        console.error('Cancel failed:', data?.error || 'Failed to cancel booking')
+        const message = data?.error || 'Could not create booking'
+      
+        // Popups only for "policy" cases (no messy inline repetition)
+        if (
+          response.status === 403 &&
+          (
+            message.startsWith('Premium membership required') ||
+            message.startsWith('Booking limit reached')
+          )
+        ) {
+          alert(message)
+        } else {
+          setBookingError(message)
+        }
+      
+        setBookingSlotId(null)
         return
       }
 
