@@ -17,11 +17,11 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const { user } = useAuth()
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlot, setBookingSlot] = useState<string | null>(null)
-  
+
   // Load existing alerts when component mounts
   useEffect(() => {
     if (!user) return
-    
+
     const loadAlerts = async () => {
       try {
         const { data } = await supabase
@@ -29,18 +29,18 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           .select('slot_id')
           .eq('diner_user_id', user.id)
           .eq('status', 'active')
-        
+
         if (data) {
-          setAlerts(new Set(data.map(alert => alert.slot_id)))
+          setAlerts(new Set(data.map((alert) => alert.slot_id)))
         }
       } catch (error) {
         console.error('Error loading alerts:', error)
       }
     }
-    
+
     loadAlerts()
   }, [user])
-  
+
   const handleBook = async (slotId: string) => {
     if (!user) {
       router.push('/login')
@@ -58,67 +58,64 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         body: JSON.stringify({ slotId }),
       })
 
-      const data = await response.json()
+      const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        alert(data.error || 'Failed to create booking')
+        // quiet failure: re-enable the button, no popup
+        console.error('Booking failed:', data?.error || response.statusText)
         return
       }
 
-      alert('Booking confirmed!')
       router.push('/bookings')
       router.refresh()
     } catch (error) {
       console.error('Booking error:', error)
-      alert('Failed to create booking')
+      // quiet failure: re-enable the button, no popup
     } finally {
       setBookingSlot(null)
     }
   }
-  
+
   const handleToggleAlert = async (slotId: string) => {
     if (!user) {
       router.push('/login')
       return
     }
-  
+
     const response = await fetch('/api/alerts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slotId }),
     })
-  
+
     const data = await response.json().catch(() => ({}))
-  
+
     if (!response.ok) {
       // Throw so AlertToggle can show inline error (no popups)
       throw new Error(data?.error || 'Failed to update alert')
     }
-  
+
     // Update local state only after successful API call
     const newAlerts = new Set(alerts)
     if (data.active) newAlerts.add(slotId)
     else newAlerts.delete(slotId)
     setAlerts(newAlerts)
   }
-  
-  
+
   return (
     <div className="space-y-8">
       <div className="bg-gray-200 rounded-lg aspect-[21/9] overflow-hidden">
-        <img 
+        <img
           src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
           alt={venue.name}
           className="w-full h-full object-cover"
         />
       </div>
-      
+
       <div>
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              {venue.name}
-            </h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{venue.name}</h1>
             <div className="flex items-center gap-4 text-gray-600 mb-2">
               <span>{venue.area}</span>
               <span>•</span>
@@ -131,19 +128,13 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
             )}
           </div>
         </div>
-        
-        {venue.description && (
-          <p className="text-gray-700 max-w-3xl">
-            {venue.description}
-          </p>
-        )}
+
+        {venue.description && <p className="text-gray-700 max-w-3xl">{venue.description}</p>}
       </div>
-      
+
       <div className="card">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Available Tables
-        </h2>
-        
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Tables</h2>
+
         {slots.length === 0 ? (
           <p className="text-gray-500">No tables available at this time.</p>
         ) : (
@@ -155,6 +146,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 dinerTier="free"
                 currentFutureBookings={0}
                 onBook={handleBook}
+                bookingSlotId={bookingSlot}
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}
               />
