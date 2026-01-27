@@ -386,7 +386,8 @@ export default function SearchPage() {
                       <button
                         type="button"
                         onClick={() => handleCancel(slot.id)}
-                        className="border px-4 py-2 rounded-lg font-medium whitespace-nowrap bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                        className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-red-500 text-red-600 hover:bg-red-50 transition-colors"
+
                       >
                         Cancel
                       </button>
@@ -396,11 +397,12 @@ export default function SearchPage() {
                           onClick={() => handleBook(slot.id)}
                           disabled={bookingSlotId === slot.id}
                           className={[
-                            'px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-colors',
+                            'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
                             bookingSlotId === slot.id
                               ? 'bg-blue-400 text-white cursor-not-allowed'
                               : 'bg-blue-600 text-white hover:bg-blue-700',
                           ].join(' ')}
+                          
                         >
                           {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
                         </button>

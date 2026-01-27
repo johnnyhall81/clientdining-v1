@@ -87,19 +87,19 @@ export default function AlertToggle(props: AlertToggleProps) {
     <div className="flex flex-col items-end">
       <button
         type="button"
-        onClick={handleClick}
+        onClick={onClick}
         disabled={isLoading}
+        title={isActive ? 'Alert is on for this slot' : 'Turn on an alert for this slot'}
         className={[
-          'text-sm px-3 py-1 rounded-md border transition-colors',
-          'focus:outline-none focus-visible:shadow-sm',
+          'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
+          'focus:outline-none focus-visible:outline-none',
+          isLoading ? 'cursor-not-allowed opacity-60' : '',
           isActive
-            ? 'bg-gray-50 border-gray-200 text-gray-900 hover:bg-gray-100'
-            : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50',
-          isLoading ? 'opacity-60 cursor-not-allowed' : '',
+            ? 'border border-orange-500 text-orange-600 bg-white hover:bg-orange-50'
+            : 'border border-blue-600 text-blue-600 bg-white hover:bg-blue-50',
         ].join(' ')}
-        title={isActive ? 'Alert is on for this slot' : 'Set alert for this slot'}
       >
-        {isLoading ? '…' : isActive ? '✓ Alert on' : 'Alert me'}
+        {isLoading ? 'Saving…' : isActive ? '✓ Following' : '+ Follow'}
       </button>
 
       {error ? (
