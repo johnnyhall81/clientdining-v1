@@ -32,7 +32,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         const { data, error } = await supabase
           .from('slot_alerts')
           .select('slot_id')
-          .eq('user_id', user.id)
+          .eq('diner_user_id', user.id)
           .eq('status', 'active')
 
         if (error) throw error
@@ -61,17 +61,16 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         const nowIso = new Date().toISOString()
 
         const { data, error } = await supabase
-          .from('bookings')
-          .select('slot_id')
-          .eq('user_id', user.id)
-          .eq('status', 'active')
-          .gt('slot_start_at', nowIso)
-          .in('slot_id', slotIds)
+        .from('bookings')
+        .select('slot_id')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .in('slot_id', slotIds)
         
       
 
         if (error) throw error
-
+        console.log('Venue bookings rows:', data)
         setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
       } catch (e) {
         console.error('Error loading bookings:', e)
