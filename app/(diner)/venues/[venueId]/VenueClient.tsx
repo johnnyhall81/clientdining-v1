@@ -21,26 +21,34 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
   // Load existing alerts when component mounts
   useEffect(() => {
-    if (!user) return
-
-    const loadAlerts = async () => {
+    if (!user) {
+      setBookedSlots(new Set())
+      return
+    }
+    if (!slots?.length) return
+  
+    const loadMyBookings = async () => {
       try {
-        const { data } = await supabase
-          .from('slot_alerts')
+        const slotIds = slots.map((s) => s.id)
+  
+        const { data, error } = await supabase
+          .from('bookings')
           .select('slot_id')
-          .eq('diner_user_id', user.id)
+          .eq('user_id', user.id)
           .eq('status', 'active')
-
-        if (data) {
-          setAlerts(new Set(data.map((alert) => alert.slot_id)))
-        }
-      } catch (error) {
-        console.error('Error loading alerts:', error)
+          .in('slot_id', slotIds)
+  
+        if (error) throw error
+  
+        setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
+      } catch (e) {
+        console.error('Error loading bookings:', e)
       }
     }
-
-    loadAlerts()
-  }, [user])
+  
+    loadMyBookings()
+  }, [user, slots])
+  
 
   // Load bookings for the slots on this venue page
   useEffect(() => {
@@ -224,6 +232,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 onCancel={handleCancel}
               />
             ))}
+
           </div>
         )}
       </div>
