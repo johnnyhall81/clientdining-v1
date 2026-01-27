@@ -9,7 +9,7 @@ export default async function VenuePage({ params }: { params: { venueId: string 
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-  
+
   // Fetch venue from database
   const { data: venue, error } = await supabase
     .from('venues')
@@ -21,14 +21,13 @@ export default async function VenuePage({ params }: { params: { venueId: string 
     notFound()
   }
 
-  // Fetch slots for this venue
+  // Fetch ALL future slots for this venue (do NOT filter to only available)
   const { data: slots } = await supabase
     .from('slots')
     .select('*')
     .eq('venue_id', params.venueId)
-    .eq('status', 'available')
     .gte('start_at', new Date().toISOString())
-    .order('start_at')
+    .order('start_at', { ascending: true })
 
   return <VenueClient venue={venue} slots={slots || []} />
 }
