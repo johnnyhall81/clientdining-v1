@@ -6,10 +6,13 @@ import { formatFullDateTime } from '@/lib/date-utils'
 
 export async function POST(request: Request) {
   try {
-    const { bookingId } = await request.json()
-    
+    // ✅ accept either bookingId (Bookings page) OR slotId (Venue/Search)
+    const body = await request.json().catch(() => ({}))
+    const bookingIdFromBody: string | undefined = body.bookingId
+    const slotIdFromBody: string | undefined = body.slotId
+
     const cookieStore = cookies()
-    
+
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -21,11 +24,40 @@ export async function POST(request: Request) {
         },
       }
     )
-    
+
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // ✅ resolve bookingId if caller passed slotId
+    let bookingId = bookingIdFromBody
+
+    if (!bookingId && slotIdFromBody) {
+      const { data: bookingRow, error: findError } = await supabase
+        .from('bookings')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('slot_id', slotIdFromBody)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (findError) {
+        return NextResponse.json({ error: findError.message }, { status: 400 })
+      }
+
+      if (!bookingRow?.id) {
+        return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
+      }
+
+      bookingId = bookingRow.id
+    }
+
+    if (!bookingId) {
+      return NextResponse.json({ error: 'Missing bookingId or slotId' }, { status: 400 })
     }
 
     // Get booking details before cancelling
@@ -50,6 +82,7 @@ export async function POST(request: Request) {
       .from('bookings')
       .update({ status: 'cancelled' })
       .eq('id', bookingId)
+      .eq('user_id', user.id) // ✅ tiny safety improvement
 
     if (cancelError) throw cancelError
 
