@@ -59,11 +59,12 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         const slotIds = slots.map((s) => s.id)
 
         const { data, error } = await supabase
-          .from('bookings')
-          .select('slot_id, status')
-          .eq('diner_user_id', user.id)
-          .in('status', ['active', 'confirmed'])
-          .in('slot_id', slotIds)
+        .from('bookings')
+        .select('slot_id, status')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .in('slot_id', slotIds)
+      
 
         if (error) throw error
 
