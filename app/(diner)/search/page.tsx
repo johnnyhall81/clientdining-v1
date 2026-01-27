@@ -146,33 +146,40 @@ export default function SearchPage() {
       router.push('/login')
       return
     }
-
+  
     setBookingError(null)
     setBookingSlotId(slotId)
-
+  
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slotId }),
       })
-
-      const data = await response.json()
-
-    if (!response.ok) {
+  
       const data = await response.json().catch(() => ({}))
-      setBookingError(data?.error || 'Could not create booking')
-      setBookingSlotId(null)
-      return
-    }
-
-
+  
+      if (!response.ok) {
+        const message = data?.error || 'Could not create booking'
+  
+        // Popup ONLY for booking-limit case
+        if (response.status === 403 && message.startsWith('Booking limit reached')) {
+          alert(message)
+        } else {
+          setBookingError(message)
+        }
+  
+        setBookingSlotId(null)
+        return
+      }
+  
       router.push('/bookings')
     } catch (error) {
       console.error('Booking error:', error)
       setBookingSlotId(null)
     }
   }
+  
 
   const isLastMinute = (startAt: string) => {
     const slotTime = new Date(startAt)
