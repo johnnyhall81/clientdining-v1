@@ -317,13 +317,19 @@ export default function SearchPage() {
                     {/* Action button */}
                     {slot.status === 'available' ? (
                     <div className="flex flex-col items-end">
-                      <button
-                        onClick={() => handleBook(slot.id)}
-                        disabled={bookingSlotId === slot.id}
-                        className="..."
-                      >
-                        {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
-                      </button>
+                    <button
+                      onClick={() => handleBook(slot.id)}
+                      disabled={bookingSlotId === slot.id}
+                      className={[
+                        'px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-colors',
+                        bookingSlotId === slot.id
+                          ? 'bg-blue-400 text-white cursor-not-allowed'
+                          : 'bg-blue-600 text-white hover:bg-blue-700',
+                      ].join(' ')}
+                    >
+                      {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
+                    </button>
+
 
                       {bookingError && (
                         <div className="text-xs text-gray-500 mt-1">
