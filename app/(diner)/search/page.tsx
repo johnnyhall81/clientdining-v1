@@ -98,15 +98,14 @@ export default function SearchPage() {
       const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        const message = data?.error || 'Could not create booking'
+        const message = data?.error || 'Failed to cancel booking'
+        console.error('Cancel failed:', message)
       
-        // Popups only for "policy" cases (no messy inline repetition)
+        // Popup for policy cases (no inline spam)
         if (
           response.status === 403 &&
-          (
-            message.startsWith('Premium membership required') ||
-            message.startsWith('Booking limit reached')
-          )
+          (message.startsWith('Booking limit reached') ||
+            message.startsWith('Premium membership required'))
         ) {
           alert(message)
         } else {
@@ -116,7 +115,7 @@ export default function SearchPage() {
         setBookingSlotId(null)
         return
       }
-
+      
       setBookedSlots((prev) => {
         const next = new Set(prev)
         next.delete(slotId)
@@ -428,7 +427,6 @@ export default function SearchPage() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        {slot.slot_tier === 'premium'}
                         <AlertToggle
                           slotId={slot.id}
                           isActive={hasAlert}
