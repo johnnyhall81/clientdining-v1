@@ -412,7 +412,6 @@ export default function SearchPage() {
                     ) : (
                       <div className="flex items-center gap-2">
                         {slot.slot_tier === 'premium' && (
-                          <span className="text-sm text-gray-500">🔒 Premium</span>
                         )}
 
                         <AlertToggle
