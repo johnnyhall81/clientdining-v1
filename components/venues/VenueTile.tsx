@@ -15,7 +15,7 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
   return (
       <Link
         href={`/venues/${venue.id}`}
-        className="group block cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg"
+        className="group block cursor-pointer focus:outline-none focus:ring-1 focus:ring-gray-200 rounded-lg"
       >
 
       <div>
