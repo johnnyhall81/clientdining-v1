@@ -99,7 +99,7 @@ export default function AlertToggle(props: AlertToggleProps) {
         ].join(' ')}
         title={isActive ? 'Watching this slot' : 'Set an alert for this slot'}
       >
-        {isLoading ? '…' : isActive ? '✓ Watching' : 'Alert me'}
+        {isLoading ? '…' : isActive ? '✓ Alert on' : 'Alert me'}
       </button>
 
       {error ? (
