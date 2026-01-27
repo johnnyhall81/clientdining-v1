@@ -15,11 +15,12 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
       <div className="group cursor-pointer">
         <div className="aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden mb-3">
           {(venue.image_venue || venue.image) ? (
-            <img 
-              src={venue.image_venue || venue.image}
-              alt={venue.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
+            <Image
+            src={venue.image_venue || venue.image}
+            alt={venue.name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+          />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center text-gray-600 group-hover:scale-105 transition-transform duration-300">
               <span className="text-4xl">🍽️</span>
