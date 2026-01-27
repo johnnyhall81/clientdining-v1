@@ -61,7 +61,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        // quiet failure: re-enable the button, no popup
+        // quiet failure: re-enable the UI, no popup
         console.error('Booking failed:', data?.error || response.statusText)
         return
       }
@@ -70,7 +70,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       router.refresh()
     } catch (error) {
       console.error('Booking error:', error)
-      // quiet failure: re-enable the button, no popup
+      // quiet failure: re-enable the UI, no popup
     } finally {
       setBookingSlot(null)
     }
@@ -146,7 +146,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 dinerTier="free"
                 currentFutureBookings={0}
                 onBook={handleBook}
-                bookingSlotId={bookingSlot}
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}
               />
