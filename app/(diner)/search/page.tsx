@@ -411,9 +411,7 @@ export default function SearchPage() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        {slot.slot_tier === 'premium' && (
-                        )}
-
+                        {slot.slot_tier === 'premium'}
                         <AlertToggle
                           slotId={slot.id}
                           isActive={hasAlert}
