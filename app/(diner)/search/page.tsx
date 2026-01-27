@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
+import AlertToggle from '@/components/slots/AlertToggle'
 
 interface SearchResult {
   slot: {
@@ -31,7 +32,7 @@ export default function SearchPage() {
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
-  
+
   const [filters, setFilters] = useState({
     date: '',
     area: '',
@@ -43,14 +44,17 @@ export default function SearchPage() {
     handleSearch()
     if (user) {
       loadAlerts()
+    } else {
+      setAlerts(new Set())
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.date, filters.area, filters.partySize, filters.within24h, user])
 
   const loadAlerts = async () => {
     try {
       const response = await fetch('/api/alerts')
       const data = await response.json()
-      
+
       if (data.alerts) {
         const activeAlertSlotIds = data.alerts
           .filter((a: any) => a.status === 'active')
@@ -91,7 +95,7 @@ export default function SearchPage() {
       startOfDay.setHours(0, 0, 0, 0)
       const endOfDay = new Date(filters.date)
       endOfDay.setHours(23, 59, 59, 999)
-      
+
       query = query
         .gte('start_at', startOfDay.toISOString())
         .lte('start_at', endOfDay.toISOString())
@@ -163,42 +167,6 @@ export default function SearchPage() {
     }
   }
 
-  const handleToggleAlert = async (slotId: string) => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    try {
-      const response = await fetch('/api/alerts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        alert(data.error || 'Failed to toggle alert')
-        return
-      }
-
-      // Update local state
-      const newAlerts = new Set(alerts)
-      if (data.active) {
-        newAlerts.add(slotId)
-        alert('Alert set! You will be notified when this slot becomes available.')
-      } else {
-        newAlerts.delete(slotId)
-        alert('Alert removed.')
-      }
-      setAlerts(newAlerts)
-    } catch (error) {
-      console.error('Alert toggle error:', error)
-      alert('Failed to toggle alert')
-    }
-  }
-
   const isLastMinute = (startAt: string) => {
     const slotTime = new Date(startAt)
     const now = new Date()
@@ -254,7 +222,7 @@ export default function SearchPage() {
               onChange={(e) => setFilters({ ...filters, partySize: parseInt(e.target.value) })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             >
-              {[2, 3, 4, 5, 6, 7, 8].map(size => (
+              {[2, 3, 4, 5, 6, 7, 8].map((size) => (
                 <option key={size} value={size}>{size} guests</option>
               ))}
             </select>
@@ -286,11 +254,17 @@ export default function SearchPage() {
           {results.map(({ slot, venue }) => {
             const lastMinute = isLastMinute(slot.start_at)
             const hasAlert = alerts.has(slot.id)
-            
+
             return (
-              <div key={slot.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+              <div
+                key={slot.id}
+                className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow"
+              >
                 <div className="flex items-center justify-between gap-4">
-                  <Link href={`/venues/${venue.id}`} className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity">
+                  <Link
+                    href={`/venues/${venue.id}`}
+                    className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
+                  >
                     {venue.image_venue && (
                       <img
                         src={venue.image_venue}
@@ -339,17 +313,19 @@ export default function SearchPage() {
                         {slot.slot_tier === 'premium' && (
                           <span className="text-sm text-gray-500">🔒 Premium</span>
                         )}
-                        <button
-                          onClick={() => handleToggleAlert(slot.id)}
-                          className={`border px-4 py-2 rounded-lg font-medium whitespace-nowrap flex items-center gap-2 ${
-                            hasAlert
-                              ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
-                              : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                          }`}
-                        >
-                          <span>{hasAlert ? '🔔' : '🔕'}</span>
-                          {hasAlert ? 'Alert Set' : 'Alert Me'}
-                        </button>
+
+                        <AlertToggle
+                          slotId={slot.id}
+                          isActive={hasAlert}
+                          requireLogin={!user}
+                          onRequireLogin={() => router.push('/login')}
+                          onStateChange={(nextActive) => {
+                            const next = new Set(alerts)
+                            if (nextActive) next.add(slot.id)
+                            else next.delete(slot.id)
+                            setAlerts(next)
+                          }}
+                        />
                       </div>
                     )}
                   </div>
