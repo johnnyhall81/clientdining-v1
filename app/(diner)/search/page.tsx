@@ -33,7 +33,6 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false)
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
-  const [bookingError, setBookingError] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
 
   const [filters, setFilters] = useState({
@@ -98,23 +97,12 @@ export default function SearchPage() {
       const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        const message = data?.error || 'Failed to cancel booking'
-        console.error('Cancel failed:', message)
-      
-        // Popup for policy cases (no inline spam)
-        if (
-          response.status === 403 &&
-          (message.startsWith('Booking limit reached') ||
-            message.startsWith('Premium membership required'))
-        ) {
-          alert(message)
-        } else {
-          setBookingError(message)
-        }
-      
+        const message = data?.error || 'Could not create booking'
+        alert(message) // popup only
         setBookingSlotId(null)
         return
       }
+      
       
       setBookedSlots((prev) => {
         const next = new Set(prev)
@@ -219,7 +207,6 @@ export default function SearchPage() {
       return
     }
 
-    setBookingError(null)
     setBookingSlotId(slotId)
 
     try {
@@ -421,9 +408,6 @@ export default function SearchPage() {
                           {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
                         </button>
 
-                        {bookingError && (
-                          <div className="text-xs text-gray-500 mt-1">{bookingError}</div>
-                        )}
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
