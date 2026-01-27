@@ -85,22 +85,30 @@ export default function AlertToggle(props: AlertToggleProps) {
 
   return (
     <div className="flex flex-col items-end">
-      <button
-        type="button"
-        onClick={handleClick}
-        disabled={isLoading}
-        title={isActive ? 'Alert is on for this slot' : 'Turn on an alert for this slot'}
-        className={[
-          'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
-          'focus:outline-none focus-visible:outline-none',
-          isLoading ? 'cursor-not-allowed opacity-60' : '',
-          isActive
-            ? 'border border-orange-500 text-orange-600 bg-white hover:bg-orange-50'
-            : 'border border-blue-600 text-blue-600 bg-white hover:bg-blue-50',
-        ].join(' ')}
-      >
-        {isLoading ? 'Saving…' : isActive ? '✓ Following' : '+ Follow'}
-      </button>
+            <button
+              type="button"
+              onClick={handleClick}
+              disabled={isLoading}
+              title={isActive ? 'Alert is on for this slot' : 'Turn on an alert for this slot'}
+              className={[
+                'h-10 px-6 text-sm rounded-lg whitespace-nowrap transition-colors',
+                'focus:outline-none focus-visible:outline-none',
+                isLoading ? 'cursor-not-allowed opacity-60' : '',
+
+                // Inactive: Follow
+                !isActive &&
+                  'border border-blue-600 text-blue-600 bg-white hover:bg-blue-50 font-medium',
+
+                // Active: Following (same colour, stronger)
+                isActive &&
+                  'border-2 border-blue-700 text-blue-700 bg-blue-50 font-semibold hover:bg-blue-100',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              {isLoading ? 'Saving…' : isActive ? '✓ Following' : '+ Follow'}
+            </button>
+
 
       {error ? (
         <span className="mt-1 text-xs text-red-600">{error}</span>
