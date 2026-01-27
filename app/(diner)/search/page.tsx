@@ -33,6 +33,7 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false)
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
+  const [bookingError, setBookingError] = useState<string | null>(null)
 
   const [filters, setFilters] = useState({
     date: '',
@@ -146,6 +147,7 @@ export default function SearchPage() {
       return
     }
 
+    setBookingError(null)
     setBookingSlotId(slotId)
 
     try {
@@ -157,10 +159,13 @@ export default function SearchPage() {
 
       const data = await response.json()
 
-      if (!response.ok) {
-        setBookingSlotId(null)
-        return
-      }
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}))
+      setBookingError(data?.error || 'Could not create booking')
+      setBookingSlotId(null)
+      return
+    }
+
 
       router.push('/bookings')
     } catch (error) {
@@ -304,14 +309,22 @@ export default function SearchPage() {
 
                     {/* Action button */}
                     {slot.status === 'available' ? (
+                    <div className="flex flex-col items-end">
                       <button
                         onClick={() => handleBook(slot.id)}
                         disabled={bookingSlotId === slot.id}
-                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium whitespace-nowrap"
+                        className="..."
                       >
                         {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
                       </button>
-                    ) : (
+
+                      {bookingError && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          {bookingError}
+                        </div>
+                      )}
+                    </div>
+                     ) : (
                       <div className="flex items-center gap-2">
                         {slot.slot_tier === 'premium' && (
                           <span className="text-sm text-gray-500">🔒 Premium</span>
