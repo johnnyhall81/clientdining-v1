@@ -46,35 +46,40 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       router.push('/login')
       return
     }
-
+  
     setBookingSlot(slotId)
-
+  
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slotId }),
       })
-
+  
       const data = await response.json().catch(() => ({}))
-
+  
       if (!response.ok) {
-        // quiet failure: re-enable the UI, no popup
-        console.error('Booking failed:', data?.error || response.statusText)
+        const message = data?.error || 'Could not create booking'
+  
+        // Popup ONLY for booking-limit case
+        if (response.status === 403 && message.startsWith('Booking limit reached')) {
+          alert(message)
+        } else {
+          console.error('Booking failed:', message)
+        }
+  
         return
       }
-
+  
       router.push('/bookings')
       router.refresh()
     } catch (error) {
       console.error('Booking error:', error)
-      // quiet failure: re-enable the UI, no popup
     } finally {
       setBookingSlot(null)
     }
   }
+  
 
   const handleToggleAlert = async (slotId: string) => {
     if (!user) {
