@@ -427,6 +427,7 @@ export default function SearchPage() {
                             setAlerts(next)
                           }}
                         />
+
                       </div>
                     )}
                   </div>
