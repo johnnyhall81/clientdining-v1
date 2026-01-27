@@ -13,11 +13,10 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
   const imageSrc = venue.image_venue || venue.image
 
   return (
-      <Link
-        href={`/venues/${venue.id}`}
-        className="group block cursor-pointer rounded-lg focus:outline-none focus-visible:shadow-sm"
-      >
-
+    <Link
+      href={`/venues/${venue.id}`}
+      className="group block cursor-pointer rounded-lg focus:outline-none focus-visible:shadow-sm"
+    >
       <div>
         <div className="relative aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden mb-3">
           {imageSrc ? (
@@ -25,11 +24,11 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
               src={imageSrc}
               alt={venue.name}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover transition-transform duration-300 will-change-transform group-hover:scale-105"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center text-gray-600 group-hover:scale-105 transition-transform duration-300">
+            <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center text-gray-600 transition-transform duration-300 will-change-transform group-hover:scale-105">
               <span className="text-4xl">🍽️</span>
             </div>
           )}
