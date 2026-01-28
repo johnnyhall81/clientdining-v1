@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase-client'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import AlertToggle from '@/components/slots/AlertToggle'
+import PremiumUnlockModal from '@/components/modals/PremiumUnlockModal'
 
 interface SearchResult {
   slot: {
@@ -26,6 +27,11 @@ interface SearchResult {
   }
 }
 
+interface Venue {
+  id: string
+  name: string
+}
+
 export default function SearchPage() {
   const router = useRouter()
   const { user } = useAuth()
@@ -34,13 +40,55 @@ export default function SearchPage() {
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
+  const [venues, setVenues] = useState<Venue[]>([])
+  const [showPremiumModal, setShowPremiumModal] = useState(false)
+  const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
 
   const [filters, setFilters] = useState({
     date: '',
     area: '',
     partySize: 2,
     within24h: false,
+    tier: 'all' as 'all' | 'free' | 'premium',
+    venueId: '',
   })
+
+  // Load venues for dropdown
+  useEffect(() => {
+    const loadVenues = async () => {
+      const { data, error } = await supabase
+        .from('venues')
+        .select('id, name')
+        .eq('is_active', true)
+        .order('name')
+
+      if (!error && data) {
+        setVenues(data)
+      }
+    }
+    loadVenues()
+  }, [])
+
+  // Load user tier
+  useEffect(() => {
+    const loadUserTier = async () => {
+      if (!user) {
+        setDinerTier('free')
+        return
+      }
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('diner_tier')
+        .eq('user_id', user.id)
+        .single()
+
+      if (data) {
+        setDinerTier(data.diner_tier)
+      }
+    }
+    loadUserTier()
+  }, [user])
 
   useEffect(() => {
     handleSearch()
@@ -50,7 +98,7 @@ export default function SearchPage() {
       setAlerts(new Set())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.date, filters.area, filters.partySize, filters.within24h, user])
+  }, [filters.date, filters.area, filters.partySize, filters.within24h, filters.tier, filters.venueId, user])
 
   useEffect(() => {
     if (!user) {
@@ -97,12 +145,10 @@ export default function SearchPage() {
       const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        const message = data?.error || 'Could not create booking'
-        alert(message) // popup only
-        setBookingSlotId(null)
+        const message = data?.error || 'Could not cancel booking'
+        alert(message)
         return
       }
-      
       
       setBookedSlots((prev) => {
         const next = new Set(prev)
@@ -143,6 +189,7 @@ export default function SearchPage() {
         party_max,
         slot_tier,
         status,
+        venue_id,
         venues!inner (
           id,
           name,
@@ -177,6 +224,16 @@ export default function SearchPage() {
       const in24h = new Date()
       in24h.setHours(in24h.getHours() + 24)
       query = query.lte('start_at', in24h.toISOString())
+    }
+
+    // Filter by tier
+    if (filters.tier !== 'all') {
+      query = query.eq('slot_tier', filters.tier)
+    }
+
+    // Filter by venue
+    if (filters.venueId) {
+      query = query.eq('venue_id', filters.venueId)
     }
 
     const { data, error } = await query
@@ -224,7 +281,6 @@ export default function SearchPage() {
         setBookingSlotId(null)
         return
       }
-      
 
       // flip this slot immediately to "Confirmed / Cancel"
       setBookedSlots((prev) => {
@@ -237,6 +293,37 @@ export default function SearchPage() {
     } catch (error) {
       console.error('Booking error:', error)
       setBookingSlotId(null)
+    }
+  }
+
+  const handleToggleAlert = async (slotId: string) => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    const isActive = alerts.has(slotId)
+
+    try {
+      const response = await fetch('/api/alerts', {
+        method: isActive ? 'DELETE' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slotId }),
+      })
+
+      if (response.ok) {
+        setAlerts((prev) => {
+          const next = new Set(prev)
+          if (isActive) {
+            next.delete(slotId)
+          } else {
+            next.add(slotId)
+          }
+          return next
+        })
+      }
+    } catch (error) {
+      console.error('Alert toggle error:', error)
     }
   }
 
@@ -256,38 +343,59 @@ export default function SearchPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
+          <button
+            onClick={() => setFilters({
+              date: '',
+              area: '',
+              partySize: 2,
+              within24h: false,
+              tier: 'all',
+              venueId: '',
+            })}
+            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+          >
+            Clear All
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {/* Date */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
             <input
               type="date"
               value={filters.date}
               onChange={(e) => setFilters({ ...filters, date: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             />
           </div>
 
+          {/* Area */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Area</label>
             <select
               value={filters.area}
               onChange={(e) => setFilters({ ...filters, area: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
               <option value="">All Areas</option>
               <option value="Mayfair">Mayfair</option>
               <option value="Notting Hill">Notting Hill</option>
               <option value="Piccadilly">Piccadilly</option>
               <option value="Soho">Soho</option>
+              <option value="Knightsbridge">Knightsbridge</option>
+              <option value="Belgravia">Belgravia</option>
             </select>
           </div>
 
+          {/* Party Size */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Party Size</label>
             <select
               value={filters.partySize}
               onChange={(e) => setFilters({ ...filters, partySize: parseInt(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
               {[2, 3, 4, 5, 6, 7, 8].map((size) => (
                 <option key={size} value={size}>
@@ -297,15 +405,47 @@ export default function SearchPage() {
             </select>
           </div>
 
+          {/* Tier Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tier</label>
+            <select
+              value={filters.tier}
+              onChange={(e) => setFilters({ ...filters, tier: e.target.value as 'all' | 'free' | 'premium' })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+            >
+              <option value="all">All Tiers</option>
+              <option value="free">Free</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+
+          {/* Venue Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Venue</label>
+            <select
+              value={filters.venueId}
+              onChange={(e) => setFilters({ ...filters, venueId: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+            >
+              <option value="">All Venues</option>
+              {venues.map((venue) => (
+                <option key={venue.id} value={venue.id}>
+                  {venue.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Within 24h Checkbox */}
           <div className="flex items-end">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={filters.within24h}
                 onChange={(e) => setFilters({ ...filters, within24h: e.target.checked })}
-                className="w-4 h-4"
+                className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
               />
-              <span className="text-sm text-gray-700">Within 24 hours</span>
+              <span className="text-sm text-gray-700">Within 24h</span>
             </label>
           </div>
         </div>
@@ -313,10 +453,14 @@ export default function SearchPage() {
 
       {/* Results */}
       {loading ? (
-        <div className="text-center py-12">Loading...</div>
+        <div className="text-center py-12">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-gray-900 border-r-transparent"></div>
+          <p className="mt-4 text-gray-600">Searching...</p>
+        </div>
       ) : results.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border">
-          <p className="text-gray-500">No available slots found. Try adjusting your filters.</p>
+        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+          <p className="text-gray-600">No slots found matching your criteria.</p>
+          <p className="text-sm text-gray-500 mt-2">Try adjusting your filters</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
@@ -357,7 +501,7 @@ export default function SearchPage() {
                   </Link>
 
                   <div className="flex items-center gap-3">
-                    {/* Status */}
+                    {/* Tier badges OR Confirmed */}
                     <div className="flex items-center gap-2 text-sm">
                       {isBookedByMe && (
                         <span className="text-green-700 font-medium">Confirmed</span>
@@ -376,37 +520,34 @@ export default function SearchPage() {
                       </button>
                     ) : slot.status === 'available' ? (
                       <div className="flex flex-col items-end">
-                        <button
-                          onClick={() => handleBook(slot.id)}
-                          disabled={bookingSlotId === slot.id}
-                          className={[
-                            'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
-                            bookingSlotId === slot.id
-                              ? 'bg-blue-400 text-white cursor-not-allowed'
-                              : 'bg-blue-600 text-white hover:bg-blue-700',
-                          ].join(' ')}
-                          
-                        >
-                          {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
-                        </button>
-
+                        {/* Check if slot is premium and user is free tier and >24h */}
+                        {slot.slot_tier === 'premium' && dinerTier === 'free' && !lastMinute ? (
+                          <button
+                            onClick={() => setShowPremiumModal(true)}
+                            className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-amber-600 text-amber-600 hover:bg-amber-50 transition-colors flex items-center gap-2"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Unlock
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleBook(slot.id)}
+                            disabled={bookingSlotId === slot.id}
+                            className={[
+                              'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
+                              bookingSlotId === slot.id
+                                ? 'bg-blue-400 text-white cursor-not-allowed'
+                                : 'bg-blue-600 text-white hover:bg-blue-700',
+                            ].join(' ')}
+                          >
+                            {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
+                          </button>
+                        )}
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2">
-                        <AlertToggle
-                          slotId={slot.id}
-                          isActive={hasAlert}
-                          requireLogin={!user}
-                          onRequireLogin={() => router.push('/login')}
-                          onStateChange={(nextActive) => {
-                            const next = new Set(alerts)
-                            if (nextActive) next.add(slot.id)
-                            else next.delete(slot.id)
-                            setAlerts(next)
-                          }}
-                        />
-
-                      </div>
+                      <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
                     )}
                   </div>
                 </div>
@@ -415,6 +556,12 @@ export default function SearchPage() {
           })}
         </div>
       )}
+
+      {/* Premium Unlock Modal */}
+      <PremiumUnlockModal 
+        isOpen={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+      />
     </div>
   )
 }
