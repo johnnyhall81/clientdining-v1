@@ -100,7 +100,7 @@ export default function AdminAlertsPage() {
       console.log('Number of alerts loaded:', data?.length || 0)
 
       // Get unique diner user IDs
-      const dinerUserIds = [...new Set((data || []).map((item: any) => item.diner_user_id))]
+      const dinerUserIds = Array.from(new Set((data || []).map((item: any) => item.diner_user_id)))
       
       // Fetch diner profiles
       const { data: profiles } = await supabase
