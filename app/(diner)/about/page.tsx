@@ -13,13 +13,13 @@ export default function AboutPage() {
             What is ClientDining?
           </h2>
           <p className="text-gray-700">
-            ClientDining is a private, members-only platform providing City professionals with exclusive access to premium dining reservations across London’s leading restaurants and private members’ clubs.
+            ClientDining is a private, members-only platform providing City professionals with exclusive access to premium dining reservations across London's leading restaurants and private members' clubs.
           </p>
           <p className="text-gray-700">
-            We curate live availability from London’s most sought-after venues, giving members access to tables that are typically unavailable to the public.
+            We curate live availability from London's most sought-after venues, giving members access to tables that are typically unavailable to the public.
           </p>
           <p className="text-gray-700">
-            ClientDining is built around intentional business dining — discreet reservations made for hosting clients, rather than promotional or discounted experiences.
+            ClientDining is built around intentional business dining — discreet reservations for client meetings, team dinners, and corporate gatherings, rather than promotional or discounted experiences.
           </p>
         </section>
 
@@ -34,7 +34,7 @@ export default function AboutPage() {
                 1. Browse Premium Venues
               </h3>
               <p className="text-gray-700">
-                Browse a curated selection of leading restaurants and private members’ clubs across London.
+                Browse a curated selection of leading restaurants and private members' clubs across London, suitable for everything from intimate client dinners to larger corporate events.
               </p>
             </div>
 
@@ -61,7 +61,7 @@ export default function AboutPage() {
                 4. Set Smart Alerts
               </h3>
               <p className="text-gray-700">
-                If your preferred time isn’t available, set a smart alert and be notified the moment it opens.
+                If your preferred time isn't available, set a smart alert and be notified the moment it opens.
               </p>
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-8">
             <div className="border-2 border-gray-200 rounded-xl p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Free
+                Standard
               </h3>
               <p className="text-gray-600 mb-6">
                 Ideal for occasional dining and last-minute bookings
@@ -94,10 +94,10 @@ export default function AboutPage() {
                 Premium – £49/month
               </h3>
               <p className="text-gray-600 mb-6">
-                Designed for frequent diners and client entertaining
+                Designed for frequent client entertainment and team dining
               </p>
               <ul className="space-y-2 text-gray-700">
-                <li>✓ Everything in Free, plus:</li>
+                <li>✓ Everything in Standard, plus:</li>
                 <li>✓ Book premium restaurant slots in advance</li>
                 <li>✓ Up to 10 future bookings</li>
                 <li>✓ Priority alert notifications</li>
@@ -115,6 +115,8 @@ export default function AboutPage() {
           </p>
           <ul className="space-y-2 text-gray-700 ml-6">
             <li>• Finance and legal professionals entertaining clients</li>
+            <li>• Team leaders organizing dinners and celebrations</li>
+            <li>• Firms hosting corporate events, round tables, and industry gatherings</li>
             <li>• Busy professionals who want reliable access to top venues</li>
           </ul>
         </section>
@@ -130,7 +132,7 @@ export default function AboutPage() {
             ClientDining is designed to sit quietly alongside existing reservation channels. The emphasis is on discretion, quality, and operational ease — not marketing, discounts, or volume for its own sake.
           </p>
           <p className="text-gray-700">
-            We launch and grow deliberately, working with a small number of carefully selected restaurants and private members’ clubs to ensure consistent availability and a high-quality experience.
+            We launch and grow deliberately, working with a small number of carefully selected restaurants and private members' clubs to ensure consistent availability and a high-quality experience.
           </p>
           <p className="text-gray-700">
             Access to ClientDining is verified via LinkedIn to confirm professional background and maintain a discreet, high-quality network.
@@ -142,7 +144,7 @@ export default function AboutPage() {
             Ready to Get Started?
           </h2>
           <p className="text-gray-300 mb-8">
-            Join ClientDining and unlock access to London’s most sought-after dining reservations.
+            Join ClientDining and unlock access to London's most sought-after dining reservations.
           </p>
           <a
             href="/signup"

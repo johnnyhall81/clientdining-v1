@@ -45,12 +45,12 @@ export default function FAQPage() {
           a: 'Verification is typically completed within one business day. You can browse venues before verification, but booking requires approval.'
         },
         {
-          q: 'What qualifies as a “City professional”?',
-          a: 'We verify professionals working in finance, law, consulting, technology, and related sectors, primarily in London’s business districts. If you are unsure, contact support@clientdining.com.'
+          q: 'What qualifies as a "City professional"?',
+          a: 'We verify professionals working in finance, law, consulting, technology, and related sectors, primarily in London's business districts. If you are unsure, contact support@clientdining.com.'
         },
         {
           q: 'Is there a free trial?',
-          a: 'All members begin on the Free tier. You can upgrade to Premium (£49/month) at any time.'
+          a: 'All members begin on the Standard tier. You can upgrade to Premium (£49/month) at any time.'
         }
       ]
     },
@@ -59,7 +59,7 @@ export default function FAQPage() {
       questions: [
         {
           q: 'How far in advance can I book?',
-          a: 'Free members can hold up to 3 future bookings. Premium members can hold up to 10 and access premium slots further in advance.'
+          a: 'Standard members can hold up to 3 future bookings. Premium members can hold up to 10 and access premium slots further in advance.'
         },
         {
           q: 'What is the 24-hour rule?',
@@ -67,19 +67,27 @@ export default function FAQPage() {
         },
         {
           q: 'How many bookings can I have at once?',
-          a: 'Free members may hold up to 3 future bookings. Premium members may hold up to 10. Bookings within 24 hours do not count toward these limits.'
+          a: 'Standard members may hold up to 3 future bookings. Premium members may hold up to 10. Bookings within 24 hours do not count toward these limits.'
+        },
+        {
+          q: 'Can I book for larger groups or corporate events?',
+          a: 'Yes. Tables accommodate various party sizes as indicated in each slot. For larger corporate gatherings or private dining rooms, contact support@clientdining.com and we can arrange suitable options with our venue partners.'
         },
         {
           q: 'Can I cancel a booking?',
-          a: 'Yes. Cancellations are managed through your account. Late cancellations may affect future access to that venue’s availability.'
+          a: 'Yes. Cancellations are managed through your account. Late cancellations may affect future access to that venue's availability.'
         },
         {
-          q: 'What happens if I don’t show up?',
+          q: 'What happens if I don't show up?',
           a: 'No-shows impact venues and other members. Repeated no-shows may result in booking restrictions or account suspension.'
         },
         {
           q: 'Can I modify a booking?',
           a: 'If you need to change a booking, cancel and rebook if availability allows. Any booking-related requests should be handled via support@clientdining.com.'
+        },
+        {
+          q: 'Who pays for the booking?',
+          a: 'The member who makes the booking is responsible. ClientDining is designed for professionals hosting clients, organizing team dinners, or arranging corporate events — one person books and settles the bill.'
         }
       ]
     },
@@ -87,12 +95,16 @@ export default function FAQPage() {
       title: 'Membership Tiers',
       questions: [
         {
-          q: 'What’s the difference between Free and Premium?',
-          a: 'Free members can book standard tables and any slot within 24 hours, holding up to 3 future bookings. Premium members (£49/month) can access premium slots in advance and hold up to 10 future bookings.'
+          q: 'What's the difference between Standard and Premium?',
+          a: 'Standard members can book standard tables and any slot within 24 hours, holding up to 3 future bookings. Premium members (£49/month) can access premium slots in advance and hold up to 10 future bookings.'
         },
         {
           q: 'What are premium slots?',
           a: 'Premium slots are higher-demand reservations at popular venues, typically at peak dining times.'
+        },
+        {
+          q: 'Is Premium worth it for frequent business dining?',
+          a: 'Premium is designed for professionals who regularly host clients or organize team events. With 10 future bookings and early access to premium slots, it provides the flexibility needed for consistent business entertainment.'
         },
         {
           q: 'Can I try Premium before committing?',
@@ -100,11 +112,11 @@ export default function FAQPage() {
         },
         {
           q: 'How do I upgrade?',
-          a: 'From your Account page, select “Upgrade to Premium”. Benefits apply immediately.'
+          a: 'From your Account page, select "Upgrade to Premium". Benefits apply immediately.'
         },
         {
           q: 'Can I downgrade?',
-          a: 'Yes. Premium benefits continue until the end of your billing period, after which the account reverts to Free.'
+          a: 'Yes. Premium benefits continue until the end of your billing period, after which the account reverts to Standard.'
         }
       ]
     },
@@ -134,11 +146,11 @@ export default function FAQPage() {
       questions: [
         {
           q: 'What types of venues are on ClientDining?',
-          a: 'A curated selection of leading restaurants and private members’ clubs in London.'
+          a: 'A curated selection of leading restaurants and private members' clubs in London, suitable for client meetings, team celebrations, and corporate events.'
         },
         {
-          q: 'Can I book any venue as a Free member?',
-          a: 'Free members can book standard restaurant tables and access any availability within 24 hours. Premium membership is required for premium slots booked further in advance.'
+          q: 'Can I book any venue as a Standard member?',
+          a: 'Standard members can book standard restaurant tables and access any availability within 24 hours. Premium membership is required for premium slots booked further in advance.'
         },
         {
           q: 'How often are new venues added?',
@@ -168,6 +180,10 @@ export default function FAQPage() {
         {
           q: 'Do you offer refunds?',
           a: 'We do not offer refunds for membership fees. You may cancel at any time to prevent future charges.'
+        },
+        {
+          q: 'Can my company pay for my membership?',
+          a: 'Yes. Many members expense their Premium membership as a business tool for client entertainment. We provide receipts for all payments via email.'
         },
         {
           q: 'How do I delete my account?',
