@@ -226,7 +226,7 @@ export default function SearchPage() {
       }
       
 
-      // flip this slot immediately to "Going / Cancel"
+      // flip this slot immediately to "Confirmed / Cancel"
       setBookedSlots((prev) => {
         const next = new Set(prev)
         next.add(slotId)
@@ -357,10 +357,10 @@ export default function SearchPage() {
                   </Link>
 
                   <div className="flex items-center gap-3">
-                    {/* Tier badges OR Going */}
+                    {/* Tier badges OR Confirmed */}
                     <div className="flex items-center gap-2 text-sm">
                       {isBookedByMe ? (
-                        <span className="text-gray-700 font-medium">Going</span>
+                        <span className="text-green-700 font-medium">Confirmed</span>
                       ) : (
                         <>
                           {slot.slot_tier === 'premium' && (
