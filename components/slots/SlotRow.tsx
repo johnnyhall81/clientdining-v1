@@ -63,23 +63,8 @@ export default function SlotRow({
 
         {/* Access / status */}
         <div>
-          {isBookedByMe ? (
+          {isBookedByMe && (
             <span className="text-xs font-medium text-green-700">Confirmed</span>
-          ) : (
-            <>
-              <span
-                className={`text-xs font-medium ${getSlotAccessColor(
-                  slot.slot_tier
-                )}`}
-              >
-                {getSlotAccessLabel(slot.slot_tier)}
-              </span>
-              {eligibility.isWithin24h && (
-                <span className="ml-2 text-xs font-medium text-blue-600">
-                  Last Chance
-                </span>
-              )}
-            </>
           )}
         </div>
 
