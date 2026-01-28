@@ -5,32 +5,61 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase-client'
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [fullName, setFullName] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+        },
+      })
 
-    if (error) {
-      setError(error.message)
+      if (authError) throw authError
+
+      if (authData.user) {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: authData.user.id,
+            email: authData.user.email,
+            full_name: fullName,
+            role: 'diner',
+            diner_tier: 'free',
+          })
+
+        if (profileError) {
+          console.error('Profile creation error:', profileError)
+        }
+
+        alert('Account created successfully! Please check your email to verify your account.')
+        router.push('/login')
+      }
+    } catch (error: any) {
+      console.error('Signup error:', error)
+      setError(error.message || 'Failed to create account')
+    } finally {
       setLoading(false)
-    } else {
-      router.push('/home')
     }
   }
 
-  const handleLinkedInLogin = async () => {
+  const handleLinkedInSignup = async () => {
     setError('')
     setLoading(true)
 
@@ -55,8 +84,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
-          <p className="mt-2 text-gray-600">Sign in to your account</p>
+          <h1 className="text-3xl font-bold text-gray-900">Create your account</h1>
+          <p className="mt-2 text-gray-600">Join London's dining community</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
@@ -66,9 +95,9 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* LinkedIn Login */}
+          {/* LinkedIn Signup */}
           <button
-            onClick={handleLinkedInLogin}
+            onClick={handleLinkedInSignup}
             disabled={loading}
             className="w-full flex items-center justify-center gap-3 bg-[#0A66C2] text-white py-3 rounded-lg hover:bg-[#004182] transition-colors disabled:opacity-50 font-medium mb-4"
           >
@@ -83,12 +112,27 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or sign in with email</span>
+              <span className="px-2 bg-white text-gray-500">Or sign up with email</span>
             </div>
           </div>
 
-          {/* Email Login */}
-          <form onSubmit={handleEmailLogin} className="space-y-4">
+          {/* Email Signup */}
+          <form onSubmit={handleEmailSignup} className="space-y-4">
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                Full Name
+              </label>
+              <input
+                id="fullName"
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                placeholder="John Smith"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
@@ -116,6 +160,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 placeholder="••••••••"
+                minLength={6}
               />
             </div>
 
@@ -124,14 +169,14 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 font-medium"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Creating account...' : 'Create account'}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link href="/signup" className="font-medium text-gray-900 hover:underline">
-              Sign up
+            Already have an account?{' '}
+            <Link href="/login" className="font-medium text-gray-900 hover:underline">
+              Sign in
             </Link>
           </p>
         </div>
