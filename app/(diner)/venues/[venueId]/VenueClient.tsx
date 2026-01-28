@@ -263,7 +263,12 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           </div>
         </div>
 
-        {venue.description && <p className="text-gray-700 max-w-3xl">{venue.description}</p>}
+        {venue.description && (
+          <div className="text-gray-700 max-w-3xl whitespace-pre-line">
+            {venue.description}
+          </div>
+        )}
+
       </div>
 
       <div className="card">

@@ -160,9 +160,23 @@ export default function EditVenuePage() {
             required
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-3 py-2 border rounded-md"
-            rows={3}
+            rows={8}
+            placeholder="Enter description. Press Enter for new paragraphs."
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm"
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Tip: Press Enter twice for paragraph breaks
+          </p>
+          
+          {/* Preview */}
+          {formData.description && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-xs font-semibold text-gray-700 mb-2">Preview:</p>
+              <div className="text-gray-700 whitespace-pre-line">
+                {formData.description}
+              </div>
+            </div>
+          )}
         </div>
 
         <div>
