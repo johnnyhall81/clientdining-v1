@@ -1,0 +1,22 @@
+# ClientDining - Robots.txt
+# Allow search engines to index public pages
+
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /faq
+Allow: /terms
+Allow: /privacy
+
+# Block private areas
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /venue
+Disallow: /venue/*
+Disallow: /account
+Disallow: /bookings
+Disallow: /alerts
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://www.clientdining.com/sitemap.xml
