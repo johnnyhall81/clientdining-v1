@@ -26,11 +26,6 @@ interface SearchResult {
   }
 }
 
-interface Venue {
-  id: string
-  name: string
-}
-
 export default function SearchPage() {
   const router = useRouter()
   const { user } = useAuth()
@@ -39,32 +34,13 @@ export default function SearchPage() {
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
-  const [venues, setVenues] = useState<Venue[]>([])
 
   const [filters, setFilters] = useState({
     date: '',
     area: '',
     partySize: 2,
     within24h: false,
-    tier: 'all' as 'all' | 'free' | 'premium',
-    venueId: '',
   })
-
-  // Load venues for dropdown
-  useEffect(() => {
-    const loadVenues = async () => {
-      const { data, error } = await supabase
-        .from('venues')
-        .select('id, name')
-        .eq('is_active', true)
-        .order('name')
-
-      if (!error && data) {
-        setVenues(data)
-      }
-    }
-    loadVenues()
-  }, [])
 
   useEffect(() => {
     handleSearch()
@@ -74,7 +50,7 @@ export default function SearchPage() {
       setAlerts(new Set())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.date, filters.area, filters.partySize, filters.within24h, filters.tier, filters.venueId, user])
+  }, [filters.date, filters.area, filters.partySize, filters.within24h, user])
 
   useEffect(() => {
     if (!user) {
@@ -121,10 +97,12 @@ export default function SearchPage() {
       const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        const message = data?.error || 'Could not cancel booking'
-        alert(message)
+        const message = data?.error || 'Could not create booking'
+        alert(message) // popup only
+        setBookingSlotId(null)
         return
       }
+      
       
       setBookedSlots((prev) => {
         const next = new Set(prev)
@@ -165,7 +143,6 @@ export default function SearchPage() {
         party_max,
         slot_tier,
         status,
-        venue_id,
         venues!inner (
           id,
           name,
@@ -200,16 +177,6 @@ export default function SearchPage() {
       const in24h = new Date()
       in24h.setHours(in24h.getHours() + 24)
       query = query.lte('start_at', in24h.toISOString())
-    }
-
-    // Filter by tier
-    if (filters.tier !== 'all') {
-      query = query.eq('slot_tier', filters.tier)
-    }
-
-    // Filter by venue
-    if (filters.venueId) {
-      query = query.eq('venue_id', filters.venueId)
     }
 
     const { data, error } = await query
@@ -257,6 +224,7 @@ export default function SearchPage() {
         setBookingSlotId(null)
         return
       }
+      
 
       // flip this slot immediately to "Confirmed / Cancel"
       setBookedSlots((prev) => {
@@ -269,37 +237,6 @@ export default function SearchPage() {
     } catch (error) {
       console.error('Booking error:', error)
       setBookingSlotId(null)
-    }
-  }
-
-  const handleToggleAlert = async (slotId: string) => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    const isActive = alerts.has(slotId)
-
-    try {
-      const response = await fetch('/api/alerts', {
-        method: isActive ? 'DELETE' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId }),
-      })
-
-      if (response.ok) {
-        setAlerts((prev) => {
-          const next = new Set(prev)
-          if (isActive) {
-            next.delete(slotId)
-          } else {
-            next.add(slotId)
-          }
-          return next
-        })
-      }
-    } catch (error) {
-      console.error('Alert toggle error:', error)
     }
   }
 
@@ -319,43 +256,38 @@ export default function SearchPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {/* Date */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
             <input
               type="date"
               value={filters.date}
               onChange={(e) => setFilters({ ...filters, date: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             />
           </div>
 
-          {/* Area */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Area</label>
             <select
               value={filters.area}
               onChange={(e) => setFilters({ ...filters, area: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             >
               <option value="">All Areas</option>
               <option value="Mayfair">Mayfair</option>
               <option value="Notting Hill">Notting Hill</option>
               <option value="Piccadilly">Piccadilly</option>
               <option value="Soho">Soho</option>
-              <option value="Knightsbridge">Knightsbridge</option>
-              <option value="Belgravia">Belgravia</option>
             </select>
           </div>
 
-          {/* Party Size */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Party Size</label>
             <select
               value={filters.partySize}
               onChange={(e) => setFilters({ ...filters, partySize: parseInt(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             >
               {[2, 3, 4, 5, 6, 7, 8].map((size) => (
                 <option key={size} value={size}>
@@ -365,47 +297,15 @@ export default function SearchPage() {
             </select>
           </div>
 
-          {/* Tier Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tier</label>
-            <select
-              value={filters.tier}
-              onChange={(e) => setFilters({ ...filters, tier: e.target.value as 'all' | 'free' | 'premium' })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-            >
-              <option value="all">All Tiers</option>
-              <option value="free">Free</option>
-              <option value="premium">Premium</option>
-            </select>
-          </div>
-
-          {/* Venue Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Venue</label>
-            <select
-              value={filters.venueId}
-              onChange={(e) => setFilters({ ...filters, venueId: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-            >
-              <option value="">All Venues</option>
-              {venues.map((venue) => (
-                <option key={venue.id} value={venue.id}>
-                  {venue.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Within 24h Checkbox */}
           <div className="flex items-end">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={filters.within24h}
                 onChange={(e) => setFilters({ ...filters, within24h: e.target.checked })}
-                className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                className="w-4 h-4"
               />
-              <span className="text-sm text-gray-700">Within 24h</span>
+              <span className="text-sm text-gray-700">Within 24 hours</span>
             </label>
           </div>
         </div>
@@ -413,14 +313,10 @@ export default function SearchPage() {
 
       {/* Results */}
       {loading ? (
-        <div className="text-center py-12">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-gray-900 border-r-transparent"></div>
-          <p className="mt-4 text-gray-600">Searching...</p>
-        </div>
+        <div className="text-center py-12">Loading...</div>
       ) : results.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <p className="text-gray-600">No slots found matching your criteria.</p>
-          <p className="text-sm text-gray-500 mt-2">Try adjusting your filters</p>
+        <div className="text-center py-12 bg-white rounded-lg border">
+          <p className="text-gray-500">No available slots found. Try adjusting your filters.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
@@ -468,13 +364,13 @@ export default function SearchPage() {
                       ) : (
                         <>
                           {slot.slot_tier === 'premium' && (
-                            <span className="text-amber-600 font-medium">Premium</span>
+                            <span className="text-orange-600 font-medium">Premium</span>
                           )}
                           {slot.slot_tier === 'free' && (
                             <span className="text-green-600 font-medium">Free</span>
                           )}
                           {lastMinute && (
-                            <span className="text-blue-600 font-medium">Last minute</span>
+                            <span className="text-blue-600 font-medium">Last Chance</span>
                           )}
                         </>
                       )}
@@ -503,11 +399,26 @@ export default function SearchPage() {
                           ].join(' ')}
                           
                         >
-                          {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
+                          {bookingSlotId === slot.id ? 'Booking…' : 'Book'}
                         </button>
+
                       </div>
                     ) : (
-                      <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
+                      <div className="flex items-center gap-2">
+                        <AlertToggle
+                          slotId={slot.id}
+                          isActive={hasAlert}
+                          requireLogin={!user}
+                          onRequireLogin={() => router.push('/login')}
+                          onStateChange={(nextActive) => {
+                            const next = new Set(alerts)
+                            if (nextActive) next.add(slot.id)
+                            else next.delete(slot.id)
+                            setAlerts(next)
+                          }}
+                        />
+
+                      </div>
                     )}
                   </div>
                 </div>

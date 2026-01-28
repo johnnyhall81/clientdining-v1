@@ -74,7 +74,7 @@ export default function SlotRow({
               </span>
               {eligibility.isWithin24h && (
                 <span className="ml-2 text-xs font-medium text-blue-600">
-                  Last minute
+                  Last Chance
                 </span>
               )}
             </>
