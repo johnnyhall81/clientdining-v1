@@ -2,6 +2,7 @@
 
 import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatFullDateTime } from '@/lib/date-utils'
+import Link from 'next/link'
 
 interface BookingCardProps {
   booking: Booking
@@ -11,52 +12,64 @@ interface BookingCardProps {
 }
 
 export default function BookingCard({ booking, venue, slot, onCancel }: BookingCardProps) {
-  console.log('Slot start_at:', slot.start_at, 'Type:', typeof slot.start_at)
-  console.log('Formatted:', formatFullDateTime(slot.start_at))
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
   
   return (
-    <div className={`card ${isCancelled ? 'opacity-60' : ''}`}>
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h3 className="font-semibold text-lg text-gray-900">{venue.name}</h3>
-          <p className="text-sm text-gray-600">{venue.area}</p>
-        </div>
-        {isCancelled && (
-          <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">
-            Cancelled
-          </span>
-        )}
-      </div>
-      
-      <div className="space-y-2 mb-4">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-600">📅</span>
-          <span className="text-gray-900">{formatFullDateTime(slot.start_at)}</span>
-        </div>
-        
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-600">👥</span>
-          <span className="text-gray-900">{booking.party_size} guests</span>
-        </div>
-        
-        {booking.notes && (
-          <div className="flex items-start gap-2 text-sm">
-            <span className="text-gray-600">📝</span>
-            <span className="text-gray-700">{booking.notes}</span>
-          </div>
-        )}
-      </div>
-      
-      {!isCancelled && !isPast && (
-        <button
-          onClick={() => onCancel(booking.id)}
-          className="w-full text-sm text-red-600 hover:text-red-700 font-medium py-2 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
+    <div className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 ${isCancelled ? 'opacity-60' : ''}`}>
+      <div className="flex items-center justify-between gap-4">
+        <Link 
+          href={`/venues/${venue.id}`} 
+          className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
         >
-          Cancel Booking
-        </button>
-      )}
+          {venue.image_venue && (
+            <img
+              src={venue.image_venue}
+              alt={venue.name}
+              className="w-16 h-16 rounded object-cover"
+            />
+          )}
+          <div>
+            <h3 className="font-semibold text-lg text-gray-900 hover:underline">{venue.name}</h3>
+            <p className="text-sm text-gray-600">{venue.area}</p>
+            <div className="flex items-center gap-3 mt-1 text-sm flex-wrap">
+              <span className="text-gray-700">
+                {formatFullDateTime(slot.start_at)}
+              </span>
+              <span className="text-gray-600">
+                {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
+              </span>
+              {isCancelled && (
+                <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
+                  Cancelled
+                </span>
+              )}
+              {!isCancelled && !isPast && (
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                  Confirmed
+                </span>
+              )}
+              {!isCancelled && isPast && (
+                <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full font-medium">
+                  Completed
+                </span>
+              )}
+            </div>
+            {booking.notes && (
+              <p className="text-sm text-gray-500 mt-2">Note: {booking.notes}</p>
+            )}
+          </div>
+        </Link>
+
+        {!isCancelled && !isPast && (
+          <button
+            onClick={() => onCancel(booking.id)}
+            className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-red-500 text-red-600 hover:bg-red-50 transition-colors"
+          >
+            Cancel
+          </button>
+        )}
+      </div>
     </div>
   )
 }
