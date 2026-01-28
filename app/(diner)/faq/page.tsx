@@ -146,7 +146,7 @@ export default function FAQPage() {
       questions: [
         {
           q: 'What types of venues are on ClientDining?',
-          a: 'A curated selection of leading restaurants and private members' clubs in London, suitable for client meetings, team celebrations, and corporate events.'
+          a: 'A curated selection of leading restaurants and private members\' clubs in London, suitable for client meetings, team celebrations, and corporate events.'
         },
         {
           q: 'Can I book any venue as a Standard member?',
