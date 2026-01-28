@@ -1,5 +1,19 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Cormorant_Garamond, Inter } from 'next/font/google'
+import './globals.css'
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-cormorant',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
+})
+
 import { AuthProvider } from '@/contexts/AuthContext'
 import { Analytics } from "@vercel/analytics/next"
 
@@ -53,7 +67,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${inter.variable} ${cormorant.variable}`}>
         <AuthProvider>
           {children}
           <Analytics />
