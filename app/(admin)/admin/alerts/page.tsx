@@ -374,7 +374,7 @@ export default function AdminAlertsPage() {
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(alert.diner.email)
-                            alert('Email copied to clipboard!')
+                            window.alert('Email copied to clipboard!')
                           }}
                           className="ml-3 text-gray-600 hover:text-gray-800 font-medium"
                         >
@@ -450,7 +450,7 @@ export default function AdminAlertsPage() {
                             <button
                               onClick={() => {
                                 navigator.clipboard.writeText(slot.diner_emails.join(', '))
-                                alert('Emails copied to clipboard!')
+                                window.alert('Emails copied to clipboard!')
                               }}
                               className="text-xs text-gray-600 hover:text-gray-800 font-medium"
                             >
