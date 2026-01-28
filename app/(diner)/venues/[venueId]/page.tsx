@@ -15,6 +15,7 @@ export default async function VenuePage({ params }: { params: { venueId: string 
     .from('venues')
     .select('*')
     .eq('id', params.venueId)
+    .eq('is_active', true)
     .single()
 
   if (error || !venue) {
