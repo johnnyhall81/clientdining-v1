@@ -22,6 +22,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
   const [showPremiumModal, setShowPremiumModal] = useState(false)
   const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
+  const [futureBookingsCount, setFutureBookingsCount] = useState(0)
 
   // Load existing alerts
   useEffect(() => {
@@ -69,6 +70,30 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     }
     loadUserTier()
   }, [user])
+
+  // Load future bookings count
+  useEffect(() => {
+    const loadFutureBookingsCount = async () => {
+      if (!user) {
+        setFutureBookingsCount(0)
+        return
+      }
+
+      const nowIso = new Date().toISOString()
+      
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .gte('slot_start_at', nowIso)
+
+      if (!error && data) {
+        setFutureBookingsCount(data.length || 0)
+      }
+    }
+    loadFutureBookingsCount()
+  }, [user, bookedSlots]) // Recount when bookings change
 
   // Load my bookings for the slots on this venue page
   useEffect(() => {
@@ -249,7 +274,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 key={slot.id}
                 slot={slot}
                 dinerTier={dinerTier}
-                currentFutureBookings={0}
+                currentFutureBookings={futureBookingsCount}
                 onBook={handleBook}
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}
