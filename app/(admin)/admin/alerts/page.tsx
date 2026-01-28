@@ -81,11 +81,6 @@ export default function AdminAlertsPage() {
               name,
               area
             )
-          ),
-          profiles!slot_alerts_diner_user_id_fkey (
-            user_id,
-            email,
-            full_name
           )
         `)
         .order('created_at', { ascending: false })
@@ -96,35 +91,64 @@ export default function AdminAlertsPage() {
 
       const { data, error } = await query
 
-      if (error) throw error
+      if (error) {
+        console.error('Error loading alerts:', error)
+        throw error
+      }
+
+      console.log('Alerts data:', data)
+      console.log('Number of alerts loaded:', data?.length || 0)
+
+      // Get unique diner user IDs
+      const dinerUserIds = [...new Set((data || []).map((item: any) => item.diner_user_id))]
+      
+      // Fetch diner profiles
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, email, full_name')
+        .in('user_id', dinerUserIds)
+
+      // Create a map of user_id to profile
+      const profileMap = new Map()
+      profiles?.forEach((profile: any) => {
+        profileMap.set(profile.user_id, profile)
+      })
 
       // Transform the data
-      const transformedAlerts: Alert[] = (data || []).map((item: any) => ({
-        id: item.id,
-        slot_id: item.slot_id,
-        diner_user_id: item.diner_user_id,
-        status: item.status,
-        created_at: item.created_at,
-        slot: {
-          id: item.slots.id,
-          start_at: item.slots.start_at,
-          party_min: item.slots.party_min,
-          party_max: item.slots.party_max,
-          slot_tier: item.slots.slot_tier,
-          status: item.slots.status,
-          venue_id: item.slots.venue_id,
-        },
-        venue: {
-          id: item.slots.venues.id,
-          name: item.slots.venues.name,
-          area: item.slots.venues.area,
-        },
-        diner: {
-          user_id: item.profiles.user_id,
-          email: item.profiles.email,
-          full_name: item.profiles.full_name,
-        },
-      }))
+      const transformedAlerts: Alert[] = (data || []).map((item: any) => {
+        const dinerProfile = profileMap.get(item.diner_user_id) || {
+          user_id: item.diner_user_id,
+          email: 'Unknown',
+          full_name: null,
+        }
+
+        return {
+          id: item.id,
+          slot_id: item.slot_id,
+          diner_user_id: item.diner_user_id,
+          status: item.status,
+          created_at: item.created_at,
+          slot: {
+            id: item.slots.id,
+            start_at: item.slots.start_at,
+            party_min: item.slots.party_min,
+            party_max: item.slots.party_max,
+            slot_tier: item.slots.slot_tier,
+            status: item.slots.status,
+            venue_id: item.slots.venue_id,
+          },
+          venue: {
+            id: item.slots.venues.id,
+            name: item.slots.venues.name,
+            area: item.slots.venues.area,
+          },
+          diner: {
+            user_id: dinerProfile.user_id,
+            email: dinerProfile.email,
+            full_name: dinerProfile.full_name,
+          },
+        }
+      })
 
       setAlerts(transformedAlerts)
 
