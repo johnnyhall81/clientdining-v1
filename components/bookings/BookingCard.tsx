@@ -3,6 +3,7 @@
 import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface BookingCardProps {
   booking: Booking
@@ -22,13 +23,17 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           href={`/venues/${venue.id}`} 
           className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
         >
-          {venue.image_venue && (
-            <img
+        {venue.image_venue && (
+          <div className="relative w-16 h-16 flex-shrink-0">
+            <Image
               src={venue.image_venue}
               alt={venue.name}
-              className="w-16 h-16 rounded object-cover"
+              fill
+              sizes="64px"
+              className="rounded object-cover"
             />
-          )}
+          </div>
+        )}
           <div>
             <h3 className="font-semibold text-lg text-gray-900 hover:underline">{venue.name}</h3>
             <p className="text-sm text-gray-600">{venue.area}</p>
