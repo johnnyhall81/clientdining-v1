@@ -160,6 +160,7 @@ export default function UsersPage() {
           <tbody className="bg-white divide-y divide-gray-200">
             {users.map((user) => (
               <tr key={user.user_id} className="hover:bg-gray-50">
+                
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-3">
                     {user.avatar_url ? (
@@ -205,6 +206,11 @@ export default function UsersPage() {
                     </div>
                   </div>
                 </td>
+
+
+
+
+
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600">{user.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <select
