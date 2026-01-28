@@ -13,6 +13,9 @@ interface BookingEmailData {
 }
 
 export async function sendBookingConfirmation(data: BookingEmailData) {
+  console.log('🔑 RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY)
+  console.log('🔑 Key starts with:', process.env.RESEND_API_KEY?.substring(0, 10))
+  
   console.log('🔵 sendBookingConfirmation called with:', {
     userEmail: data.userEmail,
     userName: data.userName,
@@ -23,7 +26,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
     console.log('🟢 Calling Resend API...')
     
     const result = await resend.emails.send({
-      from: 'ClientDining <onboarding@resend.dev>',
+      from: 'ClientDining <notifications@clientdining.com>',
       to: data.userEmail,
       subject: `Booking Confirmed: ${data.venueName}`,
       html: `
