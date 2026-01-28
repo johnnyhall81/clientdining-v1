@@ -13,8 +13,16 @@ interface BookingEmailData {
 }
 
 export async function sendBookingConfirmation(data: BookingEmailData) {
+  console.log('🔵 sendBookingConfirmation called with:', {
+    userEmail: data.userEmail,
+    userName: data.userName,
+    venueName: data.venueName
+  })
+  
   try {
-    await resend.emails.send({
+    console.log('🟢 Calling Resend API...')
+    
+    const result = await resend.emails.send({
       from: 'ClientDining <onboarding@resend.dev>',
       to: data.userEmail,
       subject: `Booking Confirmed: ${data.venueName}`,
@@ -53,10 +61,10 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
       `
     })
     
-    console.log('✅ Booking email sent to:', data.userEmail)
+    console.log('✅ Resend API success:', result)
     return { success: true }
   } catch (error) {
-    console.error('❌ Failed to send email :', error)
-    return { success: false, error }
+    console.error('❌ Resend API error:', error)
+    throw error
   }
 }
