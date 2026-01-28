@@ -29,7 +29,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/search" className="text-gray-600 hover:text-gray-900 text-sm">
-                  Search Venues
+                  Search
                 </Link>
               </li>
             </ul>
