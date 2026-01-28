@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
+
 import { formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface AlertWithDetails {
   id: string
@@ -177,13 +179,17 @@ export default function AlertsPage() {
             <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
               <div className="flex items-center justify-between gap-4">
                 <Link href={`/venues/${alert.venue.id}`} className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity">
-                  {alert.venue.image_venue && (
-                    <img
+                {alert.venue.image_venue && (
+                  <div className="relative w-16 h-16 flex-shrink-0">
+                    <Image
                       src={alert.venue.image_venue}
                       alt={alert.venue.name}
-                      className="w-16 h-16 rounded object-cover"
+                      fill
+                      sizes="64px"
+                      className="rounded object-cover"
                     />
-                  )}
+                  </div>
+                )}
                   <div>
                     <h3 className="font-semibold text-lg text-gray-900 hover:underline">{alert.venue.name}</h3>
                     <p className="text-sm text-gray-600">{alert.venue.area}</p>
