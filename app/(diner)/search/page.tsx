@@ -501,10 +501,12 @@ export default function SearchPage() {
                   </Link>
 
                   <div className="flex items-center gap-3">
-                    {/* Tier badges OR Confirmed */}
+                    {/* Status */}
                     <div className="flex items-center gap-2 text-sm">
                       {isBookedByMe && (
-                        <span className="text-green-700 font-medium">Confirmed</span>
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                          Confirmed
+                        </span>
                       )}
                     </div>
 
