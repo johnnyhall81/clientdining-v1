@@ -110,7 +110,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         return
       }
 
-      // Mark as booked locally so the row flips to Going/Cancel immediately
+      // Mark as booked locally so the row flips to Confirmed/Cancel immediately
       setBookedSlots((prev) => {
         const next = new Set(prev)
         next.add(slotId)

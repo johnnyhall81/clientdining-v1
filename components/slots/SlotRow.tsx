@@ -62,7 +62,7 @@ export default function SlotRow({
         {/* Access / status */}
         <div>
           {isBookedByMe ? (
-            <span className="text-xs font-medium text-gray-700">Going</span>
+            <span className="text-xs font-medium text-green-700">Confirmed</span>
           ) : (
             <>
               <span
