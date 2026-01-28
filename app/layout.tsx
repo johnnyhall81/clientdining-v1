@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import { Cormorant_Garamond, Inter } from 'next/font/google'
 import './globals.css'
 
@@ -67,12 +68,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${cormorant.variable}`}>
-        <AuthProvider>
-          {children}
-          <Analytics />
-        </AuthProvider>
-      </body>
+    <body className={`${inter.variable} ${cormorant.variable}`}>
+      <AuthProvider>
+        {children}
+        <Analytics />
+      </AuthProvider>
+      <GoogleAnalytics gaId="G-CYRRR3H4T9" />
+    </body>
     </html>
   );
 }
