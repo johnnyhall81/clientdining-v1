@@ -1,11 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Commented out for local development
-  // output: 'export',
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'xdgpwhfsbquczvttlsgw.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
-  trailingSlash: true,
 }
 
 module.exports = nextConfig
