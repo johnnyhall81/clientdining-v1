@@ -79,8 +79,6 @@ export default function SlotRow({
               Cancel
             </button>
 
-          ) : !isAvailable ? (
-            <span className="text-sm text-gray-500">Unavailable</span>
           ) : eligibility.requiresPremium && !eligibility.isWithin24h && onUnlock ? (
             <button
               type="button"
@@ -92,7 +90,7 @@ export default function SlotRow({
               </svg>
               Unlock
             </button>
-          ) : eligibility.canBook ? (
+          ) : isAvailable && eligibility.canBook ? (
             <button
               type="button"
               onClick={() => onBook(slot.id)}
