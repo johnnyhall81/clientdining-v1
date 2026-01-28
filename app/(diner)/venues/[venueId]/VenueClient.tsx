@@ -6,6 +6,7 @@ import { Venue, Slot } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import SlotRow from '@/components/slots/SlotRow'
+import PremiumUnlockModal from '@/components/modals/PremiumUnlockModal'
 
 interface VenueClientProps {
   venue: Venue
@@ -19,6 +20,8 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlot, setBookingSlot] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
+  const [showPremiumModal, setShowPremiumModal] = useState(false)
+  const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
 
   // Load existing alerts
   useEffect(() => {
@@ -44,6 +47,27 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     }
 
     loadAlerts()
+  }, [user])
+
+  // Load user tier
+  useEffect(() => {
+    const loadUserTier = async () => {
+      if (!user) {
+        setDinerTier('free')
+        return
+      }
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('diner_tier')
+        .eq('user_id', user.id)
+        .single()
+
+      if (data) {
+        setDinerTier(data.diner_tier)
+      }
+    }
+    loadUserTier()
   }, [user])
 
   // Load my bookings for the slots on this venue page
@@ -224,18 +248,25 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
               <SlotRow
                 key={slot.id}
                 slot={slot}
-                dinerTier="free"
+                dinerTier={dinerTier}
                 currentFutureBookings={0}
                 onBook={handleBook}
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}
                 isBookedByMe={bookedSlots.has(slot.id)}
                 onCancel={handleCancel}
+                onUnlock={() => setShowPremiumModal(true)}
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* Premium Unlock Modal */}
+      <PremiumUnlockModal 
+        isOpen={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+      />
     </div>
   )
 }
