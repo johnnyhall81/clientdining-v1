@@ -75,10 +75,10 @@ export default function FAQPage() {
         },
         {
           q: 'Can I cancel a booking?',
-          a: 'Yes. Cancellations are managed through your account. Late cancellations may affect future access to that venue's availability.'
+          a: 'Yes. Cancellations are managed through your account. Late cancellations may affect future access to that venue\'s availability.'
         },
         {
-          q: 'What happens if I don't show up?',
+          q: 'What happens if I don\'t show up?',
           a: 'No-shows impact venues and other members. Repeated no-shows may result in booking restrictions or account suspension.'
         },
         {
@@ -95,7 +95,7 @@ export default function FAQPage() {
       title: 'Membership Tiers',
       questions: [
         {
-          q: 'What's the difference between Standard and Premium?',
+          q: 'What\'s the difference between Standard and Premium?',
           a: 'Standard members can book standard tables and any slot within 24 hours, holding up to 3 future bookings. Premium members (£49/month) can access premium slots in advance and hold up to 10 future bookings.'
         },
         {
