@@ -257,7 +257,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
             </div>
             {venue.address && (
               <p className="text-sm text-gray-600">
-                📍 {venue.address}
+                📍 {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
               </p>
             )}
           </div>
@@ -272,7 +272,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       </div>
 
       <div className="card">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Tables</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Avail able Tables</h2>
 
         {slots.length === 0 ? (
           <p className="text-gray-500">No tables available at this time.</p>
