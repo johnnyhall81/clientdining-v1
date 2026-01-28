@@ -14,7 +14,7 @@ interface SearchResult {
     start_at: string
     party_min: number
     party_max: number
-    slot_tier: 'standard' | 'premium'
+    slot_tier: 'free' | 'premium'
     status: string
   }
   venue: {
@@ -46,7 +46,7 @@ export default function SearchPage() {
     area: '',
     partySize: 2,
     within24h: false,
-    tier: 'all' as 'all' | 'standard' | 'premium',
+    tier: 'all' as 'all' | 'free' | 'premium',
     venueId: '',
   })
 
@@ -202,12 +202,12 @@ export default function SearchPage() {
       query = query.lte('start_at', in24h.toISOString())
     }
 
-    // NEW: Filter by tier
+    // Filter by tier
     if (filters.tier !== 'all') {
       query = query.eq('slot_tier', filters.tier)
     }
 
-    // NEW: Filter by venue
+    // Filter by venue
     if (filters.venueId) {
       query = query.eq('venue_id', filters.venueId)
     }
@@ -365,21 +365,21 @@ export default function SearchPage() {
             </select>
           </div>
 
-          {/* NEW: Tier Filter */}
+          {/* Tier Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Tier</label>
             <select
               value={filters.tier}
-              onChange={(e) => setFilters({ ...filters, tier: e.target.value as 'all' | 'standard' | 'premium' })}
+              onChange={(e) => setFilters({ ...filters, tier: e.target.value as 'all' | 'free' | 'premium' })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
               <option value="all">All Tiers</option>
-              <option value="standard">Free</option>
+              <option value="free">Free</option>
               <option value="premium">Premium</option>
             </select>
           </div>
 
-          {/* NEW: Venue Filter */}
+          {/* Venue Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Venue</label>
             <select
@@ -470,7 +470,7 @@ export default function SearchPage() {
                           {slot.slot_tier === 'premium' && (
                             <span className="text-amber-600 font-medium">Premium</span>
                           )}
-                          {slot.slot_tier === 'standard' && (
+                          {slot.slot_tier === 'free' && (
                             <span className="text-green-600 font-medium">Free</span>
                           )}
                           {lastMinute && (
