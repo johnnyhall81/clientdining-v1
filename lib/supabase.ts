@@ -12,6 +12,9 @@ export interface Venue {
   venue_type: 'restaurant' | 'club'
   description: string
   address?: string
+  postcode?: string
+  phone?: string
+  booking_email?: string
   image_venue?: string
   image_food?: string
   is_active: boolean
