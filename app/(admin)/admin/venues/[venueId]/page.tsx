@@ -18,6 +18,9 @@ export default function EditVenuePage() {
     venue_type: 'restaurant' as 'restaurant' | 'club',
     description: '',
     address: '',
+    postcode: '',
+    phone: '',
+    booking_email: '',
     image_venue: '',
     image_food: '',
   })
@@ -50,6 +53,9 @@ export default function EditVenuePage() {
       venue_type: data.venue_type,
       description: data.description,
       address: data.address || '',
+      postcode: data.postcode || '',
+      phone: data.phone || '',
+      booking_email: data.booking_email || '',
       image_venue: data.image_venue || '',
       image_food: data.image_food || '',
     })
@@ -168,7 +174,6 @@ export default function EditVenuePage() {
             Tip: Press Enter twice for paragraph breaks
           </p>
           
-          {/* Preview */}
           {formData.description && (
             <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <p className="text-xs font-semibold text-gray-700 mb-2">Preview:</p>
@@ -185,6 +190,41 @@ export default function EditVenuePage() {
             type="text"
             value={formData.address}
             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Postcode</label>
+            <input
+              type="text"
+              placeholder="W1K 1AB"
+              value={formData.postcode}
+              onChange={(e) => setFormData({ ...formData, postcode: e.target.value })}
+              className="w-full px-3 py-2 border rounded-md"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Phone</label>
+            <input
+              type="tel"
+              placeholder="+44 20 1234 5678"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="w-full px-3 py-2 border rounded-md"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Booking Email</label>
+          <input
+            type="email"
+            placeholder="reservations@venue.com"
+            value={formData.booking_email}
+            onChange={(e) => setFormData({ ...formData, booking_email: e.target.value })}
             className="w-full px-3 py-2 border rounded-md"
           />
         </div>
