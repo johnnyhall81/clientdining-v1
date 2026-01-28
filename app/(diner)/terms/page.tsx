@@ -44,7 +44,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">4. Membership Tiers</h2>
             
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">4.1 Free Membership</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">4.1 Standard Membership</h3>
             <ul className="list-disc ml-6 space-y-2">
               <li>Access to standard restaurant bookings</li>
               <li>Ability to book any slot within 24 hours</li>
@@ -54,7 +54,7 @@ export default function TermsPage() {
   
             <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-4">4.2 Premium Membership (£49/month)</h3>
             <ul className="list-disc ml-6 space-y-2">
-              <li>All Free tier benefits</li>
+              <li>All Standard tier benefits</li>
               <li>Access to premium slots more than 24 hours in advance</li>
               <li>Maximum of 10 future bookings</li>
               <li>Priority alert notifications</li>
@@ -107,7 +107,7 @@ export default function TermsPage() {
   
             <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-4">7.2 Failed Payments</h3>
             <p>
-              If payment fails, you will have a grace period to update your payment method. Failure to resolve payment issues will result in downgrade to Free tier.
+              If payment fails, you will have a grace period to update your payment method. Failure to resolve payment issues will result in downgrade to Standard tier.
             </p>
   
             <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-4">7.3 Refunds</h3>

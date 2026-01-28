@@ -173,7 +173,7 @@ export default function UsersPage() {
                     onChange={(e) => updateUserTier(user.user_id, e.target.value as 'free' | 'premium')}
                     className="text-sm border border-gray-300 rounded px-2 py-1"
                   >
-                    <option value="free">Free</option>
+                    <option value="free">Standard</option>
                     <option value="premium">Premium</option>
                   </select>
                 </td>

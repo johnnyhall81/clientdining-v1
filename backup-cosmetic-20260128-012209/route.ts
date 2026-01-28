@@ -98,7 +98,7 @@ export async function POST(request: Request) {
         {
           error: `Booking limit reached (${currentFutureBookings}/${maxBookings}). ${
             profile.diner_tier === 'free'
-              ? 'Standard users can have up to 3 future bookings. Upgrade to Premium for 10.'
+              ? 'Free users can have up to 3 future bookings. Upgrade to Premium for 10.'
               : 'Premium users can have up to 10 future bookings.'
           }`,
         },

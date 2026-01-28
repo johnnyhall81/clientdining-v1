@@ -236,7 +236,7 @@ export default function AdminSlotsPage() {
                   onChange={(e) => setBulkForm({ ...bulkForm, slotTier: e.target.value as any })}
                   className="w-full px-3 py-2 border rounded-md"
                 >
-                  <option value="free">Standard</option>
+                  <option value="free">Free</option>
                   <option value="premium">Premium</option>
                 </select>
               </div>
