@@ -165,7 +165,7 @@ export default function UsersPage() {
                   <div className="flex items-center gap-3">
                     {user.avatar_url ? (
                       
-                        href={`https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(
+                       <a href={`https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(
                           user.full_name || user.email || ''
                         )}`}
                         target="_blank"
@@ -190,7 +190,7 @@ export default function UsersPage() {
                       <span className="font-medium text-gray-900">{user.full_name || 'N/A'}</span>
                       {user.is_professionally_verified && (
                         
-                          href={`https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(
+                         <a href={`https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(
                             user.full_name || user.email || ''
                           )}`}
                           target="_blank"
