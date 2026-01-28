@@ -94,6 +94,16 @@ export default function AdminLayout({
                 Bookings
               </Link>
               <Link
+                href="/admin/alerts"
+                className={`text-sm font-medium transition-colors ${
+                  isActive('/admin/alerts')
+                    ? 'text-white'
+                    : 'text-gray-300 hover:text-white'
+                }`}
+              >
+                Alerts
+              </Link>
+              <Link
                 href="/admin/users"
                 className={`text-sm font-medium transition-colors ${
                   isActive('/admin/users')
