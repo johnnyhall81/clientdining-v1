@@ -60,102 +60,25 @@ export default function AdminAlertsPage() {
   const loadAlerts = async () => {
     setLoading(true)
     try {
-      let query = supabase
-        .from('slot_alerts')
-        .select(`
-          id,
-          slot_id,
-          diner_user_id,
-          status,
-          created_at,
-          slots!inner (
-            id,
-            start_at,
-            party_min,
-            party_max,
-            slot_tier,
-            status,
-            venue_id,
-            venues!inner (
-              id,
-              name,
-              area
-            )
-          )
-        `)
-        .order('created_at', { ascending: false })
+      console.log('📡 Calling admin alerts API with status:', filterStatus)
 
-      if (filterStatus !== 'all') {
-        query = query.eq('status', filterStatus)
-      }
-
-      const { data, error } = await query
-
-      if (error) {
-        console.error('Error loading alerts:', error)
-        throw error
-      }
-
-      console.log('Alerts data:', data)
-      console.log('Number of alerts loaded:', data?.length || 0)
-
-      // Get unique diner user IDs
-      const dinerUserIds = Array.from(new Set((data || []).map((item: any) => item.diner_user_id)))
+      // Call our new API route instead of querying Supabase directly
+      const response = await fetch(`/api/admin/alerts?status=${filterStatus}`)
       
-      // Fetch diner profiles
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('user_id, email, full_name')
-        .in('user_id', dinerUserIds)
+      if (!response.ok) {
+        throw new Error('Failed to load alerts')
+      }
 
-      // Create a map of user_id to profile
-      const profileMap = new Map()
-      profiles?.forEach((profile: any) => {
-        profileMap.set(profile.user_id, profile)
-      })
+      const { alerts: transformedAlerts } = await response.json()
 
-      // Transform the data
-      const transformedAlerts: Alert[] = (data || []).map((item: any) => {
-        const dinerProfile = profileMap.get(item.diner_user_id) || {
-          user_id: item.diner_user_id,
-          email: 'Unknown',
-          full_name: null,
-        }
-
-        return {
-          id: item.id,
-          slot_id: item.slot_id,
-          diner_user_id: item.diner_user_id,
-          status: item.status,
-          created_at: item.created_at,
-          slot: {
-            id: item.slots.id,
-            start_at: item.slots.start_at,
-            party_min: item.slots.party_min,
-            party_max: item.slots.party_max,
-            slot_tier: item.slots.slot_tier,
-            status: item.slots.status,
-            venue_id: item.slots.venue_id,
-          },
-          venue: {
-            id: item.slots.venues.id,
-            name: item.slots.venues.name,
-            area: item.slots.venues.area,
-          },
-          diner: {
-            user_id: dinerProfile.user_id,
-            email: dinerProfile.email,
-            full_name: dinerProfile.full_name,
-          },
-        }
-      })
+      console.log('✅ Received', transformedAlerts?.length || 0, 'alerts from API')
 
       setAlerts(transformedAlerts)
 
       // Calculate venue demand
-      calculateVenueDemand(transformedAlerts.filter(a => a.status === 'active'))
+      calculateVenueDemand(transformedAlerts.filter((a: Alert) => a.status === 'active'))
     } catch (error) {
-      console.error('Error loading alerts:', error)
+      console.error('❌ Error loading alerts:', error)
     } finally {
       setLoading(false)
     }
