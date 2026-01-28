@@ -489,27 +489,23 @@ export default function SearchPage() {
                     <div>
                       <h3 className="font-semibold text-lg text-gray-900 hover:underline">{venue.name}</h3>
                       <p className="text-sm text-gray-600">{venue.area}</p>
-                      <div className="flex items-center gap-3 mt-1 text-sm">
+                      <div className="flex items-center gap-3 mt-1 text-sm flex-wrap">
                         <span className="text-gray-700">
                           {formatSlotDate(slot.start_at)} • {formatSlotTime(slot.start_at)}
                         </span>
                         <span className="text-gray-600">
                           {slot.party_min}-{slot.party_max} guests
                         </span>
+                        {isBookedByMe && (
+                          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                            Confirmed
+                          </span>
+                        )}
                       </div>
                     </div>
                   </Link>
 
                   <div className="flex items-center gap-3">
-                    {/* Status */}
-                    <div className="flex items-center gap-2 text-sm">
-                      {isBookedByMe && (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
-                          Confirmed
-                        </span>
-                      )}
-                    </div>
-
                     {/* Action button: Cancel OR Book OR Alert */}
                     {isBookedByMe ? (
                       <button
