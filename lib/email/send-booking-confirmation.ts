@@ -69,6 +69,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                 justify-content: space-between; 
                 padding: 12px 0; 
                 border-bottom: 1px solid #E5E7EB;
+                gap: 24px;
               }
               .detail-row:last-child {
                 border-bottom: none;
@@ -77,6 +78,8 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                 font-weight: 600; 
                 color: #6B7280;
                 font-size: 14px;
+                min-width: 120px;
+                flex-shrink: 0;
               }
               .detail-value { 
                 color: #111827;
