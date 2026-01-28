@@ -164,8 +164,26 @@ export default function UsersPage() {
             {users.map((user) => (
               <tr key={user.user_id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center gap-3">
+                  {/* Profile Picture */}
+                  {user.avatar_url ? (
+                    <img
+                      src={user.avatar_url}
+                      alt={user.full_name || 'User'}
+                      className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center border border-gray-300">
+                      <span className="text-gray-600 text-sm font-medium">
+                        {user.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Name */}
                   <div className="font-medium text-gray-900">{user.full_name || 'N/A'}</div>
-                </td>
+                </div>
+              </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600">{user.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <select
