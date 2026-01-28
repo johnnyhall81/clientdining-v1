@@ -37,6 +37,10 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
       from: 'ClientDining <notifications@clientdining.com>',
       to: data.userEmail,
       subject: `Booking Confirmed: ${data.venueName}`,
+      attachments: icsContent ? [{
+        filename: `booking-${data.bookingId.slice(0, 8)}.ics`,
+        content: Buffer.from(icsContent).toString('base64')
+      }] : [],
       html: `
         <!DOCTYPE html>
         <html>
@@ -154,6 +158,14 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                 font-size: 16px;
                 border: 2px solid #111827;
               }
+              .calendar-note {
+                background: #F3F4F6;
+                padding: 12px 16px;
+                border-radius: 6px;
+                margin: 16px 0;
+                font-size: 14px;
+                color: #374151;
+              }
             </style>
           </head>
           <body>
@@ -190,14 +202,13 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                   </div>
                 </div>
 
+                ${icsContent ? `
+                  <div class="calendar-note">
+                    📅 <strong>Calendar event attached</strong> — Open the .ics file attached to this email to add this booking to your calendar.
+                  </div>
+                ` : ''}
+
                 <center>
-                  ${icsContent ? `
-                    <a href="data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}" 
-                       download="booking-${data.bookingId.slice(0, 8)}.ics" 
-                       class="button">
-                      📅 Add to Calendar
-                    </a>
-                  ` : ''}
                   <a href="${mapsUrl}" class="button" target="_blank">
                     📍 Get Directions
                   </a>
