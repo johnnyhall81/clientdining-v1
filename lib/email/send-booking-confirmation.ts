@@ -23,17 +23,91 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
         <html>
           <head>
             <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
-              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #1a1a1a; color: white; padding: 30px; text-align: center; }
-              .content { background: #f9f9f9; padding: 30px; }
-              .booking-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
-              .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-              .detail-label { font-weight: 600; color: #666; }
-              .detail-value { color: #1a1a1a; }
-              .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-              .button { background: #1a1a1a; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0; }
+              body { 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+                line-height: 1.6; 
+                color: #111827;
+                margin: 0;
+                padding: 0;
+              }
+              .container { 
+                max-width: 600px; 
+                margin: 0 auto; 
+                background: #ffffff;
+              }
+              .header { 
+                background: #111827; 
+                color: white; 
+                padding: 40px 32px; 
+                text-align: center; 
+              }
+              .header h1 {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
+              }
+              .content { 
+                background: #F9FAFB; 
+                padding: 32px; 
+              }
+              .content p {
+                margin: 0 0 16px 0;
+                font-size: 16px;
+                color: #111827;
+              }
+              .booking-details { 
+                background: white; 
+                padding: 24px; 
+                border-radius: 8px; 
+                margin: 24px 0;
+                border-left: 4px solid #059669;
+              }
+              .detail-row { 
+                display: flex; 
+                justify-content: space-between; 
+                padding: 12px 0; 
+                border-bottom: 1px solid #E5E7EB;
+              }
+              .detail-row:last-child {
+                border-bottom: none;
+              }
+              .detail-label { 
+                font-weight: 600; 
+                color: #6B7280;
+                font-size: 14px;
+              }
+              .detail-value { 
+                color: #111827;
+                font-size: 16px;
+                text-align: right;
+              }
+              .footer { 
+                text-align: center; 
+                padding: 32px; 
+                color: #6B7280; 
+                font-size: 14px;
+                background: #F9FAFB;
+              }
+              .footer p {
+                margin: 8px 0;
+              }
+              .footer a {
+                color: #6B7280;
+                text-decoration: none;
+              }
+              .button { 
+                background: #111827; 
+                color: white !important; 
+                padding: 14px 32px; 
+                text-decoration: none; 
+                border-radius: 6px; 
+                display: inline-block; 
+                margin: 24px 0;
+                font-weight: 600;
+                font-size: 16px;
+              }
             </style>
           </head>
           <body>
@@ -45,7 +119,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
               <div class="content">
                 <p>Hello ${data.userName},</p>
                 
-                <p>Your reservation at <strong>${data.venueName}</strong> has been confirmed.</p>
+                <p>You're all set for <strong>${data.venueName}</strong>.</p>
                 
                 <div class="booking-details">
                   <div class="detail-row">
@@ -58,22 +132,22 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                   </div>
                   <div class="detail-row">
                     <span class="detail-label">Party Size</span>
-                    <span class="detail-value">${data.partySize} guests</span>
+                    <span class="detail-value">${data.partySize} ${data.partySize === 1 ? 'guest' : 'guests'}</span>
                   </div>
                   <div class="detail-row">
                     <span class="detail-label">Address</span>
                     <span class="detail-value">${data.venueAddress}</span>
                   </div>
                   <div class="detail-row">
-                    <span class="detail-label">Booking Reference</span>
+                    <span class="detail-label">Reference</span>
                     <span class="detail-value">${data.bookingId.slice(0, 8).toUpperCase()}</span>
                   </div>
                 </div>
                 
-                <p><strong>Important:</strong> Please arrive on time. If you need to cancel, you can do so from your account page at least 24 hours in advance.</p>
+                <p>If your plans change, you can cancel up to 24 hours in advance from your bookings page.</p>
                 
                 <center>
-                  <a href="https://clientdining.com/bookings" class="button">View My Bookings</a>
+                  <a href="https://clientdining.com/bookings" class="button">View Bookings</a>
                 </center>
               </div>
               

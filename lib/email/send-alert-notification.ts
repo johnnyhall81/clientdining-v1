@@ -18,48 +18,122 @@ export async function sendAlertNotification(data: AlertEmailData) {
     await resend.emails.send({
       from: 'ClientDining <notifications@clientdining.com>',
       to: data.userEmail,
-      subject: `🔔 Slot Available: ${data.venueName}`,
+      subject: `Table Available: ${data.venueName}`,
       html: `
         <!DOCTYPE html>
         <html>
           <head>
             <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
-              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #2563eb; color: white; padding: 30px; text-align: center; }
-              .content { background: #f9f9f9; padding: 30px; }
-              .alert-box { background: #dbeafe; border-left: 4px solid #2563eb; padding: 20px; margin: 20px 0; }
-              .booking-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
-              .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-              .detail-label { font-weight: 600; color: #666; }
-              .detail-value { color: #1a1a1a; }
-              .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+              body { 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+                line-height: 1.6; 
+                color: #111827;
+                margin: 0;
+                padding: 0;
+              }
+              .container { 
+                max-width: 600px; 
+                margin: 0 auto; 
+                background: #ffffff;
+              }
+              .header { 
+                background: #111827; 
+                color: white; 
+                padding: 40px 32px; 
+                text-align: center; 
+              }
+              .header h1 {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
+              }
+              .content { 
+                background: #F9FAFB; 
+                padding: 32px; 
+              }
+              .content p {
+                margin: 0 0 16px 0;
+                font-size: 16px;
+                color: #111827;
+              }
+              .alert-box { 
+                background: #FEF3C7; 
+                border-left: 4px solid #D97706; 
+                padding: 20px; 
+                margin: 24px 0;
+                border-radius: 8px;
+              }
+              .alert-box p {
+                margin: 0;
+                color: #92400E;
+                font-weight: 600;
+              }
+              .booking-details { 
+                background: white; 
+                padding: 24px; 
+                border-radius: 8px; 
+                margin: 24px 0;
+                border-left: 4px solid #D97706;
+              }
+              .detail-row { 
+                display: flex; 
+                justify-content: space-between; 
+                padding: 12px 0; 
+                border-bottom: 1px solid #E5E7EB;
+              }
+              .detail-row:last-child {
+                border-bottom: none;
+              }
+              .detail-label { 
+                font-weight: 600; 
+                color: #6B7280;
+                font-size: 14px;
+              }
+              .detail-value { 
+                color: #111827;
+                font-size: 16px;
+                text-align: right;
+              }
+              .footer { 
+                text-align: center; 
+                padding: 32px; 
+                color: #6B7280; 
+                font-size: 14px;
+                background: #F9FAFB;
+              }
+              .footer p {
+                margin: 8px 0;
+              }
+              .footer a {
+                color: #6B7280;
+                text-decoration: none;
+              }
               .button { 
-                background: #2563eb; 
+                background: #D97706; 
                 color: white !important; 
                 padding: 14px 32px; 
                 text-decoration: none; 
                 border-radius: 6px; 
                 display: inline-block; 
-                margin: 20px 0; 
-                font-weight: 600; 
+                margin: 24px 0;
+                font-weight: 600;
+                font-size: 16px;
               }
-              .urgent { color: #dc2626; font-weight: 600; }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h1>🔔 Your Alert is Active!</h1>
+                <h1>Table Available</h1>
               </div>
               
               <div class="content">
                 <p>Hello ${data.userName},</p>
                 
                 <div class="alert-box">
-                  <p class="urgent">⚡ A slot you were waiting for is now available!</p>
-                  <p style="margin: 10px 0 0 0;"><strong>You have 15 minutes to book this slot before it's offered to others.</strong></p>
+                  <p>Good news — a table is now available at ${data.venueName}.</p>
                 </div>
                 
                 <div class="booking-details">
@@ -81,22 +155,18 @@ export async function sendAlertNotification(data: AlertEmailData) {
                   </div>
                 </div>
                 
-                <p><strong>Important:</strong> This is a FIFO (First In, First Out) system. You were first to set an alert, so you get first chance to book. If you don't book within 15 minutes, the next person in the queue will be notified.</p>
+                <p>Book now to secure your table.</p>
                 
                 <center>
-                  <a href="https://clientdining.com/venues/${data.venueId}#slot-${data.slotId}" class="button" style="color: white;">Book This Slot Now</a>
+                  <a href="https://clientdining.com/venues/${data.venueId}" class="button" style="color: white;">View Venue</a>
                 </center>
-                
-                <p style="margin-top: 30px; font-size: 14px; color: #666;">
-                  This alert will expire in 15 minutes. Book quickly to secure your table!
-                </p>
               </div>
               
               <div class="footer">
                 <p>London's best tables</p>
                 <p><a href="https://clientdining.com">clientdining.com</a></p>
-                <p style="margin-top: 10px; font-size: 12px;">
-                  <a href="https://clientdining.com/alerts" style="color: #666;">Manage my alerts</a>
+                <p style="margin-top: 16px;">
+                  <a href="https://clientdining.com/alerts" style="color: #6B7280; text-decoration: none;">Manage alerts</a>
                 </p>
               </div>
             </div>
