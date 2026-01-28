@@ -121,6 +121,10 @@ export async function POST(request: Request) {
 
     // Send confirmation email (async, don't wait for it)
     const venue = (slot as any).venues
+    console.log('📧 About to send booking email to:', profile.email)
+    console.log('📧 Venue data:', venue)
+    console.log('📧 Booking ID:', booking.id || slotId)
+    
     sendBookingConfirmation({
       userEmail: profile.email,
       userName: profile.full_name || 'Guest',
