@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase-client'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import AlertToggle from '@/components/slots/AlertToggle'
+import PremiumUnlockModal from '@/components/modals/PremiumUnlockModal'
 
 interface SearchResult {
   slot: {
@@ -40,6 +41,8 @@ export default function SearchPage() {
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
   const [venues, setVenues] = useState<Venue[]>([])
+  const [showPremiumModal, setShowPremiumModal] = useState(false)
+  const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
 
   const [filters, setFilters] = useState({
     date: '',
@@ -65,6 +68,27 @@ export default function SearchPage() {
     }
     loadVenues()
   }, [])
+
+  // Load user tier
+  useEffect(() => {
+    const loadUserTier = async () => {
+      if (!user) {
+        setDinerTier('free')
+        return
+      }
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('diner_tier')
+        .eq('user_id', user.id)
+        .single()
+
+      if (data) {
+        setDinerTier(data.diner_tier)
+      }
+    }
+    loadUserTier()
+  }, [user])
 
   useEffect(() => {
     handleSearch()
@@ -508,19 +532,31 @@ export default function SearchPage() {
                       </button>
                     ) : slot.status === 'available' ? (
                       <div className="flex flex-col items-end">
-                        <button
-                          onClick={() => handleBook(slot.id)}
-                          disabled={bookingSlotId === slot.id}
-                          className={[
-                            'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
-                            bookingSlotId === slot.id
-                              ? 'bg-blue-400 text-white cursor-not-allowed'
-                              : 'bg-blue-600 text-white hover:bg-blue-700',
-                          ].join(' ')}
-                          
-                        >
-                          {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
-                        </button>
+                        {/* Check if slot is premium and user is free tier and >24h */}
+                        {slot.slot_tier === 'premium' && dinerTier === 'free' && !lastMinute ? (
+                          <button
+                            onClick={() => setShowPremiumModal(true)}
+                            className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-amber-600 text-white hover:bg-amber-700 transition-colors flex items-center gap-2"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Unlock
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleBook(slot.id)}
+                            disabled={bookingSlotId === slot.id}
+                            className={[
+                              'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
+                              bookingSlotId === slot.id
+                                ? 'bg-blue-400 text-white cursor-not-allowed'
+                                : 'bg-blue-600 text-white hover:bg-blue-700',
+                            ].join(' ')}
+                          >
+                            {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
+                          </button>
+                        )}
                       </div>
                     ) : (
                       <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
@@ -532,6 +568,12 @@ export default function SearchPage() {
           })}
         </div>
       )}
+
+      {/* Premium Unlock Modal */}
+      <PremiumUnlockModal 
+        isOpen={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+      />
     </div>
   )
 }
