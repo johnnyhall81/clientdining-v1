@@ -338,7 +338,7 @@ export default function SearchPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Search Available Tables</h1>
-        <p className="text-gray-600">Find and book your perfect dining experience</p>
+        <p className="text-gray-600">Search restaurants and private members' clubs</p>
       </div>
 
       {/* Filters */}
