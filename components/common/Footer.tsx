@@ -51,7 +51,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/account" className="text-gray-600 hover:text-gray-900 text-sm">
-                  My Account
+                  Account
                 </Link>
               </li>
             </ul>
