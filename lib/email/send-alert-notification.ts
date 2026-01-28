@@ -39,10 +39,11 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 background: #ffffff;
               }
               .header { 
-                background: #111827; 
-                color: white; 
+                background: #FFFFFF; 
+                color: #111827; 
                 padding: 40px 32px; 
-                text-align: center; 
+                text-align: center;
+                border-bottom: 1px solid #E5E7EB;
               }
               .header h1 {
                 margin: 0;
@@ -50,7 +51,7 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 font-weight: 600;
               }
               .content { 
-                background: #F9FAFB; 
+                background: #FFFFFF; 
                 padding: 32px; 
               }
               .content p {
@@ -71,7 +72,7 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 font-weight: 600;
               }
               .booking-details { 
-                background: white; 
+                background: #F9FAFB; 
                 padding: 24px; 
                 border-radius: 8px; 
                 margin: 24px 0;
@@ -114,8 +115,8 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 text-decoration: none;
               }
               .button { 
-                background: #D97706; 
-                color: white !important; 
+                background: white; 
+                color: #D97706 !important; 
                 padding: 14px 32px; 
                 text-decoration: none; 
                 border-radius: 6px; 
@@ -123,6 +124,7 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 margin: 24px 0;
                 font-weight: 600;
                 font-size: 16px;
+                border: 2px solid #D97706;
               }
             </style>
           </head>

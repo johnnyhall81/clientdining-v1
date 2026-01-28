@@ -37,10 +37,11 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                 background: #ffffff;
               }
               .header { 
-                background: #111827; 
-                color: white; 
+                background: #FFFFFF; 
+                color: #111827; 
                 padding: 40px 32px; 
-                text-align: center; 
+                text-align: center;
+                border-bottom: 1px solid #E5E7EB;
               }
               .header h1 {
                 margin: 0;
@@ -48,7 +49,7 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                 font-weight: 600;
               }
               .content { 
-                background: #F9FAFB; 
+                background: #FFFFFF; 
                 padding: 32px; 
               }
               .content p {
@@ -57,7 +58,7 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                 color: #111827;
               }
               .booking-details { 
-                background: white; 
+                background: #F9FAFB; 
                 padding: 24px; 
                 border-radius: 8px; 
                 margin: 24px 0;
