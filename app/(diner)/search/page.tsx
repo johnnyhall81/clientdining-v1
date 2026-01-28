@@ -374,7 +374,7 @@ export default function SearchPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
               <option value="all">All Tiers</option>
-              <option value="standard">Standard</option>
+              <option value="standard">Free</option>
               <option value="premium">Premium</option>
             </select>
           </div>
@@ -471,7 +471,7 @@ export default function SearchPage() {
                             <span className="text-amber-600 font-medium">Premium</span>
                           )}
                           {slot.slot_tier === 'standard' && (
-                            <span className="text-green-600 font-medium">Standard</span>
+                            <span className="text-green-600 font-medium">Free</span>
                           )}
                           {lastMinute && (
                             <span className="text-blue-600 font-medium">Last minute</span>
