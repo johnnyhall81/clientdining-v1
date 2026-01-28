@@ -46,7 +46,7 @@ export default function FAQPage() {
         },
         {
           q: 'What qualifies as a "City professional"?',
-          a: 'We verify professionals working in finance, law, consulting, technology, and related sectors, primarily in London's business districts. If you are unsure, contact support@clientdining.com.'
+          a: 'We verify professionals working in finance, law, consulting, technology, and related sectors, primarily in London\'s business districts. If you are unsure, contact support@clientdining.com.'
         },
         {
           q: 'Is there a free trial?',
