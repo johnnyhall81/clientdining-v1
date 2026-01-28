@@ -53,20 +53,21 @@ export default function SlotRow({
         </div>
 
         {/* Party size */}
-        <div>
+        <div className="flex items-center gap-2">
           <p className="text-sm text-gray-600">
             {slot.party_min === slot.party_max
               ? `${slot.party_min} guests`
               : `${slot.party_min}-${slot.party_max} guests`}
           </p>
-        </div>
-
-        {/* Access / status */}
-        <div>
           {isBookedByMe && (
-            <span className="text-xs font-medium text-green-700">Confirmed</span>
+            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+              Confirmed
+            </span>
           )}
         </div>
+
+        {/* Access / status - empty spacer */}
+        <div></div>
 
         {/* Action */}
         <div className="flex items-center gap-2 justify-end">
