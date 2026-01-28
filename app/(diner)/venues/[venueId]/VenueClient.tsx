@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Venue, Slot } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
@@ -233,14 +234,19 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="bg-gray-200 rounded-lg aspect-[21/9] overflow-hidden">
-        <img
-          src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
-          alt={venue.name}
-          className="w-full h-full object-cover"
-        />
-      </div>
+
+        <div className="relative bg-gray-200 rounded-lg aspect-[21/9] overflow-hidden">
+          <Image
+            src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
+            alt={venue.name}
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            className="object-cover"
+          />
+        </div>
+
+
 
       <div>
         <div className="flex items-start justify-between mb-4">
