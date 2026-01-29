@@ -1,18 +1,22 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { sendCancellationConfirmation } from '@/lib/email/send-cancellation-confirmation'
+import { createClient } from '@supabase/supabase-js'
+import { sendAlertNotification } from '@/lib/email/send-alert-notification'
 import { formatFullDateTime } from '@/lib/date-utils'
+import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
+
+// Service role client for admin operations
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function POST(request: Request) {
   try {
-    // ✅ accept either bookingId (Bookings page) OR slotId (Venue/Search)
-    const body = await request.json().catch(() => ({}))
-    const bookingIdFromBody: string | undefined = body.bookingId
-    const slotIdFromBody: string | undefined = body.slotId
-
+    const { bookingId, reason } = await request.json()
+    
+    // Get authenticated user
     const cookieStore = cookies()
-
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -24,94 +28,327 @@ export async function POST(request: Request) {
         },
       }
     )
-
+    
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-
+    
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // ✅ resolve bookingId if caller passed slotId
-    let bookingId = bookingIdFromBody
-
-    if (!bookingId && slotIdFromBody) {
-      const { data: bookingRow, error: findError } = await supabase
-        .from('bookings')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('slot_id', slotIdFromBody)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (findError) {
-        return NextResponse.json({ error: findError.message }, { status: 400 })
-      }
-
-      if (!bookingRow?.id) {
-        return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
-      }
-
-      bookingId = bookingRow.id
-    }
-
-    if (!bookingId) {
-      return NextResponse.json({ error: 'Missing bookingId or slotId' }, { status: 400 })
-    }
-
-    // Get booking details before cancelling
-    const { data: booking, error: fetchError } = await supabase
+    // Get booking details
+    const { data: booking, error: bookingError } = await supabaseAdmin
       .from('bookings')
       .select(`
-        *,
-        slots (start_at),
-        venues (name),
-        profiles!bookings_user_id_fkey (email, full_name)
+        id,
+        slot_id,
+        diner_user_id,
+        status,
+        slots!inner (
+          id,
+          start_at,
+          venue_id,
+          party_min,
+          party_max
+        )
       `)
       .eq('id', bookingId)
-      .eq('user_id', user.id)
       .single()
 
-    if (fetchError || !booking) {
+    if (bookingError || !booking) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
     }
 
+    // Check permission
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single()
+
+    const isOwner = booking.diner_user_id === user.id
+    const isAdmin = profile?.role === 'platform_admin' || profile?.role === 'venue_admin'
+
+    if (!isOwner && !isAdmin) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+    }
+
+    if (booking.status !== 'active') {
+      return NextResponse.json({ error: 'Booking is not active' }, { status: 400 })
+    }
+
     // Cancel the booking
-    const { error: cancelError } = await supabase
+    const { error: cancelError } = await supabaseAdmin
       .from('bookings')
-      .update({ status: 'cancelled' })
+      .update({ 
+        status: 'cancelled', 
+        cancelled_at: new Date().toISOString() 
+      })
       .eq('id', bookingId)
-      .eq('user_id', user.id) // ✅ tiny safety improvement
 
-    if (cancelError) throw cancelError
+    if (cancelError) {
+      throw cancelError
+    }
 
-    // Update slot back to available
-    await supabase
+    // Reopen the slot
+    const { error: slotError } = await supabaseAdmin
       .from('slots')
       .update({ status: 'available' })
       .eq('id', booking.slot_id)
 
-    // Send cancellation email
-    const profile = (booking as any).profiles
-    const venue = (booking as any).venues
-    const slot = (booking as any).slots
+    if (slotError) {
+      throw slotError
+    }
 
-    sendCancellationConfirmation({
-      userEmail: profile?.email || user.email!,
-      userName: profile?.full_name || 'Guest',
-      venueName: venue?.name || 'Venue',
-      slotTime: formatFullDateTime(slot?.start_at || new Date().toISOString()),
-      partySize: booking.party_size,
-      bookingId: booking.id,
-    }).catch(err => console.error('Email send failed:', err))
+    // Calculate hours until slot
+    const slotStartAt = (booking.slots as any).start_at
+    const hoursUntil = (new Date(slotStartAt).getTime() - Date.now()) / (1000 * 60 * 60)
 
-    return NextResponse.json({ success: true })
+    console.log(`📅 Slot starts in ${hoursUntil.toFixed(1)} hours`)
+
+    // PROCESS ALERTS IMMEDIATELY
+    if (hoursUntil <= 24) {
+      // Strategy A: BLAST NOTIFICATION (<24 hours)
+      console.log('⚡ Blast notification mode (<24h)')
+      
+      await processBlastNotification(booking.slot_id, booking.slots as any)
+      
+    } else {
+      // Strategy B: FIFO QUEUE (>24 hours)
+      console.log('📋 FIFO queue mode (>24h)')
+      
+      await processFIFONotification(booking.slot_id, booking.slots as any)
+    }
+
+    // Audit log
+    await supabaseAdmin
+      .from('audit_log')
+      .insert({
+        actor_user_id: user.id,
+        actor_role: profile?.role || 'diner',
+        action: 'cancel_booking',
+        object_type: 'booking',
+        object_id: bookingId,
+        metadata: { reason, slot_id: booking.slot_id }
+      })
+
+    return NextResponse.json({ 
+      success: true,
+      message: 'Booking cancelled successfully'
+    })
+
   } catch (error: any) {
-    console.error('Cancellation error:', error)
+    console.error('❌ Cancel booking error:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to cancel booking' },
       { status: 500 }
     )
+  }
+}
+
+// BLAST NOTIFICATION: Notify all users immediately
+async function processBlastNotification(slotId: string, slot: any) {
+  try {
+    console.log('🔔 Starting blast notification...')
+
+    // Get all active alerts for this slot
+    const { data: alerts, error: alertsError } = await supabaseAdmin
+      .from('slot_alerts')
+      .select(`
+        id,
+        diner_user_id,
+        slot_id
+      `)
+      .eq('slot_id', slotId)
+      .eq('status', 'active')
+
+    if (alertsError) {
+      console.error('Error fetching alerts:', alertsError)
+      return
+    }
+
+    if (!alerts || alerts.length === 0) {
+      console.log('No active alerts for this slot')
+      return
+    }
+
+    console.log(`📧 Found ${alerts.length} users to notify`)
+
+    // Get venue details
+    const { data: venue } = await supabaseAdmin
+      .from('venues')
+      .select('id, name, area, venue_type, description')
+      .eq('id', slot.venue_id)
+      .single()
+
+    if (!venue) {
+      console.error('Venue not found')
+      return
+    }
+
+    // Update all alerts to 'notified' status immediately
+    const { error: updateError } = await supabaseAdmin
+      .from('slot_alerts')
+      .update({ 
+        status: 'notified',
+        notified_at: new Date().toISOString()
+      })
+      .eq('slot_id', slotId)
+      .eq('status', 'active')
+
+    if (updateError) {
+      console.error('Error updating alert statuses:', updateError)
+    }
+
+    // Send emails in parallel (don't wait)
+    const emailPromises = alerts.map(async (alert) => {
+      try {
+        // Get user profile
+        const { data: userProfile } = await supabaseAdmin
+          .from('profiles')
+          .select('user_id')
+          .eq('user_id', alert.diner_user_id)
+          .single()
+
+        if (!userProfile) return
+
+        // Get auth user for email
+        const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(
+          alert.diner_user_id
+        )
+
+        if (!authUser?.user?.email) return
+
+        // Get full name from user metadata or profiles
+        const fullName = authUser.user.user_metadata?.full_name || 
+                        authUser.user.user_metadata?.name ||
+                        'Guest'
+
+        await sendAlertNotification({
+          userEmail: authUser.user.email,
+          userName: fullName,
+          venueName: venue.name,
+          venueAddress: venue.area || 'London',
+          slotTime: formatFullDateTime(slot.start_at),
+          partySize: `${slot.party_min}-${slot.party_max} guests`,
+          slotId: slotId,
+          venueId: venue.id,
+        })
+
+        console.log(`✅ Email sent to ${authUser.user.email}`)
+      } catch (err) {
+        console.error(`❌ Failed to send email for alert ${alert.id}:`, err)
+      }
+    })
+
+    // Fire and forget - don't wait for all emails
+    Promise.all(emailPromises).then(() => {
+      console.log(`🎉 Blast notification complete: ${alerts.length} emails sent`)
+    })
+
+  } catch (error) {
+    console.error('❌ Blast notification error:', error)
+  }
+}
+
+// FIFO NOTIFICATION: Notify first person in queue with 15-min reservation
+async function processFIFONotification(slotId: string, slot: any) {
+  try {
+    console.log('🎯 Starting FIFO notification...')
+
+    // Get oldest active alert (first in queue)
+    const { data: nextAlert, error: alertError } = await supabaseAdmin
+      .from('slot_alerts')
+      .select(`
+        id,
+        diner_user_id,
+        slot_id,
+        created_at
+      `)
+      .eq('slot_id', slotId)
+      .eq('status', 'active')
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .single()
+
+    if (alertError || !nextAlert) {
+      console.log('No users in queue for this slot')
+      return
+    }
+
+    console.log(`👤 Next user in queue: ${nextAlert.diner_user_id}`)
+
+    // Reserve slot for this user (15 minutes)
+    const reserveUntil = new Date(Date.now() + 15 * 60 * 1000)
+    
+    const { error: reserveError } = await supabaseAdmin
+      .from('slots')
+      .update({
+        reserved_for_user_id: nextAlert.diner_user_id,
+        reserved_until: reserveUntil.toISOString()
+      })
+      .eq('id', slotId)
+
+    if (reserveError) {
+      console.error('Error reserving slot:', reserveError)
+      return
+    }
+
+    // Update alert to 'notified'
+    const { error: updateError } = await supabaseAdmin
+      .from('slot_alerts')
+      .update({ 
+        status: 'notified',
+        notified_at: new Date().toISOString()
+      })
+      .eq('id', nextAlert.id)
+
+    if (updateError) {
+      console.error('Error updating alert:', updateError)
+      return
+    }
+
+    // Get venue details
+    const { data: venue } = await supabaseAdmin
+      .from('venues')
+      .select('id, name, area')
+      .eq('id', slot.venue_id)
+      .single()
+
+    if (!venue) {
+      console.error('Venue not found')
+      return
+    }
+
+    // Get user details and send email
+    const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(
+      nextAlert.diner_user_id
+    )
+
+    if (!authUser?.user?.email) {
+      console.error('User email not found')
+      return
+    }
+
+    const fullName = authUser.user.user_metadata?.full_name || 
+                    authUser.user.user_metadata?.name ||
+                    'Guest'
+
+    // Send email immediately
+    await sendAlertNotification({
+      userEmail: authUser.user.email,
+      userName: fullName,
+      venueName: venue.name,
+      venueAddress: venue.area || 'London',
+      slotTime: formatFullDateTime(slot.start_at),
+      partySize: `${slot.party_min}-${slot.party_max} guests`,
+      slotId: slotId,
+      venueId: venue.id,
+    })
+
+    console.log(`✅ FIFO notification sent to ${authUser.user.email}`)
+    console.log(`⏰ Reservation expires at ${reserveUntil.toISOString()}`)
+
+  } catch (error) {
+    console.error('❌ FIFO notification error:', error)
   }
 }
