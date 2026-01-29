@@ -45,6 +45,7 @@ export default function SearchPage() {
   const [venues, setVenues] = useState<Venue[]>([])
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
+  const [showPremiumModal, setShowPremiumModal] = useState(false)
   const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
 
   const [filters, setFilters] = useState({
