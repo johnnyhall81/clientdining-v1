@@ -39,7 +39,7 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
           {venue.name}
         </h3>
 
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 capitalize">
           {venue.area} · {venue.venue_type}
         </p>
 
