@@ -522,6 +522,7 @@ export default function SearchPage() {
                         alt={venue.name}
                         fill
                         sizes="64px"
+                        quality={85}
                         className="rounded object-cover"
                       />
                     </div>
