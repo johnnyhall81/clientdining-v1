@@ -6,7 +6,7 @@ import { formatFullDateTime } from '@/lib/date-utils'
 
 export async function POST(request: Request) {
   try {
-    const { slotId } = await request.json()
+    const { slotId, partySize } = await request.json()
 
     const cookieStore = cookies()
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     // Get slot details with venue info
     const { data: slot, error: slotError } = await supabase
       .from('slots')
-      .select('venue_id, party_min, status, slot_tier, start_at, venues(name, address, postcode, phone, booking_email)')
+      .select('venue_id, party_min, party_max, status, slot_tier, start_at, venues(name, address, postcode, phone, booking_email)')
       .eq('id', slotId)
       .single()
 
@@ -42,9 +42,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Slot not found' }, { status: 404 })
     }
 
+   
     if (slot.status !== 'available') {
       return NextResponse.json({ error: 'Slot is no longer available' }, { status: 400 })
     }
+    
+    if (!partySize || partySize < slot.party_min || partySize > (slot as any).party_max) {
+      return NextResponse.json(
+        { error: `Party size must be between ${slot.party_min} and ${(slot as any).party_max} guests` },
+        { status: 400 }
+      )
+    }
+
+
+
+
 
     // Get user's profile
     const { data: profile } = await supabase
@@ -111,7 +123,7 @@ export async function POST(request: Request) {
       p_slot_id: slotId,
       p_user_id: user.id,
       p_venue_id: slot.venue_id,
-      p_party_size: slot.party_min,
+      p_party_size: partySize,
     })
 
     if (bookingError) {
@@ -135,7 +147,7 @@ export async function POST(request: Request) {
       venueEmail: venue?.booking_email,
       slotTime: formatFullDateTime(slot.start_at),
       slotStartISO: slot.start_at,
-      partySize: slot.party_min,
+      partySize: partySize,
       bookingId: booking.id || slotId,
     }).catch((err) => console.error('Email send failed:', err))
 

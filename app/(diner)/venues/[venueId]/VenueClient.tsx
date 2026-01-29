@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import SlotRow from '@/components/slots/SlotRow'
 import PremiumUnlockModal from '@/components/modals/PremiumUnlockModal'
+import PartySizeModal from '@/components/modals/PartySizeModal'
 
 interface VenueClientProps {
   venue: Venue
@@ -22,6 +23,8 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const [bookingSlot, setBookingSlot] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
   const [showPremiumModal, setShowPremiumModal] = useState(false)
+  const [showPartySizeModal, setShowPartySizeModal] = useState(false)
+  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
   const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
   const [futureBookingsCount, setFutureBookingsCount] = useState(0)
 
@@ -130,51 +133,73 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     loadMyBookings()
   }, [user, slots])
 
+
+
   const handleBook = async (slotId: string) => {
     if (!user) {
       router.push('/login')
       return
     }
-
-    setBookingSlot(slotId)
-
+  
+    const slot = slots.find(s => s.id === slotId)
+    if (!slot) return
+  
+    setSelectedSlot(slot)
+    setShowPartySizeModal(true)
+  }
+  
+  const confirmBooking = async (partySize: number) => {
+    if (!selectedSlot) return
+  
+    setShowPartySizeModal(false)
+    setBookingSlot(selectedSlot.id)
+  
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId }),
+        body: JSON.stringify({ 
+          slotId: selectedSlot.id,
+          partySize 
+        }),
       })
-
+  
       const data = await response.json().catch(() => ({}))
-
+  
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
-
-        // Popup ONLY for booking-limit case
+  
         if (response.status === 403 && message.startsWith('Booking limit reached')) {
           alert(message)
         } else {
           console.error('Booking failed:', message)
         }
-
+  
         return
       }
-
-      // Mark as booked locally so the row flips to Confirmed/Cancel immediately
+  
       setBookedSlots((prev) => {
         const next = new Set(prev)
-        next.add(slotId)
+        next.add(selectedSlot.id)
         return next
       })
-
+  
       router.push('/bookings')
       router.refresh()
     } catch (error) {
       console.error('Booking error:', error)
     } finally {
       setBookingSlot(null)
+      setSelectedSlot(null)
     }
   }
+
+
+
+
+
+
+
 
   const handleCancel = async (slotId: string) => {
     if (!user) {
@@ -301,6 +326,20 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         isOpen={showPremiumModal}
         onClose={() => setShowPremiumModal(false)}
       />
+
+      {selectedSlot && (
+        <PartySizeModal
+          isOpen={showPartySizeModal}
+          onClose={() => {
+            setShowPartySizeModal(false)
+            setSelectedSlot(null)
+          }}
+          onConfirm={confirmBooking}
+          minSize={selectedSlot.party_min}
+          maxSize={selectedSlot.party_max}
+          venueName={venue.name}
+        />
+      )}
     </div>
   )
 }
