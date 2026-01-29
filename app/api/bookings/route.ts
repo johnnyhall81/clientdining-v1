@@ -125,7 +125,7 @@ export async function POST(request: Request) {
     console.log('📧 Venue data:', venue)
     console.log('📧 Booking ID:', booking.id || slotId)
 
-    sendBookingConfirmation({
+    await sendBookingConfirmation({
       userEmail: profile.email,
       userName: profile.full_name || 'Guest',
       venueName: venue?.name || 'Venue',
