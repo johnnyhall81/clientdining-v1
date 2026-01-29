@@ -89,11 +89,9 @@ export default function BookingsPage() {
         throw new Error(data.error || 'Failed to cancel booking')
       }
 
-      alert('Booking cancelled successfully. A confirmation email has been sent.')
       fetchBookings()
     } catch (error: any) {
       console.error('Error cancelling booking:', error)
-      alert('Failed to cancel booking: ' + error.message)
     }
   }
 
