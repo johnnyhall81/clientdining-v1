@@ -96,9 +96,8 @@ export default function SlotRow({
   <button
     type="button"
     onClick={() => onBook(slot.id)}
-    className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-2"
+    className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-blue-600 text-amber-400 hover:bg-blue-700 transition-colors"
   >
-    <span className="text-base">✨</span>
     Book
   </button>
 
