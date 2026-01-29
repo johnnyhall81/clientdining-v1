@@ -9,6 +9,7 @@ import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import AlertToggle from '@/components/slots/AlertToggle'
 import PremiumUnlockModal from '@/components/modals/PremiumUnlockModal'
+import PartySizeModal from '@/components/modals/PartySizeModal'
 
 interface SearchResult {
   slot: {
@@ -42,7 +43,8 @@ export default function SearchPage() {
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
   const [venues, setVenues] = useState<Venue[]>([])
-  const [showPremiumModal, setShowPremiumModal] = useState(false)
+  const [showPartySizeModal, setShowPartySizeModal] = useState(false)
+  const [selectedSlot, setSelectedSlot] = useState<any>(null)
   const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
 
   const [filters, setFilters] = useState({
@@ -259,43 +261,68 @@ export default function SearchPage() {
     setLoading(false)
   }
 
+ 
   const handleBook = async (slotId: string) => {
     if (!user) {
       router.push('/login')
       return
     }
-
-    setBookingSlotId(slotId)
-
+  
+    // Find the slot to get party min/max
+    const slot = results.find(r => r.slot.id === slotId)?.slot
+    if (!slot) return
+  
+    // Show party size modal
+    setSelectedSlot(slot)
+    setShowPartySizeModal(true)
+  }
+  
+  const confirmBooking = async (partySize: number) => {
+    if (!selectedSlot) return
+  
+    setShowPartySizeModal(false)
+    setBookingSlotId(selectedSlot.id)
+  
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId }),
+        body: JSON.stringify({ 
+          slotId: selectedSlot.id,
+          partySize 
+        }),
       })
-
+  
       const data = await response.json().catch(() => ({}))
-
+  
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
         alert(message)
         setBookingSlotId(null)
         return
       }
-
+  
       // flip this slot immediately to "Confirmed / Cancel"
       setBookedSlots((prev) => {
         const next = new Set(prev)
-        next.add(slotId)
+        next.add(selectedSlot.id)
         return next
       })
-
+  
       router.push('/bookings')
     } catch (error) {
       console.error('Booking error:', error)
       setBookingSlotId(null)
+    } finally {
+      setSelectedSlot(null)
     }
   }
+
+
+
+
+
+
 
   const handleToggleAlert = async (slotId: string) => {
     if (!user) {
@@ -499,7 +526,7 @@ export default function SearchPage() {
                           {formatSlotDate(slot.start_at)} • {formatSlotTime(slot.start_at)}
                         </span>
                         <span className="text-gray-600">
-                          {slot.party_min}-{slot.party_max} guests
+                            Typical table: {slot.party_min}-{slot.party_max} guests
                         </span>
                         {isBookedByMe && (
                           <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
@@ -591,6 +618,20 @@ export default function SearchPage() {
         isOpen={showPremiumModal}
         onClose={() => setShowPremiumModal(false)}
       />
+
+      {selectedSlot && (
+        <PartySizeModal
+          isOpen={showPartySizeModal}
+          onClose={() => {
+            setShowPartySizeModal(false)
+            setSelectedSlot(null)
+          }}
+          onConfirm={confirmBooking}
+          minSize={selectedSlot.party_min}
+          maxSize={selectedSlot.party_max}
+          venueName={selectedSlot.venue?.name || 'Venue'}
+        />
+      )}
     </div>
   )
 }
