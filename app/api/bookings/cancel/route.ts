@@ -77,14 +77,16 @@ export async function POST(request: Request) {
     }
 
     // Cancel the booking
-    const { error: cancelError } = await supabaseAdmin
-      .from('bookings')
-      .update({ 
-        status: 'cancelled', 
-        cancelled_at: new Date().toISOString(),
-        cancelled_by: user.id
-      })
-      .eq('id', bookingId)
+// Cancel the booking
+const { error: cancelError } = await supabaseAdmin
+  .from('bookings')
+  .update({ 
+    status: 'cancelled', 
+    cancelled_at: new Date().toISOString(),
+    cancelled_by: user.id,
+    updated_at: new Date().toISOString()  // ← ADD THIS LINE
+  })
+  .eq('id', bookingId)
 
     if (cancelError) {
       throw cancelError
