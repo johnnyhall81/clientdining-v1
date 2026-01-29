@@ -4,6 +4,8 @@ import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useState } from 'react'
+import CancelBookingModal from '@/components/modals/CancelBookingModal'
 
 interface BookingCardProps {
   booking: Booking
@@ -15,6 +17,7 @@ interface BookingCardProps {
 export default function BookingCard({ booking, venue, slot, onCancel }: BookingCardProps) {
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
+  const [showCancelModal, setShowCancelModal] = useState(false)
   
   return (
     <div className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 ${isCancelled ? 'opacity-60' : ''}`}>
