@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY!)
 interface CancellationEmailData {
   userEmail: string
   userName: string
-  venueName: 
+  venueName: string
   venueAddress: string 
   slotTime: string
   partySize: number
