@@ -522,7 +522,7 @@ export default function SearchPage() {
                       <button
                         type="button"
                         onClick={() => handleCancel(slot.id)}
-                        className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-red-500 text-red-600 hover:bg-red-50 transition-colors"
+                        className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
                       >
                         Cancel
                       </button>
@@ -540,32 +540,32 @@ export default function SearchPage() {
                             Unlock
                           </button>
                         ) : slot.slot_tier === 'premium' && dinerTier === 'premium' ? (
-                          <button
-                            onClick={() => handleBook(slot.id)}
-                            disabled={bookingSlotId === slot.id}
-                            className={[
-                              'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
-                              bookingSlotId === slot.id
-                                ? 'bg-blue-400 text-white cursor-not-allowed'
-                                : 'bg-blue-600 text-white hover:bg-blue-700',
-                            ].join(' ')}
-                          >
-                            {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
-                          </button>
+                        <button
+                          onClick={() => handleBook(slot.id)}
+                          disabled={bookingSlotId === slot.id}
+                          className={[
+                            'h-9 px-5 text-sm font-medium rounded-lg whitespace-nowrap transition-colors border border-gray-300',
+                            bookingSlotId === slot.id
+                              ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                              : 'bg-white text-gray-900 hover:bg-gray-50',
+                          ].join(' ')}
+                        >
+                          {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
+                        </button>
 
                         ) : (
-                          <button
-                            onClick={() => handleBook(slot.id)}
-                            disabled={bookingSlotId === slot.id}
-                            className={[
-                              'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
-                              bookingSlotId === slot.id
-                                ? 'bg-blue-400 text-white cursor-not-allowed'
-                                : 'bg-blue-600 text-white hover:bg-blue-700',
-                            ].join(' ')}
-                          >
-                            {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
-                          </button>
+                        <button
+                          onClick={() => handleBook(slot.id)}
+                          disabled={bookingSlotId === slot.id}
+                          className={[
+                            'h-9 px-5 text-sm font-medium rounded-lg whitespace-nowrap transition-colors border border-gray-300',
+                            bookingSlotId === slot.id
+                              ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                              : 'bg-white text-gray-900 hover:bg-gray-50',
+                          ].join(' ')}
+                        >
+                          {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
+                        </button>
                         )}
                       </div>
 

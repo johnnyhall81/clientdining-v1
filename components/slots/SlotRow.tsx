@@ -40,7 +40,10 @@ export default function SlotRow({
   const isAvailable = slot.status === 'available'
 
   return (
-    <div className="flex items-center justify-between py-4 border-b border-gray-200 last:border-b-0">
+    <div 
+      className="flex items-center justify-between py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
+      onClick={() => !isBookedByMe && isAvailable && eligibility.canBook && onBook(slot.id)}
+    >
       <div className="flex-1 grid grid-cols-4 gap-4">
         {/* Date / time */}
         <div>
@@ -79,8 +82,11 @@ export default function SlotRow({
           {isBookedByMe ? (
             <button
               type="button"
-              onClick={() => onCancel?.(slot.id)}
-              className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-red-500 text-red-600 hover:bg-red-50 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                onCancel?.(slot.id)
+              }}
+              className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
@@ -88,7 +94,10 @@ export default function SlotRow({
           ) : eligibility.requiresPremium && !eligibility.isWithin24h && onUnlock ? (
             <button
               type="button"
-              onClick={onUnlock}
+              onClick={(e) => {
+                e.stopPropagation()
+                onUnlock()
+              }}
               className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-amber-600 text-amber-600 hover:bg-amber-50 transition-colors flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,29 +106,37 @@ export default function SlotRow({
               Unlock
             </button>
 
-) : slot.slot_tier === 'premium' && dinerTier === 'premium' && isAvailable && eligibility.canBook ? (
-  <button
-    type="button"
-    onClick={() => onBook(slot.id)}
-    className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-  >
-    Book
-  </button>
+          ) : slot.slot_tier === 'premium' && dinerTier === 'premium' && isAvailable && eligibility.canBook ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onBook(slot.id)
+              }}
+              className="h-9 px-5 text-sm font-medium rounded-lg whitespace-nowrap bg-white text-gray-900 border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              Book
+            </button>
 
           ) : isAvailable && eligibility.canBook ? (
             <button
               type="button"
-              onClick={() => onBook(slot.id)}
-              className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                onBook(slot.id)
+              }}
+              className="h-9 px-5 text-sm font-medium rounded-lg whitespace-nowrap bg-white text-gray-900 border border-gray-300 hover:bg-gray-50 transition-colors"
             >
               Book
             </button>
 
           ) : (
-            <AlertToggle
-              isActive={isAlertActive}
-              onToggle={() => onToggleAlert(slot.id)}
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <AlertToggle
+                isActive={isAlertActive}
+                onToggle={() => onToggleAlert(slot.id)}
+              />
+            </div>
           )}
         </div>
       </div>
