@@ -45,6 +45,7 @@ export default function SearchPage() {
   const [venues, setVenues] = useState<Venue[]>([])
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
+  const [bookingError, setBookingError] = useState<string | null>(null)
   const [showPremiumModal, setShowPremiumModal] = useState(false)
   const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
 
@@ -149,11 +150,14 @@ export default function SearchPage() {
       const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        const message = data?.error || 'Could not cancel booking'
-        alert(message)
+        const message = data?.error || 'Could not create booking'
+        setBookingError(message)
+        setBookingSlotId(null)
         return
       }
       
+      setBookingError(null)
+
       setBookedSlots((prev) => {
         const next = new Set(prev)
         next.delete(slotId)
@@ -621,18 +625,20 @@ export default function SearchPage() {
       />
 
       {selectedSlot && (
-        <PartySizeModal
-          isOpen={showPartySizeModal}
-          onClose={() => {
-            setShowPartySizeModal(false)
-            setSelectedSlot(null)
-          }}
-          onConfirm={confirmBooking}
-          minSize={selectedSlot.party_min}
-          maxSize={selectedSlot.party_max}
-          venueName={selectedSlot.venue?.name || 'Venue'}
-        />
-      )}
+  <PartySizeModal
+    isOpen={showPartySizeModal}
+    onClose={() => {
+      setShowPartySizeModal(false)
+      setSelectedSlot(null)
+      setBookingError(null)
+    }}
+    onConfirm={confirmBooking}
+    minSize={selectedSlot.party_min}
+    maxSize={selectedSlot.party_max}
+    venueName={selectedSlot.venue?.name || 'Venue'}
+    error={bookingError}
+  />
+)}
     </div>
   )
 }
