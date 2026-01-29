@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { sendAlertNotification } from '@/lib/email/send-alert-notification'
+import { sendCancellationConfirmation } from '@/lib/email/send-cancellation-confirmation'
 import { formatFullDateTime } from '@/lib/date-utils'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
@@ -77,35 +78,67 @@ export async function POST(request: Request) {
     }
 
     // Cancel the booking
-// Cancel the booking
-// Cancel the booking
-const { error: cancelError } = await supabaseAdmin
-  .from('bookings')
-  .update({ 
-    status: 'cancelled', 
-    cancelled_at: new Date().toISOString(),
-    cancelled_by: user.id
-    // updated_at is set automatically by trigger
-  })
-  .eq('id', bookingId)
-
-    if (cancelError) {
-      throw cancelError
+    const { error: cancelError } = await supabaseAdmin
+    .from('bookings')
+    .update({ 
+      status: 'cancelled', 
+      cancelled_at: new Date().toISOString(),
+      cancelled_by: user.id
+    })
+    .eq('id', bookingId)
+  
+  if (cancelError) {
+    throw cancelError
+  }
+  
+  // Reopen the slot
+  const { error: slotError } = await supabaseAdmin
+    .from('slots')
+    .update({ status: 'available' })
+    .eq('id', booking.slot_id)
+  
+  if (slotError) {
+    throw slotError
+  }
+  
+  // Send cancellation confirmation email to the booking owner
+  try {
+    const { data: bookingOwner } = await supabaseAdmin.auth.admin.getUserById(
+      booking.user_id
+    )
+    
+    if (bookingOwner?.user?.email) {
+      const { data: venue } = await supabaseAdmin
+        .from('venues')
+        .select('id, name, area')
+        .eq('id', (booking.slots as any).venue_id)
+        .single()
+      
+      if (venue) {
+        await sendCancellationConfirmation({
+          userEmail: bookingOwner.user.email,
+          userName: bookingOwner.user.user_metadata?.full_name || 
+                   bookingOwner.user.user_metadata?.name || 
+                   bookingOwner.user.email?.split('@')[0] || 
+                   'Guest',
+          venueName: venue.name,
+          venueAddress: venue.area || 'London',
+          slotTime: formatFullDateTime((booking.slots as any).start_at),
+          partySize: booking.party_size || 2,
+          bookingId: bookingId,
+        })
+        
+        console.log(`✅ Cancellation email sent to ${bookingOwner.user.email}`)
+      }
     }
-
-    // Reopen the slot
-    const { error: slotError } = await supabaseAdmin
-      .from('slots')
-      .update({ status: 'available' })
-      .eq('id', booking.slot_id)
-
-    if (slotError) {
-      throw slotError
-    }
-
-    // Calculate hours until slot
-    const slotStartAt = (booking.slots as any).start_at
-    const hoursUntil = (new Date(slotStartAt).getTime() - Date.now()) / (1000 * 60 * 60)
+  } catch (emailError) {
+    console.error('❌ Failed to send cancellation email:', emailError)
+    // Don't fail the whole cancellation if email fails
+  }
+  
+  // Calculate hours until slot
+  const slotStartAt = (booking.slots as any).start_at
+  const hoursUntil = (new Date(slotStartAt).getTime() - Date.now()) / (1000 * 60 * 60)
 
     console.log(`📅 Slot starts in ${hoursUntil.toFixed(1)} hours`)
 
