@@ -78,13 +78,14 @@ export async function POST(request: Request) {
 
     // Cancel the booking
 // Cancel the booking
+// Cancel the booking
 const { error: cancelError } = await supabaseAdmin
   .from('bookings')
   .update({ 
     status: 'cancelled', 
     cancelled_at: new Date().toISOString(),
-    cancelled_by: user.id,
-    updated_at: new Date().toISOString()  // ← ADD THIS LINE
+    cancelled_by: user.id
+    // updated_at is set automatically by trigger
   })
   .eq('id', bookingId)
 
