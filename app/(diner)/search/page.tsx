@@ -539,10 +539,10 @@ export default function SearchPage() {
                             onClick={() => handleBook(slot.id)}
                             disabled={bookingSlotId === slot.id}
                             className={[
-                              'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
+                              'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors border-2 border-amber-400',
                               bookingSlotId === slot.id
-                                ? 'bg-blue-400 text-amber-400 cursor-not-allowed'
-                                : 'bg-blue-600 text-amber-400 hover:bg-blue-700',
+                                ? 'bg-blue-400 text-white cursor-not-allowed'
+                                : 'bg-blue-600 text-white hover:bg-blue-700',
                             ].join(' ')}
                           >
                             {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
