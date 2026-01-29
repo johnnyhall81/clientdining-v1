@@ -18,7 +18,7 @@ export async function sendAlertNotification(data: AlertEmailData) {
     await resend.emails.send({
       from: 'ClientDining <notifications@clientdining.com>',
       to: data.userEmail,
-      subject: `Table Available: ${data.venueName}`,
+      subject: `Availability opened: ${data.venueName}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -32,6 +32,7 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 color: #111827;
                 margin: 0;
                 padding: 0;
+                background: #F9FAFB;
               }
               .container { 
                 max-width: 600px; 
@@ -40,15 +41,16 @@ export async function sendAlertNotification(data: AlertEmailData) {
               }
               .header { 
                 background: #FFFFFF; 
-                color: #111827; 
-                padding: 40px 32px; 
+                color: #6B7280; 
+                padding: 32px 32px 24px; 
                 text-align: center;
                 border-bottom: 1px solid #E5E7EB;
               }
               .header h1 {
                 margin: 0;
-                font-size: 24px;
-                font-weight: 600;
+                font-size: 18px;
+                font-weight: 500;
+                color: #6B7280;
               }
               .content { 
                 background: #FFFFFF; 
@@ -59,24 +61,12 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 font-size: 16px;
                 color: #111827;
               }
-              .alert-box { 
-                background: #FEF3C7; 
-                border-left: 4px solid #D97706; 
-                padding: 20px; 
-                margin: 24px 0;
-                border-radius: 8px;
-              }
-              .alert-box p {
-                margin: 0;
-                color: #92400E;
-                font-weight: 600;
-              }
               .booking-details { 
                 background: #F9FAFB; 
                 padding: 24px; 
                 border-radius: 8px; 
                 margin: 24px 0;
-                border-left: 4px solid #D97706;
+                border: 1px solid #E5E7EB;
               }
               .detail-row { 
                 display: flex; 
@@ -103,43 +93,47 @@ export async function sendAlertNotification(data: AlertEmailData) {
               .footer { 
                 text-align: center; 
                 padding: 32px; 
-                color: #6B7280; 
-                font-size: 14px;
+                color: #9CA3AF; 
+                font-size: 13px;
                 background: #F9FAFB;
               }
               .footer p {
                 margin: 8px 0;
               }
               .footer a {
-                color: #6B7280;
+                color: #9CA3AF;
                 text-decoration: none;
+              }
+              .footer a:hover {
+                color: #6B7280;
+                text-decoration: underline;
               }
               .button { 
                 background: white; 
-                color: #D97706 !important; 
-                padding: 14px 32px; 
+                color: #374151 !important; 
+                padding: 12px 28px; 
                 text-decoration: none; 
                 border-radius: 6px; 
                 display: inline-block; 
                 margin: 24px 0;
-                font-weight: 600;
-                font-size: 16px;
-                border: 2px solid #D97706;
+                font-weight: 500;
+                font-size: 15px;
+                border: 1px solid #D1D5DB;
+              }
+              .button:hover {
+                background: #F9FAFB;
+                border-color: #9CA3AF;
               }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h1>Table Available</h1>
+                <h1>Table available</h1>
               </div>
               
               <div class="content">
-                <p>Hello ${data.userName},</p>
-                
-                <div class="alert-box">
-                  <p>Good news — a table is now available at ${data.venueName}.</p>
-                </div>
+                <p>A table you were watching is now available at ${data.venueName}.</p>
                 
                 <div class="booking-details">
                   <div class="detail-row">
@@ -151,7 +145,7 @@ export async function sendAlertNotification(data: AlertEmailData) {
                     <span class="detail-value">${data.slotTime}</span>
                   </div>
                   <div class="detail-row">
-                    <span class="detail-label">Party Size</span>
+                    <span class="detail-label">Typical tables</span>
                     <span class="detail-value">${data.partySize}</span>
                   </div>
                   <div class="detail-row">
@@ -160,18 +154,15 @@ export async function sendAlertNotification(data: AlertEmailData) {
                   </div>
                 </div>
                 
-                <p>Book now to secure your table.</p>
-                
                 <center>
-                  <a href="https://clientdining.com/venues/${data.venueId}" class="button" style="color: white;">View Venue</a>
+                  <a href="https://clientdining.com/venues/${data.venueId}" class="button">View availability</a>
                 </center>
               </div>
               
               <div class="footer">
-                <p>London's best tables</p>
                 <p><a href="https://clientdining.com">clientdining.com</a></p>
                 <p style="margin-top: 16px;">
-                  <a href="https://clientdining.com/alerts" style="color: #6B7280; text-decoration: none;">Manage alerts</a>
+                  <a href="https://clientdining.com/alerts">Manage alerts</a>
                 </p>
               </div>
             </div>

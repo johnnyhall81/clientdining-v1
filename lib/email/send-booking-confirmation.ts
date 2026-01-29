@@ -36,7 +36,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
     await resend.emails.send({
       from: 'ClientDining <notifications@clientdining.com>',
       to: data.userEmail,
-      subject: `Booking Confirmed: ${data.venueName}`,
+      subject: `Booking confirmed: ${data.venueName}`,
       attachments: icsContent ? [{
         filename: `booking-${data.bookingId.slice(0, 8)}.ics`,
         content: Buffer.from(icsContent).toString('base64')
@@ -54,6 +54,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                 color: #111827;
                 margin: 0;
                 padding: 0;
+                background: #F9FAFB;
               }
               .container { 
                 max-width: 600px; 
@@ -86,7 +87,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                 padding: 24px; 
                 border-radius: 8px; 
                 margin: 24px 0;
-                border-left: 4px solid #059669;
+                border: 1px solid #E5E7EB;
               }
               .detail-row { 
                 display: flex; 
@@ -112,51 +113,62 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
               }
               .contact-info {
                 background: #F9FAFB;
-                padding: 20px 24px;
-                border-radius: 8px;
+                padding: 16px 20px;
+                border-radius: 6px;
                 margin: 24px 0;
+                border: 1px solid #E5E7EB;
               }
               .contact-info p {
-                margin: 8px 0;
-                font-size: 14px;
+                margin: 6px 0;
+                font-size: 13px;
+                color: #6B7280;
               }
-              .policy-box {
-                background: #FEF3C7;
-                border-left: 4px solid #F59E0B;
-                padding: 16px 20px;
-                margin: 24px 0;
-                border-radius: 4px;
+              .contact-info .heading {
+                font-size: 13px;
+                font-weight: 600;
+                color: #6B7280;
+                margin-bottom: 8px;
               }
-              .policy-box p {
-                margin: 0;
-                font-size: 14px;
-                color: #92400E;
+              .policy-note {
+                padding: 16px 0;
+                margin: 24px 0 0;
+                font-size: 13px;
+                color: #6B7280;
+                line-height: 1.5;
               }
               .footer { 
                 text-align: center; 
                 padding: 32px; 
-                color: #6B7280; 
-                font-size: 14px;
+                color: #9CA3AF; 
+                font-size: 13px;
                 background: #F9FAFB;
               }
               .footer p {
                 margin: 8px 0;
               }
               .footer a {
-                color: #6B7280;
+                color: #9CA3AF;
                 text-decoration: none;
+              }
+              .footer a:hover {
+                color: #6B7280;
+                text-decoration: underline;
               }
               .button { 
                 background: white; 
-                color: #111827 !important; 
-                padding: 14px 32px; 
+                color: #374151 !important; 
+                padding: 12px 28px; 
                 text-decoration: none; 
                 border-radius: 6px; 
                 display: inline-block; 
                 margin: 8px 8px 8px 0;
-                font-weight: 600;
-                font-size: 16px;
-                border: 2px solid #111827;
+                font-weight: 500;
+                font-size: 15px;
+                border: 1px solid #D1D5DB;
+              }
+              .button:hover {
+                background: #F9FAFB;
+                border-color: #9CA3AF;
               }
               .calendar-note {
                 background: #F3F4F6;
@@ -164,20 +176,19 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                 border-radius: 6px;
                 margin: 16px 0;
                 font-size: 14px;
-                color: #374151;
+                color: #6B7280;
+                border: 1px solid #E5E7EB;
               }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h1>Booking Confirmed</h1>
+                <h1>Booking confirmed</h1>
               </div>
               
               <div class="content">
-                <p>Hello ${data.userName},</p>
-                
-                <p>You're all set for <strong>${data.venueName}</strong>.</p>
+                <p>Your booking at <strong>${data.venueName}</strong> is confirmed.</p>
                 
                 <div class="booking-details">
                   <div class="detail-row">
@@ -204,35 +215,29 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
 
                 ${icsContent ? `
                   <div class="calendar-note">
-                    📅 <strong>Calendar event attached</strong> — Open the .ics file attached to this email to add this booking to your calendar.
+                    📅 <strong>Calendar event attached</strong> — Open the .ics file to add this booking to your calendar.
                   </div>
                 ` : ''}
 
                 <center>
-                  <a href="${mapsUrl}" class="button" target="_blank">
-                    📍 Get Directions
-                  </a>
+                  <a href="${mapsUrl}" class="button" target="_blank">Get directions</a>
+                  <a href="https://clientdining.com/bookings" class="button">View bookings</a>
                 </center>
 
                 ${data.venuePhone || data.venueEmail ? `
                   <div class="contact-info">
-                    <p style="font-weight: 600; margin-bottom: 12px; color: #111827;">Venue Contact</p>
-                    ${data.venuePhone ? `<p><strong>Phone:</strong> ${data.venuePhone}</p>` : ''}
-                    ${data.venueEmail ? `<p><strong>Email:</strong> ${data.venueEmail}</p>` : ''}
+                    <p class="heading">Venue contact</p>
+                    ${data.venuePhone ? `<p>Phone: ${data.venuePhone}</p>` : ''}
+                    ${data.venueEmail ? `<p>Email: ${data.venueEmail}</p>` : ''}
                   </div>
                 ` : ''}
 
-                <div class="policy-box">
-                  <p><strong>Cancellation Policy:</strong> You can cancel up to 24 hours in advance from your bookings page. Cancellations within 24 hours may be subject to the venue's terms.</p>
+                <div class="policy-note">
+                  You can cancel up to 24 hours in advance from your bookings page. Later cancellations may be subject to venue terms.
                 </div>
-                
-                <center>
-                  <a href="https://clientdining.com/bookings" class="button">View Bookings</a>
-                </center>
               </div>
               
               <div class="footer">
-                <p>London's best tables</p>
                 <p><a href="https://clientdining.com">clientdining.com</a></p>
               </div>
             </div>

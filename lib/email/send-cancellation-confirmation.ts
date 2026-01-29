@@ -17,7 +17,7 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
     await resend.emails.send({
       from: 'ClientDining <notifications@clientdining.com>',
       to: data.userEmail,
-      subject: `Booking Cancelled: ${data.venueName}`,
+      subject: `Booking cancelled: ${data.venueName}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -31,6 +31,7 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                 color: #111827;
                 margin: 0;
                 padding: 0;
+                background: #F9FAFB;
               }
               .container { 
                 max-width: 600px; 
@@ -63,7 +64,7 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                 padding: 24px; 
                 border-radius: 8px; 
                 margin: 24px 0;
-                border-left: 4px solid #DC2626;
+                border: 1px solid #E5E7EB;
               }
               .detail-row { 
                 display: flex; 
@@ -87,31 +88,39 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                 font-size: 16px;
                 text-align: right;
               }
+              .note {
+                font-size: 14px;
+                color: #6B7280;
+                margin: 24px 0 0;
+                padding: 16px 0 0;
+              }
               .footer { 
                 text-align: center; 
                 padding: 32px; 
-                color: #6B7280; 
-                font-size: 14px;
+                color: #9CA3AF; 
+                font-size: 13px;
                 background: #F9FAFB;
               }
               .footer p {
                 margin: 8px 0;
               }
               .footer a {
-                color: #6B7280;
+                color: #9CA3AF;
                 text-decoration: none;
+              }
+              .footer a:hover {
+                color: #6B7280;
+                text-decoration: underline;
               }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h1>Booking Cancelled</h1>
+                <h1>Booking cancelled</h1>
               </div>
               
               <div class="content">
-                <p>Hello ${data.userName},</p>
-                
                 <p>Your booking at <strong>${data.venueName}</strong> has been cancelled.</p>
                 
                 <div class="booking-details">
@@ -133,11 +142,10 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                   </div>
                 </div>
                 
-                <p>We hope to see you soon.</p>
+                <p class="note">You can make a new booking at any time.</p>
               </div>
               
               <div class="footer">
-                <p>London's best tables</p>
                 <p><a href="https://clientdining.com">clientdining.com</a></p>
               </div>
             </div>
