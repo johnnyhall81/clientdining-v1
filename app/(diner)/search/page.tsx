@@ -383,7 +383,7 @@ export default function SearchPage() {
               tier: 'all',
               venueId: '',
             })}
-            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+            className="text-sm text-gray-600 hover:text-gray-900 transition-colors underline"
           >
             Clear All
           </button>
