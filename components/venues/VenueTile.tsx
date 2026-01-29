@@ -35,9 +35,9 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
         </div>
 
         <div className="space-y-1">
-          <h3 className="font-semibold text-lg text-gray-900 group-hover:text-blue-600 transition-colors">
-            {venue.name}
-          </h3>
+        <h3 className="font-semibold text-lg text-gray-900">
+          {venue.name}
+        </h3>
 
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">{venue.area}</span>
