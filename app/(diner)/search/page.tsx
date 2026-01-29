@@ -302,7 +302,7 @@ export default function SearchPage() {
   
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
-        alert(message)
+        setBookingError(message)  // ← NO ALERT
         setBookingSlotId(null)
         return
       }
