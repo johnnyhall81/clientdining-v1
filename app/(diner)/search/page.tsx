@@ -383,7 +383,7 @@ export default function SearchPage() {
               tier: 'all',
               venueId: '',
             })}
-            className="text-sm text-gray-600 hover:text-gray-900 transition-colors underline"
+            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
           >
             Clear All
           </button>
@@ -436,15 +436,15 @@ export default function SearchPage() {
 
           {/* Tier Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tier</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Access</label>
             <select
               value={filters.tier}
               onChange={(e) => setFilters({ ...filters, tier: e.target.value as 'all' | 'free' | 'premium' })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
-              <option value="all">All Tiers</option>
-              <option value="free">Free</option>
-              <option value="premium">Premium</option>
+              <option value="all">All Tables</option>
+              <option value="free">Free Access</option>
+              <option value="premium">Premium Access</option>
             </select>
           </div>
 
