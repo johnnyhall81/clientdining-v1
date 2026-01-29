@@ -285,7 +285,6 @@ export default function SearchPage() {
   const confirmBooking = async (partySize: number) => {
     if (!selectedSlot) return
   
-    setShowPartySizeModal(false)
     setBookingSlotId(selectedSlot.id)
   
     try {
@@ -302,12 +301,16 @@ export default function SearchPage() {
   
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
-        setBookingError(message)  // ← NO ALERT
+        setBookingError(message)
         setBookingSlotId(null)
-        return
+        return  // Keep modal open to show error
       }
   
-      // flip this slot immediately to "Confirmed / Cancel"
+      // Success! Clear error and close modal
+      setBookingError(null)
+      setShowPartySizeModal(false)
+  
+      // Flip this slot immediately to "Confirmed / Cancel"
       setBookedSlots((prev) => {
         const next = new Set(prev)
         next.add(selectedSlot.id)
@@ -317,12 +320,12 @@ export default function SearchPage() {
       router.push('/bookings')
     } catch (error) {
       console.error('Booking error:', error)
+      setBookingError('Something went wrong. Please try again.')
       setBookingSlotId(null)
     } finally {
-      setSelectedSlot(null)
+      setBookingSlotId(null)
     }
   }
-
 
 
 
