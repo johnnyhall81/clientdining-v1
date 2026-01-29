@@ -64,6 +64,11 @@ export default function SlotRow({
               Confirmed
             </span>
           )}
+          {slot.slot_tier === 'premium' && dinerTier === 'premium' && !isBookedByMe && (
+            <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+              Premium
+            </span>
+          )}
         </div>
 
         {/* Access / status - empty spacer */}
@@ -96,7 +101,7 @@ export default function SlotRow({
   <button
     type="button"
     onClick={() => onBook(slot.id)}
-    className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-blue-600 text-white hover:bg-blue-700 transition-colors border-2 border-amber-400"
+    className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-blue-600 text-white hover:bg-blue-700 transition-colors"
   >
     Book
   </button>

@@ -506,6 +506,11 @@ export default function SearchPage() {
                             Confirmed
                           </span>
                         )}
+                        {slot.slot_tier === 'premium' && dinerTier === 'premium' && !isBookedByMe && (
+                          <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+                            Premium
+                          </span>
+                        )}
                       </div>
                     </div>
                   </Link>
@@ -539,7 +544,7 @@ export default function SearchPage() {
                             onClick={() => handleBook(slot.id)}
                             disabled={bookingSlotId === slot.id}
                             className={[
-                              'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors border-2 border-amber-400',
+                              'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
                               bookingSlotId === slot.id
                                 ? 'bg-blue-400 text-white cursor-not-allowed'
                                 : 'bg-blue-600 text-white hover:bg-blue-700',
@@ -547,6 +552,7 @@ export default function SearchPage() {
                           >
                             {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
                           </button>
+
                         ) : (
                           <button
                             onClick={() => handleBook(slot.id)}
