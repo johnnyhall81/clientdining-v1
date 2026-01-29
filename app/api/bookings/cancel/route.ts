@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       .select(`
         id,
         slot_id,
-        diner_user_id,
+        user_id,
         status,
         slots!inner (
           id,
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       .eq('user_id', user.id)
       .single()
 
-    const isOwner = booking.diner_user_id === user.id
+    const isOwner = booking.user_id === user.id
     const isAdmin = profile?.role === 'platform_admin' || profile?.role === 'venue_admin'
 
     if (!isOwner && !isAdmin) {
@@ -81,7 +81,8 @@ export async function POST(request: Request) {
       .from('bookings')
       .update({ 
         status: 'cancelled', 
-        cancelled_at: new Date().toISOString() 
+        cancelled_at: new Date().toISOString(),
+        cancelled_by: user.id
       })
       .eq('id', bookingId)
 
@@ -202,15 +203,6 @@ async function processBlastNotification(slotId: string, slot: any) {
     // Send emails in parallel (don't wait)
     const emailPromises = alerts.map(async (alert) => {
       try {
-        // Get user profile
-        const { data: userProfile } = await supabaseAdmin
-          .from('profiles')
-          .select('user_id')
-          .eq('user_id', alert.diner_user_id)
-          .single()
-
-        if (!userProfile) return
-
         // Get auth user for email
         const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(
           alert.diner_user_id
@@ -218,9 +210,10 @@ async function processBlastNotification(slotId: string, slot: any) {
 
         if (!authUser?.user?.email) return
 
-        // Get full name from user metadata or profiles
+        // Get full name from user metadata
         const fullName = authUser.user.user_metadata?.full_name || 
                         authUser.user.user_metadata?.name ||
+                        authUser.user.email?.split('@')[0] ||
                         'Guest'
 
         await sendAlertNotification({
@@ -331,6 +324,7 @@ async function processFIFONotification(slotId: string, slot: any) {
 
     const fullName = authUser.user.user_metadata?.full_name || 
                     authUser.user.user_metadata?.name ||
+                    authUser.user.email?.split('@')[0] ||
                     'Guest'
 
     // Send email immediately
