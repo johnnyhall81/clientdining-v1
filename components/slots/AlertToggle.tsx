@@ -54,7 +54,7 @@ export default function AlertToggle(props: AlertToggleProps) {
         const data = await response.json().catch(() => ({}))
 
         if (!response.ok) {
-          setError(data?.error || 'Couldn't update alert')
+          setError(data?.error || "Couldn't update alert")
           return
         }
 
@@ -63,7 +63,7 @@ export default function AlertToggle(props: AlertToggleProps) {
 
         if (nextActive) setJustActivated(true)
       } catch {
-        setError('Couldn't update alert')
+        setError("Couldn't update alert")
       } finally {
         setIsLoading(false)
       }
@@ -77,7 +77,7 @@ export default function AlertToggle(props: AlertToggleProps) {
       await props.onToggle()
       setJustActivated(true)
     } catch (e: any) {
-      setError(e?.message || 'Couldn't update alert')
+      setError(e?.message || "Couldn't update alert")
     } finally {
       setIsLoading(false)
     }
