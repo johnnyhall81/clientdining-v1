@@ -9,6 +9,7 @@ interface PartySizeModalProps {
   minSize: number
   maxSize: number
   venueName: string
+  error?: string | null
 }
 
 export default function PartySizeModal({
@@ -18,6 +19,7 @@ export default function PartySizeModal({
   minSize,
   maxSize,
   venueName,
+  error,
 }: PartySizeModalProps) {
   const [partySize, setPartySize] = useState(minSize)
 
@@ -67,6 +69,12 @@ export default function PartySizeModal({
               We'll confirm suitability with the venue if needed.
             </p>
           </div>
+
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <button
