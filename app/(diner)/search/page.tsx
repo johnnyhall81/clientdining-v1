@@ -510,6 +510,7 @@ export default function SearchPage() {
                     </div>
                   </Link>
 
+                 
                   <div className="flex items-center gap-3">
                     {/* Action button: Cancel OR Book OR Alert */}
                     {isBookedByMe ? (
@@ -517,7 +518,6 @@ export default function SearchPage() {
                         type="button"
                         onClick={() => handleCancel(slot.id)}
                         className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-red-500 text-red-600 hover:bg-red-50 transition-colors"
-
                       >
                         Cancel
                       </button>
@@ -534,6 +534,19 @@ export default function SearchPage() {
                             </svg>
                             Unlock
                           </button>
+                        ) : slot.slot_tier === 'premium' && dinerTier === 'premium' ? (
+                          <button
+                            onClick={() => handleBook(slot.id)}
+                            disabled={bookingSlotId === slot.id}
+                            className={[
+                              'h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
+                              bookingSlotId === slot.id
+                                ? 'bg-blue-400 text-amber-400 cursor-not-allowed'
+                                : 'bg-blue-600 text-amber-400 hover:bg-blue-700',
+                            ].join(' ')}
+                          >
+                            {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
+                          </button>
                         ) : (
                           <button
                             onClick={() => handleBook(slot.id)}
@@ -549,6 +562,13 @@ export default function SearchPage() {
                           </button>
                         )}
                       </div>
+
+
+
+
+
+
+
                     ) : (
                       <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
                     )}
