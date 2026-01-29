@@ -39,10 +39,9 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
           {venue.name}
         </h3>
 
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">{venue.area}</span>
-            <span className="text-gray-500 capitalize">{venue.venue_type}</span>
-          </div>
+        <p className="text-sm text-gray-600">
+          {venue.area} · {venue.venue_type}
+        </p>
 
           {availableSlots > 0 && (
             <p className="text-sm text-green-600 font-medium">
