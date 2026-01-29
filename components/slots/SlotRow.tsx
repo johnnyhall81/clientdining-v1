@@ -91,6 +91,17 @@ export default function SlotRow({
               </svg>
               Unlock
             </button>
+
+          ) : slot.slot_tier === 'premium' && dinerTier === 'premium' && isAvailable && eligibility.canBook ? (
+            <button
+              type="button"
+              onClick={() => onBook(slot.id)}
+              className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-amber-600 text-amber-600 hover:bg-amber-50 transition-colors flex items-center gap-2"
+            >
+              <span className="text-base">✨</span>
+              Premium
+            </button>
+
           ) : isAvailable && eligibility.canBook ? (
             <button
               type="button"
