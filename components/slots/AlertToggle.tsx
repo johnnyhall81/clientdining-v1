@@ -54,7 +54,7 @@ export default function AlertToggle(props: AlertToggleProps) {
         const data = await response.json().catch(() => ({}))
 
         if (!response.ok) {
-          setError(data?.error || 'Couldn’t update alert')
+          setError(data?.error || 'Couldn't update alert')
           return
         }
 
@@ -63,7 +63,7 @@ export default function AlertToggle(props: AlertToggleProps) {
 
         if (nextActive) setJustActivated(true)
       } catch {
-        setError('Couldn’t update alert')
+        setError('Couldn't update alert')
       } finally {
         setIsLoading(false)
       }
@@ -77,7 +77,7 @@ export default function AlertToggle(props: AlertToggleProps) {
       await props.onToggle()
       setJustActivated(true)
     } catch (e: any) {
-      setError(e?.message || 'Couldn’t update alert')
+      setError(e?.message || 'Couldn't update alert')
     } finally {
       setIsLoading(false)
     }
@@ -85,35 +85,34 @@ export default function AlertToggle(props: AlertToggleProps) {
 
   return (
     <div className="flex flex-col items-end">
-            <button
-              type="button"
-              onClick={handleClick}
-              disabled={isLoading}
-              title={isActive ? 'Alert is on for this slot' : 'Turn on an alert for this slot'}
-              className={[
-                'h-10 px-6 text-sm rounded-lg whitespace-nowrap transition-colors',
-                'focus:outline-none focus-visible:outline-none',
-                isLoading ? 'cursor-not-allowed opacity-60' : '',
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={isLoading}
+        title={isActive ? 'Alert is on for this slot' : 'Turn on an alert for this slot'}
+        className={[
+          'h-10 px-6 text-sm rounded-lg whitespace-nowrap transition-colors font-medium',
+          'focus:outline-none focus-visible:outline-none',
+          isLoading ? 'cursor-not-allowed opacity-60' : '',
 
-                // Inactive: Follow
-                !isActive &&
-                  'border border-blue-600 text-blue-600 bg-white hover:bg-blue-50 font-medium',
+          // Inactive: Follow
+          !isActive &&
+            'border border-gray-200 text-gray-600 bg-white hover:border-gray-300',
 
-                // Active: Following (same colour, stronger)
-                isActive &&
-                  'border-2 border-blue-700 text-blue-700 bg-blue-50 font-semibold hover:bg-blue-100',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              {isLoading ? 'Saving…' : isActive ? '✓ Following' : '+ Follow'}
-            </button>
-
+          // Active: Following
+          isActive &&
+            'border border-gray-300 text-gray-700 bg-gray-50 hover:border-gray-400',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        {isLoading ? 'Saving…' : isActive ? '✓ Following' : '+ Follow'}
+      </button>
 
       {error ? (
         <span className="mt-1 text-xs text-red-600">{error}</span>
       ) : isActive && justActivated ? (
-        <span className="mt-1 text-xs text-gray-500">We’ll email you if it opens.</span>
+        <span className="mt-1 text-xs text-gray-500">We'll email you if it opens.</span>
       ) : null}
     </div>
   )
