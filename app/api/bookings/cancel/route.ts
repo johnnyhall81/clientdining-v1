@@ -44,6 +44,7 @@ export async function POST(request: Request) {
         slot_id,
         user_id,
         status,
+        party_size,
         slots!inner (
           id,
           start_at,
