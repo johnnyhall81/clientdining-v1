@@ -25,6 +25,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const [showPremiumModal, setShowPremiumModal] = useState(false)
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
+  const [bookingError, setBookingError] = useState<string | null>(null)
   const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
   const [futureBookingsCount, setFutureBookingsCount] = useState(0)
 
@@ -168,16 +169,13 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
-  
-        if (response.status === 403 && message.startsWith('Booking limit reached')) {
-          alert(message)
-        } else {
-          console.error('Booking failed:', message)
-        }
-  
+        setBookingError(message)
+        setBookingSlot(null)
         return
       }
-  
+
+      setBookingError(null)
+
       setBookedSlots((prev) => {
         const next = new Set(prev)
         next.add(selectedSlot.id)
@@ -327,19 +325,21 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         onClose={() => setShowPremiumModal(false)}
       />
 
-      {selectedSlot && (
-        <PartySizeModal
-          isOpen={showPartySizeModal}
-          onClose={() => {
-            setShowPartySizeModal(false)
-            setSelectedSlot(null)
-          }}
-          onConfirm={confirmBooking}
-          minSize={selectedSlot.party_min}
-          maxSize={selectedSlot.party_max}
-          venueName={venue.name}
-        />
-      )}
+{selectedSlot && (
+  <PartySizeModal
+    isOpen={showPartySizeModal}
+    onClose={() => {
+      setShowPartySizeModal(false)
+      setSelectedSlot(null)
+      setBookingError(null)
+    }}
+    onConfirm={confirmBooking}
+    minSize={selectedSlot.party_min}
+    maxSize={selectedSlot.party_max}
+    venueName={venue.name}
+    error={bookingError}
+  />
+)}
     </div>
   )
 }
