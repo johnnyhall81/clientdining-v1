@@ -75,9 +75,6 @@ export default function BookingsPage() {
   }
 
   const handleCancel = async (bookingId: string) => {
-    if (!confirm('Are you sure you want to cancel this booking?')) {
-      return
-    }
 
     try {
       // Call the cancel API endpoint
