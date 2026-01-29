@@ -69,7 +69,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         {!isCancelled && !isPast && (
           <button
             onClick={() => onCancel(booking.id)}
-            className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-red-500 text-red-600 hover:bg-red-50 transition-colors"
+            className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>
