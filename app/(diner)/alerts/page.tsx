@@ -185,8 +185,8 @@ export default function AlertsPage() {
                       src={alert.venue.image_venue}
                       alt={alert.venue.name}
                       fill
-                      sizes="64px"
-                      quality={80}
+                      sizes="96px"
+                      quality={90}
                       className="rounded object-cover"
                     />
                   </div>

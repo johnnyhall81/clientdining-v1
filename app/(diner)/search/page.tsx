@@ -521,8 +521,8 @@ export default function SearchPage() {
                         src={venue.image_venue}
                         alt={venue.name}
                         fill
-                        sizes="64px"
-                        quality={80}
+                        sizes="96px"
+                        quality={90}
                         className="rounded object-cover"
                       />
                     </div>
