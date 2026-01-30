@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
@@ -121,12 +123,23 @@ export default function TopNav() {
               {/* User Menu with Chevron */}
               <div className="relative group">
                 <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                  {profile?.avatar_url ? (
-                    <img
+                  
+                {profile?.avatar_url ? (
+                  <div className="relative w-8 h-8">
+                    <Image
                       src={profile.avatar_url}
                       alt={profile.full_name || 'Profile'}
-                      className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                      fill
+                      sizes="32px"
+                      quality={70}
+                      className="rounded-full object-cover border border-gray-200"
                     />
+                  </div>
+
+
+
+
+
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-600">
                       {profile?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}

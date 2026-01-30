@@ -1,7 +1,10 @@
 'use client'
 
+
+
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import { loadStripe } from '@stripe/stripe-js'
@@ -94,11 +97,17 @@ export default function AccountPage() {
         <div className="flex items-start gap-6">
           {/* Avatar */}
           {profile.avatar_url ? (
-            <img
-              src={profile.avatar_url}
-              alt={profile.full_name || 'Profile'}
-              className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
-            />
+            <div className="relative w-20 h-20">
+              <Image
+                src={profile.avatar_url}
+                alt={profile.full_name || 'Profile'}
+                fill
+                sizes="80px"
+                quality={70}
+                className="rounded-full object-cover border-2 border-gray-200"
+              />
+            </div>
+
           ) : (
             <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-semibold text-gray-600">
               {profile.full_name?.charAt(0) || profile.email?.charAt(0).toUpperCase()}

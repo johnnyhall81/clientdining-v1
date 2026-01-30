@@ -259,14 +259,18 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   return (
     <div className="space-y-8">
       <div className="relative bg-gray-200 rounded-lg aspect-[21/9] overflow-hidden">
-        <Image
-          src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
-          alt={venue.name}
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-          className="object-cover"
-        />
+        
+      <Image
+        src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
+        alt={venue.name}
+        fill
+        priority
+        quality={75}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+        className="object-cover"
+      />
+
+
       </div>
 
       <div>

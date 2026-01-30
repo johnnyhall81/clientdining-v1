@@ -516,7 +516,7 @@ export default function SearchPage() {
                     className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
                   >
                     {venue.image_venue && (
-                    <div className="relative w-16 h-16 flex-shrink-0">
+                    <div className="relative w-24 h-24 flex-shrink-0">
                       <Image
                         src={venue.image_venue}
                         alt={venue.name}

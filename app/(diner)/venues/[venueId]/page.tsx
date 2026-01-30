@@ -23,12 +23,18 @@ export default async function VenuePage({ params }: { params: { venueId: string 
   }
 
   // Fetch ALL future slots for this venue (do NOT filter to only available)
+  const now = new Date()
+  const thirtyDaysFromNow = new Date()
+  thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
+
   const { data: slots } = await supabase
     .from('slots')
     .select('*')
     .eq('venue_id', params.venueId)
-    .gte('start_at', new Date().toISOString())
+    .gte('start_at', now.toISOString())
+    .lte('start_at', thirtyDaysFromNow.toISOString())
     .order('start_at', { ascending: true })
+    .limit(50)
 
   return <VenueClient venue={venue} slots={slots || []} />
 }
