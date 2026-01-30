@@ -11,10 +11,16 @@ export default function TopNav() {
   const router = useRouter()
   const { user } = useAuth()
   const [profile, setProfile] = useState<any>(null)
+  const [bookingCount, setBookingCount] = useState(0)
+  const [alertCount, setAlertCount] = useState(0)
 
   useEffect(() => {
     if (user) {
       loadProfile()
+      loadCounts()
+    } else {
+      setBookingCount(0)
+      setAlertCount(0)
     }
   }, [user])
 
@@ -26,6 +32,29 @@ export default function TopNav() {
       .eq('user_id', user.id)
       .single()
     setProfile(data)
+  }
+
+  const loadCounts = async () => {
+    if (!user) return
+
+    // Get active future bookings count
+    const { data: bookings } = await supabase
+      .from('bookings')
+      .select('id, slots!inner(start_at)')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .gte('slots.start_at', new Date().toISOString())
+
+    setBookingCount(bookings?.length || 0)
+
+    // Get active alerts count
+    const { data: alerts } = await supabase
+      .from('slot_alerts')
+      .select('id', { count: 'exact', head: true })
+      .eq('diner_user_id', user.id)
+      .eq('status', 'active')
+
+    setAlertCount(alerts?.length || 0)
   }
 
   const handleSignOut = async () => {
@@ -60,23 +89,33 @@ export default function TopNav() {
               </Link>
               <Link
                 href="/bookings"
-                className={`text-sm font-medium transition-colors ${
+                className={`relative flex items-center gap-1.5 text-sm font-medium transition-colors ${
                   isActive('/bookings')
                     ? 'text-gray-900'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 Bookings
+                {bookingCount > 0 && (
+                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold text-white bg-red-500 rounded-full">
+                    {bookingCount}
+                  </span>
+                )}
               </Link>
               <Link
                 href="/alerts"
-                className={`text-sm font-medium transition-colors ${
+                className={`relative flex items-center gap-1.5 text-sm font-medium transition-colors ${
                   isActive('/alerts')
                     ? 'text-gray-900'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 Alerts
+                {alertCount > 0 && (
+                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold text-white bg-red-500 rounded-full">
+                    {alertCount}
+                  </span>
+                )}
               </Link>
 
               {/* User Menu with Chevron */}
