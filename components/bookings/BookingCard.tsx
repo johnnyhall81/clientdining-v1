@@ -33,6 +33,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
               alt={venue.name}
               fill
               sizes="64px"
+              quality={80}
               className="rounded object-cover"
             />
           </div>
