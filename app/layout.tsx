@@ -17,6 +17,7 @@ const inter = Inter({
 
 import { AuthProvider } from '@/contexts/AuthContext'
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: "ClientDining - Premium Restaurant & Club Reservations for City Professionals",
@@ -72,6 +73,7 @@ export default function RootLayout({
       <AuthProvider>
         {children}
         <Analytics />
+        <SpeedInsights />
       </AuthProvider>
       <GoogleAnalytics gaId="G-CYRRR3H4T9" />
     </body>
