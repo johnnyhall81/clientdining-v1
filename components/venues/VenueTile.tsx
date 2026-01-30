@@ -14,9 +14,11 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
 
   return (
     <Link
-      href={`/venues/${venue.id}`}
-      className="group block cursor-pointer rounded-md focus:outline-none focus-visible:shadow-sm"
+    href={`/venues/${venue.id}`}
+    prefetch={true}
+    className="group block cursor-pointer rounded-md focus:outline-none focus-visible:shadow-sm"
     >
+
       <div>
         <div className="relative aspect-[4/3] bg-gray-200 rounded-md overflow-hidden mb-3">
           {imageSrc ? (

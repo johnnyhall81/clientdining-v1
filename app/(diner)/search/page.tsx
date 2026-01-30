@@ -511,10 +511,16 @@ export default function SearchPage() {
                 className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-center justify-between gap-4">
-                  <Link
-                    href={`/venues/${venue.id}`}
-                    className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
-                  >
+                  
+                <Link
+                  href={`/venues/${venue.id}`}
+                  prefetch={true}
+                  className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
+                >
+
+
+
+
                     <div className="relative w-16 h-16 aspect-square bg-gray-100 rounded overflow-hidden flex-shrink-0">
                   {venue.image_venue ? (
                     <Image
