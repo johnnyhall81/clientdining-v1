@@ -48,14 +48,14 @@ export default function TopNav() {
     setBookingCount(bookings?.length || 0)
 
     // Get active alerts count
+// Get active alerts count
     const { data: alerts } = await supabase
       .from('slot_alerts')
-      .select('id', { count: 'exact', head: true })
+      .select('id')
       .eq('diner_user_id', user.id)
       .eq('status', 'active')
 
     setAlertCount(alerts?.length || 0)
-  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
