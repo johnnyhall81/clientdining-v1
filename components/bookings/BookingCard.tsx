@@ -26,18 +26,22 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           href={`/venues/${venue.id}`} 
           className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
         >
-        {venue.image_venue && (
-          <div className="relative w-16 h-16 flex-shrink-0">
+        <div className="relative w-16 h-16 aspect-square bg-gray-100 rounded overflow-hidden flex-shrink-0">
+          {venue.image_venue ? (
             <Image
               src={venue.image_venue}
               alt={venue.name}
               fill
-              sizes="96px"
+              sizes="64px"
               quality={90}
-              className="rounded object-cover"
+              className="object-cover"
             />
-          </div>
-        )}
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+              No image
+            </div>
+          )}
+        </div>
           <div>
             <h3 className="font-semibold text-lg text-gray-900 hover:underline">{venue.name}</h3>
             <p className="text-sm text-gray-600">{venue.area}</p>
