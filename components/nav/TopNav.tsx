@@ -97,7 +97,7 @@ export default function TopNav() {
               >
                 Bookings
                 {bookingCount > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold text-gray-700 bg-gray-200 rounded-full">
+                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-medium text-gray-600 bg-gray-200 rounded-full">
                     {bookingCount}
                   </span>
                 )}
@@ -112,7 +112,7 @@ export default function TopNav() {
               >
                 Alerts
                 {alertCount > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold text-gray-700 bg-gray-200 rounded-full">
+                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-medium text-gray-600 bg-gray-200 rounded-full">
                     {alertCount}
                   </span>
                 )}
