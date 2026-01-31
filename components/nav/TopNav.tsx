@@ -178,31 +178,13 @@ export default function TopNav() {
             </nav>
           ) : (
             <nav className="flex items-center gap-4">
-              <Link
-                href="/about"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
-              >
-                About
-              </Link>
-              <Link
-                href="/faq"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
-              >
-                FAQ
-              </Link>
-              <Link
-                href="/login"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
-              >
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className="btn-primary text-sm"
-              >
-                Sign Up
-              </Link>
-            </nav>
+            <Link
+              href="/login"
+              className="text-sm font-medium text-gray-900 hover:text-gray-700"
+            >
+              Login
+            </Link>
+          </nav>
           )}
         </div>
       </div>
