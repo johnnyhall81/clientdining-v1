@@ -13,7 +13,8 @@ export default function AboutPage() {
       <div className="prose prose-lg max-w-none">
         <section className="space-y-4">
           <p className="text-gray-700">
-            ClientDining is built for business dining: client meetings, team dinners, and private roundtables. Availability is accurate. Bookings are immediate.
+            ClientDining is built for business dining: client meetings, team dinners, and private roundtables. 
+            Availability is accurate. Bookings are immediate. Set alerts on any slot.
           </p>
         </section>
 
@@ -37,6 +38,7 @@ export default function AboutPage() {
                 <span className="text-sm font-medium text-gray-900">£49/month</span>
               </div>
               <ul className="space-y-2 text-gray-700 text-sm">
+                <li>Everything in Standard</li>
                 <li>Book premium slots in advance</li>
                 <li>Up to 10 future bookings</li>
                 <li>Priority alert notifications</li>
