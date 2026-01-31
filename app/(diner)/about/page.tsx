@@ -58,16 +58,16 @@ export default function AboutPage() {
         </section>
 
         <section className="mt-14 not-prose">
-          <div className="bg-gray-900 text-white p-10 rounded-2xl">
-            <h2 className="text-2xl font-bold mb-3">Join ClientDining</h2>
-            
-              href="/login"
-              className="inline-block bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Sign in
-            </a>
-          </div>
-        </section>
+  <div className="bg-gray-900 text-white p-10 rounded-2xl">
+    <h2 className="text-2xl font-bold mb-3">Join ClientDining</h2>
+    <a                
+      href="/login"
+      className="inline-block bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+    >
+      Sign in
+    </a>               
+  </div>
+</section>
       </div>
     </div>
   )
