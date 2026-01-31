@@ -291,22 +291,31 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           </div>
         </div>
 
-        <ReactMarkdown
-            components={{
-              p: ({ children }) => (
-                <p className="text-gray-700 leading-relaxed mb-3 last:mb-0">
-                  {children}
-                </p>
-              ),
-              strong: ({ children }) => (
-                <strong className="font-medium text-gray-900">
-                  {children}
-                </strong>
-              ),
-            }}
-          >
-            {text}
-          </ReactMarkdown>
+        {venue.description && (
+            <div className="max-w-3xl">
+              <ReactMarkdown
+                components={{
+                  p: ({ children }) => (
+                    <p className="text-gray-700 leading-relaxed mb-3 last:mb-0">
+                      {children}
+                    </p>
+                  ),
+                  strong: ({ children }) => (
+                    <strong className="font-medium text-gray-900">
+                      {children}
+                    </strong>
+                  ),
+                }}
+              >
+                {venue.description}
+              </ReactMarkdown>
+            </div>
+          )}
+
+
+
+
+
 
 
       </div>
