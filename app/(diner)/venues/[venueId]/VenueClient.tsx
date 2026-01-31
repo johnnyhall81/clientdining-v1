@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Venue, Slot } from '@/lib/supabase'
+import ReactMarkdown from 'react-markdown'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import SlotRow from '@/components/slots/SlotRow'
@@ -291,8 +292,8 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         </div>
 
         {venue.description && (
-          <div className="text-gray-700 max-w-3xl whitespace-pre-line">
-            {venue.description}
+          <div className="text-gray-700 max-w-3xl prose prose-sm prose-stone">
+            <ReactMarkdown>{venue.description}</ReactMarkdown>
           </div>
         )}
 
