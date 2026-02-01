@@ -70,7 +70,7 @@ export default function AboutPage() {
               <h3 className="text-xl font-bold text-gray-900 mb-2">Standard</h3>
               <ul className="space-y-2 text-gray-700 m-0 p-0 list-none">
                 <li>✓ Request standard restaurant tables</li>
-                <li>✓ Book premium tables within 24 hours of reservation time</li>
+                <li>✓ Book premium tables last minute</li>
                 <li>✓ Set alerts on any slot</li>
                 <li>✓ Hold up to three future bookings</li>
               </ul>
