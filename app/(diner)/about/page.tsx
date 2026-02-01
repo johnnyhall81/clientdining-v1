@@ -38,11 +38,11 @@ export default function AboutPage() {
 
         <section className="space-y-4 mt-12">
           <h2 className="text-2xl font-bold text-gray-900">Membership</h2>
-          <p className="text-gray-700">ClientDining offers two membership tiers: Core and Premium.</p>
+          <p className="text-gray-700">ClientDining offers two membership tiers: Standard and Premium.</p>
 
           <div className="not-prose grid md:grid-cols-2 gap-6 mt-6">
             <div className="border border-gray-200 rounded-xl p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Core</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Standard</h3>
               <ul className="space-y-2 text-gray-700 text-sm">
                 <li>✓ Request standard restaurant tables</li>
                 <li>✓ Access selected premium availability at short notice</li>
@@ -58,7 +58,7 @@ export default function AboutPage() {
               </div>
               <p className="text-sm text-gray-600 mb-4">For members who plan further ahead or host clients regularly.</p>
               <ul className="space-y-2 text-gray-700 text-sm">
-                <li>✓ Everything in Core</li>
+                <li>✓ Everything in Standard</li>
                 <li>✓ Book premium tables further in advance</li>
                 <li>✓ Hold up to ten future bookings</li>
                 <li>✓ Priority alert notifications</li>
