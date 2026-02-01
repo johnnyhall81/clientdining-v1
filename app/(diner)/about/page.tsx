@@ -1,152 +1,169 @@
 export default function AboutPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-16">
-      <div className="mb-16">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">About</h1>
-        <p className="text-lg text-gray-700 max-w-3xl leading-relaxed">
-          A private platform for booking business dinners at a small number of restaurants
-          and private members’ clubs in London.
+      <header className="mb-10">
+        <h1 className="text-4xl font-bold text-gray-900 mb-3">
+          About ClientDining
+        </h1>
+        <p className="text-lg text-gray-700">
+          ClientDining is a private platform for managing business dining reservations at a selected group of restaurants and private members' clubs in London.
         </p>
-      </div>
+      </header>
 
-      <div className="prose prose-lg max-w-none space-y-16">
-        {/* About */}
-        <section className="space-y-6">
-          <h2 className="text-2xl font-bold text-gray-900">About ClientDining</h2>
-
+      <div className="prose prose-lg max-w-none">
+        <section className="space-y-4">
           <p className="text-gray-700">
-            ClientDining is designed for people who regularly take clients or colleagues
-            out to dinner and want a straightforward way to see what’s available,
-            request a table, and keep bookings in one place.
+            Members use the platform to view availability, make reservations, and manage bookings in one place. Availability is shown based on real-time information from participating venues.
           </p>
-
           <p className="text-gray-700">
-            Availability on ClientDining is shown based on information shared by venues
-            and updated as changes come in. In practice, this means you can usually see
-            dates, times, and table sizes without having to email, call, or wait for a reply.
+            The platform is built for business dining: client meetings, team dinners, and private roundtables. Venues are selected for professional settings and their ability to support hosting requirements.
           </p>
         </section>
 
-        {/* How people use */}
-        <section className="space-y-8">
-          <h2 className="text-2xl font-bold text-gray-900">How people use ClientDining</h2>
+        <section className="space-y-4 mt-12">
+          <h2 className="text-2xl font-bold text-gray-900">How members use ClientDining</h2>
 
-          <div className="space-y-4 not-prose">
-            <div className="bg-gray-50/70 p-6 rounded-xl border border-gray-100">
-              <h3 className="font-semibold text-gray-900 mb-2">Browse venues</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Members browse a short list of restaurants and private members’ clubs
-                that work well for business dinners. Venues are chosen with professional
-                settings in mind.
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Browse venues</h3>
+              <p className="text-gray-700">
+                Members browse a curated selection of restaurants and private members' clubs across London. Venues are reviewed before being added, with attention to service standards, discretion, and operational reliability.
               </p>
             </div>
 
-            <div className="bg-gray-50/70 p-6 rounded-xl border border-gray-100">
-              <h3 className="font-semibold text-gray-900 mb-2">Request a table</h3>
-              <p className="text-gray-700 leading-relaxed">
-                When a table is available, members submit a booking request through the
-                platform. In many cases this is confirmed quickly, but timing ultimately
-                depends on the venue.
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">View availability</h3>
+              <p className="text-gray-700">
+                Availability is displayed by date, time, and table size. Information is updated as venues make changes to their inventory.
               </p>
             </div>
 
-            <div className="bg-gray-50/70 p-6 rounded-xl border border-gray-100">
-              <h3 className="font-semibold text-gray-900 mb-2">Set alerts</h3>
-              <p className="text-gray-700 leading-relaxed">
-                If the time you want isn’t available, you can set an alert on that slot.
-                When availability changes and the slot opens up, you’ll get a notification.
-                Premium members receive alerts first when there’s competition for the
-                same table.
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Book tables</h3>
+              <p className="text-gray-700">
+                Reservations are made through the platform. Members manage all bookings in one place. Standard tables are available to all members. Premium tables require Premium membership and can be booked further in advance.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Set alerts</h3>
+              <p className="text-gray-700">
+                When a preferred time is unavailable, members set an alert for that slot. Alerts notify members when the slot becomes available. Premium members receive priority notifications.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Membership */}
-        <section className="space-y-8">
-          <h2 className="text-2xl font-bold text-gray-900">Membership</h2>
+        <section className="space-y-4 mt-12">
+          <h2 className="text-2xl font-bold text-gray-900">Membership tiers</h2>
+          <p className="text-gray-700">ClientDining offers two membership tiers: Standard and Premium.</p>
 
-          <p className="text-gray-700">
-            ClientDining has two membership levels: Standard and Premium.
-          </p>
-
-          <div className="grid md:grid-cols-2 gap-8 not-prose">
-            <div className="border border-gray-200 rounded-xl p-8 bg-white">
+          <div className="not-prose grid md:grid-cols-2 gap-6 mt-6">
+            <div className="border border-gray-200 rounded-xl p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-2">Standard</h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Free. Best if you book occasionally or tend to plan at short notice.
-              </p>
-              <ul className="space-y-2 text-gray-700 m-0 p-0 list-none">
-                <li>✓ Browse all venues</li>
-                <li>✓ Request standard restaurant tables</li>
-                <li>✓ Book any table within 24 hours</li>
-                <li>✓ Set alerts on any slot</li>
-                <li>✓ Hold up to three future bookings</li>
+              <p className="text-sm text-gray-600 mb-4">Available at no cost</p>
+              <ul className="space-y-2 text-gray-700 text-sm">
+                <li>Browse all venues</li>
+                <li>Book standard restaurant tables</li>
+                <li>Book any table within 24 hours</li>
+                <li>Set alerts on any slot</li>
+                <li>Hold up to three active bookings</li>
               </ul>
+              <p className="text-sm text-gray-600 mt-4">
+                Standard membership suits professionals who book occasionally or prefer short-notice planning.
+              </p>
             </div>
 
-            <div className="border border-gray-300 rounded-xl p-8 bg-gray-50">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Premium — £49/month
-              </h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                For people who host business dinners regularly and prefer to plan ahead.
-              </p>
-              <ul className="space-y-2 text-gray-700 m-0 p-0 list-none">
-                <li>✓ Everything in Standard</li>
-                <li>✓ Request certain tables further in advance</li>
-                <li>✓ Hold up to ten future bookings</li>
-                <li>✓ Priority alert notifications</li>
+            <div className="border border-gray-900 rounded-xl p-8 bg-gray-50">
+              <div className="flex items-baseline justify-between gap-4 mb-2">
+                <h3 className="text-xl font-bold text-gray-900">Premium</h3>
+                <span className="text-sm font-medium text-gray-900">£49/month</span>
+              </div>
+              <p className="text-sm text-gray-700 mb-4">Everything in Standard, plus:</p>
+              <ul className="space-y-2 text-gray-700 text-sm">
+                <li>Book premium tables in advance</li>
+                <li>Hold up to ten active bookings</li>
+                <li>Priority alert notifications</li>
               </ul>
+              <p className="text-sm text-gray-600 mt-4">
+                Premium membership suits professionals who host client dinners regularly and plan ahead.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* Venues */}
-        <section className="space-y-6">
-          <h2 className="text-2xl font-bold text-gray-900">The venues</h2>
-
+        <section className="space-y-4 mt-12">
+          <h2 className="text-2xl font-bold text-gray-900">Venue selection</h2>
           <p className="text-gray-700">
-            ClientDining works with a smaller group of restaurants and private members’
-            clubs that are comfortable hosting business dinners and willing to share
-            availability information.
+            ClientDining works with a focused group of restaurants and private members' clubs in London. Venues are selected for:
           </p>
-
+          <ul className="space-y-2 text-gray-700">
+            <li>Consistency and quality of service</li>
+            <li>Suitability for business dining</li>
+            <li>Capacity to accommodate professional hosting requirements</li>
+            <li>Operational reliability</li>
+          </ul>
           <p className="text-gray-700">
-            New venues are added gradually rather than all at once.
+            New venues are added deliberately and reviewed before inclusion.
           </p>
         </section>
 
-        {/* Access */}
-        <section className="space-y-6">
+        <section className="space-y-4 mt-12">
           <h2 className="text-2xl font-bold text-gray-900">Access and verification</h2>
-
           <p className="text-gray-700">
-            Membership is intended for professional use and is verified using publicly
-            available information, typically LinkedIn profiles.
+            Membership is verified through professional background, typically via LinkedIn. This maintains a business-focused network.
           </p>
-
           <p className="text-gray-700">
-            Access isn’t open to the general public, and new members are approved before
-            they can use the platform.
+            Access is not public. New members apply and are approved before joining.
           </p>
         </section>
 
-        {/* CTA */}
-        <section className="bg-gray-900 text-white p-10 rounded-2xl not-prose">
-          <h2 className="text-2xl font-bold mb-3">Join ClientDining</h2>
-          <p className="text-gray-300 mb-7 leading-relaxed">
-            Create an account to request access and start booking.
+        <section className="space-y-4 mt-12">
+          <h2 className="text-2xl font-bold text-gray-900">Operational principles</h2>
+
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Accuracy</h3>
+              <p className="text-gray-700">
+                Availability reflects current venue inventory, updated in real time.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Discretion</h3>
+              <p className="text-gray-700">
+                The platform operates alongside existing reservation systems. It does not promote, discount, or market individual venues publicly.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Quality</h3>
+              <p className="text-gray-700">
+                Focus is placed on a smaller number of suitable venues rather than comprehensive coverage. Growth is deliberate.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-4 mt-12">
+          <p className="text-gray-700 text-sm">
+            For venues: <span className="text-gray-900 font-medium">venues@clientdining.com</span>
           </p>
-          <a
-            href="/signup"
-            className="inline-block bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
-          >
-            Join
-          </a>
-          <p className="text-sm text-gray-400 mt-4">
-            Access is subject to approval.
+          <p className="text-gray-700 text-sm">
+            For member support: <span className="text-gray-900 font-medium">support@clientdining.com</span>
           </p>
+        </section>
+
+        <section className="mt-14 not-prose">
+          <div className="bg-gray-900 text-white p-10 rounded-2xl">
+            <h2 className="text-2xl font-bold mb-3">Join ClientDining</h2>
+            
+              href="/login"
+              className="inline-block bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Sign in
+            </a>
+          </div>
         </section>
       </div>
     </div>
