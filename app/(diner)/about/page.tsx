@@ -79,8 +79,8 @@ export default function AboutPage() {
             <div className="border border-amber-600 rounded-xl p-8 bg-white">
               <h3 className="text-xl font-bold text-gray-900 mb-2">Premium — £49/month</h3>
               <ul className="space-y-2 text-gray-700 m-0 p-0 list-none">
-                <li>✓ Premium includes everything in Standard, plus</li>
-                <li>✓ Request premium tables further in advance</li>
+                <li>✓ Everything in Standard, plus</li>
+                <li>✓ Book premium tables further in advance</li>
                 <li>✓ Hold up to ten future bookings</li>
                 <li>✓ Priority alert notifications</li>
               </ul>
