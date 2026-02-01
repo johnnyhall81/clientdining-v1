@@ -68,32 +68,22 @@ export default function AboutPage() {
           <div className="not-prose grid md:grid-cols-2 gap-8">
             <div className="border border-gray-200 rounded-xl p-8 bg-white">
               <h3 className="text-xl font-bold text-gray-900 mb-2">Standard</h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Standard membership is free. It suits members who book occasionally or tend to plan at short notice.
-              </p>
               <ul className="space-y-2 text-gray-700 m-0 p-0 list-none">
-                <li>Browse all venues</li>
-                <li>Request standard restaurant tables</li>
-                <li>Book any table within 24 hours of the reservation time</li>
-                <li>Set alerts on any slot</li>
-                <li>Hold up to three future bookings</li>
+                <li>✓ Request standard restaurant tables</li>
+                <li>✓ Book any table within 24 hours of the reservation time</li>
+                <li>✓ Set alerts on any slot</li>
+                <li>✓ Hold up to three future bookings</li>
               </ul>
             </div>
 
             <div className="border border-gray-300 rounded-xl p-8 bg-gray-50">
               <h3 className="text-xl font-bold text-gray-900 mb-2">Premium — £49/month</h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Premium includes everything in Standard, plus the ability to request certain tables further in advance,
-                hold up to ten future bookings, and receive priority alert notifications.
-              </p>
               <ul className="space-y-2 text-gray-700 m-0 p-0 list-none">
-                <li>Request certain tables further in advance</li>
-                <li>Hold up to ten future bookings</li>
-                <li>Priority alert notifications</li>
+                <li>✓ Premium includes everything in Standard, plus</li>
+                <li>✓ Request certain tables further in advance</li>
+                <li>✓ Hold up to ten future bookings</li>
+                <li>✓ Priority alert notifications</li>
               </ul>
-              <p className="text-gray-600 mt-6 leading-relaxed">
-                Premium membership suits members who host client dinners more regularly and prefer to plan ahead.
-              </p>
             </div>
           </div>
         </section>
