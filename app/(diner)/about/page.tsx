@@ -70,7 +70,7 @@ export default function AboutPage() {
               <h3 className="text-xl font-bold text-gray-900 mb-2">Standard</h3>
               <ul className="space-y-2 text-gray-700 m-0 p-0 list-none">
                 <li>✓ Request standard restaurant tables</li>
-                <li>✓ Book any table within 24 hours of the reservation time</li>
+                <li>✓ Book premium tables within 24 hours of reservation time</li>
                 <li>✓ Set alerts on any slot</li>
                 <li>✓ Hold up to three future bookings</li>
               </ul>
@@ -80,7 +80,7 @@ export default function AboutPage() {
               <h3 className="text-xl font-bold text-gray-900 mb-2">Premium — £49/month</h3>
               <ul className="space-y-2 text-gray-700 m-0 p-0 list-none">
                 <li>✓ Premium includes everything in Standard, plus</li>
-                <li>✓ Request certain tables further in advance</li>
+                <li>✓ Request premium tables further in advance</li>
                 <li>✓ Hold up to ten future bookings</li>
                 <li>✓ Priority alert notifications</li>
               </ul>
