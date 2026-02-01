@@ -109,8 +109,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-bold text-gray-900">Access and verification</h2>
 
           <p className="text-gray-700">
-            ClientDining is intended for professional use. Membership is verified using publicly available professional
-            information, typically LinkedIn profiles.
+            ClientDining is intended for professional use. Membership is verified via LinkedIn to maintain a professional network.
           </p>
 
           <p className="text-gray-700">
