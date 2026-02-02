@@ -222,20 +222,23 @@ export default function AlertsPage() {
                 </Link>
 
                 {alert.status === 'notified' ? (
-                  <Link
-                    href={`/venues/${alert.venue.id}`}
-                    className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-                       >
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/venues/${alert.venue.id}`)}
+                    className="inline-flex items-center justify-center h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
+                  >
                     Book
-                  </Link>
+                  </button>
                 ) : (
                   <button
+                    type="button"
                     onClick={() => handleRemoveAlert(alert)}
-                    className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-                   >
+                    className="inline-flex items-center justify-center h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
+                  >
                     Remove
                   </button>
                 )}
+
               </div>
             </div>
           ))}
