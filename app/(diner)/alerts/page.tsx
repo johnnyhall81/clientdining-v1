@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase-client'
 import { formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
+import RemoveAlertModal from '@/components/modals/RemoveAlertModal'
 
 interface AlertWithDetails {
   id: string
@@ -37,6 +38,9 @@ export default function AlertsPage() {
   const [alerts, setAlerts] = useState<AlertWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'active' | 'all'>('active')
+  const [showRemoveModal, setShowRemoveModal] = useState(false)
+  const [alertToRemove, setAlertToRemove] = useState<AlertWithDetails | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -96,26 +100,35 @@ export default function AlertsPage() {
     }
   }
 
-  const handleRemoveAlert = async (alertId: string) => {
-    if (!confirm('Remove this alert?')) return
+  const handleRemoveAlert = (alert: AlertWithDetails) => {
+    setAlertToRemove(alert)
+    setShowRemoveModal(true)
+  }
+
+  const confirmRemoveAlert = async () => {
+    if (!alertToRemove) return
+
+    setShowRemoveModal(false)
+    setError(null)
 
     try {
       const { error } = await supabase
         .from('slot_alerts')
         .delete()
-        .eq('id', alertId)
+        .eq('id', alertToRemove.id)
 
       if (error) {
         console.error('Error removing alert:', error)
-        alert('Failed to remove alert')
+        setError('Failed to remove alert. Please try again.')
         return
       }
 
       // Reload alerts
       loadAlerts()
+      setAlertToRemove(null)
     } catch (error) {
       console.error('Error removing alert:', error)
-      alert('Failed to remove alert')
+      setError('Failed to remove alert. Please try again.')
     }
   }
 
@@ -174,7 +187,14 @@ export default function AlertsPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
+        <>
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm font-light">
+              {error}
+            </div>
+          )}
+          
+          <div className="space-y-4">
           {filteredAlerts.map(alert => (
             <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4">
               <div className="flex items-center justify-between gap-4">
@@ -233,7 +253,7 @@ export default function AlertsPage() {
                 </Link>
 
                 <button
-                  onClick={() => handleRemoveAlert(alert.id)}
+                  onClick={() => handleRemoveAlert(alert)}
                   className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
                 >
                   Remove
@@ -242,7 +262,19 @@ export default function AlertsPage() {
             </div>
           ))}
         </div>
+        </>
       )}
+
+      {/* Remove Alert Modal */}
+      <RemoveAlertModal
+        isOpen={showRemoveModal}
+        onClose={() => {
+          setShowRemoveModal(false)
+          setAlertToRemove(null)
+        }}
+        onConfirm={confirmRemoveAlert}
+        venueName={alertToRemove?.venue.name}
+      />
     </div>
   )
 }
