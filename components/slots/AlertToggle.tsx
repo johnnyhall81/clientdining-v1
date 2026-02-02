@@ -91,17 +91,17 @@ export default function AlertToggle(props: AlertToggleProps) {
         disabled={isLoading}
         title={isActive ? 'Alert is on for this slot' : 'Turn on an alert for this slot'}
         className={[
-          'h-10 px-6 text-sm rounded-lg whitespace-nowrap transition-colors font-medium',
+          'h-10 px-6 text-sm rounded-lg whitespace-nowrap transition-colors font-light',
           'focus:outline-none focus-visible:outline-none',
           isLoading ? 'cursor-not-allowed opacity-60' : '',
 
           // Inactive: Follow
           !isActive &&
-            'border border-gray-200 text-gray-600 bg-white hover:border-gray-300',
+            'border border-zinc-200 text-zinc-600 bg-white hover:border-zinc-300',
 
           // Active: Following
           isActive &&
-            'border border-gray-300 text-gray-700 bg-gray-50 hover:border-gray-400',
+            'border border-zinc-300 text-zinc-700 bg-zinc-50 hover:border-zinc-400',
         ]
           .filter(Boolean)
           .join(' ')}
@@ -112,7 +112,7 @@ export default function AlertToggle(props: AlertToggleProps) {
       {error ? (
         <span className="mt-1 text-xs text-red-600">{error}</span>
       ) : isActive && justActivated ? (
-        <span className="mt-1 text-xs text-gray-500">We'll email you if it opens.</span>
+        <span className="mt-1 text-xs text-zinc-500 font-light">We'll email you if it opens.</span>
       ) : null}
     </div>
   )
