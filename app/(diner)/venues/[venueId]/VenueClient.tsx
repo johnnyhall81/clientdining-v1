@@ -321,11 +321,11 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
             return (
               <div className="text-sm leading-snug mb-1 last:mb-0">
-                <span className="text-zinc-500 font-medium">{label}</span>
-                <span className="mx-2 text-zinc-300">·</span>
-                <span className="text-zinc-600 font-light">{value}</span>
+                <span className="text-zinc-500 font-medium">{label}:</span>{' '}
+                <span className="text-zinc-700 font-light">{value}</span>
               </div>
             )
+            
           }
 
           // Summary paragraph: same size + same leading to keep it calm
