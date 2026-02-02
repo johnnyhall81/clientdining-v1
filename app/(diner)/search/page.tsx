@@ -234,12 +234,10 @@ export default function SearchPage() {
       query = query.lte('start_at', in24h.toISOString())
     }
 
-    // Filter by tier
     if (filters.tier !== 'all') {
       query = query.eq('slot_tier', filters.tier)
     }
 
-    // Filter by venue
     if (filters.venueId) {
       query = query.eq('venue_id', filters.venueId)
     }
@@ -248,43 +246,45 @@ export default function SearchPage() {
 
     if (error) {
       console.error('Search error:', error)
+      setResults([])
     } else {
-      const transformed: SearchResult[] = (data || []).map((item: any) => ({
+      const mappedResults = (data || []).map((row: any) => ({
         slot: {
-          id: item.id,
-          start_at: item.start_at,
-          party_min: item.party_min,
-          party_max: item.party_max,
-          slot_tier: item.slot_tier,
-          status: item.status,
+          id: row.id,
+          start_at: row.start_at,
+          party_min: row.party_min,
+          party_max: row.party_max,
+          slot_tier: row.slot_tier,
+          status: row.status,
         },
-        venue: item.venues,
+        venue: row.venues,
       }))
-      setResults(transformed)
+      setResults(mappedResults)
     }
 
     setLoading(false)
   }
 
- 
   const handleBook = async (slotId: string) => {
     if (!user) {
       router.push('/login')
       return
     }
   
-    // Find the slot to get party min/max
-    const slot = results.find(r => r.slot.id === slotId)?.slot
-    if (!slot) return
+    const result = results.find(r => r.slot.id === slotId)
+    if (!result) return
   
-    // Show party size modal
-    setSelectedSlot(slot)
+    setSelectedSlot({
+      ...result.slot,
+      venue: result.venue
+    })
     setShowPartySizeModal(true)
   }
-  
+
   const confirmBooking = async (partySize: number) => {
     if (!selectedSlot) return
   
+    setShowPartySizeModal(false)
     setBookingSlotId(selectedSlot.id)
   
     try {
@@ -303,14 +303,11 @@ export default function SearchPage() {
         const message = data?.error || 'Could not create booking'
         setBookingError(message)
         setBookingSlotId(null)
-        return  // Keep modal open to show error
+        return
       }
-  
-      // Success! Clear error and close modal
+
       setBookingError(null)
-      setShowPartySizeModal(false)
-  
-      // Flip this slot immediately to "Confirmed / Cancel"
+
       setBookedSlots((prev) => {
         const next = new Set(prev)
         next.add(selectedSlot.id)
@@ -318,19 +315,14 @@ export default function SearchPage() {
       })
   
       router.push('/bookings')
+      router.refresh()
     } catch (error) {
       console.error('Booking error:', error)
-      setBookingError('Something went wrong. Please try again.')
-      setBookingSlotId(null)
     } finally {
       setBookingSlotId(null)
+      setSelectedSlot(null)
     }
   }
-
-
-
-
-
 
   const handleToggleAlert = async (slotId: string) => {
     if (!user) {
@@ -338,100 +330,82 @@ export default function SearchPage() {
       return
     }
 
-    const isActive = alerts.has(slotId)
+    const response = await fetch('/api/alerts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slotId }),
+    })
 
-    try {
-      const response = await fetch('/api/alerts', {
-        method: isActive ? 'DELETE' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId }),
-      })
+    const data = await response.json().catch(() => ({}))
 
-      if (response.ok) {
-        setAlerts((prev) => {
-          const next = new Set(prev)
-          if (isActive) {
-            next.delete(slotId)
-          } else {
-            next.add(slotId)
-          }
-          return next
-        })
-      }
-    } catch (error) {
-      console.error('Alert toggle error:', error)
+    if (!response.ok) {
+      throw new Error(data?.error || 'Failed to update alert')
     }
+
+    const newAlerts = new Set(alerts)
+    if (data.active) newAlerts.add(slotId)
+    else newAlerts.delete(slotId)
+    setAlerts(newAlerts)
   }
 
   const isLastMinute = (startAt: string) => {
-    const slotTime = new Date(startAt)
     const now = new Date()
+    const slotTime = new Date(startAt)
     const hoursUntil = (slotTime.getTime() - now.getTime()) / (1000 * 60 * 60)
     return hoursUntil <= 24
   }
 
   return (
     <div className="space-y-6">
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Search</h1>
-      <p className="text-gray-600">View and search available tables</p>
-    </div>
+      <div>
+        <h1 className="text-4xl font-light text-zinc-900 mb-2">Search Tables</h1>
+        <p className="text-zinc-600 font-light">Find available bookings across all venues</p>
+      </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
-          <button
-            onClick={() => setFilters({
-              date: '',
-              area: '',
-              partySize: 2,
-              within24h: false,
-              tier: 'all',
-              venueId: '',
-            })}
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Clear All
-          </button>
-        </div>
+      <div className="bg-white rounded-lg border border-zinc-200 p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {/* Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+            <label className="block text-sm font-light text-zinc-700 mb-2">Date</label>
             <input
               type="date"
               value={filters.date}
               onChange={(e) => setFilters({ ...filters, date: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
             />
           </div>
 
           {/* Area */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Area</label>
+            <label className="block text-sm font-light text-zinc-700 mb-2">Area</label>
             <select
               value={filters.area}
               onChange={(e) => setFilters({ ...filters, area: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
             >
               <option value="">All Areas</option>
               <option value="Mayfair">Mayfair</option>
-              <option value="Notting Hill">Notting Hill</option>
-              <option value="Piccadilly">Piccadilly</option>
               <option value="Soho">Soho</option>
+              <option value="Covent Garden">Covent Garden</option>
+              <option value="Fitzrovia">Fitzrovia</option>
+              <option value="Marylebone">Marylebone</option>
               <option value="Knightsbridge">Knightsbridge</option>
-              <option value="Belgravia">Belgravia</option>
+              <option value="Chelsea">Chelsea</option>
+              <option value="Notting Hill">Notting Hill</option>
+              <option value="Shoreditch">Shoreditch</option>
+              <option value="City of London">City of London</option>
+              <option value="Canary Wharf">Canary Wharf</option>
             </select>
           </div>
 
           {/* Party Size */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Party Size</label>
+            <label className="block text-sm font-light text-zinc-700 mb-2">Party Size</label>
             <select
               value={filters.partySize}
               onChange={(e) => setFilters({ ...filters, partySize: parseInt(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
             >
               {[2, 3, 4, 5, 6, 7, 8].map((size) => (
                 <option key={size} value={size}>
@@ -443,11 +417,11 @@ export default function SearchPage() {
 
           {/* Tier Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Access</label>
+            <label className="block text-sm font-light text-zinc-700 mb-2">Access</label>
             <select
               value={filters.tier}
               onChange={(e) => setFilters({ ...filters, tier: e.target.value as 'all' | 'free' | 'premium' })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
             >
               <option value="all">All Tables</option>
               <option value="free">Free Access</option>
@@ -457,11 +431,11 @@ export default function SearchPage() {
 
           {/* Venue Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Venue</label>
+            <label className="block text-sm font-light text-zinc-700 mb-2">Venue</label>
             <select
               value={filters.venueId}
               onChange={(e) => setFilters({ ...filters, venueId: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
             >
               <option value="">All Venues</option>
               {venues.map((venue) => (
@@ -479,9 +453,9 @@ export default function SearchPage() {
                 type="checkbox"
                 checked={filters.within24h}
                 onChange={(e) => setFilters({ ...filters, within24h: e.target.checked })}
-                className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                className="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
               />
-              <span className="text-sm text-gray-700">Within 24h</span>
+              <span className="text-sm text-zinc-700 font-light">Within 24h</span>
             </label>
           </div>
         </div>
@@ -490,13 +464,13 @@ export default function SearchPage() {
       {/* Results */}
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-gray-900 border-r-transparent"></div>
-          <p className="mt-4 text-gray-600">Searching...</p>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-zinc-900 border-r-transparent"></div>
+          <p className="mt-4 text-zinc-600 font-light">Searching...</p>
         </div>
       ) : results.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <p className="text-gray-600">No slots found matching your criteria.</p>
-          <p className="text-sm text-gray-500 mt-2">Try adjusting your filters</p>
+        <div className="text-center py-12 bg-white rounded-lg border border-zinc-200">
+          <p className="text-zinc-600 font-light">No slots found matching your criteria.</p>
+          <p className="text-sm text-zinc-500 font-light mt-2">Try adjusting your filters</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
@@ -508,7 +482,7 @@ export default function SearchPage() {
             return (
               <div
                 key={slot.id}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow"
+                className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-center justify-between gap-4">
                   
@@ -521,7 +495,7 @@ export default function SearchPage() {
 
 
 
-                    <div className="relative w-16 h-16 aspect-square bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                    <div className="relative w-16 h-16 aspect-square bg-zinc-100 rounded overflow-hidden flex-shrink-0">
                   {venue.image_venue ? (
                     <Image
                       src={venue.image_venue}
@@ -532,28 +506,28 @@ export default function SearchPage() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                    <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs font-light">
                       No image
                     </div>
                   )}
                 </div>
                     <div>
-                      <h3 className="font-semibold text-lg text-gray-900 hover:underline">{venue.name}</h3>
-                      <p className="text-sm text-gray-600">{venue.area}</p>
+                      <h3 className="font-light text-lg text-zinc-900 hover:underline">{venue.name}</h3>
+                      <p className="text-sm text-zinc-600 font-light">{venue.area}</p>
                       <div className="flex items-center gap-3 mt-1 text-sm flex-wrap">
-                        <span className="text-gray-700">
+                        <span className="text-zinc-700 font-light">
                           {formatSlotDate(slot.start_at)} • {formatSlotTime(slot.start_at)}
                         </span>
-                        <span className="text-gray-600">
+                        <span className="text-zinc-600 font-light">
                             Typical table: {slot.party_min}-{slot.party_max} guests
                         </span>
                         {isBookedByMe && (
-                          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                          <span className="text-xs bg-zinc-900 text-zinc-50 px-2 py-0.5 rounded-full font-light">
                             Confirmed
                           </span>
                         )}
                         {slot.slot_tier === 'premium' && dinerTier === 'premium' && !isBookedByMe && (
-                          <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+                          <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
                             Premium
                           </span>
                         )}
@@ -568,7 +542,7 @@ export default function SearchPage() {
                       <button
                         type="button"
                         onClick={() => handleCancel(slot.id)}
-                        className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
                       >
                         Cancel
                       </button>
@@ -578,7 +552,7 @@ export default function SearchPage() {
                         {slot.slot_tier === 'premium' && dinerTier === 'free' && !lastMinute ? (
                           <button
                             onClick={() => setShowPremiumModal(true)}
-                            className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-gray-200 text-gray-600 hover:border-gray-300 transition-colors flex items-center gap-2"
+                            className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-200 text-zinc-600 hover:border-zinc-300 transition-colors flex items-center gap-2"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -590,10 +564,10 @@ export default function SearchPage() {
                           onClick={() => handleBook(slot.id)}
                           disabled={bookingSlotId === slot.id}
                           className={[
-                            'h-9 px-5 text-sm font-medium rounded-lg whitespace-nowrap transition-colors border border-gray-300',
+                            'h-9 px-5 text-sm font-light rounded-lg whitespace-nowrap transition-colors border border-zinc-300',
                             bookingSlotId === slot.id
-                              ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                              : 'bg-white text-gray-900 hover:bg-gray-50',
+                              ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
+                              : 'bg-white text-zinc-900 hover:bg-zinc-50',
                           ].join(' ')}
                         >
                           {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
@@ -604,10 +578,10 @@ export default function SearchPage() {
                           onClick={() => handleBook(slot.id)}
                           disabled={bookingSlotId === slot.id}
                           className={[
-                            'h-9 px-5 text-sm font-medium rounded-lg whitespace-nowrap transition-colors border border-gray-300',
+                            'h-9 px-5 text-sm font-light rounded-lg whitespace-nowrap transition-colors border border-zinc-300',
                             bookingSlotId === slot.id
-                              ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                              : 'bg-white text-gray-900 hover:bg-gray-50',
+                              ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
+                              : 'bg-white text-zinc-900 hover:bg-zinc-50',
                           ].join(' ')}
                         >
                           {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
