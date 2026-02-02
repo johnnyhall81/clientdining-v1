@@ -126,7 +126,7 @@ export default function About() {
         </p>
         
         <a 
-          href="/apply" 
+          href="/signup" 
           className="inline-block bg-zinc-900 text-zinc-50 px-8 py-4 hover:bg-zinc-800 transition-colors duration-200"
         >
           Apply for membership
