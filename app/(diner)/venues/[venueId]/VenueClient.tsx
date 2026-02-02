@@ -16,6 +16,29 @@ interface VenueClientProps {
   slots: Slot[]
 }
 
+/**
+ * BEST VERSION NOTES
+ * - Treats venue.description as:
+ *   - one (or more) normal paragraphs = summary
+ *   - bold-led lines (e.g. **Best for:** ...) = compact “spec rows”
+ * - Renders spec rows as a 2-column grid for a premium “metadata” feel
+ * - Keeps everything visually bound as a single block
+ */
+
+function VenueSpecRow({ children }: { children: any }) {
+  // children is typically: [<strong>Label</strong>, ' value...']
+  const parts = Array.isArray(children) ? children : [children]
+  const labelNode = parts[0]
+  const valueNodes = parts.slice(1)
+
+  return (
+    <div className="grid grid-cols-[120px_1fr] gap-3 text-sm leading-snug py-0.5">
+      <div className="text-zinc-500 font-medium">{labelNode}</div>
+      <div className="text-zinc-700 font-light">{valueNodes}</div>
+    </div>
+  )
+}
+
 export default function VenueClient({ venue, slots }: VenueClientProps) {
   const router = useRouter()
   const { user } = useAuth()
@@ -86,7 +109,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       }
 
       const nowIso = new Date().toISOString()
-      
+
       const { data, error } = await supabase
         .from('bookings')
         .select('id', { count: 'exact', head: true })
@@ -99,7 +122,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       }
     }
     loadFutureBookingsCount()
-  }, [user, bookedSlots]) // Recount when bookings change
+  }, [user, bookedSlots])
 
   // Load my bookings for the slots on this venue page
   useEffect(() => {
@@ -113,19 +136,14 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       try {
         const slotIds = slots.map((s) => s.id)
 
-        const nowIso = new Date().toISOString()
-
         const { data, error } = await supabase
-        .from('bookings')
-        .select('slot_id')
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .in('slot_id', slotIds)
-        
-      
+          .from('bookings')
+          .select('slot_id')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .in('slot_id', slotIds)
 
         if (error) throw error
-        console.log('Venue bookings rows:', data)
         setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
       } catch (e) {
         console.error('Error loading bookings:', e)
@@ -135,39 +153,37 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     loadMyBookings()
   }, [user, slots])
 
-
-
   const handleBook = async (slotId: string) => {
     if (!user) {
       router.push('/login')
       return
     }
-  
-    const slot = slots.find(s => s.id === slotId)
+
+    const slot = slots.find((s) => s.id === slotId)
     if (!slot) return
-  
+
     setSelectedSlot(slot)
     setShowPartySizeModal(true)
   }
-  
+
   const confirmBooking = async (partySize: number) => {
     if (!selectedSlot) return
-  
+
     setShowPartySizeModal(false)
     setBookingSlot(selectedSlot.id)
-  
+
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           slotId: selectedSlot.id,
-          partySize 
+          partySize,
         }),
       })
-  
+
       const data = await response.json().catch(() => ({}))
-  
+
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
         setBookingError(message)
@@ -182,7 +198,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         next.add(selectedSlot.id)
         return next
       })
-  
+
       router.push('/bookings')
       router.refresh()
     } catch (error) {
@@ -192,13 +208,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       setSelectedSlot(null)
     }
   }
-
-
-
-
-
-
-
 
   const handleCancel = async (slotId: string) => {
     if (!user) {
@@ -247,7 +256,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     const data = await response.json().catch(() => ({}))
 
     if (!response.ok) {
-      // Throw so AlertToggle can show inline error (no popups)
       throw new Error(data?.error || 'Failed to update alert')
     }
 
@@ -260,84 +268,73 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   return (
     <div className="space-y-8">
       <div className="relative bg-zinc-100 rounded-lg aspect-[21/9] overflow-hidden">
-        
-      <Image
-        src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
-        alt={venue.name}
-        fill
-        priority
-        quality={75}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-        className="object-cover"
-      />
-
-
+        <Image
+          src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
+          alt={venue.name}
+          fill
+          priority
+          quality={75}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+          className="object-cover"
+        />
       </div>
 
       <div>
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-3">
           <div>
             <h1 className="text-4xl font-light text-zinc-900 mb-2">{venue.name}</h1>
+
             <div className="flex items-center gap-4 text-zinc-600 font-light mb-2">
               <span>{venue.area}</span>
               <span>•</span>
               <span className="capitalize">{venue.venue_type}</span>
             </div>
+
             {venue.address && (
               <p className="text-sm text-zinc-600 font-light">
-                📍 {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                📍 {venue.address}
+                {venue.postcode ? `, ${venue.postcode}` : ''}
               </p>
             )}
           </div>
         </div>
 
         {venue.description && (
-            <div className="max-w-3xl">
-<ReactMarkdown
-  components={{
-    p: ({ children }) => {
-      const isArray = Array.isArray(children)
-      const first = isArray ? children[0] : null
-      const startsWithStrong =
-        first &&
-        typeof first === 'object' &&
-        // @ts-ignore
-        first?.type?.name === 'strong'
+          <div className="max-w-3xl">
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => {
+                  const isArray = Array.isArray(children)
+                  const first = isArray ? children[0] : null
+                  const startsWithStrong =
+                    first &&
+                    typeof first === 'object' &&
+                    // @ts-ignore
+                    first?.type?.name === 'strong'
 
-      // Compact “spec” rows (Best for / Tables / etc)
-      if (startsWithStrong) {
-        return (
-          <p className="text-sm text-zinc-600 font-light leading-snug mb-1 last:mb-0">
-            {children}
-          </p>
-        )
-      }
+                  // Spec lines render as compact 2-col rows
+                  if (startsWithStrong) {
+                    return <VenueSpecRow>{children}</VenueSpecRow>
+                  }
 
-      // The main description paragraph
-      return (
-        <p className="text-zinc-600 font-light leading-relaxed mb-2 last:mb-0">
-          {children}
-        </p>
-      )
-    },
-    strong: ({ children }) => (
-      <strong className="font-medium text-zinc-800">
-        {children}
-      </strong>
-    ),
-  }}
->
-  {venue.description}
-</ReactMarkdown>
-            </div>
-          )}
-
-
-
-
-
-
-
+                  // Summary paragraph: slightly tighter than body copy
+                  return (
+                    <p className="text-zinc-600 font-light leading-relaxed mb-3 last:mb-0">
+                      {children}
+                    </p>
+                  )
+                },
+                strong: ({ children }) => {
+                  // Make the label feel like a key, and strip a trailing colon if present
+                  const label = String(children).replace(/:\s*$/, '')
+                  return <span className="text-zinc-500 font-medium">{label}</span>
+                },
+              }}
+            >
+              {venue.description}
+            </ReactMarkdown>
+          </div>
+        )}
       </div>
 
       <div className="card">
@@ -365,27 +362,23 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         )}
       </div>
 
-      {/* Premium Unlock Modal */}
-      <PremiumUnlockModal 
-        isOpen={showPremiumModal}
-        onClose={() => setShowPremiumModal(false)}
-      />
+      <PremiumUnlockModal isOpen={showPremiumModal} onClose={() => setShowPremiumModal(false)} />
 
-{selectedSlot && (
-  <PartySizeModal
-    isOpen={showPartySizeModal}
-    onClose={() => {
-      setShowPartySizeModal(false)
-      setSelectedSlot(null)
-      setBookingError(null)
-    }}
-    onConfirm={confirmBooking}
-    minSize={selectedSlot.party_min}
-    maxSize={selectedSlot.party_max}
-    venueName={venue.name}
-    error={bookingError}
-  />
-)}
+      {selectedSlot && (
+        <PartySizeModal
+          isOpen={showPartySizeModal}
+          onClose={() => {
+            setShowPartySizeModal(false)
+            setSelectedSlot(null)
+            setBookingError(null)
+          }}
+          onConfirm={confirmBooking}
+          minSize={selectedSlot.party_min}
+          maxSize={selectedSlot.party_max}
+          venueName={venue.name}
+          error={bookingError}
+        />
+      )}
     </div>
   )
 }
