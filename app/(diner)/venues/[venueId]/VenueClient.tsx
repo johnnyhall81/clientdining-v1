@@ -293,30 +293,42 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
         {venue.description && (
             <div className="max-w-3xl">
-            <ReactMarkdown
-              components={{
-                p: ({ children }) => {
-                  // Check if paragraph starts with bold (labels like "Typical tables:")
-                  const hasStrongStart = children && typeof children === 'object' && 
-                    Array.isArray(children) && children[0]?.type?.name === 'strong';
-                  
-                  return (
-                    <p className={`text-zinc-600 font-light leading-relaxed ${
-                      hasStrongStart ? 'mb-1' : 'mb-4 last:mb-0'
-                    }`}>
-                      {children}
-                    </p>
-                  );
-                },
-                strong: ({ children }) => (
-                  <strong className="font-light text-zinc-900">
-                    {children}
-                  </strong>
-                ),
-              }}
-            >
-              {venue.description}
-            </ReactMarkdown>
+<ReactMarkdown
+  components={{
+    p: ({ children }) => {
+      const isArray = Array.isArray(children)
+      const first = isArray ? children[0] : null
+      const startsWithStrong =
+        first &&
+        typeof first === 'object' &&
+        // @ts-ignore
+        first?.type?.name === 'strong'
+
+      // Compact “spec” rows (Best for / Tables / etc)
+      if (startsWithStrong) {
+        return (
+          <p className="text-sm text-zinc-600 font-light leading-snug mb-1 last:mb-0">
+            {children}
+          </p>
+        )
+      }
+
+      // The main description paragraph
+      return (
+        <p className="text-zinc-600 font-light leading-relaxed mb-2 last:mb-0">
+          {children}
+        </p>
+      )
+    },
+    strong: ({ children }) => (
+      <strong className="font-medium text-zinc-800">
+        {children}
+      </strong>
+    ),
+  }}
+>
+  {venue.description}
+</ReactMarkdown>
             </div>
           )}
 
