@@ -154,7 +154,7 @@ export default function AccountPage() {
               <h3 className="font-light text-zinc-900 mb-3">Upgrade to Premium - £49/month</h3>
               <ul className="space-y-2 text-sm text-zinc-700 font-light mb-4">
                 <li>✓ Book premium restaurant slots in advance</li>
-                <li>✓ Up to 10 future bookings (vs 3 on free)</li>
+                <li>✓ Up to 10 future bookings (vs 3 on standard)</li>
                 <li>✓ Priority alert notifications</li>
                 <li>✓ Access to exclusive venues</li>
               </ul>
