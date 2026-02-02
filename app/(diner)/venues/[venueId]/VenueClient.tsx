@@ -279,75 +279,82 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         />
       </div>
 
+
+
+
+
+
+
+
+
+
       <div>
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <h1 className="text-4xl font-light text-zinc-900 mb-2">{venue.name}</h1>
+  <div className="flex items-start justify-between">
+    <div>
+      <h1 className="text-4xl font-light text-zinc-900 mb-3">{venue.name}</h1>
 
-            <div className="flex items-center gap-4 text-zinc-600 font-light mb-2">
-              <span>{venue.area}</span>
-              <span>•</span>
-              <span className="capitalize">{venue.venue_type}</span>
-            </div>
-
-            {venue.address && (
-              <p className="text-sm text-zinc-600 font-light">
-                📍 {venue.address}
-                {venue.postcode ? `, ${venue.postcode}` : ''}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {venue.description && (
-  <div className="max-w-3xl">
-    <ReactMarkdown
-      components={{
-        p: ({ children }) => {
-          const isArray = Array.isArray(children)
-          const first = isArray ? children[0] : null
-          const startsWithStrong =
-            first &&
-            typeof first === 'object' &&
-            // @ts-ignore
-            first?.type?.name === 'strong'
-
-          // Spec lines: **Label:** Value  ->  Label · Value (single line)
-          if (startsWithStrong) {
-            const parts = isArray ? children : [children]
-            const rawLabel = parts[0]?.props?.children
-            const label = String(rawLabel || '').replace(/:\s*$/, '')
-            const value = parts.slice(1)
-
-            return (
-              <div className="text-sm leading-snug mb-1 last:mb-0">
-                <span className="text-zinc-500 font-medium">{label}:</span>{' '}
-                <span className="text-zinc-700 font-light">{value}</span>
-              </div>
-            )
-            
-          }
-
-          // Summary paragraph: same size + same leading to keep it calm
-          return (
-            <p className="text-sm text-zinc-600 font-light leading-snug mb-2 last:mb-0">
-              {children}
-            </p>
-          )
-        },
-
-        // Keep strong rendering default-ish for any other bold inside the summary
-        strong: ({ children }) => (
-          <strong className="font-medium text-zinc-600">{children}</strong>
-        ),
-      }}
-    >
-      {venue.description}
-    </ReactMarkdown>
-  </div>
-)}
-
+      <div className="flex items-center gap-4 text-zinc-600 font-light mb-1">
+        <span>{venue.area}</span>
+        <span>•</span>
+        <span className="capitalize">{venue.venue_type}</span>
       </div>
+
+      {venue.address && (
+        <p className="mt-1 text-xs text-zinc-500 font-light">
+          📍 {venue.address}
+          {venue.postcode ? `, ${venue.postcode}` : ''}
+        </p>
+      )}
+    </div>
+  </div>
+
+  {venue.description && (
+    <div className="mt-7 max-w-3xl">
+      <ReactMarkdown
+        components={{
+          p: ({ children }) => {
+            const isArray = Array.isArray(children)
+            const first = isArray ? children[0] : null
+            const startsWithStrong =
+              first &&
+              typeof first === 'object' &&
+              // @ts-ignore
+              first?.type?.name === 'strong'
+
+            // Spec lines: **Label:** Value  ->  Label: Value (single line, calm)
+            if (startsWithStrong) {
+              const parts = isArray ? children : [children]
+              const rawLabel = parts[0]?.props?.children
+              const label = String(rawLabel || '').replace(/:\s*$/, '')
+              const value = parts.slice(1)
+
+              return (
+                <div className="text-sm leading-snug mb-1.5 last:mb-0">
+                  <span className="text-zinc-500 font-medium">{label}:</span>{' '}
+                  <span className="text-zinc-700 font-light">{value}</span>
+                </div>
+              )
+            }
+
+            // Summary paragraph (match spec sizing/leading for restraint)
+            return (
+              <p className="text-sm text-zinc-600 font-light leading-snug mb-3 last:mb-0">
+                {children}
+              </p>
+            )
+          },
+
+          // If any bold appears in summary text, keep it restrained
+          strong: ({ children }) => (
+            <strong className="font-medium text-zinc-700">{children}</strong>
+          ),
+        }}
+      >
+        {venue.description}
+      </ReactMarkdown>
+    </div>
+  )}
+</div>
 
       <div className="card">
         <h2 className="text-2xl font-light text-zinc-900 mb-6">Available Tables</h2>
