@@ -50,7 +50,7 @@ export default function FAQPage() {
         },
         {
           q: 'Is there a free trial?',
-          a: 'All members begin on the Free tier. You can upgrade to Premium (£49/month) at any time.'
+          a: 'All members begin on the Standard tier. Currenlty free. You can upgrade to Premium (£49/month) at any time.'
         }
       ]
     },
@@ -59,7 +59,7 @@ export default function FAQPage() {
       questions: [
         {
           q: 'How far in advance can I book?',
-          a: 'Free members can hold up to 3 future bookings. Premium members can hold up to 10 and access premium slots further in advance.'
+          a: 'Standard members can hold up to 3 future bookings. Premium members can hold up to 10 and access premium slots further in advance.'
         },
         {
           q: 'What is the 24-hour rule?',
@@ -67,7 +67,7 @@ export default function FAQPage() {
         },
         {
           q: 'How many bookings can I have at once?',
-          a: 'Free members may hold up to 3 future bookings. Premium members may hold up to 10. Bookings within 24 hours do not count toward these limits.'
+          a: 'Standard members may hold up to 3 future bookings. Premium members may hold up to 10. Bookings within 24 hours do not count toward these limits.'
         },
         {
           q: 'Can I book for larger groups or corporate events?',
@@ -96,7 +96,7 @@ export default function FAQPage() {
       questions: [
         {
           q: 'What\'s the difference between Standard and Premium?',
-          a: 'Free members can book standard tables and any slot within 24 hours, holding up to 3 future bookings. Premium members (£49/month) can access premium slots in advance and hold up to 10 future bookings.'
+          a: 'Standard members can book standard tables and any slot within 24 hours, holding up to 3 future bookings. Premium members (£49/month) can access premium slots in advance and hold up to 10 future bookings.'
         },
         {
           q: 'What are premium slots?',
@@ -116,7 +116,7 @@ export default function FAQPage() {
         },
         {
           q: 'Can I downgrade?',
-          a: 'Yes. Premium benefits continue until the end of your billing period, after which the account reverts to Free.'
+          a: 'Yes. Premium benefits continue until the end of your billing period, after which the account reverts to Standard.'
         }
       ]
     },
@@ -150,7 +150,7 @@ export default function FAQPage() {
         },
         {
           q: 'Can I book any venue as a Standard member?',
-          a: 'Free members can book standard restaurant tables and access any availability within 24 hours. Premium membership is required for premium slots booked further in advance.'
+          a: 'Standard members can book standard restaurant tables and access any availability within 24 hours. Premium membership is required for premium slots booked further in advance.'
         },
         {
           q: 'How often are new venues added?',
