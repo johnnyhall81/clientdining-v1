@@ -150,7 +150,7 @@ export default function NominationCard() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-zinc-900 text-zinc-50 py-3 rounded-lg hover:bg-zinc-800 disabled:opacity-50 font-light"
+            className="w-full bg-white border border-zinc-800 text-zinc-800 py-3 rounded-lg hover:bg-zinc-50 disabled:opacity-50 font-light"
           >
             {loading ? 'Sending...' : 'Invite'}
           </button>

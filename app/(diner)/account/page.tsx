@@ -144,7 +144,7 @@ export default function AccountPage() {
             <p className="text-2xl font-light text-zinc-900 capitalize">{profile.diner_tier}</p>
           </div>
           {isPremium && (
-            <span className="px-4 py-2 bg-zinc-900 text-zinc-50 rounded-lg font-light">
+            <span className="px-4 py-2 bg-green-50 text-green-700 rounded-lg font-light">
               Active
             </span>
           )}
