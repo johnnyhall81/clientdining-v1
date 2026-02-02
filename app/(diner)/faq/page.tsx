@@ -194,20 +194,28 @@ export default function FAQPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+    <div className="min-h-screen bg-zinc-50">
+      {/* Hero Section */}
+      <section className="max-w-4xl mx-auto px-6 pt-24 pb-16">
+        <h1 className="text-5xl md:text-6xl font-light text-zinc-900 mb-6 tracking-tight">
           Frequently Asked Questions
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-xl md:text-2xl text-zinc-600 font-light leading-relaxed">
           Clear answers on membership, bookings, and how ClientDining works.
         </p>
-      </div>
+      </section>
 
-      <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
-        {faqData.map((category, categoryIndex) => (
-          <div key={categoryIndex} className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      {/* FAQ Sections */}
+      {faqData.map((category, categoryIndex) => (
+        <div key={categoryIndex}>
+          {/* Divider */}
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="border-t border-zinc-200"></div>
+          </div>
+
+          {/* Category Section */}
+          <section className="max-w-4xl mx-auto px-6 py-16">
+            <h2 className="text-3xl font-light text-zinc-900 mb-8">
               {category.title}
             </h2>
 
@@ -219,24 +227,24 @@ export default function FAQPage() {
                 return (
                   <div
                     key={itemId}
-                    className="border-b border-gray-200 last:border-0 pb-4 last:pb-0"
+                    className="border-b border-zinc-200 last:border-0 pb-4 last:pb-0"
                   >
                     <button
                       onClick={() => toggleItem(itemId)}
                       className="w-full flex justify-between text-left"
                     >
-                      <span className="text-lg font-semibold text-gray-900 pr-4">
+                      <span className="text-lg font-light text-zinc-900 pr-4">
                         {item.q}
                       </span>
                       <ChevronDown
-                        className={`w-5 h-5 text-gray-400 transition-transform ${
+                        className={`w-5 h-5 text-zinc-400 transition-transform ${
                           isOpen ? 'rotate-180' : ''
                         }`}
                       />
                     </button>
 
                     {isOpen && (
-                      <div className="mt-3 text-gray-600 leading-relaxed">
+                      <div className="mt-3 text-zinc-600 leading-relaxed">
                         {item.a}
                       </div>
                     )}
@@ -244,22 +252,32 @@ export default function FAQPage() {
                 )
               })}
             </div>
-          </div>
-        ))}
-
-        <div className="bg-gray-900 text-white rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">Still Have Questions?</h2>
-          <p className="text-gray-300 mb-6">
-            If you need anything else, email our team.
-          </p>
-          <a
-            href="mailto:support@clientdining.com"
-            className="inline-block bg-white text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-          >
-            Contact Support
-          </a>
+          </section>
         </div>
+      ))}
+
+      {/* Divider */}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="border-t border-zinc-200"></div>
       </div>
+
+      {/* Contact Section */}
+      <section className="max-w-4xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-light text-zinc-900 mb-8">Still Have Questions?</h2>
+        <p className="text-zinc-600 leading-relaxed mb-12">
+          If you need anything else, email our team.
+        </p>
+        
+        <a 
+          href="mailto:support@clientdining.com" 
+          className="inline-block bg-zinc-900 text-zinc-50 px-8 py-4 hover:bg-zinc-800 transition-colors duration-200"
+        >
+          Contact Support
+        </a>
+      </section>
+
+      {/* Bottom Spacing */}
+      <div className="h-24"></div>
     </div>
   )
 }
