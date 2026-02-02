@@ -29,10 +29,11 @@ export async function sendAlertNotification(data: AlertEmailData) {
               body { 
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
                 line-height: 1.6; 
-                color: #111827;
+                color: #18181B;
                 margin: 0;
                 padding: 0;
-                background: #F9FAFB;
+                background: #FAFAFA;
+                font-weight: 300;
               }
               .container { 
                 max-width: 600px; 
@@ -41,16 +42,16 @@ export async function sendAlertNotification(data: AlertEmailData) {
               }
               .header { 
                 background: #FFFFFF; 
-                color: #6B7280; 
+                color: #71717A; 
                 padding: 32px 32px 24px; 
                 text-align: center;
-                border-bottom: 1px solid #E5E7EB;
+                border-bottom: 1px solid #E4E4E7;
               }
               .header h1 {
                 margin: 0;
                 font-size: 18px;
-                font-weight: 500;
-                color: #6B7280;
+                font-weight: 300;
+                color: #71717A;
               }
               .content { 
                 background: #FFFFFF; 
@@ -59,70 +60,74 @@ export async function sendAlertNotification(data: AlertEmailData) {
               .content p {
                 margin: 0 0 16px 0;
                 font-size: 16px;
-                color: #111827;
+                color: #18181B;
+                font-weight: 300;
               }
               .booking-details { 
-                background: #F9FAFB; 
+                background: #FAFAFA; 
                 padding: 24px; 
                 border-radius: 8px; 
                 margin: 24px 0;
-                border: 1px solid #E5E7EB;
+                border: 1px solid #E4E4E7;
               }
               .detail-row { 
                 display: flex; 
                 justify-content: space-between; 
                 padding: 12px 0; 
-                border-bottom: 1px solid #E5E7EB;
+                border-bottom: 1px solid #E4E4E7;
                 gap: 24px;
               }
               .detail-row:last-child {
                 border-bottom: none;
               }
               .detail-label { 
-                font-weight: 600; 
-                color: #6B7280;
+                font-weight: 300; 
+                color: #71717A;
                 font-size: 14px;
                 min-width: 120px;
                 flex-shrink: 0;
               }
               .detail-value { 
-                color: #111827;
+                color: #18181B;
                 font-size: 16px;
                 text-align: right;
+                font-weight: 300;
               }
               .footer { 
                 text-align: center; 
                 padding: 32px; 
-                color: #9CA3AF; 
+                color: #A1A1AA; 
                 font-size: 13px;
-                background: #F9FAFB;
+                background: #FAFAFA;
+                font-weight: 300;
               }
               .footer p {
                 margin: 8px 0;
               }
               .footer a {
-                color: #9CA3AF;
+                color: #A1A1AA;
                 text-decoration: none;
+                font-weight: 300;
               }
               .footer a:hover {
-                color: #6B7280;
+                color: #71717A;
                 text-decoration: underline;
               }
               .button { 
                 background: white; 
-                color: #374151 !important; 
+                color: #3F3F46 !important; 
                 padding: 12px 28px; 
                 text-decoration: none; 
                 border-radius: 6px; 
                 display: inline-block; 
                 margin: 24px 0;
-                font-weight: 500;
+                font-weight: 300;
                 font-size: 15px;
-                border: 1px solid #D1D5DB;
+                border: 1px solid #D4D4D8;
               }
               .button:hover {
-                background: #F9FAFB;
-                border-color: #9CA3AF;
+                background: #FAFAFA;
+                border-color: #A1A1AA;
               }
             </style>
           </head>
