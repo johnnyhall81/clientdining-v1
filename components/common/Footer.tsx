@@ -9,7 +9,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-light mb-4 text-zinc-900">ClientDining</h3>
             <p className="text-zinc-600 text-sm font-light">
-              London's best tables
+              When the table matters
             </p>
           </div>
 
