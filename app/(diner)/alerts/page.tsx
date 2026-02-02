@@ -234,8 +234,8 @@ export default function AlertsPage() {
                         {alert.slot.party_min}-{alert.slot.party_max} guests
                       </span>
                       {alert.status === 'notified' && (
-                        <span className="text-xs bg-zinc-900 text-zinc-50 px-2 py-0.5 rounded-full font-light">
-                          🔔 Notified - Book now!
+                        <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-light">
+                          Available
                         </span>
                       )}
                       {alert.status === 'active' && (
