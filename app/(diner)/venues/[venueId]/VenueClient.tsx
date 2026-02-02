@@ -259,7 +259,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
   return (
     <div className="space-y-8">
-      <div className="relative bg-gray-200 rounded-lg aspect-[21/9] overflow-hidden">
+      <div className="relative bg-zinc-100 rounded-lg aspect-[21/9] overflow-hidden">
         
       <Image
         src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
@@ -277,14 +277,14 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       <div>
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">{venue.name}</h1>
-            <div className="flex items-center gap-4 text-gray-600 mb-2">
+            <h1 className="text-4xl font-light text-zinc-900 mb-2">{venue.name}</h1>
+            <div className="flex items-center gap-4 text-zinc-600 font-light mb-2">
               <span>{venue.area}</span>
               <span>•</span>
               <span className="capitalize">{venue.venue_type}</span>
             </div>
             {venue.address && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-zinc-600 font-light">
                 📍 {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
               </p>
             )}
@@ -301,7 +301,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                     Array.isArray(children) && children[0]?.type?.name === 'strong';
                   
                   return (
-                    <p className={`text-gray-700 leading-relaxed ${
+                    <p className={`text-zinc-600 font-light leading-relaxed ${
                       hasStrongStart ? 'mb-1' : 'mb-4 last:mb-0'
                     }`}>
                       {children}
@@ -309,7 +309,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                   );
                 },
                 strong: ({ children }) => (
-                  <strong className="font-semibold text-gray-900">
+                  <strong className="font-light text-zinc-900">
                     {children}
                   </strong>
                 ),
@@ -329,10 +329,10 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       </div>
 
       <div className="card">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Tables</h2>
+        <h2 className="text-2xl font-light text-zinc-900 mb-6">Available Tables</h2>
 
         {slots.length === 0 ? (
-          <p className="text-gray-500">No tables available at this time.</p>
+          <p className="text-zinc-500 font-light">No tables available at this time.</p>
         ) : (
           <div>
             {slots.map((slot) => (
