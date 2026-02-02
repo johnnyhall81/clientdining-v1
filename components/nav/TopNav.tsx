@@ -71,13 +71,13 @@ export default function TopNav() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href={user ? "/home" : "/"} className="text-xl font-light text-zinc-900">
+          <Link href={user ? "/home" : "/"} className="text-xl font-light text-zinc-900 flex-shrink-0">
             ClientDining
           </Link>
 
           {/* Navigation */}
           {user ? (
-            <nav className="flex items-center gap-6">
+            <nav className="flex items-center gap-3 sm:gap-6">
               <Link
                 href="/search"
                 className={`text-sm font-light transition-colors ${
