@@ -64,13 +64,13 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 </span>
               )}
               {!isCancelled && !isPast && (
-                <span className="text-xs bg-zinc-900 text-zinc-50 px-2 py-0.5 rounded-full font-light">
+                <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-light">
                   Confirmed
                 </span>
               )}
-              {!isCancelled && isPast && (
-                <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
-                  Completed
+              {!isCancelled && !isPast && (
+                <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-light">
+                  Confirmed
                 </span>
               )}
             </div>
