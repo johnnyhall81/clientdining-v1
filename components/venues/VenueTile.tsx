@@ -20,7 +20,7 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
     >
 
       <div>
-        <div className="relative aspect-[4/3] bg-gray-200 rounded-md overflow-hidden mb-3">
+        <div className="relative aspect-[4/3] bg-zinc-100 rounded-md overflow-hidden mb-3">
           {imageSrc ? (
             <Image
               src={imageSrc}
@@ -30,23 +30,23 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
               className="object-cover transition-transform duration-300 will-change-transform group-hover:scale-105"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center text-gray-600 transition-transform duration-300 will-change-transform group-hover:scale-105">
+            <div className="w-full h-full bg-gradient-to-br from-zinc-200 to-zinc-300 flex items-center justify-center text-zinc-600 transition-transform duration-300 will-change-transform group-hover:scale-105">
               <span className="text-4xl">🍽️</span>
             </div>
           )}
         </div>
 
         <div className="space-y-1">
-        <h3 className="font-semibold text-lg text-gray-900">
+        <h3 className="font-light text-lg text-zinc-900">
           {venue.name}
         </h3>
 
-        <p className="text-sm text-gray-600 capitalize">
+        <p className="text-sm text-zinc-600 font-light capitalize">
           {venue.area} · {venue.venue_type}
         </p>
 
           {availableSlots > 0 && (
-            <p className="text-sm text-green-600 font-medium">
+            <p className="text-sm text-zinc-900 font-light">
               {availableSlots} {availableSlots === 1 ? 'slot' : 'slots'} available
             </p>
           )}

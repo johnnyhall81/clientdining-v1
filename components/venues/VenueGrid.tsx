@@ -11,7 +11,7 @@ export default function VenueGrid({ venues }: VenueGridProps) {
   if (venues.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">No venues available at the moment.</p>
+        <p className="text-zinc-600 font-light leading-relaxed">No venues available at the moment.</p>
       </div>
     )
   }
