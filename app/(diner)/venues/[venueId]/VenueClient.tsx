@@ -300,41 +300,43 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         </div>
 
         {venue.description && (
-          <div className="max-w-3xl">
-            <ReactMarkdown
-              components={{
-                p: ({ children }) => {
-                  const isArray = Array.isArray(children)
-                  const first = isArray ? children[0] : null
-                  const startsWithStrong =
-                    first &&
-                    typeof first === 'object' &&
-                    // @ts-ignore
-                    first?.type?.name === 'strong'
+  <div className="max-w-3xl">
+    <ReactMarkdown
+      components={{
+        p: ({ children }) => {
+          const isArray = Array.isArray(children)
+          const first = isArray ? children[0] : null
+          const startsWithStrong =
+            first &&
+            typeof first === 'object' &&
+            // @ts-ignore
+            first?.type?.name === 'strong'
 
-                  // Spec lines render as compact 2-col rows
-                  if (startsWithStrong) {
-                    return <VenueSpecRow>{children}</VenueSpecRow>
-                  }
+          if (startsWithStrong) {
+            return (
+              <p className="text-sm text-zinc-600 font-light leading-snug mb-1 last:mb-0">
+                {children}
+              </p>
+            )
+          }
 
-                  // Summary paragraph: slightly tighter than body copy
-                  return (
-                    <p className="text-zinc-600 font-light leading-relaxed mb-3 last:mb-0">
-                      {children}
-                    </p>
-                  )
-                },
-                strong: ({ children }) => {
-                  // Make the label feel like a key, and strip a trailing colon if present
-                  const label = String(children).replace(/:\s*$/, '')
-                  return <span className="text-zinc-500 font-medium">{label}</span>
-                },
-              }}
-            >
-              {venue.description}
-            </ReactMarkdown>
-          </div>
-        )}
+          return (
+            <p className="text-zinc-600 font-light leading-relaxed mb-2 last:mb-0">
+              {children}
+            </p>
+          )
+        },
+        strong: ({ children }) => (
+          <strong className="font-medium text-zinc-800">
+            {children}
+          </strong>
+        ),
+      }}
+    >
+      {venue.description}
+    </ReactMarkdown>
+  </div>
+)}
       </div>
 
       <div className="card">
