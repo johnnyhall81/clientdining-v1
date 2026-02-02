@@ -110,7 +110,7 @@ export default function BookingsPage() {
   if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-500">Loading bookings...</p>
+        <p className="text-zinc-500 font-light">Loading bookings...</p>
       </div>
     )
   }
@@ -118,39 +118,39 @@ export default function BookingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Bookings</h1>
-        <p className="text-gray-600">View and manage your bookings</p>
+        <h1 className="text-3xl font-light text-zinc-900 mb-2">Bookings</h1>
+        <p className="text-zinc-600 font-light">View and manage your bookings</p>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-zinc-200">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab('upcoming')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`py-4 px-1 border-b-2 font-light text-sm ${
               activeTab === 'upcoming'
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-zinc-900 text-zinc-900'
+                : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
             }`}
           >
             Upcoming
           </button>
           <button
             onClick={() => setActiveTab('past')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`py-4 px-1 border-b-2 font-light text-sm ${
               activeTab === 'past'
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-zinc-900 text-zinc-900'
+                : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
             }`}
           >
             Past
           </button>
           <button
             onClick={() => setActiveTab('cancelled')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`py-4 px-1 border-b-2 font-light text-sm ${
               activeTab === 'cancelled'
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-zinc-900 text-zinc-900'
+                : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
             }`}
           >
             Cancelled
@@ -161,8 +161,8 @@ export default function BookingsPage() {
       {/* Bookings List */}
       <div className="space-y-4">
         {filteredBookings.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <p className="text-gray-500">
+          <div className="text-center py-12 bg-white rounded-lg border border-zinc-200">
+            <p className="text-zinc-500 font-light">
               {activeTab === 'upcoming' && 'No upcoming bookings'}
               {activeTab === 'past' && 'No past bookings'}
               {activeTab === 'cancelled' && 'No cancelled bookings'}

@@ -20,7 +20,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [showCancelModal, setShowCancelModal] = useState(false)
   
   return (
-    <div className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 ${isCancelled ? 'opacity-60' : ''}`}>
+    <div className={`bg-white rounded-lg shadow-sm border border-zinc-200 p-4 ${isCancelled ? 'opacity-60' : ''}`}>
       <div className="flex items-center justify-between gap-4">
         
       <Link 
@@ -32,7 +32,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
 
 
-        <div className="relative w-16 h-16 aspect-square bg-gray-100 rounded overflow-hidden flex-shrink-0">
+        <div className="relative w-16 h-16 aspect-square bg-zinc-100 rounded overflow-hidden flex-shrink-0">
           {venue.image_venue ? (
             <Image
               src={venue.image_venue}
@@ -43,39 +43,39 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+            <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs font-light">
               No image
             </div>
           )}
         </div>
           <div>
-            <h3 className="font-semibold text-lg text-gray-900 hover:underline">{venue.name}</h3>
-            <p className="text-sm text-gray-600">{venue.area}</p>
+            <h3 className="font-light text-lg text-zinc-900 hover:underline">{venue.name}</h3>
+            <p className="text-sm text-zinc-600 font-light">{venue.area}</p>
             <div className="flex items-center gap-3 mt-1 text-sm flex-wrap">
-              <span className="text-gray-700">
+              <span className="text-zinc-700 font-light">
                 {formatFullDateTime(slot.start_at)}
               </span>
-              <span className="text-gray-600">
+              <span className="text-zinc-600 font-light">
                 {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
               </span>
               {isCancelled && (
-                <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
+                <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-light">
                   Cancelled
                 </span>
               )}
               {!isCancelled && !isPast && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                <span className="text-xs bg-zinc-900 text-zinc-50 px-2 py-0.5 rounded-full font-light">
                   Confirmed
                 </span>
               )}
               {!isCancelled && isPast && (
-                <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full font-medium">
+                <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
                   Completed
                 </span>
               )}
             </div>
             {booking.notes && (
-              <p className="text-sm text-gray-500 mt-2">Note: {booking.notes}</p>
+              <p className="text-sm text-zinc-500 font-light mt-2">Note: {booking.notes}</p>
             )}
           </div>
         </Link>
@@ -83,7 +83,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         {!isCancelled && !isPast && (
           <button
           onClick={() => setShowCancelModal(true)}
-          className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+          className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
         >
           Cancel
         </button>
