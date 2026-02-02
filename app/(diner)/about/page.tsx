@@ -1,226 +1,140 @@
-export default function AboutPage() {
+import React from 'react';
+
+export default function About() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16">
-      <header className="mb-10">
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">
+    <div className="min-h-screen bg-zinc-50">
+      {/* Hero Section */}
+      <section className="max-w-4xl mx-auto px-6 pt-24 pb-16">
+        <h1 className="text-5xl md:text-6xl font-light text-zinc-900 mb-6 tracking-tight">
           About ClientDining
         </h1>
-        <p className="text-lg text-gray-700">Where you book matters.</p>
-      </header>
+        <p className="text-xl md:text-2xl text-zinc-600 font-light leading-relaxed max-w-3xl">
+          A private booking platform for City professionals hosting business dinners at London's leading restaurants and private members' clubs.
+        </p>
+        <p className="text-lg text-zinc-500 mt-6 font-light">
+          See availability. Request tables. Confirm bookings.
+        </p>
+      </section>
 
-      <div className="prose prose-lg max-w-none">
-        {/* About */}
-        <section className="space-y-4">
-          <p className="text-gray-700">
-            ClientDining is a private booking platform for City professionals hosting business dinners at London&apos;s
-            leading restaurants and private members&apos; clubs.
-          </p>
-          <p className="text-gray-700">
-            It provides a reliable way to see availability, request tables, and manage bookings — without chasing
-            confirmations or relying on personal relationships.
-          </p>
-          <p className="text-gray-700">
-            Availability is shared directly by venues. Members see real dates, times, and table sizes in one place.
-          </p>
-          <p className="text-gray-700">
-            ClientDining is designed for business dining where discretion, service, and reliability are expected.
-          </p>
-        </section>
+      {/* Divider */}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="border-t border-zinc-200"></div>
+      </div>
 
-        {/* How it works */}
-        <section className="space-y-4 mt-12">
-          <h2 className="text-2xl font-bold text-gray-900">How It Works</h2>
-          <p className="text-gray-700">
-            ClientDining maintains a curated list of restaurants and private members&apos; clubs suited to business
-            dining.
+      {/* How It Works */}
+      <section className="max-w-4xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-light text-zinc-900 mb-8">How It Works</h2>
+        <div className="space-y-6 text-zinc-600 leading-relaxed">
+          <p>
+            Restaurants share availability directly with the platform. Members see dates, times, and table sizes. Submit a request. The venue confirms.
           </p>
-          <p className="text-gray-700">
-            Venues share availability directly with the platform. Members see what is genuinely available.
+          <p>
+            High-demand slots are reserved for Premium members. If unfilled, they open to all members in the final 24 hours.
           </p>
-          <p className="text-gray-700">
-            When a table suits, a request is submitted. The venue confirms on its timeline. All updates and
-            confirmations stay in one place.
-          </p>
-          <p className="text-gray-700">
-            If a preferred slot isn&apos;t available, members can set an alert and be notified when availability
-            changes. Priority applies where tables are competitive.
-          </p>
-        </section>
+        </div>
+      </section>
 
-        {/* Membership */}
-        <section className="space-y-6 mt-12">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Membership</h2>
-            <p className="text-gray-600">Two tiers. The difference is certainty.</p>
-          </div>
+      {/* Divider */}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="border-t border-zinc-200"></div>
+      </div>
 
-          <div className="not-prose grid md:grid-cols-2 gap-6 mt-8">
-            {/* Standard Card */}
-            <div className="border border-gray-200 rounded-xl p-8 bg-white hover:shadow-sm transition-shadow">
-              <h3 className="text-xl font-semibold text-gray-900 mb-1">Standard</h3>
-              <p className="text-sm text-gray-600 mb-6">For occasional business dining</p>
-
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700 text-sm">Access participating venues</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700 text-sm">Book tables available within 24 hours</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700 text-sm">Set alerts for preferred times</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700 text-sm">Hold up to three future bookings</span>
-                </li>
-              </ul>
-
-              <a
-                href="/signup"
-                className="block w-full text-center py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Get started
-              </a>
+      {/* Membership */}
+      <section className="max-w-4xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-light text-zinc-900 mb-12">Membership</h2>
+        
+        <div className="grid md:grid-cols-2 gap-12">
+          {/* Standard */}
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-2xl font-light text-zinc-900 mb-2">Standard</h3>
             </div>
-
-            {/* Premium Card */}
-            <div className="border border-gray-800 rounded-xl p-8 bg-gray-50 relative overflow-hidden hover:shadow-md transition-shadow">
-              {/* Subtle accent bar */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gray-900"></div>
-
-              <div className="flex items-baseline justify-between gap-4 mb-1">
-                <h3 className="text-xl font-semibold text-gray-900">Premium</h3>
-                <span className="text-lg font-semibold text-gray-900">£49/month</span>
-              </div>
-              <p className="text-sm text-gray-600 mb-6">For regular hosting</p>
-
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="w-5 h-5 text-gray-700 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-900 text-sm font-medium">Everything in Standard, plus:</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="w-5 h-5 text-gray-700 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700 text-sm">Early access to select availability</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="w-5 h-5 text-gray-700 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700 text-sm">Hold up to ten future bookings</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="w-5 h-5 text-gray-700 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700 text-sm">Priority alerts when tables are in demand</span>
-                </li>
-              </ul>
-
-              <a
-                href="/signup?tier=premium"
-                className="block w-full text-center py-2.5 text-sm font-medium bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                Upgrade to Premium
-              </a>
-
-              <p className="text-xs text-gray-500 mt-4 text-center">
-                Recommended for professionals hosting 2+ client dinners per month
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Venues */}
-        <section className="space-y-4 mt-12">
-          <h2 className="text-2xl font-bold text-gray-900">The venues</h2>
-          <p className="text-gray-700">ClientDining works with a limited number of restaurants and private members&apos; clubs.</p>
-          <p className="text-gray-700">
-            Venues are selected for consistent service, appropriate atmosphere, and discretion. Availability is shared
-            at their discretion, and bookings remain subject to their usual acceptance process.
-          </p>
-          <p className="text-gray-700">New venues are added selectively.</p>
-        </section>
-
-        {/* Access */}
-        <section className="space-y-4 mt-12">
-          <h2 className="text-2xl font-bold text-gray-900">Access</h2>
-          <p className="text-gray-700">ClientDining is intended for professional use.</p>
-          <p className="text-gray-700">
-            Membership is verified via LinkedIn and approved individually. Access is not open to the general public.
-          </p>
-          <p className="text-gray-700">
-            This maintains a trusted network for members and a professional clientele for venues.
-          </p>
-        </section>
-
-        <section className="mt-16 pt-8 border-t border-gray-200 not-prose">
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Ready to get started?{" "}
-              <a href="/signup" className="text-gray-900 hover:underline font-medium">
-                Create your account
-              </a>
+            <ul className="space-y-3 text-zinc-600">
+              <li className="flex items-start">
+                <span className="mr-3 text-zinc-400">•</span>
+                <span>Access participating venues</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-3 text-zinc-400">•</span>
+                <span>Book available tables</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-3 text-zinc-400">•</span>
+                <span>Set alerts for preferred dates</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-3 text-zinc-400">•</span>
+                <span>Hold three future bookings</span>
+              </li>
+            </ul>
+            <p className="text-sm text-zinc-500 italic pt-4 border-t border-zinc-200">
+              Grab high-demand slots if they're still available in the final 24 hours.
             </p>
           </div>
-        </section>
+
+          {/* Premium */}
+          <div className="space-y-6 md:border-l md:border-zinc-200 md:pl-12">
+            <div>
+              <h3 className="text-2xl font-light text-zinc-900 mb-1">Premium</h3>
+              <p className="text-zinc-500">£49/month</p>
+            </div>
+            <ul className="space-y-3 text-zinc-600">
+              <li className="flex items-start">
+                <span className="mr-3 text-zinc-400">•</span>
+                <span>Everything in Standard</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-3 text-zinc-400">•</span>
+                <span>Immediate access to high-demand slots</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-3 text-zinc-400">•</span>
+                <span>Hold ten future bookings</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-3 text-zinc-400">•</span>
+                <span>Priority alerts</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="border-t border-zinc-200"></div>
       </div>
+
+      {/* The Venues */}
+      <section className="max-w-4xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-light text-zinc-900 mb-8">The Venues</h2>
+        <p className="text-zinc-600 leading-relaxed max-w-3xl">
+          A limited number of restaurants and private members' clubs selected for consistent service, appropriate atmosphere, and discretion.
+        </p>
+      </section>
+
+      {/* Divider */}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="border-t border-zinc-200"></div>
+      </div>
+
+      {/* Access */}
+      <section className="max-w-4xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-light text-zinc-900 mb-8">Access</h2>
+        <p className="text-zinc-600 leading-relaxed mb-12">
+          Membership verified via LinkedIn. Approved individually.
+        </p>
+        
+        <a 
+          href="/apply" 
+          className="inline-block bg-zinc-900 text-zinc-50 px-8 py-4 hover:bg-zinc-800 transition-colors duration-200"
+        >
+          Apply for membership
+        </a>
+      </section>
+
+      {/* Bottom Spacing */}
+      <div className="h-24"></div>
     </div>
-  )
+  );
 }
