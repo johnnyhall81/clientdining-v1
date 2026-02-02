@@ -8,6 +8,8 @@ import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import { loadStripe } from '@stripe/stripe-js'
+import NominationCard from '@/components/account/NominationCard'
+
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
@@ -197,6 +199,9 @@ export default function AccountPage() {
           </div>
         </div>
       </div>
+
+      {/* Nominations - only shows if enabled for this user */}
+      <NominationCard />
     </div>
   )
 }
