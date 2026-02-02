@@ -127,35 +127,35 @@ export default function AlertsPage() {
   })
 
   if (authLoading || loading) {
-    return <div className="flex items-center justify-center min-h-[400px]">Loading...</div>
+    return <div className="flex items-center justify-center min-h-[400px] text-zinc-500 font-light">Loading...</div>
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Alerts</h1>
-        <p className="text-gray-600">View and manage your alerts</p>
+        <h1 className="text-3xl font-light text-zinc-900 mb-2">Alerts</h1>
+        <p className="text-zinc-600 font-light">View and manage your alerts</p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-zinc-200">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setFilter('active')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`py-4 px-1 border-b-2 font-light text-sm ${
               filter === 'active'
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-zinc-900 text-zinc-900'
+                : 'border-transparent text-zinc-500 hover:text-zinc-700'
             }`}
           >
             Active
           </button>
           <button
             onClick={() => setFilter('all')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`py-4 px-1 border-b-2 font-light text-sm ${
               filter === 'all'
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-zinc-900 text-zinc-900'
+                : 'border-transparent text-zinc-500 hover:text-zinc-700'
             }`}
           >
             All
@@ -165,18 +165,18 @@ export default function AlertsPage() {
 
       {/* Alerts List */}
       {filteredAlerts.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border">
-          <p className="text-gray-500 mb-4">
+        <div className="text-center py-12 bg-white rounded-lg border border-zinc-200">
+          <p className="text-zinc-500 font-light mb-4">
             {filter === 'active' ? 'No active alerts' : 'No alerts set'}
           </p>
-          <Link href="/search" className="text-blue-600 hover:underline">
+          <Link href="/search" className="text-zinc-900 font-light hover:underline">
             Search for tables to set alerts
           </Link>
         </div>
       ) : (
         <div className="space-y-4">
           {filteredAlerts.map(alert => (
-            <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4">
               <div className="flex items-center justify-between gap-4">
                 
               <Link 
@@ -187,7 +187,7 @@ export default function AlertsPage() {
                 
                 
                 
-                <div className="relative w-16 h-16 aspect-square bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                <div className="relative w-16 h-16 aspect-square bg-zinc-100 rounded overflow-hidden flex-shrink-0">
                 {alert.venue.image_venue ? (
                   <Image
                     src={alert.venue.image_venue}
@@ -198,33 +198,33 @@ export default function AlertsPage() {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                  <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs font-light">
                     No image
                   </div>
                 )}
               </div>
                   <div>
-                    <h3 className="font-semibold text-lg text-gray-900 hover:underline">{alert.venue.name}</h3>
-                    <p className="text-sm text-gray-600">{alert.venue.area}</p>
+                    <h3 className="font-light text-lg text-zinc-900 hover:underline">{alert.venue.name}</h3>
+                    <p className="text-sm text-zinc-600 font-light">{alert.venue.area}</p>
                     <div className="flex items-center gap-3 mt-1 text-sm">
-                      <span className="text-gray-700">
+                      <span className="text-zinc-700 font-light">
                         {formatFullDateTime(alert.slot.start_at)}
                       </span>
-                      <span className="text-gray-600">
+                      <span className="text-zinc-600 font-light">
                         {alert.slot.party_min}-{alert.slot.party_max} guests
                       </span>
                       {alert.status === 'notified' && (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                        <span className="text-xs bg-zinc-900 text-zinc-50 px-2 py-0.5 rounded-full font-light">
                           🔔 Notified - Book now!
                         </span>
                       )}
                       {alert.status === 'active' && (
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+                        <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
                           Active
                         </span>
                       )}
                       {alert.status === 'expired' && (
-                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full font-medium">
+                        <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
                           Expired
                         </span>
                       )}
@@ -234,7 +234,7 @@ export default function AlertsPage() {
 
                 <button
                   onClick={() => handleRemoveAlert(alert.id)}
-                  className="h-10 px-6 text-sm font-medium rounded-lg whitespace-nowrap bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
                 >
                   Remove
                 </button>
