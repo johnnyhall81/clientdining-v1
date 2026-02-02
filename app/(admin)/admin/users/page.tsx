@@ -97,6 +97,25 @@ export default function UsersPage() {
     }
   }
 
+  const toggleNominations = async (userId: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch('/api/admin/users/toggle-nominations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, canNominate: !currentStatus }),
+      })
+
+      if (response.ok) {
+        await loadUsers()
+      } else {
+        alert('Failed to update nomination access')
+      }
+    } catch (error) {
+      console.error('Error updating nominations:', error)
+      alert('Failed to update nomination access')
+    }
+  }
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-[400px]">Loading...</div>
   }
@@ -154,6 +173,7 @@ export default function UsersPage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tier</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Verified</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nominations</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member Since</th>
             </tr>
           </thead>
@@ -164,8 +184,7 @@ export default function UsersPage() {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-3">
                     {user.avatar_url ? (
-                      
-                       <a href={`https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(
+                      <a href={`https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(
                           user.full_name || user.email || ''
                         )}`}
                         target="_blank"
@@ -189,8 +208,7 @@ export default function UsersPage() {
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-gray-900">{user.full_name || 'N/A'}</span>
                       {user.is_professionally_verified && (
-                        
-                         <a href={`https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(
+                        <a href={`https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(
                             user.full_name || user.email || ''
                           )}`}
                           target="_blank"
@@ -206,10 +224,6 @@ export default function UsersPage() {
                     </div>
                   </div>
                 </td>
-
-
-
-
 
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600">{user.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -243,6 +257,18 @@ export default function UsersPage() {
                     }`}
                   >
                     {user.is_professionally_verified ? '✓ Verified' : 'Not Verified'}
+                  </button>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    onClick={() => toggleNominations(user.user_id, user.can_nominate)}
+                    className={`text-sm px-3 py-1 rounded-full cursor-pointer transition-colors ${
+                      user.can_nominate
+                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {user.can_nominate ? '✓ Enabled' : 'Disabled'}
                   </button>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
