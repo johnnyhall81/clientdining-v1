@@ -231,7 +231,7 @@ export default function AlertsPage() {
                 ) : (
                   <button
                     onClick={() => handleRemoveAlert(alert)}
-                    className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
+                    className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-800 text-zinc-800 hover:bg-zinc-50 transition-colors flex items-center"
                   >
                     Remove
                   </button>
