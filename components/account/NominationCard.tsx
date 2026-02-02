@@ -56,7 +56,7 @@ export default function NominationCard() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to send nomination')
+        throw new Error(data.error || 'Failed to send invitation')
       }
 
       setSuccess(`Invitation sent to ${formData.name}`)
@@ -79,11 +79,10 @@ export default function NominationCard() {
     <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
       <div className="mb-6">
         <h2 className="text-xl font-light text-zinc-900 mb-2">
-          Nominate Colleagues
+          Invite colleagues
         </h2>
         <p className="text-sm text-zinc-600 font-light">
-          You can invite {remainingNominations} more{' '}
-          {remainingNominations === 1 ? 'colleague' : 'colleagues'}.
+          {remainingNominations} {remainingNominations === 1 ? 'invitation' : 'invitations'} remaining
         </p>
       </div>
 
@@ -123,7 +122,7 @@ export default function NominationCard() {
 
           <div>
             <label className="block text-sm font-light text-zinc-700 mb-1">
-              Company (optional)
+              Company
             </label>
             <input
               type="text"
@@ -153,19 +152,22 @@ export default function NominationCard() {
             disabled={loading}
             className="w-full bg-zinc-900 text-zinc-50 py-3 rounded-lg hover:bg-zinc-800 disabled:opacity-50 font-light"
           >
-            {loading ? 'Sending...' : 'Send Invitation'}
+            {loading ? 'Sending...' : 'Invite'}
           </button>
+          <p className="text-xs text-zinc-400 font-light text-center">
+            We'll keep it simple.
+          </p>
         </form>
       ) : (
         <div className="text-sm text-zinc-600 bg-zinc-50 p-4 rounded-lg mb-6 font-light">
-          You have used all 3 nominations.
+          All 3 invitations sent.
         </div>
       )}
 
       {nominations.length > 0 && (
         <div>
-          <h3 className="text-sm font-light text-zinc-700 mb-3">
-            Your Nominations
+          <h3 className="text-sm font-light text-zinc-500 mb-3">
+            Sent
           </h3>
           <div className="space-y-2">
             {nominations.map((nom) => (
