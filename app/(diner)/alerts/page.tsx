@@ -37,7 +37,6 @@ export default function AlertsPage() {
   const { user, loading: authLoading } = useAuth()
   const [alerts, setAlerts] = useState<AlertWithDetails[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<'active' | 'all'>('active')
   const [showRemoveModal, setShowRemoveModal] = useState(false)
   const [alertToRemove, setAlertToRemove] = useState<AlertWithDetails | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -132,12 +131,7 @@ export default function AlertsPage() {
     }
   }
 
-  const filteredAlerts = alerts.filter(alert => {
-    if (filter === 'active') {
-      return alert.status === 'active' || alert.status === 'notified'
-    }
-    return true
-  })
+  const filteredAlerts = alerts.filter(alert => alert.status === 'active' || alert.status === 'notified')
 
   if (authLoading || loading) {
     return <div className="flex items-center justify-center min-h-[400px] text-zinc-500 font-light">Loading...</div>
@@ -150,37 +144,12 @@ export default function AlertsPage() {
         <p className="text-zinc-600 font-light">View and manage your alerts</p>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="border-b border-zinc-200">
-        <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setFilter('active')}
-            className={`py-4 px-1 border-b-2 font-light text-sm ${
-              filter === 'active'
-                ? 'border-zinc-900 text-zinc-900'
-                : 'border-transparent text-zinc-500 hover:text-zinc-700'
-            }`}
-          >
-            Active
-          </button>
-          <button
-            onClick={() => setFilter('all')}
-            className={`py-4 px-1 border-b-2 font-light text-sm ${
-              filter === 'all'
-                ? 'border-zinc-900 text-zinc-900'
-                : 'border-transparent text-zinc-500 hover:text-zinc-700'
-            }`}
-          >
-            All
-          </button>
-        </nav>
-      </div>
 
       {/* Alerts List */}
       {filteredAlerts.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-lg border border-zinc-200">
           <p className="text-zinc-500 font-light mb-4">
-            {filter === 'active' ? 'No active alerts' : 'No alerts set'}
+            No active alerts
           </p>
           <Link href="/search" className="text-zinc-900 font-light hover:underline">
             Search for tables to set alerts

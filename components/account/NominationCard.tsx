@@ -131,7 +131,6 @@ export default function NominationCard() {
                 setFormData({ ...formData, company: e.target.value })
               }
               className="input-field"
-              placeholder="Acme Corp"
             />
           </div>
 
