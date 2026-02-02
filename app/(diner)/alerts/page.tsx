@@ -9,6 +9,7 @@ import { formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
 import RemoveAlertModal from '@/components/modals/RemoveAlertModal'
+import PartySizeModal from '@/components/modals/PartySizeModal'
 
 interface AlertWithDetails {
   id: string
@@ -18,6 +19,7 @@ interface AlertWithDetails {
   notified_at: string | null
   expires_at: string | null
   slot: {
+    id?: string
     start_at: string
     party_min: number
     party_max: number
@@ -35,11 +37,19 @@ interface AlertWithDetails {
 export default function AlertsPage() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
+
   const [alerts, setAlerts] = useState<AlertWithDetails[]>([])
   const [loading, setLoading] = useState(true)
+
   const [showRemoveModal, setShowRemoveModal] = useState(false)
   const [alertToRemove, setAlertToRemove] = useState<AlertWithDetails | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // Booking state (mirrors SearchPage flow)
+  const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
+  const [showPartySizeModal, setShowPartySizeModal] = useState(false)
+  const [selectedAlert, setSelectedAlert] = useState<AlertWithDetails | null>(null)
+  const [bookingError, setBookingError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -50,17 +60,21 @@ export default function AlertsPage() {
     if (user) {
       loadAlerts()
     }
-  }, [user, authLoading, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, authLoading])
 
   const loadAlerts = async () => {
     if (!user) return
 
     try {
+      setLoading(true)
+
       const { data, error } = await supabase
         .from('slot_alerts')
         .select(`
           *,
           slots!inner (
+            id,
             start_at,
             party_min,
             party_max,
@@ -92,8 +106,8 @@ export default function AlertsPage() {
       }))
 
       setAlerts(transformed)
-    } catch (error) {
-      console.error('Error loading alerts:', error)
+    } catch (e) {
+      console.error('Error loading alerts:', e)
     } finally {
       setLoading(false)
     }
@@ -111,10 +125,7 @@ export default function AlertsPage() {
     setError(null)
 
     try {
-      const { error } = await supabase
-        .from('slot_alerts')
-        .delete()
-        .eq('id', alertToRemove.id)
+      const { error } = await supabase.from('slot_alerts').delete().eq('id', alertToRemove.id)
 
       if (error) {
         console.error('Error removing alert:', error)
@@ -122,16 +133,75 @@ export default function AlertsPage() {
         return
       }
 
-      // Reload alerts
-      loadAlerts()
+      await loadAlerts()
       setAlertToRemove(null)
-    } catch (error) {
-      console.error('Error removing alert:', error)
+    } catch (e) {
+      console.error('Error removing alert:', e)
       setError('Failed to remove alert. Please try again.')
     }
   }
 
-  const filteredAlerts = alerts.filter(alert => alert.status === 'active' || alert.status === 'notified')
+  // --- Booking flow (copy of SearchPage logic, adapted to alerts list) ---
+  const handleBook = (alert: AlertWithDetails) => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    // guard: only book if notified (available)
+    if (alert.status !== 'notified') return
+
+    setSelectedAlert(alert)
+    setBookingError(null)
+    setShowPartySizeModal(true)
+  }
+
+  const confirmBooking = async (partySize: number) => {
+    if (!selectedAlert) return
+
+    setShowPartySizeModal(false)
+    setBookingSlotId(selectedAlert.slot_id)
+
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slotId: selectedAlert.slot_id,
+          partySize,
+        }),
+      })
+
+      const data = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        const message = data?.error || 'Could not create booking'
+        setBookingError(message)
+        setBookingSlotId(null)
+        return
+      }
+
+      setBookingError(null)
+
+      // Optional but sensible: remove the alert once booked
+      try {
+        await supabase.from('slot_alerts').delete().eq('id', selectedAlert.id)
+      } catch (e) {
+        console.error('Could not remove alert after booking:', e)
+      }
+
+      router.push('/bookings')
+      router.refresh()
+    } catch (e) {
+      console.error('Booking error:', e)
+      setBookingError('Could not create booking. Please try again.')
+    } finally {
+      setBookingSlotId(null)
+      setSelectedAlert(null)
+    }
+  }
+
+  const filteredAlerts = alerts.filter((a) => a.status === 'active' || a.status === 'notified')
 
   if (authLoading || loading) {
     return <div className="flex items-center justify-center min-h-[400px] text-zinc-500 font-light">Loading...</div>
@@ -144,13 +214,9 @@ export default function AlertsPage() {
         <p className="text-zinc-600 font-light">View and manage your alerts</p>
       </div>
 
-
-      {/* Alerts List */}
       {filteredAlerts.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-lg border border-zinc-200">
-          <p className="text-zinc-500 font-light mb-4">
-            No active alerts
-          </p>
+          <p className="text-zinc-500 font-light mb-4">No active alerts</p>
           <Link href="/search" className="text-zinc-900 font-light hover:underline">
             Search for tables to set alerts
           </Link>
@@ -162,87 +228,87 @@ export default function AlertsPage() {
               {error}
             </div>
           )}
-          
+
           <div className="space-y-4">
-          {filteredAlerts.map(alert => (
-            <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4">
-              <div className="flex items-center justify-between gap-4">
-                
-              <Link 
-                href={`/venues/${alert.venue.id}`}
-                prefetch={true}
-                className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
-              >
-                
-                
-                
-                <div className="relative w-16 h-16 aspect-square bg-zinc-100 rounded overflow-hidden flex-shrink-0">
-                {alert.venue.image_venue ? (
-                  <Image
-                    src={alert.venue.image_venue}
-                    alt={alert.venue.name}
-                    fill
-                    sizes="64px"
-                    quality={90}
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs font-light">
-                    No image
-                  </div>
-                )}
-              </div>
-                  <div>
-                    <h3 className="font-light text-lg text-zinc-900 hover:underline">{alert.venue.name}</h3>
-                    <p className="text-sm text-zinc-600 font-light">{alert.venue.area}</p>
-                    <div className="flex items-center gap-3 mt-1 text-sm">
-                      <span className="text-zinc-700 font-light">
-                        {formatFullDateTime(alert.slot.start_at)}
-                      </span>
-                      <span className="text-zinc-600 font-light">
-                        {alert.slot.party_min}-{alert.slot.party_max} guests
-                      </span>
-                      {alert.status === 'notified' && (
-                        <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-light">
-                          Available
-                        </span>
-                      )}
-                      {alert.status === 'active' && (
-                        <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
-                          Active
-                        </span>
-                      )}
-                      {alert.status === 'expired' && (
-                        <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
-                          Expired
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </Link>
+            {filteredAlerts.map((alert) => {
+              const isBookingThis = bookingSlotId === alert.slot_id
 
-                {alert.status === 'notified' ? (
-                  <button
-                    type="button"
-                    onClick={() => router.push(`/venues/${alert.venue.id}`)}
-                    className="inline-flex items-center justify-center h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-                  >
-                    Book
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveAlert(alert)}
-                    className="inline-flex items-center justify-center h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-                  >
-                    Remove
-                  </button>
-                )}
+              return (
+                <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <Link
+                      href={`/venues/${alert.venue.id}`}
+                      prefetch={true}
+                      className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
+                    >
+                      <div className="relative w-16 h-16 aspect-square bg-zinc-100 rounded overflow-hidden flex-shrink-0">
+                        {alert.venue.image_venue ? (
+                          <Image
+                            src={alert.venue.image_venue}
+                            alt={alert.venue.name}
+                            fill
+                            sizes="64px"
+                            quality={90}
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs font-light">
+                            No image
+                          </div>
+                        )}
+                      </div>
 
-              </div>
-            </div>
-          ))}
-        </div>
+                      <div>
+                        <h3 className="font-light text-lg text-zinc-900 hover:underline">{alert.venue.name}</h3>
+                        <p className="text-sm text-zinc-600 font-light">{alert.venue.area}</p>
+                        <div className="flex items-center gap-3 mt-1 text-sm flex-wrap">
+                          <span className="text-zinc-700 font-light">{formatFullDateTime(alert.slot.start_at)}</span>
+                          <span className="text-zinc-600 font-light">
+                            {alert.slot.party_min}-{alert.slot.party_max} guests
+                          </span>
+
+                          {alert.status === 'notified' && (
+                            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-light">
+                              Available
+                            </span>
+                          )}
+                          {alert.status === 'active' && (
+                            <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+
+                    {alert.status === 'notified' ? (
+                      <button
+                        type="button"
+                        onClick={() => handleBook(alert)}
+                        disabled={isBookingThis}
+                        className={[
+                          'inline-flex items-center justify-center h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap transition-colors border border-zinc-300',
+                          isBookingThis
+                            ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
+                            : 'bg-white text-zinc-900 hover:bg-zinc-50',
+                        ].join(' ')}
+                      >
+                        {isBookingThis ? 'Booking...' : 'Book'}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAlert(alert)}
+                        className="inline-flex items-center justify-center h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </>
       )}
 
@@ -256,6 +322,23 @@ export default function AlertsPage() {
         onConfirm={confirmRemoveAlert}
         venueName={alertToRemove?.venue.name}
       />
+
+      {/* Party Size Modal (same UX as SearchPage) */}
+      {selectedAlert && (
+        <PartySizeModal
+          isOpen={showPartySizeModal}
+          onClose={() => {
+            setShowPartySizeModal(false)
+            setSelectedAlert(null)
+            setBookingError(null)
+          }}
+          onConfirm={confirmBooking}
+          minSize={selectedAlert.slot.party_min}
+          maxSize={selectedAlert.slot.party_max}
+          venueName={selectedAlert.venue?.name || 'Venue'}
+          error={bookingError}
+        />
+      )}
     </div>
   )
 }
