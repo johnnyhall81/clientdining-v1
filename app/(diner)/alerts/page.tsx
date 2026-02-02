@@ -221,12 +221,21 @@ export default function AlertsPage() {
                   </div>
                 </Link>
 
-                <button
-                  onClick={() => handleRemoveAlert(alert)}
-                  className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-                >
-                  Remove
-                </button>
+                {alert.status === 'notified' ? (
+                  <Link
+                    href={`/venues/${alert.venue.id}`}
+                    className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-zinc-900 text-zinc-50 hover:bg-zinc-800 transition-colors flex items-center"
+                  >
+                    Book
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => handleRemoveAlert(alert)}
+                    className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
             </div>
           ))}
