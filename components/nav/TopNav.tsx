@@ -67,11 +67,11 @@ export default function TopNav() {
   const isAdmin = profile?.role === 'platform_admin'
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white border-b border-zinc-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href={user ? "/home" : "/"} className="text-xl font-bold text-gray-900">
+          <Link href={user ? "/home" : "/"} className="text-xl font-light text-zinc-900">
             ClientDining
           </Link>
 
@@ -80,40 +80,40 @@ export default function TopNav() {
             <nav className="flex items-center gap-6">
               <Link
                 href="/search"
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-light transition-colors ${
                   isActive('/search')
-                    ? 'text-gray-900'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-zinc-900'
+                    : 'text-zinc-600 hover:text-zinc-900'
                 }`}
               >
                 Search
               </Link>
               <Link
                 href="/bookings"
-                className={`relative flex items-center gap-1.5 text-sm font-medium transition-colors ${
+                className={`relative flex items-center gap-1.5 text-sm font-light transition-colors ${
                   isActive('/bookings')
-                    ? 'text-gray-900'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-zinc-900'
+                    : 'text-zinc-600 hover:text-zinc-900'
                 }`}
               >
                 Bookings
                 {bookingCount > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-medium text-gray-600 bg-gray-200 rounded-full">
+                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-light text-zinc-600 bg-zinc-100 rounded-full">
                     {bookingCount}
                   </span>
                 )}
               </Link>
               <Link
                 href="/alerts"
-                className={`relative flex items-center gap-1.5 text-sm font-medium transition-colors ${
+                className={`relative flex items-center gap-1.5 text-sm font-light transition-colors ${
                   isActive('/alerts')
-                    ? 'text-gray-900'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-zinc-900'
+                    : 'text-zinc-600 hover:text-zinc-900'
                 }`}
               >
                 Alerts
                 {alertCount > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-medium text-gray-600 bg-gray-200 rounded-full">
+                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-light text-zinc-600 bg-zinc-100 rounded-full">
                     {alertCount}
                   </span>
                 )}
@@ -131,30 +131,29 @@ export default function TopNav() {
                       fill
                       sizes="32px"
                       quality={70}
-                      className="rounded-full object-cover border border-gray-200"
+                      className="rounded-full object-cover border border-zinc-200"
                     />
                   </div>
 
 
 
 
-
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-600">
+                    <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-sm font-light text-zinc-600">
                       {profile?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}
                     </div>
                   )}
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
                 {/* Dropdown */}
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                   {!isAdmin && (
                     <Link
                       href="/account"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+                      className="block px-4 py-2 text-sm font-light text-zinc-700 hover:bg-zinc-50 rounded-t-lg"
                     >
                       Account
                     </Link>
@@ -162,14 +161,14 @@ export default function TopNav() {
                   {isAdmin && (
                     <Link
                       href="/admin"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+                      className="block px-4 py-2 text-sm font-light text-zinc-700 hover:bg-zinc-50 rounded-t-lg"
                     >
                       Admin Dashboard
                     </Link>
                   )}
                   <button
                     onClick={handleSignOut}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg"
+                    className="w-full text-left px-4 py-2 text-sm font-light text-zinc-700 hover:bg-zinc-50 rounded-b-lg"
                   >
                     Sign Out
                   </button>
@@ -180,7 +179,7 @@ export default function TopNav() {
             <nav className="flex items-center gap-4">
             <Link
               href="/login"
-              className="text-sm font-medium text-gray-900 hover:text-gray-700"
+              className="text-sm font-light text-zinc-900 hover:text-zinc-700"
             >
               Login
             </Link>
