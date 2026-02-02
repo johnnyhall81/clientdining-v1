@@ -312,24 +312,33 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
             // @ts-ignore
             first?.type?.name === 'strong'
 
+          // Spec lines: **Label:** Value  ->  Label · Value (single line)
           if (startsWithStrong) {
+            const parts = isArray ? children : [children]
+            const rawLabel = parts[0]?.props?.children
+            const label = String(rawLabel || '').replace(/:\s*$/, '')
+            const value = parts.slice(1)
+
             return (
-              <p className="text-sm text-zinc-600 font-light leading-snug mb-1 last:mb-0">
-                {children}
-              </p>
+              <div className="text-sm leading-snug mb-1 last:mb-0">
+                <span className="text-zinc-500 font-medium">{label}</span>
+                <span className="mx-2 text-zinc-300">·</span>
+                <span className="text-zinc-600 font-light">{value}</span>
+              </div>
             )
           }
 
+          // Summary paragraph: same size + same leading to keep it calm
           return (
-            <p className="text-zinc-600 font-light leading-relaxed mb-2 last:mb-0">
+            <p className="text-sm text-zinc-600 font-light leading-snug mb-2 last:mb-0">
               {children}
             </p>
           )
         },
+
+        // Keep strong rendering default-ish for any other bold inside the summary
         strong: ({ children }) => (
-          <strong className="font-medium text-zinc-800">
-            {children}
-          </strong>
+          <strong className="font-medium text-zinc-600">{children}</strong>
         ),
       }}
     >
@@ -337,6 +346,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     </ReactMarkdown>
   </div>
 )}
+
       </div>
 
       <div className="card">
