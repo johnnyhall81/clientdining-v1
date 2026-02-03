@@ -127,9 +127,9 @@ export default function About() {
         
         <a 
           href="/signup" 
-          className="inline-flex items-center px-6 h-10 text-sm font-light border border-zinc-300 text-zinc-900 hover:border-zinc-400 transition-colors"
+          className="inline-flex items-center px-6 h-10 text-sm font-light bg-zinc-900 text-white hover:bg-zinc-800 transition-colors"
         >
-          Request access
+          Apply for membership
         </a>
       </section>
 
