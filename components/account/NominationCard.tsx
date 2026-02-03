@@ -79,7 +79,7 @@ export default function NominationCard() {
     <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
       <div className="mb-6">
         <h2 className="text-xl font-light text-zinc-900 mb-2">
-        Invite a few trusted contacts from your professional network to ClientDining.
+        Invite trusted contacts
         </h2>
         <p className="text-sm text-zinc-600 font-light">
           {remainingNominations} {remainingNominations === 1 ? 'invitation' : 'invitations'} remaining
