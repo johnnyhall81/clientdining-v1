@@ -102,7 +102,7 @@ export default function AboutPage() {
               </li>
             </ul>
 
-            <p className="text-zinc-600 leading-relaxed mt-6">
+            <p className="text-sm text-zinc-600 leading-relaxed mt-6">
               High-demand tables open to Standard members if still available within 24 hours.
             </p>
 
