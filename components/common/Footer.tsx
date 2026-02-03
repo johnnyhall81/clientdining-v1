@@ -13,9 +13,11 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Platform Links */}
           <div>
-            <h3 className="text-sm font-light mb-4 uppercase tracking-wider text-zinc-900">Platform</h3>
+            <h3 className="text-sm font-light mb-4 uppercase tracking-wider text-zinc-900">
+              Platform
+            </h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/about" className="text-zinc-600 hover:text-zinc-900 text-sm font-light">
@@ -32,12 +34,22 @@ export default function Footer() {
                   Search
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/venue/overview"
+                  className="text-zinc-600 hover:text-zinc-900 text-sm font-light"
+                >
+                  Venue overview
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Account Links */}
           <div>
-            <h3 className="text-sm font-light mb-4 uppercase tracking-wider text-zinc-900">Account</h3>
+            <h3 className="text-sm font-light mb-4 uppercase tracking-wider text-zinc-900">
+              Account
+            </h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/login" className="text-zinc-600 hover:text-zinc-900 text-sm font-light">
@@ -59,7 +71,9 @@ export default function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h3 className="text-sm font-light mb-4 uppercase tracking-wider text-zinc-900">Legal</h3>
+            <h3 className="text-sm font-light mb-4 uppercase tracking-wider text-zinc-900">
+              Legal
+            </h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/privacy" className="text-zinc-600 hover:text-zinc-900 text-sm font-light">
@@ -81,7 +95,10 @@ export default function Footer() {
             © {new Date().getFullYear()} ClientDining. All rights reserved.
           </p>
           <p className="text-zinc-600 text-sm font-light mt-4 md:mt-0">
-            Contact: <a href="mailto:support@clientdining.com" className="hover:text-zinc-900">support@clientdining.com</a>
+            Contact:{' '}
+            <a href="mailto:support@clientdining.com" className="hover:text-zinc-900">
+              support@clientdining.com
+            </a>
           </p>
         </div>
       </div>
