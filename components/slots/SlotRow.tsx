@@ -63,7 +63,7 @@ export default function SlotRow({
               : `${slot.party_min}-${slot.party_max} guests`}
           </p>
           {isBookedByMe && (
-            <span className="text-xs bg-zinc-900 text-zinc-50 px-2 py-0.5 rounded-full font-light">
+            <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-light">
               Confirmed
             </span>
           )}
