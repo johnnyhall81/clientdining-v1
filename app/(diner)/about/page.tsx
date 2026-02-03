@@ -158,25 +158,26 @@ export default function About() {
       </div>
 
       {/* The venues */}
-      <section className="max-w-4xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-light text-zinc-900 mb-8">
-          The venues
-        </h2>
+<section className="max-w-4xl mx-auto px-6 py-16">
+  <h2 className="text-3xl font-light text-zinc-900 mb-8">
+    The venues
+  </h2>
 
-        <div className="space-y-4 text-zinc-600 leading-relaxed max-w-3xl">
-          <p>
-            ClientDining does not aim to list every restaurant in London.
-          </p>
+  <div className="space-y-4 text-zinc-600 leading-relaxed max-w-3xl">
+    <p>
+      ClientDining works with a deliberately small group of restaurants and private members’ clubs.
+    </p>
 
-          <p>
-            It works with a limited number of establishments that understand the difference between feeding people and hosting business.
-          </p>
+    <p>
+      Venues are chosen for reliability, discretion, and their ability to host business dinners comfortably.
+    </p>
 
-          <p>
-            Availability is shared at the venue’s discretion. Bookings remain subject to the venue’s usual acceptance process. New venues are added gradually.
-          </p>
-        </div>
-      </section>
+    <p>
+      Availability is shared at the venue’s discretion, and bookings remain subject to their usual acceptance process. The list of venues is expanded carefully over time.
+    </p>
+  </div>
+</section>
+
 
       {/* Divider */}
       <div className="max-w-4xl mx-auto px-6">
