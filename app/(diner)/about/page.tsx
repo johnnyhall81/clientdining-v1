@@ -81,10 +81,10 @@ export default function About() {
             </h3>
 
             <ul className="space-y-3 text-zinc-600">
-              <li>Access participating venues</li>
-              <li>Book available tables</li>
-              <li>Set alerts for preferred dates and times</li>
-              <li>Hold up to three future bookings</li>
+              <li>✓ Access participating venues</li>
+              <li>✓ Book available tables</li>
+              <li>✓ Set alerts for preferred dates and times</li>
+              <li>✓ Hold up to three future bookings</li>
             </ul>
 
             <p className="text-sm text-zinc-500 italic pt-4 border-t border-zinc-200">
@@ -104,10 +104,10 @@ export default function About() {
             </div>
 
             <ul className="space-y-3 text-zinc-600">
-              <li>Everything in Standard</li>
-              <li>First access when high-demand tables become available</li>
-              <li>Hold up to ten future bookings</li>
-              <li>Early visibility when availability changes</li>
+              <li>✓ Everything in Standard</li>
+              <li>✓ First access when high-demand tables become available</li>
+              <li>✓ Hold up to ten future bookings</li>
+              <li>✓ Early visibility when availability changes</li>
             </ul>
 
             <p className="text-sm text-zinc-500 italic">
@@ -143,12 +143,13 @@ export default function About() {
         </div>
 
         <div className="mt-8">
-          <a
-            href="/contact"
+        <a
+            href="mailto:support@clientdining.com?subject=Company%20plans%20enquiry"
             className="inline-flex items-center px-6 h-10 text-sm font-light border border-zinc-300 text-zinc-900 hover:bg-zinc-100 transition-colors"
           >
             Enquire about company plans
           </a>
+
         </div>
       </section>
 
