@@ -24,7 +24,7 @@ export default function AboutPage() {
 
           <p>
             The platform is designed for early-evening business dining, Monday to Thursday. Reservations are discreet,
-            service-led, and sit alongside a venue’s existing operations without disruption.
+            service-led, and low-key, sitting alongside a venue’s existing operations without disruption.
           </p>
 
           <p>
@@ -124,7 +124,7 @@ export default function AboutPage() {
             </div>
 
             <p className="text-zinc-600 leading-relaxed mb-6">
-              Best when the table matters.
+               Best for peak times and planning ahead.
             </p>
 
             <ul className="space-y-3 text-zinc-600 leading-relaxed">
@@ -185,7 +185,7 @@ export default function AboutPage() {
             ClientDining works with a deliberately small group of restaurants and private members’ clubs.
           </p>
           <p>
-            Venues are chosen for reliability, discretion, and their ability to host business dinners comfortably.
+            Venues are chosen for reliability, discretion, and their ability to host low-key business dinners comfortably.
           </p>
           <p>
             Availability is shared at the venue’s discretion, and bookings remain subject to their usual acceptance
