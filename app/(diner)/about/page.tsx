@@ -127,7 +127,7 @@ export default function About() {
         
         <a 
           href="/signup" 
-          className="inline-block bg-zinc-900 text-zinc-50 px-8 py-4 hover:bg-zinc-800 transition-colors duration-200"
+          className="inline-flex items-center px-6 h-10 text-sm font-light border border-zinc-300 text-zinc-900 hover:border-zinc-400 transition-colors"
         >
           Apply for membership
         </a>
