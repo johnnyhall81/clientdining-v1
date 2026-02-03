@@ -36,7 +36,6 @@ export default function ForVenuesPage() {
           <li>One host entertaining clients or colleagues</li>
           <li>Early evening, Monday to Friday</li>
           <li>Discreet, low-key service</li>
-          <li>Higher-than-average spend</li>
           <li>One bill settled by the host, usually on a company card</li>
         </ul>
         <p className="mt-6 text-zinc-600">
