@@ -453,7 +453,7 @@ export default function SearchPage() {
                 type="checkbox"
                 checked={filters.within24h}
                 onChange={(e) => setFilters({ ...filters, within24h: e.target.checked })}
-                className="w-4 h-4 rounded border-zinc-200 accent-zinc-700 focus:ring-0 focus:ring-offset-0"=
+                className="w-4 h-4 rounded border-zinc-200 accent-zinc-700 focus:ring-0 focus:ring-offset-0"
               />
               <span className="text-sm text-zinc-700 font-light">Within 24h</span>
             </label>
