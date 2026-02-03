@@ -34,8 +34,7 @@ export default function ForVenuesPage() {
         <h2 className="text-3xl font-light text-zinc-900 mb-8">Typical booking profile</h2>
         <ul className="space-y-3 text-zinc-600">
           <li>One host entertaining clients or colleagues</li>
-          <li>Early evening, Monday to Thursday</li>
-          <li>Small tables</li>
+          <li>Early evening, Monday to Friday</li>
           <li>Discreet, low-key service</li>
           <li>Higher-than-average spend</li>
           <li>One bill settled by the host, usually on a company card</li>
