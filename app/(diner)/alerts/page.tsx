@@ -158,38 +158,48 @@ export default function AlertsPage() {
 
   const confirmBooking = async (partySize: number) => {
     if (!selectedAlert) return
-
-    setShowPartySizeModal(false)
+  
     setBookingSlotId(selectedAlert.slot_id)
-
+    setBookingError(null)
+  
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           slotId: selectedAlert.slot_id,
-          partySize,
+          partySize: Number(partySize),
         }),
       })
-
+  
       const data = await response.json().catch(() => ({}))
-
+  
       if (!response.ok) {
+        // ✅ show API error in modal and keep modal open
         const message = data?.error || 'Could not create booking'
         setBookingError(message)
         setBookingSlotId(null)
         return
       }
-
+  
+      // ✅ success: close modal
+      setShowPartySizeModal(false)
       setBookingError(null)
-
-      // Optional but sensible: remove the alert once booked
-      try {
-        await supabase.from('slot_alerts').delete().eq('id', selectedAlert.id)
-      } catch (e) {
-        console.error('Could not remove alert after booking:', e)
+  
+      // ✅ remove alert immediately in UI
+      setAlerts((prev) => prev.filter((a) => a.id !== selectedAlert.id))
+  
+      // best-effort delete in DB
+      const { error: deleteError } = await supabase
+        .from('slot_alerts')
+        .delete()
+        .eq('id', selectedAlert.id)
+  
+      if (deleteError) {
+        console.error('Could not remove alert after booking:', deleteError)
+        loadAlerts()
       }
-
+  
       router.push('/bookings')
       router.refresh()
     } catch (e) {
@@ -197,9 +207,9 @@ export default function AlertsPage() {
       setBookingError('Could not create booking. Please try again.')
     } finally {
       setBookingSlotId(null)
-      setSelectedAlert(null)
     }
   }
+  
 
   const filteredAlerts = alerts.filter((a) => a.status === 'active' || a.status === 'notified')
 
@@ -326,18 +336,20 @@ export default function AlertsPage() {
       {/* Party Size Modal (same UX as SearchPage) */}
       {selectedAlert && (
         <PartySizeModal
-          isOpen={showPartySizeModal}
-          onClose={() => {
-            setShowPartySizeModal(false)
-            setSelectedAlert(null)
-            setBookingError(null)
-          }}
-          onConfirm={confirmBooking}
-          minSize={selectedAlert.slot.party_min}
-          maxSize={selectedAlert.slot.party_max}
-          venueName={selectedAlert.venue?.name || 'Venue'}
-          error={bookingError}
-        />
+        isOpen={showPartySizeModal}
+        onClose={() => {
+          setShowPartySizeModal(false)
+          setSelectedAlert(null)
+          setBookingError(null)
+          setBookingSlotId(null)
+        }}
+        onConfirm={confirmBooking}
+        minSize={selectedAlert.slot.party_min}
+        maxSize={selectedAlert.slot.party_max}
+        venueName={selectedAlert.venue?.name || 'Venue'}
+        error={bookingError}
+      />
+      
       )}
     </div>
   )
