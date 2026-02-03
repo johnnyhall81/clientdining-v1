@@ -9,7 +9,7 @@ export default function VenueOverviewPage() {
           For Restaurants & Private Members’ Clubs
         </h1>
         <p className="text-xl md:text-2xl text-zinc-600 font-light leading-relaxed max-w-3xl">
-          ClientDining works with a deliberately small group of restaurants and private members’ clubs in London.
+          ClientDining works with a deliberately select group of restaurants and private members’ clubs in London.
         </p>
       </section>
 
