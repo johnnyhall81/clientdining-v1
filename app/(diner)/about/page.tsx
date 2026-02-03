@@ -3,45 +3,72 @@ import React from 'react';
 export default function About() {
   return (
     <div className="min-h-screen bg-zinc-50">
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="max-w-4xl mx-auto px-6 pt-24 pb-16">
         <h1 className="text-5xl md:text-6xl font-light text-zinc-900 mb-6 tracking-tight">
           About ClientDining
         </h1>
-        <p className="text-xl md:text-2xl text-zinc-600 font-light leading-relaxed max-w-3xl">
-          A private booking platform for City professionals hosting business dinners at London&apos;s leading restaurants and private members&apos; clubs.
-        </p>
-        <p className="text-lg text-zinc-500 mt-6 font-light">
-          See availability. Request tables. Confirm bookings.
-        </p>
-      </section>
 
-      {/* Divider */}
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="border-t border-zinc-200"></div>
-      </div>
-
-      {/* How It Works */}
-      <section className="max-w-4xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-light text-zinc-900 mb-8">How It Works</h2>
-        <div className="space-y-6 text-zinc-600 leading-relaxed">
+        <div className="space-y-6 text-zinc-600 text-lg leading-relaxed max-w-3xl">
           <p>
-            Restaurants share availability directly with the platform. Members see dates, times, and table sizes, submit a request, and the venue confirms.
+            ClientDining is a private booking platform for City professionals who host business dinners in London.
           </p>
+
           <p>
-            When a table is in demand, access is time-sensitive. Premium members see these slots first. If unfilled, they open to all members in the final 24 hours.
+            It provides a reliable way to see availability, request tables, and manage bookings at a small number of leading restaurants and private members’ clubs. Availability is shared directly by venues and updated as it changes.
+          </p>
+
+          <p>
+            The platform is designed for early-evening business dining, Monday to Thursday. Reservations are discreet, service-led, and sit alongside a venue’s existing operations without disruption.
+          </p>
+
+          <p>
+            ClientDining is selective by design. Venues are chosen for consistency, atmosphere, and their suitability for professional hosting. Membership is verified and not open to the general public.
+          </p>
+
+          <p className="text-zinc-500">
+            The aim is simple: fewer emails, fewer follow-ups, and greater certainty when the table matters.
           </p>
         </div>
       </section>
 
       {/* Divider */}
       <div className="max-w-4xl mx-auto px-6">
-        <div className="border-t border-zinc-200"></div>
+        <div className="border-t border-zinc-200" />
+      </div>
+
+      {/* How it works */}
+      <section className="max-w-4xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-light text-zinc-900 mb-8">
+          How it works
+        </h2>
+
+        <div className="space-y-6 text-zinc-600 leading-relaxed max-w-3xl">
+          <p>
+            ClientDining maintains a curated list of restaurants and private members’ clubs suited to business dining. Venues are selected for their ability to host professional conversations comfortably, across different group sizes.
+          </p>
+
+          <p>
+            Venues share availability directly with the platform. Members see real dates, times, and table sizes, submit a booking request, and receive confirmation in one place. Confirmation timing remains with the venue.
+          </p>
+
+          <p>
+            When tables are in demand, access is time-sensitive. Premium members see availability first. If unfilled, tables open to all members in the final 24 hours.
+          </p>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="border-t border-zinc-200" />
       </div>
 
       {/* Membership */}
       <section className="max-w-4xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-light text-zinc-900 mb-4">Membership</h2>
+        <h2 className="text-3xl font-light text-zinc-900 mb-4">
+          Membership
+        </h2>
+
         <p className="text-zinc-500 mb-12">
           Two tiers. The difference is access when tables are competitive.
         </p>
@@ -49,27 +76,17 @@ export default function About() {
         <div className="grid md:grid-cols-2 gap-12">
           {/* Standard */}
           <div className="space-y-6">
-            <div>
-              <h3 className="text-2xl font-light text-zinc-900 mb-2">Standard</h3>
-            </div>
+            <h3 className="text-2xl font-light text-zinc-900">
+              Standard
+            </h3>
+
             <ul className="space-y-3 text-zinc-600">
-              <li className="flex items-start">
-                <span className="mr-3 text-zinc-400">•</span>
-                <span>Access participating venues</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-3 text-zinc-400">•</span>
-                <span>Book available tables</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-3 text-zinc-400">•</span>
-                <span>Set alerts for preferred dates</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-3 text-zinc-400">•</span>
-                <span>Hold up to three future bookings</span>
-              </li>
+              <li>Access participating venues</li>
+              <li>Book available tables</li>
+              <li>Set alerts for preferred dates and times</li>
+              <li>Hold up to three future bookings</li>
             </ul>
+
             <p className="text-sm text-zinc-500 italic pt-4 border-t border-zinc-200">
               High-demand tables open to Standard members if still available within 24 hours.
             </p>
@@ -78,27 +95,21 @@ export default function About() {
           {/* Premium */}
           <div className="space-y-6 md:border-l md:border-zinc-200 md:pl-12">
             <div>
-              <h3 className="text-2xl font-light text-zinc-900 mb-1">Premium</h3>
-              <p className="text-zinc-500">£49/month</p>
+              <h3 className="text-2xl font-light text-zinc-900 mb-1">
+                Premium
+              </h3>
+              <p className="text-zinc-500">
+                £49 per month
+              </p>
             </div>
+
             <ul className="space-y-3 text-zinc-600">
-              <li className="flex items-start">
-                <span className="mr-3 text-zinc-400">•</span>
-                <span>Everything in Standard</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-3 text-zinc-400">•</span>
-                <span>First access when high-demand tables become available</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-3 text-zinc-400">•</span>
-                <span>Hold up to ten future bookings</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-3 text-zinc-400">•</span>
-                <span>Early visibility on competitive slots</span>
-              </li>
+              <li>Everything in Standard</li>
+              <li>First access when high-demand tables become available</li>
+              <li>Hold up to ten future bookings</li>
+              <li>Early visibility when availability changes</li>
             </ul>
+
             <p className="text-sm text-zinc-500 italic">
               Commonly expensed as a business tool.
             </p>
@@ -108,18 +119,29 @@ export default function About() {
 
       {/* Divider */}
       <div className="max-w-4xl mx-auto px-6">
-        <div className="border-t border-zinc-200"></div>
+        <div className="border-t border-zinc-200" />
       </div>
 
-      {/* Company Plans */}
+      {/* Company plans */}
       <section className="max-w-4xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-light text-zinc-900 mb-8">Company Plans</h2>
-        <p className="text-zinc-600 leading-relaxed max-w-3xl mb-6">
-          ClientDining is often used by teams where multiple people host clients on behalf of the same firm. Company plans provide central billing and shared access, without changing how venues operate.
-        </p>
-        <p className="text-zinc-500">
-          Designed for teams where client hosting is a shared responsibility.
-        </p>
+        <h2 className="text-3xl font-light text-zinc-900 mb-8">
+          Company plans
+        </h2>
+
+        <div className="space-y-4 text-zinc-600 leading-relaxed max-w-3xl">
+          <p>
+            ClientDining is often used by teams where multiple people host clients on behalf of the same firm.
+          </p>
+
+          <p>
+            Company plans provide central billing and shared access, while preserving the same booking rules and venue controls.
+          </p>
+
+          <p>
+            Designed for organisations where business dining is a shared responsibility.
+          </p>
+        </div>
+
         <div className="mt-8">
           <a
             href="/contact"
@@ -132,28 +154,50 @@ export default function About() {
 
       {/* Divider */}
       <div className="max-w-4xl mx-auto px-6">
-        <div className="border-t border-zinc-200"></div>
+        <div className="border-t border-zinc-200" />
       </div>
 
-      {/* The Venues */}
+      {/* The venues */}
       <section className="max-w-4xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-light text-zinc-900 mb-8">The Venues</h2>
-        <p className="text-zinc-600 leading-relaxed max-w-3xl">
-          A limited number of restaurants and private members&apos; clubs selected for consistent service, appropriate atmosphere, and discretion.
-        </p>
+        <h2 className="text-3xl font-light text-zinc-900 mb-8">
+          The venues
+        </h2>
+
+        <div className="space-y-4 text-zinc-600 leading-relaxed max-w-3xl">
+          <p>
+            ClientDining does not aim to list every restaurant in London.
+          </p>
+
+          <p>
+            It works with a limited number of establishments that understand the difference between feeding people and hosting business.
+          </p>
+
+          <p>
+            Availability is shared at the venue’s discretion. Bookings remain subject to the venue’s usual acceptance process. New venues are added gradually.
+          </p>
+        </div>
       </section>
 
       {/* Divider */}
       <div className="max-w-4xl mx-auto px-6">
-        <div className="border-t border-zinc-200"></div>
+        <div className="border-t border-zinc-200" />
       </div>
 
       {/* Access */}
       <section className="max-w-4xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-light text-zinc-900 mb-8">Access</h2>
-        <p className="text-zinc-600 leading-relaxed mb-12">
-          Membership is verified via LinkedIn and approved individually.
-        </p>
+        <h2 className="text-3xl font-light text-zinc-900 mb-8">
+          Access
+        </h2>
+
+        <div className="space-y-4 text-zinc-600 leading-relaxed max-w-3xl mb-12">
+          <p>
+            ClientDining is intended for professional use.
+          </p>
+
+          <p>
+            Membership is verified via LinkedIn and approved individually. Access is not open to the general public.
+          </p>
+        </div>
 
         <a
           href="/signup"
@@ -163,8 +207,8 @@ export default function About() {
         </a>
       </section>
 
-      {/* Bottom Spacing */}
-      <div className="h-24"></div>
+      {/* Bottom spacing */}
+      <div className="h-24" />
     </div>
   );
 }
