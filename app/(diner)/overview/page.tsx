@@ -78,7 +78,7 @@ export default function VenueOverviewPage() {
           Some venues also use ClientDining selectively to make better use of private rooms.
         </p>
         <p>
-          This works particularly well for small corporate roundtables, breakfast or lunch meetings, and quiet
+          This works particularly well for industry roundtables, breakfast or lunch meetings, and quiet
           strategy discussions. These bookings are typically contained, low-impact, and sit comfortably within
           existing operations, often during periods that would otherwise be underused.
         </p>
