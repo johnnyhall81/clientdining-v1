@@ -56,7 +56,7 @@ export default function AboutPage() {
 
           <p>
             Venues share availability directly with the platform. Members see real dates, times, and table sizes, submit
-            a booking request, and receive confirmation in one place. Confirmation timing remains with the venue.
+            a booking request, and receive confirmation in one place. Bookings are reviewed and confirmed directly by the venue.
           </p>
 
           <p>
@@ -76,7 +76,8 @@ export default function AboutPage() {
         <h2 className="text-3xl font-light text-zinc-900 mb-8">Membership</h2>
 
         <p className="max-w-3xl text-zinc-600 leading-relaxed">
-          Two tiers. The difference is access when tables are competitive.
+        Membership is designed to suit different hosting needs.
+        Standard works well when you’re flexible. Premium is designed for peak-time bookings and planning ahead, when certainty matters.
         </p>
 
         <div className="grid md:grid-cols-2 gap-8 mt-12">
