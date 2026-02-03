@@ -35,10 +35,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/venue/overview"
-                  className="text-zinc-600 hover:text-zinc-900 text-sm font-light"
-                >
+                <Link href="/overview" className="text-zinc-600 hover:text-zinc-900 text-sm font-light">
                   Venue overview
                 </Link>
               </li>
