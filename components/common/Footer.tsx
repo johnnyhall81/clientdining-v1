@@ -34,11 +34,6 @@ export default function Footer() {
                   Search
                 </Link>
               </li>
-              <li>
-                <Link href="/overview" className="text-zinc-600 hover:text-zinc-900 text-sm font-light">
-                  Venue overview
-                </Link>
-              </li>
             </ul>
           </div>
 
