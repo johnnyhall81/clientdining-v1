@@ -63,25 +63,36 @@ export default function AdminLayout({
 
             {/* Admin Navigation */}
             <nav className="flex items-center gap-6">
-            <Link href="/admin/venues" className="text-sm text-zinc-100 hover:text-white transition-colors">
-              Venues
-            </Link>
-            <Link href="/admin/slots" className="text-sm text-zinc-100 hover:text-white transition-colors">
-              Slots
-            </Link>
-            <Link href="/admin/bookings" className="text-sm text-zinc-100 hover:text-white transition-colors">
-              Bookings
-            </Link>
-            <Link href="/admin/alerts" className="text-sm text-zinc-100 hover:text-white transition-colors">
-              Alerts
-            </Link>
-            <Link href="/admin/users" className="text-sm text-zinc-100 hover:text-white transition-colors">
-              Users
-            </Link>
-            <Link href="/admin/dashboard" className="text-sm text-zinc-100 hover:text-white transition-colors">
-              Activity
-            </Link>
-            </nav>
+  <Link href="/admin/venues" className="text-sm text-zinc-100 hover:text-white transition-colors">
+    Venues
+  </Link>
+  <Link href="/admin/slots" className="text-sm text-zinc-100 hover:text-white transition-colors">
+    Slots
+  </Link>
+  <Link href="/admin/bookings" className="text-sm text-zinc-100 hover:text-white transition-colors">
+    Bookings
+  </Link>
+  <Link href="/admin/alerts" className="text-sm text-zinc-100 hover:text-white transition-colors">
+    Alerts
+  </Link>
+  <Link href="/admin/users" className="text-sm text-zinc-100 hover:text-white transition-colors">
+    Users
+  </Link>
+  <Link href="/admin/dashboard" className="text-sm text-zinc-100 hover:text-white transition-colors">
+    Activity
+  </Link>
+  
+  {/* Add separator and account links */}
+  <div className="border-l border-zinc-700 h-6 mx-2"></div>
+  
+  <Link href="/account" className="text-sm text-zinc-100 hover:text-white transition-colors">
+    Account
+  </Link>
+  <Link href="/home" className="text-sm text-zinc-100 hover:text-white transition-colors">
+    Exit Admin
+  </Link>
+</nav>
+
           </div>
         </div>
       </header>
