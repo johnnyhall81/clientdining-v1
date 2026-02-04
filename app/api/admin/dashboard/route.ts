@@ -21,7 +21,7 @@ export async function GET() {
       .select(`
         id,
         slot_id,
-        user_id,
+        diner_user_id,
         party_size,
         status,
         notes_private,
@@ -37,7 +37,7 @@ export async function GET() {
       .limit(50)
 
     const activeWithUsers = await Promise.all((activeRaw || []).map(async (booking: any) => {
-      const { data: userData } = await supabase.auth.admin.getUserById(booking.user_id)
+      const { data: userData } = await supabase.auth.admin.getUserById(booking.diner_user_id)
       return {
         ...booking,
         user: {
@@ -53,7 +53,7 @@ export async function GET() {
       .select(`
         id,
         slot_id,
-        user_id,
+        diner_user_id,
         party_size,
         status,
         notes_private,
@@ -69,7 +69,7 @@ export async function GET() {
       .limit(50)
 
     const cancelledWithUsers = await Promise.all((cancelledRaw || []).map(async (booking: any) => {
-      const { data: userData } = await supabase.auth.admin.getUserById(booking.user_id)
+      const { data: userData } = await supabase.auth.admin.getUserById(booking.diner_user_id)
       return {
         ...booking,
         user: {
@@ -85,7 +85,7 @@ export async function GET() {
       .select(`
         id,
         slot_id,
-        user_id,
+        diner_user_id,
         party_size,
         status,
         notes_private,
@@ -101,7 +101,7 @@ export async function GET() {
       .limit(50)
 
     const completedWithUsers = await Promise.all((completedRaw || []).map(async (booking: any) => {
-      const { data: userData } = await supabase.auth.admin.getUserById(booking.user_id)
+      const { data: userData } = await supabase.auth.admin.getUserById(booking.diner_user_id)
       return {
         ...booking,
         user: {
