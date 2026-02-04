@@ -81,18 +81,22 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-zinc-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-zinc-600 text-sm font-light">
-            © {new Date().getFullYear()} ClientDining. All rights reserved.
-          </p>
-          <p className="text-zinc-600 text-sm font-light mt-4 md:mt-0">
-            Contact:{' '}
-            <a href="mailto:support@clientdining.com" className="hover:text-zinc-900">
-              support@clientdining.com
-            </a>
-          </p>
-        </div>
+       {/* Bottom Bar */}
+<div className="border-t border-zinc-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+  <p className="text-zinc-600 text-sm font-light">
+    © {new Date().getFullYear()} ClientDining. All rights reserved.
+  </p>
+
+  <p className="text-zinc-600 text-sm font-light mt-4 md:mt-0">
+    <a
+      href="mailto:support@clientdining.com"
+      className="hover:text-zinc-900 transition-colors"
+    >
+      Contact us
+    </a>
+  </p>
+</div>
+
       </div>
     </footer>
   )
