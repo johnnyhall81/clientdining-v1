@@ -63,62 +63,24 @@ export default function AdminLayout({
 
             {/* Admin Navigation */}
             <nav className="flex items-center gap-6">
-              <Link
-                href="/admin/venues"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/admin/venues') || pathname.startsWith('/admin/venues/')
-                    ? 'text-white'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-              >
-                Venues
-              </Link>
-              <Link
-                href="/admin/slots"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/admin/slots')
-                    ? 'text-white'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-              >
-                Slots
-              </Link>
-              <Link
-                href="/admin/bookings"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/admin/bookings')
-                    ? 'text-white'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-              >
-                Bookings
-              </Link>
-              <Link
-                href="/admin/alerts"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/admin/alerts')
-                    ? 'text-white'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-              >
-                Alerts
-              </Link>
-              <Link
-                href="/admin/users"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/admin/users')
-                    ? 'text-white'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-              >
-                Users
-              </Link>
-              <Link
-                href="/home"
-                className="text-sm font-medium text-gray-300 hover:text-white"
-              >
-                Exit Admin
-              </Link>
+            <Link href="/admin/venues" className="text-sm text-zinc-100 hover:text-white transition-colors">
+              Venues
+            </Link>
+            <Link href="/admin/slots" className="text-sm text-zinc-100 hover:text-white transition-colors">
+              Slots
+            </Link>
+            <Link href="/admin/bookings" className="text-sm text-zinc-100 hover:text-white transition-colors">
+              Bookings
+            </Link>
+            <Link href="/admin/alerts" className="text-sm text-zinc-100 hover:text-white transition-colors">
+              Alerts
+            </Link>
+            <Link href="/admin/users" className="text-sm text-zinc-100 hover:text-white transition-colors">
+              Users
+            </Link>
+            <Link href="/admin/dashboard" className="text-sm text-zinc-100 hover:text-white transition-colors">
+              Activity
+            </Link>
             </nav>
           </div>
         </div>
