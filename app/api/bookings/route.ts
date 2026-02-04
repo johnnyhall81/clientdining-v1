@@ -6,7 +6,7 @@ import { formatFullDateTime } from '@/lib/date-utils'
 
 export async function POST(request: Request) {
   try {
-    const { slotId, partySize } = await request.json()
+    const { slotId, partySize, notes } = await request.json()
 
     const cookieStore = cookies()
 
@@ -124,6 +124,7 @@ export async function POST(request: Request) {
       p_user_id: user.id,
       p_venue_id: slot.venue_id,
       p_party_size: partySize,
+      p_notes: notes || null,
     })
 
     if (bookingError) {

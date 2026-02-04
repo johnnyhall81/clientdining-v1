@@ -281,7 +281,7 @@ export default function SearchPage() {
     setShowPartySizeModal(true)
   }
 
-  const confirmBooking = async (partySize: number) => {
+  const confirmBooking = async (partySize: number, notes?: string) => {
     if (!selectedSlot) return
   
     setShowPartySizeModal(false)
@@ -293,7 +293,8 @@ export default function SearchPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           slotId: selectedSlot.id,
-          partySize 
+          partySize,
+          notes,
         }),
       })
   

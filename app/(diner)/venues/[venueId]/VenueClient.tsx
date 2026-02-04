@@ -166,7 +166,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     setShowPartySizeModal(true)
   }
 
-  const confirmBooking = async (partySize: number) => {
+  const confirmBooking = async (partySize: number, notes?: string) => {
     if (!selectedSlot) return
 
     setShowPartySizeModal(false)
@@ -179,6 +179,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         body: JSON.stringify({
           slotId: selectedSlot.id,
           partySize,
+          notes,
         }),
       })
 

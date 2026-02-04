@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 interface PartySizeModalProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: (partySize: number) => void
+  onConfirm: (partySize: number, notes?: string) => void  // ✨ CHANGED: Added notes parameter
   minSize: number
   maxSize: number
   venueName: string
@@ -22,16 +22,18 @@ export default function PartySizeModal({
   error,
 }: PartySizeModalProps) {
   const [partySize, setPartySize] = useState(minSize)
+  const [notes, setNotes] = useState('')  // ✨ NEW: State for notes
 
   useEffect(() => {
     setPartySize(minSize)
+    setNotes('')  // ✨ NEW: Reset notes when modal opens
   }, [minSize, isOpen])
 
   if (!isOpen) return null
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onConfirm(partySize)
+    onConfirm(partySize, notes.trim() || undefined)  // ✨ CHANGED: Pass notes to onConfirm
   }
 
   return (
@@ -67,6 +69,27 @@ export default function PartySizeModal({
 
             <p className="mt-2 text-xs text-zinc-500 font-light">
               We'll confirm suitability with the venue if needed.
+            </p>
+          </div>
+
+          {/* ✨ NEW: Notes textarea field */}
+          <div>
+            <label htmlFor="notes" className="block text-sm font-light text-zinc-900 mb-2">
+              Is there anything else we should know?
+            </label>
+            
+            <textarea
+              id="notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="e.g. dietary requirements, allergies, special occasions..."
+              className="w-full px-4 py-3 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light resize-none"
+              rows={3}
+              maxLength={500}
+            />
+
+            <p className="mt-1 text-xs text-zinc-500 font-light">
+              Optional - Let the venue know about allergies, dietary needs, or special occasions.
             </p>
           </div>
 

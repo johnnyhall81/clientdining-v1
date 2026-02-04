@@ -156,7 +156,7 @@ export default function AlertsPage() {
     setShowPartySizeModal(true)
   }
 
-  const confirmBooking = async (partySize: number) => {
+  const confirmBooking = async (partySize: number, notes?: string) => {
     if (!selectedAlert) return
   
     setBookingSlotId(selectedAlert.slot_id)
@@ -169,6 +169,7 @@ export default function AlertsPage() {
         body: JSON.stringify({
           slotId: selectedAlert.slot_id,
           partySize: Number(partySize),
+          notes,
         }),
       })
   
