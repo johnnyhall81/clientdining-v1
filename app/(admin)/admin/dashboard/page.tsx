@@ -11,7 +11,7 @@ interface Booking {
   user_id: string
   party_size: number
   status: string
-  notes_private: string | null
+  notes: string | null  // Changed from notes_private
   created_at: string
   cancelled_at: string | null
   slot: {
@@ -229,9 +229,9 @@ export default function AdminDashboard() {
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm">
-                          {booking.notes_private ? (
-                            <div className="text-zinc-700 text-xs max-w-xs truncate" title={booking.notes_private}>
-                              {booking.notes_private}
+                          {booking.notes ? (
+                            <div className="text-zinc-700 text-xs max-w-xs truncate" title={booking.notes}>
+                              {booking.notes}
                             </div>
                           ) : (
                             <span className="text-zinc-400 text-xs">None</span>

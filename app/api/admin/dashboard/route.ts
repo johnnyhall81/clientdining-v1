@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
-    // Create admin client with service role
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -46,68 +45,62 @@ export async function GET() {
     }))
 
     // Load cancelled bookings
-    const { data: cancelledRaw } = await supabase
+    const { data: cancelledBookings } = await supabase
       .from('bookings')
       .select(`
-        id,
-        slot_id,
-        diner_user_id,
-        party_size,
-        status,
-        notes_private,
-        created_at,
-        cancelled_at,
-        slot:slots!inner(
+        *,
+        slots!inner (
           start_at,
-          venue:venues!inner(name, phone, booking_email)
+          venues!inner (name, phone, booking_email)
+        ),
+        profiles!bookings_user_id_fkey (
+          full_name,
+          email
         )
       `)
       .eq('status', 'cancelled')
       .order('cancelled_at', { ascending: false })
       .limit(50)
 
-    const cancelledWithUsers = await Promise.all((cancelledRaw || []).map(async (booking: any) => {
-      const { data: userData } = await supabase.auth.admin.getUserById(booking.diner_user_id)
-      return {
-        ...booking,
-        user_id: booking.diner_user_id,
-        user: {
-          email: userData?.user?.email || 'N/A',
-          full_name: userData?.user?.user_metadata?.full_name || null
-        }
+    const cancelledWithUsers = (cancelledBookings || []).map((booking: any) => ({
+      ...booking,
+      slot: {
+        start_at: booking.slots.start_at,
+        venue: booking.slots.venues
+      },
+      user: {
+        email: booking.profiles?.email || 'N/A',
+        full_name: booking.profiles?.full_name || null
       }
     }))
 
     // Load completed bookings
-    const { data: completedRaw } = await supabase
+    const { data: completedBookings } = await supabase
       .from('bookings')
       .select(`
-        id,
-        slot_id,
-        diner_user_id,
-        party_size,
-        status,
-        notes_private,
-        created_at,
-        cancelled_at,
-        slot:slots!inner(
+        *,
+        slots!inner (
           start_at,
-          venue:venues!inner(name, phone, booking_email)
+          venues!inner (name, phone, booking_email)
+        ),
+        profiles!bookings_user_id_fkey (
+          full_name,
+          email
         )
       `)
       .eq('status', 'completed')
       .order('created_at', { ascending: false })
       .limit(50)
 
-    const completedWithUsers = await Promise.all((completedRaw || []).map(async (booking: any) => {
-      const { data: userData } = await supabase.auth.admin.getUserById(booking.diner_user_id)
-      return {
-        ...booking,
-        user_id: booking.diner_user_id,
-        user: {
-          email: userData?.user?.email || 'N/A',
-          full_name: userData?.user?.user_metadata?.full_name || null
-        }
+    const completedWithUsers = (completedBookings || []).map((booking: any) => ({
+      ...booking,
+      slot: {
+        start_at: booking.slots.start_at,
+        venue: booking.slots.venues
+      },
+      user: {
+        email: booking.profiles?.email || 'N/A',
+        full_name: booking.profiles?.full_name || null
       }
     }))
 
