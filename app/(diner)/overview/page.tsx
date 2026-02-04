@@ -36,7 +36,7 @@ export default function VenuesOverview() {
 
       <p>
         Some venues also use ClientDining selectively for private rooms,
-        particularly for small corporate breakfasts or lunches.
+        particularly for corporate breakfasts or lunches.
       </p>
 
       <p>
