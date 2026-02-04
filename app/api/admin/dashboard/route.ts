@@ -16,35 +16,32 @@ export async function GET() {
     )
 
     // Load active bookings
-    const { data: activeRaw } = await supabase
+    const { data: activeBookings } = await supabase
       .from('bookings')
       .select(`
-        id,
-        slot_id,
-        diner_user_id,
-        party_size,
-        status,
-        notes_private,
-        created_at,
-        cancelled_at,
-        slot:slots!inner(
+        *,
+        slots!inner (
           start_at,
-          venue:venues!inner(name, phone, booking_email)
+          venues!inner (name, phone, booking_email)
+        ),
+        profiles!bookings_user_id_fkey (
+          full_name,
+          email
         )
       `)
       .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(50)
 
-    const activeWithUsers = await Promise.all((activeRaw || []).map(async (booking: any) => {
-      const { data: userData } = await supabase.auth.admin.getUserById(booking.diner_user_id)
-      return {
-        ...booking,
-        user_id: booking.diner_user_id,
-        user: {
-          email: userData?.user?.email || 'N/A',
-          full_name: userData?.user?.user_metadata?.full_name || null
-        }
+    const activeWithUsers = (activeBookings || []).map((booking: any) => ({
+      ...booking,
+      slot: {
+        start_at: booking.slots.start_at,
+        venue: booking.slots.venues
+      },
+      user: {
+        email: booking.profiles?.email || 'N/A',
+        full_name: booking.profiles?.full_name || null
       }
     }))
 
