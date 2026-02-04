@@ -30,6 +30,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/overview" className="text-zinc-600 hover:text-zinc-900 text-sm font-light">
+                  Venues
+                </Link>
+              </li>
+              <li>
                 <Link href="/search" className="text-zinc-600 hover:text-zinc-900 text-sm font-light">
                   Search
                 </Link>
