@@ -40,6 +40,7 @@ export async function GET() {
       const { data: userData } = await supabase.auth.admin.getUserById(booking.diner_user_id)
       return {
         ...booking,
+        user_id: booking.diner_user_id,
         user: {
           email: userData?.user?.email || 'N/A',
           full_name: userData?.user?.user_metadata?.full_name || null
@@ -72,6 +73,7 @@ export async function GET() {
       const { data: userData } = await supabase.auth.admin.getUserById(booking.diner_user_id)
       return {
         ...booking,
+        user_id: booking.diner_user_id,
         user: {
           email: userData?.user?.email || 'N/A',
           full_name: userData?.user?.user_metadata?.full_name || null
@@ -104,6 +106,7 @@ export async function GET() {
       const { data: userData } = await supabase.auth.admin.getUserById(booking.diner_user_id)
       return {
         ...booking,
+        user_id: booking.diner_user_id,
         user: {
           email: userData?.user?.email || 'N/A',
           full_name: userData?.user?.user_metadata?.full_name || null
