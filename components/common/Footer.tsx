@@ -92,6 +92,15 @@ export default function Footer() {
       Contact us
     </a>
   </p>
+
+  <p className="text-zinc-600 text-sm font-light mt-4 md:mt-0">
+    <a
+      href="mailto:support@clientdining.com"
+      className="hover:text-zinc-900 transition-colors"
+    >
+      Contact us
+    </a>
+  </p>
 </div>
 
       </div>
