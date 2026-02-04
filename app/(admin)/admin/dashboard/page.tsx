@@ -84,107 +84,186 @@ export default function AdminDashboard() {
     setLoading(true)
     try {
       // Load active bookings
-      const { data: active } = await supabase
+      const { data: activeRaw } = await supabase
         .from('bookings')
         .select(`
-          *,
+          id,
+          slot_id,
+          user_id,
+          party_size,
+          status,
+          notes_private,
+          created_at,
+          cancelled_at,
           slot:slots!inner(
             start_at,
             venue:venues!inner(name, phone, booking_email)
-          ),
-          user:profiles!bookings_user_id_fkey(email:auth.users(email), full_name)
+          )
         `)
         .eq('status', 'active')
         .order('created_at', { ascending: false })
         .limit(50)
 
-      setActiveBookings(active || [])
+      // Get user details separately
+      const activeWithUsers = await Promise.all((activeRaw || []).map(async (booking: any) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(booking.user_id)
+        return {
+          ...booking,
+          user: {
+            email: userData?.user?.email || 'N/A',
+            full_name: userData?.user?.user_metadata?.full_name || null
+          }
+        }
+      }))
+
+      setActiveBookings(activeWithUsers)
 
       // Load cancelled bookings (last 50)
-      const { data: cancelled } = await supabase
+      const { data: cancelledRaw } = await supabase
         .from('bookings')
         .select(`
-          *,
+          id,
+          slot_id,
+          user_id,
+          party_size,
+          status,
+          notes_private,
+          created_at,
+          cancelled_at,
           slot:slots!inner(
             start_at,
             venue:venues!inner(name, phone, booking_email)
-          ),
-          user:profiles!bookings_user_id_fkey(email:auth.users(email), full_name)
+          )
         `)
         .eq('status', 'cancelled')
         .order('cancelled_at', { ascending: false })
         .limit(50)
 
-      setCancelledBookings(cancelled || [])
+      const cancelledWithUsers = await Promise.all((cancelledRaw || []).map(async (booking: any) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(booking.user_id)
+        return {
+          ...booking,
+          user: {
+            email: userData?.user?.email || 'N/A',
+            full_name: userData?.user?.user_metadata?.full_name || null
+          }
+        }
+      }))
+
+      setCancelledBookings(cancelledWithUsers)
 
       // Load completed bookings (last 50)
-      const { data: completed } = await supabase
+      const { data: completedRaw } = await supabase
         .from('bookings')
         .select(`
-          *,
+          id,
+          slot_id,
+          user_id,
+          party_size,
+          status,
+          notes_private,
+          created_at,
+          cancelled_at,
           slot:slots!inner(
             start_at,
             venue:venues!inner(name, phone, booking_email)
-          ),
-          user:profiles!bookings_user_id_fkey(email:auth.users(email), full_name)
+          )
         `)
         .eq('status', 'completed')
         .order('created_at', { ascending: false })
         .limit(50)
 
-      setCompletedBookings(completed || [])
+      const completedWithUsers = await Promise.all((completedRaw || []).map(async (booking: any) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(booking.user_id)
+        return {
+          ...booking,
+          user: {
+            email: userData?.user?.email || 'N/A',
+            full_name: userData?.user?.user_metadata?.full_name || null
+          }
+        }
+      }))
+
+      setCompletedBookings(completedWithUsers)
 
       // Load active alerts
-      const { data: alertsData } = await supabase
+      const { data: alertsRaw } = await supabase
         .from('slot_alerts')
         .select(`
-          *,
+          id,
+          slot_id,
+          diner_user_id,
+          status,
+          created_at,
+          notified_at,
           slot:slots!inner(
             start_at,
             venue:venues!inner(name)
-          ),
-          user:profiles!slot_alerts_diner_user_id_fkey(email:auth.users(email), full_name)
+          )
         `)
         .in('status', ['active', 'notified'])
         .order('created_at', { ascending: false })
         .limit(100)
 
-      setAlerts(alertsData || [])
+      const alertsWithUsers = await Promise.all((alertsRaw || []).map(async (alert: any) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(alert.diner_user_id)
+        return {
+          ...alert,
+          user: {
+            email: userData?.user?.email || 'N/A',
+            full_name: userData?.user?.user_metadata?.full_name || null
+          }
+        }
+      }))
+
+      setAlerts(alertsWithUsers)
 
       // Load new users (last 7 days)
       const sevenDaysAgo = new Date()
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-      const { data: users } = await supabase
+      const { data: profilesData } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          email:auth.users!inner(email)
-        `)
+        .select('user_id, role, diner_tier, is_professionally_verified, created_at, referred_by_user_id')
         .gte('created_at', sevenDaysAgo.toISOString())
         .order('created_at', { ascending: false })
 
-      setNewUsers(users || [])
+      const usersWithEmail = await Promise.all((profilesData || []).map(async (profile: any) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(profile.user_id)
+        return {
+          ...profile,
+          email: userData?.user?.email || 'N/A',
+          full_name: userData?.user?.user_metadata?.full_name || null
+        }
+      }))
+
+      setNewUsers(usersWithEmail)
 
       // Load referrals (all time)
-      const { data: referralsData } = await supabase
+      const { data: referralProfiles } = await supabase
         .from('profiles')
-        .select(`
-          user_id,
-          created_at,
-          diner_tier,
-          email:auth.users!profiles_user_id_fkey(email),
-          full_name,
-          referrer:profiles!profiles_referred_by_user_id_fkey(
-            email:auth.users!profiles_user_id_fkey(email),
-            full_name
-          )
-        `)
+        .select('user_id, diner_tier, created_at, referred_by_user_id')
         .not('referred_by_user_id', 'is', null)
         .order('created_at', { ascending: false })
         .limit(100)
 
-      setReferrals(referralsData || [])
+      const referralsWithEmails = await Promise.all((referralProfiles || []).map(async (profile: any) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(profile.user_id)
+        const { data: referrerData } = await supabase.auth.admin.getUserById(profile.referred_by_user_id)
+        return {
+          user_id: profile.user_id,
+          email: userData?.user?.email || 'N/A',
+          full_name: userData?.user?.user_metadata?.full_name || null,
+          created_at: profile.created_at,
+          diner_tier: profile.diner_tier,
+          referrer: {
+            email: referrerData?.user?.email || 'N/A',
+            full_name: referrerData?.user?.user_metadata?.full_name || null
+          }
+        }
+      }))
+
+      setReferrals(referralsWithEmails)
 
       setLastRefresh(new Date())
     } catch (error) {
