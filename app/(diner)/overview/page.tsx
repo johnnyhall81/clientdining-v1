@@ -52,7 +52,13 @@ export default function VenuesOverview() {
 
           <p>
             If this is relevant, a short walkthrough is usually enough to
-            determine fit.
+            determine fit. To discuss participation, contact{' '}
+            <a
+              href="mailto:john@clientdining.com"
+              className="text-zinc-900 underline underline-offset-4 hover:no-underline"
+            >
+              john@clientdining.com
+              </a>
           </p>
         </div>
       </section>
@@ -61,22 +67,6 @@ export default function VenuesOverview() {
       <div className="max-w-4xl mx-auto px-6">
         <div className="border-t border-zinc-200"></div>
       </div>
-
-{/* Contact */}
-<section className="max-w-4xl mx-auto px-6 pt-12">
-        <div className="max-w-3xl">
-          <p className="text-zinc-600 leading-relaxed">
-            For a brief walkthrough or to discuss participation, contact{' '}
-            <a
-              href="mailto:john@clientdining.com"
-              className="text-zinc-900 underline underline-offset-4 hover:no-underline"
-            >
-              john@clientdining.com
-            </a>
-            .
-          </p>
-        </div>
-      </section>
 
       
       {/* Bottom spacing to mirror About */}
