@@ -11,10 +11,10 @@ interface BookingWithDetails {
     start_at: string
     party_min: number
     party_max: number
-    venues: {
-      name: string
-      area: string
-    }
+  }
+  venues: {
+    name: string
+    area: string
   }
   profiles: {
     full_name: string
@@ -122,8 +122,8 @@ export default function AdminBookingsPage() {
                   <div className="text-sm text-gray-500">{booking.profiles.email}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="font-medium text-gray-900">{booking.slots.venues.name}</div>
-                  <div className="text-sm text-gray-500">{booking.slots.venues.area}</div>
+                  <div className="font-medium text-gray-900">{booking.venues.name}</div>
+                  <div className="text-sm text-gray-500">{booking.venues.area}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                   {formatFullDateTime(booking.slots.start_at)}

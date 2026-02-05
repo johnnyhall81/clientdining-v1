@@ -12,15 +12,8 @@ export async function GET(request: Request) {
       .from('bookings')
       .select(`
         *,
-        slots (
-          start_at,
-          party_min,
-          party_max,
-          venues (
-            name,
-            area
-          )
-        ),
+        slots (*),
+        venues (*),
         profiles!bookings_user_id_fkey (
           full_name,
           email
