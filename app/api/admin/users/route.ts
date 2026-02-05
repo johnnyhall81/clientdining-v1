@@ -18,7 +18,54 @@ export async function GET(request: Request) {
 
     if (error) throw error
 
-    const response = NextResponse.json({ users: users || [] })
+    // Fetch stats for all users
+    const usersWithStats = await Promise.all(
+      (users || []).map(async (user) => {
+        const now = new Date().toISOString()
+
+        // Count past bookings
+        const { count: pastBookings } = await supabaseAdmin
+          .from('bookings')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.user_id)
+          .eq('status', 'active')
+          .lt('slots.start_at', now)
+
+        // Count future bookings
+        const { count: futureBookings } = await supabaseAdmin
+          .from('bookings')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.user_id)
+          .eq('status', 'active')
+          .gte('slots.start_at', now)
+
+        // Count active alerts
+        const { count: alerts } = await supabaseAdmin
+          .from('slot_alerts')
+          .select('*', { count: 'exact', head: true })
+          .eq('diner_user_id', user.user_id)
+          .in('status', ['active', 'notified'])
+
+        // Count cancellations
+        const { count: cancellations } = await supabaseAdmin
+          .from('bookings')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.user_id)
+          .eq('status', 'cancelled')
+
+        return {
+          ...user,
+          stats: {
+            pastBookings: pastBookings || 0,
+            futureBookings: futureBookings || 0,
+            alerts: alerts || 0,
+            cancellations: cancellations || 0,
+          }
+        }
+      })
+    )
+
+    const response = NextResponse.json({ users: usersWithStats })
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
     return response
   } catch (error: any) {
