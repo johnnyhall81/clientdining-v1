@@ -46,12 +46,6 @@ export default function VenuesOverview() {
           </p>
 
           <p>
-            Commercially, ClientDining operates on a flat commission on completed
-            bookings, calculated on food and beverage spend excluding VAT and
-            service charge, and invoiced monthly.
-          </p>
-
-          <p>
             The venue group is kept deliberately small and peer level. Growth is
             controlled so demand concentrates and standards remain high.
           </p>
