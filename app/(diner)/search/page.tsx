@@ -613,6 +613,23 @@ export default function SearchPage() {
         </div>
       )}
 
+
+
+{!loading && results.length > 0 && (
+  <div className="pt-2 text-sm text-zinc-500 font-light">
+    Not seeing the right table?{" "}
+    <a
+      href={`mailto:support@clientdining.com?subject=${encodeURIComponent('Table enquiry via ClientDining')}&body=${encodeURIComponent(
+        `Venue:\nPreferred date:\nTime window:\nParty size:\nOccasion (optional):\nNotes (optional):\n`
+      )}`}
+      className="text-zinc-700 hover:text-zinc-900 underline underline-offset-4"
+    >
+      Ask us to check.
+    </a>
+  </div>
+)}
+
+
       {/* Premium Unlock Modal */}
       <PremiumUnlockModal 
         isOpen={showPremiumModal}
