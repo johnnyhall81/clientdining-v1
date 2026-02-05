@@ -281,11 +281,12 @@ export default function SearchPage() {
     setShowPartySizeModal(true)
   }
 
+  
   const confirmBooking = async (partySize: number, notes?: string) => {
     if (!selectedSlot) return
   
-    setShowPartySizeModal(false)
     setBookingSlotId(selectedSlot.id)
+    setBookingError(null)
   
     try {
       const response = await fetch('/api/bookings', {
@@ -307,7 +308,9 @@ export default function SearchPage() {
         return
       }
 
+      setShowPartySizeModal(false)
       setBookingError(null)
+      setSelectedSlot(null)
 
       setBookedSlots((prev) => {
         const next = new Set(prev)
@@ -319,11 +322,14 @@ export default function SearchPage() {
       router.refresh()
     } catch (error) {
       console.error('Booking error:', error)
+      setBookingError('Could not create booking. Please try again.')
     } finally {
       setBookingSlotId(null)
-      setSelectedSlot(null)
     }
   }
+
+
+
 
   const handleToggleAlert = async (slotId: string) => {
     if (!user) {
@@ -613,13 +619,14 @@ export default function SearchPage() {
         onClose={() => setShowPremiumModal(false)}
       />
 
-      {selectedSlot && (
+{selectedSlot && (
   <PartySizeModal
     isOpen={showPartySizeModal}
     onClose={() => {
       setShowPartySizeModal(false)
       setSelectedSlot(null)
       setBookingError(null)
+      setBookingSlotId(null)
     }}
     onConfirm={confirmBooking}
     minSize={selectedSlot.party_min}
@@ -628,6 +635,9 @@ export default function SearchPage() {
     error={bookingError}
   />
 )}
+
+
+
     </div>
   )
 }
