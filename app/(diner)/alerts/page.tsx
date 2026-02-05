@@ -245,8 +245,27 @@ export default function AlertsPage() {
               const isBookingThis = bookingSlotId === alert.slot_id
 
               return (
-                <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4">
-                  <div className="flex items-center justify-between gap-4">
+                <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4 relative">
+                  {/* ✨ NEW: Dismiss icon - always visible */}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveAlert(alert)}
+                    className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors"
+                    aria-label="Remove alert"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-4 h-4"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                  <div className="flex items-center justify-between gap-4 pr-8">
                     <Link
                       href={`/venues/${alert.venue.id}`}
                       prefetch={true}
@@ -292,7 +311,8 @@ export default function AlertsPage() {
                       </div>
                     </Link>
 
-                    {alert.status === 'notified' ? (
+                    {/* ✨ CHANGED: Only show Book button for notified alerts (Remove is now always available via × icon) */}
+                    {alert.status === 'notified' && (
                       <button
                         type="button"
                         onClick={() => handleBook(alert)}
@@ -305,14 +325,6 @@ export default function AlertsPage() {
                         ].join(' ')}
                       >
                         {isBookingThis ? 'Booking...' : 'Book'}
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveAlert(alert)}
-                        className="inline-flex items-center justify-center h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-                      >
-                        Remove
                       </button>
                     )}
                   </div>
