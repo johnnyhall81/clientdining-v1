@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -23,7 +26,17 @@ export async function GET(request: Request) {
 
     if (error) throw error
 
-    return NextResponse.json({ bookings: bookings || [] })
+    return NextResponse.json(
+      { bookings: bookings || [] },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      }
+    )
+    
   } catch (error: any) {
     console.error('Error fetching bookings:', error)
     return NextResponse.json(

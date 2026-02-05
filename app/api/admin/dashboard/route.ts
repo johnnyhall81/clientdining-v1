@@ -1,3 +1,7 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const runtime = 'nodejs'
+
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
@@ -199,14 +203,24 @@ export async function GET() {
       }
     }))
 
-    return NextResponse.json({
-      activeBookings: activeWithUsers,
-      cancelledBookings: cancelledWithUsers,
-      completedBookings: completedWithUsers,
-      alerts: alertsWithUsers,
-      newUsers: usersWithEmail,
-      referrals: referralsWithEmails,
-    })
+    return NextResponse.json(
+      {
+        activeBookings: activeWithUsers,
+        cancelledBookings: cancelledWithUsers,
+        completedBookings: completedWithUsers,
+        alerts: alertsWithUsers,
+        newUsers: usersWithEmail,
+        referrals: referralsWithEmails,
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      }
+    )
+    
   } catch (error: any) {
     console.error('Dashboard API error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })

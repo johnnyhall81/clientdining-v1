@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
@@ -102,7 +105,17 @@ export async function GET(request: Request) {
 
     console.log('📤 Returning', transformedAlerts.length, 'transformed alerts')
 
-    return NextResponse.json({ alerts: transformedAlerts })
+    return NextResponse.json(
+      { alerts: transformedAlerts },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      }
+    )
+    
 
   } catch (error: any) {
     console.error('💥 Admin alerts API error:', error)
