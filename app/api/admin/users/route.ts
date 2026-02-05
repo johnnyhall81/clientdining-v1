@@ -6,7 +6,13 @@ export const revalidate = 0
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  }
 )
 
 export async function GET(request: Request) {
@@ -18,56 +24,65 @@ export async function GET(request: Request) {
 
     if (error) throw error
 
-    // Fetch stats for all users
-    const usersWithStats = await Promise.all(
-      (users || []).map(async (user) => {
-        const now = new Date().toISOString()
+    
+// Fetch stats for all users
+const usersWithStats = await Promise.all(
+  (users || []).map(async (user) => {
+    const now = new Date().toISOString()
 
-        // Count past bookings
-        const { count: pastBookings } = await supabaseAdmin
-          .from('bookings')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.user_id)
-          .eq('status', 'active')
-          .lt('slots.start_at', now)
+    // Fetch all active bookings with slot data
+    const { data: bookings } = await supabaseAdmin
+      .from('bookings')
+      .select('*, slots(start_at)')
+      .eq('user_id', user.user_id)
+      .eq('status', 'active')
 
-        // Count future bookings
-        const { count: futureBookings } = await supabaseAdmin
-          .from('bookings')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.user_id)
-          .eq('status', 'active')
-          .gte('slots.start_at', now)
+    // Count past vs future in JavaScript
+    const pastBookings = (bookings || []).filter(b => b.slots?.start_at < now).length
+    const futureBookings = (bookings || []).filter(b => b.slots?.start_at >= now).length
 
-        // Count active alerts
-        const { count: alerts } = await supabaseAdmin
-          .from('slot_alerts')
-          .select('*', { count: 'exact', head: true })
-          .eq('diner_user_id', user.user_id)
-          .in('status', ['active', 'notified'])
+    // Count active alerts
+    const { data: alertsData } = await supabaseAdmin
+      .from('slot_alerts')
+      .select('id')
+      .eq('diner_user_id', user.user_id)
+      .in('status', ['active', 'notified'])
 
-        // Count cancellations
-        const { count: cancellations } = await supabaseAdmin
-          .from('bookings')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.user_id)
-          .eq('status', 'cancelled')
+    // Count cancellations
+    const { data: cancellationsData } = await supabaseAdmin
+      .from('bookings')
+      .select('id')
+      .eq('user_id', user.user_id)
+      .eq('status', 'cancelled')
 
-        return {
-          ...user,
-          stats: {
-            pastBookings: pastBookings || 0,
-            futureBookings: futureBookings || 0,
-            alerts: alerts || 0,
-            cancellations: cancellations || 0,
-          }
-        }
-      })
-    )
+    return {
+      ...user,
+      stats: {
+        pastBookings,
+        futureBookings,
+        alerts: alertsData?.length || 0,
+        cancellations: cancellationsData?.length || 0,
+      }
+    }
+  })
+)
 
-    const response = NextResponse.json({ users: usersWithStats })
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
-    return response
+
+return NextResponse.json(
+  { users: usersWithStats },
+  {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+    },
+  }
+)
+
+
+
+
+   
   } catch (error: any) {
     console.error('Error fetching users:', error)
     return NextResponse.json(
