@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
-
 import { formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -45,7 +44,6 @@ export default function AlertsPage() {
   const [alertToRemove, setAlertToRemove] = useState<AlertWithDetails | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  // Booking state (mirrors SearchPage flow)
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
   const [selectedAlert, setSelectedAlert] = useState<AlertWithDetails | null>(null)
@@ -141,14 +139,12 @@ export default function AlertsPage() {
     }
   }
 
-  // --- Booking flow (copy of SearchPage logic, adapted to alerts list) ---
   const handleBook = (alert: AlertWithDetails) => {
     if (!user) {
       router.push('/login')
       return
     }
 
-    // guard: only book if notified (available)
     if (alert.status !== 'notified') return
 
     setSelectedAlert(alert)
@@ -176,21 +172,17 @@ export default function AlertsPage() {
       const data = await response.json().catch(() => ({}))
   
       if (!response.ok) {
-        // ✅ show API error in modal and keep modal open
         const message = data?.error || 'Could not create booking'
         setBookingError(message)
         setBookingSlotId(null)
         return
       }
   
-      // ✅ success: close modal
       setShowPartySizeModal(false)
       setBookingError(null)
   
-      // ✅ remove alert immediately in UI
       setAlerts((prev) => prev.filter((a) => a.id !== selectedAlert.id))
   
-      // best-effort delete in DB
       const { error: deleteError } = await supabase
         .from('slot_alerts')
         .delete()
@@ -210,7 +202,6 @@ export default function AlertsPage() {
       setBookingSlotId(null)
     }
   }
-  
 
   const filteredAlerts = alerts.filter((a) => a.status === 'active' || a.status === 'notified')
 
@@ -246,7 +237,6 @@ export default function AlertsPage() {
 
               return (
                 <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4 relative">
-                  {/* ✨ NEW: Dismiss icon - always visible */}
                   <button
                     type="button"
                     onClick={() => handleRemoveAlert(alert)}
@@ -311,7 +301,6 @@ export default function AlertsPage() {
                       </div>
                     </Link>
 
-                    {/* ✨ CHANGED: Only show Book button for notified alerts (Remove is now always available via × icon) */}
                     {alert.status === 'notified' && (
                       <button
                         type="button"
@@ -335,7 +324,6 @@ export default function AlertsPage() {
         </>
       )}
 
-      {/* Remove Alert Modal */}
       <RemoveAlertModal
         isOpen={showRemoveModal}
         onClose={() => {
@@ -346,23 +334,21 @@ export default function AlertsPage() {
         venueName={alertToRemove?.venue.name}
       />
 
-      {/* Party Size Modal (same UX as SearchPage) */}
       {selectedAlert && (
         <PartySizeModal
-        isOpen={showPartySizeModal}
-        onClose={() => {
-          setShowPartySizeModal(false)
-          setSelectedAlert(null)
-          setBookingError(null)
-          setBookingSlotId(null)
-        }}
-        onConfirm={confirmBooking}
-        minSize={selectedAlert.slot.party_min}
-        maxSize={selectedAlert.slot.party_max}
-        venueName={selectedAlert.venue?.name || 'Venue'}
-        error={bookingError}
-      />
-      
+          isOpen={showPartySizeModal}
+          onClose={() => {
+            setShowPartySizeModal(false)
+            setSelectedAlert(null)
+            setBookingError(null)
+            setBookingSlotId(null)
+          }}
+          onConfirm={confirmBooking}
+          minSize={selectedAlert.slot.party_min}
+          maxSize={selectedAlert.slot.party_max}
+          venueName={selectedAlert.venue?.name || 'Venue'}
+          error={bookingError}
+        />
       )}
     </div>
   )
