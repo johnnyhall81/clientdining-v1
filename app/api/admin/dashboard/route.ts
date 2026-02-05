@@ -104,35 +104,57 @@ export async function GET() {
       }
     }))
 
-    // Load active alerts
-    const { data: alertsRaw } = await supabase
-      .from('slot_alerts')
-      .select(`
-        id,
-        slot_id,
-        diner_user_id,
-        status,
-        created_at,
-        notified_at,
-        slot:slots!inner(
-          start_at,
-          venue:venues!inner(name)
-        )
-      `)
-      .in('status', ['active', 'notified'])
-      .order('created_at', { ascending: false })
-      .limit(100)
+    // Load active alerts (using same pattern as working alerts endpoint)
+const { data: alertsRaw } = await supabase
+.from('slot_alerts')
+.select(`
+  id,
+  slot_id,
+  diner_user_id,
+  status,
+  created_at,
+  notified_at,
+  slots!inner (
+    id,
+    start_at,
+    venues!inner (
+      id,
+      name
+    )
+  )
+`)
+.in('status', ['active', 'notified'])
+.order('created_at', { ascending: false })
+.limit(100)
 
-    const alertsWithUsers = await Promise.all((alertsRaw || []).map(async (alert: any) => {
-      const { data: userData } = await supabase.auth.admin.getUserById(alert.diner_user_id)
-      return {
-        ...alert,
-        user: {
-          email: userData?.user?.email || 'N/A',
-          full_name: userData?.user?.user_metadata?.full_name || null
-        }
-      }
-    }))
+// Get diner profiles (same pattern as working alerts endpoint)
+const dinerUserIds = Array.from(
+new Set((alertsRaw || []).map(item => item.diner_user_id))
+)
+
+const { data: alertProfiles } = await supabase
+.from('profiles')
+.select('user_id, email, full_name')
+.in('user_id', dinerUserIds)
+
+const alertProfileMap = new Map()
+alertProfiles?.forEach((profile: any) => {
+alertProfileMap.set(profile.user_id, profile)
+})
+
+const alertsWithUsers = (alertsRaw || []).map((alert: any) => ({
+...alert,
+slot: {
+  start_at: alert.slots.start_at,
+  venue: {
+    name: alert.slots.venues.name
+  }
+},
+user: alertProfileMap.get(alert.diner_user_id) || {
+  email: 'N/A',
+  full_name: null
+}
+}))
 
     // Load new users (last 7 days)
     const sevenDaysAgo = new Date()
