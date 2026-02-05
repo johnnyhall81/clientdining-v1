@@ -12,11 +12,11 @@ export async function GET(request: Request) {
       .from('bookings')
       .select(`
         *,
-        slots!inner (
+        slots (
           start_at,
           party_min,
           party_max,
-          venues!inner (
+          venues (
             name,
             area
           )
