@@ -62,12 +62,6 @@ export default function VenuesOverview() {
           </p>
         </div>
       </section>
-
-      {/* Divider */}
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="border-t border-zinc-200"></div>
-      </div>
-
       
       {/* Bottom spacing to mirror About */}
       <div className="h-24"></div>
