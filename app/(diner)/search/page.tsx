@@ -596,12 +596,6 @@ export default function SearchPage() {
                         )}
                       </div>
 
-
-
-
-
-
-
                     ) : (
                       <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
                     )}
@@ -614,20 +608,28 @@ export default function SearchPage() {
       )}
 
 
-
 {!loading && results.length > 0 && (
   <div className="pt-2 text-sm text-zinc-500 font-light">
     Not seeing the right table?{" "}
     <a
-      href={`mailto:support@clientdining.com?subject=${encodeURIComponent('Table enquiry via ClientDining')}&body=${encodeURIComponent(
-        `Venue:\nPreferred date:\nTime window:\nParty size:\nOccasion (optional):\nNotes (optional):\n`
-      )}`}
-      className="text-zinc-700 hover:text-zinc-900 underline underline-offset-4"
+      onClick={(e) => {
+        e.preventDefault()
+        const subject = encodeURIComponent('Table enquiry via ClientDining')
+        const body = encodeURIComponent(
+          `Venue:\nPreferred date:\nTime window:\nParty size:\nOccasion (optional):\nNotes (optional):\n`
+        )
+        window.open(
+          `mailto:support@clientdining.com?subject=${subject}&body=${body}`,
+          '_blank'
+        )
+      }}
+      className="text-zinc-700 hover:text-zinc-900 underline underline-offset-4 cursor-pointer"
     >
       Ask us to check.
     </a>
   </div>
 )}
+
 
 
       {/* Premium Unlock Modal */}
