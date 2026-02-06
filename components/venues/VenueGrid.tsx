@@ -17,7 +17,7 @@ export default function VenueGrid({ venues }: VenueGridProps) {
   }
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
       {venues.map((venue) => (
         <VenueTile key={venue.id} venue={venue} />
       ))}
