@@ -23,7 +23,7 @@ export default function AboutPage() {
           </p>
 
           <p>
-            The platform is designed for early-evening business dining, Monday to Thursday. Reservations are discreet,
+            The platform is designed for early-evening business dining, Monday to Friday. Reservations are discreet,
             service-led, and low-key, sitting alongside a venue’s existing operations without disruption.
           </p>
 
