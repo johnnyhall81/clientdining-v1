@@ -36,21 +36,18 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
           )}
         </div>
 
-        <div className="space-y-1">
-        <h3 className="font-light text-lg text-zinc-900">
-          {venue.name}
-        </h3>
-
-        <p className="text-sm text-zinc-600 font-light capitalize">
-          {venue.area} · {venue.venue_type}
-        </p>
+        <div className="space-y-2">
+          <h3 className="font-light text-lg text-zinc-900">
+            {venue.name}
+          </h3>
 
           {availableSlots > 0 && (
-            <p className="text-sm text-zinc-900 font-light">
-              {availableSlots} {availableSlots === 1 ? 'slot' : 'slots'} available
-            </p>
+            <span className="text-xs font-medium text-green-700 bg-green-50 px-3 py-1 rounded-full inline-block">
+              Available today
+            </span>
           )}
         </div>
+        
       </div>
     </Link>
   )
