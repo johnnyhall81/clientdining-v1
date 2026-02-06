@@ -34,7 +34,7 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
         )}
 
         {/* Dark gradient overlay at bottom */}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pt-16 pb-4 px-4">
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-12 pb-4 px-4">
           <h3 className="font-light text-lg text-white">
             {venue.name}
           </h3>
