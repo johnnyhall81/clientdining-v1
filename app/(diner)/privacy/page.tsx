@@ -225,7 +225,7 @@ export default function PrivacyPage() {
           </p>
         </div>
         <p className="text-zinc-600 leading-relaxed">
-          To exercise these rights, contact us at privacy@clientdining.com
+          To exercise these rights, contact us at support@clientdining.com
         </p>
       </section>
 
