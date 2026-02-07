@@ -17,13 +17,10 @@ export default function TopNav() {
 
   useEffect(() => {
     if (user) {
-      console.log('👤 User logged in:', user.id)
       loadProfile()
       loadCounts()
       
-      // Set up real-time subscriptions with detailed debugging
-      console.log('🔌 Setting up real-time subscriptions for user:', user.id)
-      
+      // Set up real-time subscriptions
       const bookingsChannel = supabase
         .channel('bookings-changes')
         .on(
@@ -34,17 +31,9 @@ export default function TopNav() {
             table: 'bookings',
             filter: `user_id=eq.${user.id}`,
           },
-          (payload) => {
-            console.log('📦 Booking change detected!')
-            console.log('   Event type:', payload.eventType)
-            console.log('   Full payload:', payload)
-            loadCounts()
-          }
+          () => loadCounts()
         )
-        .subscribe((status, err) => {
-          console.log('📦 Bookings subscription status:', status)
-          if (err) console.error('📦 Bookings subscription error:', err)
-        })
+        .subscribe()
 
       const alertsChannel = supabase
         .channel('alerts-changes')
@@ -54,28 +43,24 @@ export default function TopNav() {
             event: '*',
             schema: 'public',
             table: 'slot_alerts',
-            filter: `diner_user_id=eq.${user.id}`,
           },
-          (payload) => {
-            console.log('🔔 Alert change detected!')
-            console.log('   Event type:', payload.eventType)
-            console.log('   Full payload:', payload)
-            loadCounts()
+          (payload: any) => {
+            // Filter in JavaScript (DELETE events don't work with subscription filters)
+            const record = payload.new || payload.old
+            const recordUserId = record?.diner_user_id
+            if (recordUserId && recordUserId === user.id) {
+              loadCounts()
+            }
           }
         )
-        .subscribe((status, err) => {
-          console.log('🔔 Alerts subscription status:', status)
-          if (err) console.error('🔔 Alerts subscription error:', err)
-        })
+        .subscribe()
 
       // Cleanup subscriptions
       return () => {
-        console.log('🧹 Cleaning up subscriptions')
         bookingsChannel.unsubscribe()
         alertsChannel.unsubscribe()
       }
     } else {
-      console.log('👤 No user logged in')
       setBookingCount(0)
       setAlertCount(0)
     }
@@ -93,50 +78,31 @@ export default function TopNav() {
 
   const loadCounts = async () => {
     if (!user) return
-    
-    console.log('🔄 Loading counts...')
-    const now = new Date().toISOString()
-    console.log('   Current time:', now)
 
     // Get active future bookings count
-    const { data: bookings, error: bookingsError } = await supabase
+    const { data: bookings } = await supabase
       .from('bookings')
       .select('id, slot_id, status, slots(start_at)')
       .eq('user_id', user.id)
       .eq('status', 'active')
-
-    console.log('📦 All active bookings:', bookings)
     
-    // Filter for future bookings in JavaScript to debug
+    // Filter for future bookings
     const futureBookings = bookings?.filter(b => {
-      // Handle slots being an array (from the join)
       const slot = Array.isArray(b.slots) ? b.slots[0] : b.slots
       const slotStartAt = slot?.start_at
-      const isFuture = slotStartAt && new Date(slotStartAt) >= new Date()
-      console.log(`   Booking ${b.id}: start=${slotStartAt}, future=${isFuture}`)
-      return isFuture
+      return slotStartAt && new Date(slotStartAt) >= new Date()
     }) || []
 
-    console.log('📦 Future bookings count:', futureBookings.length)
-    console.log('📦 Future bookings:', futureBookings)
-    if (bookingsError) console.error('📦 Bookings error:', bookingsError)
-    
     setBookingCount(futureBookings.length)
 
     // Get active alerts count
-    const { data: alerts, error: alertsError } = await supabase
+    const { data: alerts } = await supabase
       .from('slot_alerts')
-      .select('id, status')
+      .select('id')
       .eq('diner_user_id', user.id)
       .eq('status', 'active')
 
-    console.log('🔔 Active alerts:', alerts)
-    console.log('🔔 Alerts count:', alerts?.length || 0)
-    if (alertsError) console.error('🔔 Alerts error:', alertsError)
-    
     setAlertCount(alerts?.length || 0)
-    
-    console.log('✅ Counts updated - Bookings:', futureBookings.length, 'Alerts:', alerts?.length || 0)
   }
 
   const handleSignOut = async () => {
