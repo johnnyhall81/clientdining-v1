@@ -6,7 +6,7 @@ export default function PrivacyPage() {
         <h1 className="text-5xl md:text-6xl font-light text-zinc-900 mb-6 tracking-tight">
           Privacy Policy
         </h1>
-        <p className="text-sm text-zinc-500 font-light">Last updated: January 2026</p>
+        <p className="text-sm text-zinc-500 font-light">Last updated: February 2026</p>
       </section>
 
       {/* Divider */}
@@ -17,8 +17,13 @@ export default function PrivacyPage() {
       {/* 1. Introduction */}
       <section className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-light text-zinc-900 mb-8">1. Introduction</h2>
-        <p className="text-zinc-600 leading-relaxed">
-          ClientDining ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
+        <p className="text-zinc-600 leading-relaxed mb-4">
+          CLIENTDINING LIMITED ("ClientDining", "we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
+        </p>
+        <p className="text-sm text-zinc-600 leading-relaxed">
+          CLIENTDINING LIMITED is a company registered in England and Wales.<br />
+          Company Registration No: 17018817<br />
+          Registered Office: 2 The Topiary, Ashtead, KT21 2TE
         </p>
       </section>
 
@@ -191,7 +196,7 @@ export default function PrivacyPage() {
       <section className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-light text-zinc-900 mb-8">6. Your Rights</h2>
         <p className="text-zinc-600 leading-relaxed mb-6">
-          You have the right to:
+          Under UK GDPR, you have the right to:
         </p>
         <div className="space-y-3 text-zinc-600 leading-relaxed mb-8">
           <p className="flex items-start">
@@ -272,7 +277,7 @@ export default function PrivacyPage() {
       <section className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-light text-zinc-900 mb-8">10. International Data Transfers</h2>
         <p className="text-zinc-600 leading-relaxed">
-          Your information may be transferred to and processed in countries other than your country of residence. We ensure appropriate safeguards are in place for such transfers.
+          Your information may be transferred to and processed in countries other than your country of residence. We ensure appropriate safeguards are in place for such transfers in accordance with UK GDPR requirements.
         </p>
       </section>
 
@@ -301,8 +306,10 @@ export default function PrivacyPage() {
           If you have questions about this Privacy Policy, please contact us at:
         </p>
         <p className="text-zinc-600 leading-relaxed">
-          Email: support@clientdining.com<br />
-          Address: 2 The Topiary, Ashtead, Surrey, KT21 2TE
+          CLIENTDINING LIMITED<br />
+          Email: privacy@clientdining.com<br />
+          Address: 2 The Topiary, Ashtead, KT21 2TE<br />
+          Company Registration No: 17018817
         </p>
       </section>
 

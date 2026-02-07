@@ -121,6 +121,12 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                 color: #71717A;
                 text-decoration: underline;
               }
+              .company-info {
+                font-size: 11px;
+                color: #A1A1AA;
+                margin-top: 16px;
+                line-height: 1.4;
+              }
             </style>
           </head>
           <body>
@@ -156,6 +162,11 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
               
               <div class="footer">
                 <p><a href="https://clientdining.com">clientdining.com</a></p>
+                <div class="company-info">
+                  CLIENTDINING LIMITED<br />
+                  Company No: 17018817<br />
+                  2 The Topiary, Ashtead, KT21 2TE
+                </div>
               </div>
             </div>
           </body>

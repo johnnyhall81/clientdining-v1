@@ -82,19 +82,27 @@ export default function Footer() {
         </div>
 
        {/* Bottom Bar */}
-<div className="border-t border-zinc-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-  <p className="text-zinc-600 text-sm font-light">
-    © {new Date().getFullYear()} ClientDining. All rights reserved.    
-  </p>
+<div className="border-t border-zinc-200 mt-8 pt-8">
+  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <p className="text-zinc-600 text-sm font-light">
+        © {new Date().getFullYear()} CLIENTDINING LIMITED. All rights reserved.
+      </p>
+      <p className="text-zinc-500 text-xs font-light mt-1">
+        Company Registration No: 17018817<br />
+        Registered in England and Wales
+      </p>
+    </div>
 
-  <p className="text-zinc-600 text-sm font-light mt-4 md:mt-0">
-    <a
-      href="mailto:support@clientdining.com"
-      className="hover:text-zinc-900 transition-colors"
-    >
-      Contact us
-    </a>
-  </p>
+    <p className="text-zinc-600 text-sm font-light">
+      <a
+        href="mailto:support@clientdining.com"
+        className="hover:text-zinc-900 transition-colors"
+      >
+        Contact us
+      </a>
+    </p>
+  </div>
 </div>
 
       </div>

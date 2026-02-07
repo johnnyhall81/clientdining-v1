@@ -18,13 +18,13 @@ export default function AboutPage() {
 
           <p>
             It provides a reliable way to see availability, request tables, and manage bookings at a small number of
-            leading restaurants and private members’ clubs. Availability is shared directly by venues and updated as it
+            leading restaurants and private members' clubs. Availability is shared directly by venues and updated as it
             changes.
           </p>
 
           <p>
             The platform is designed for early-evening business dining, Monday to Friday. Reservations are discreet,
-            service-led, and low-key, sitting alongside a venue’s existing operations without disruption.
+            service-led, and low-key, sitting alongside a venue's existing operations without disruption.
           </p>
 
           <p>
@@ -49,7 +49,7 @@ export default function AboutPage() {
 
         <div className="max-w-3xl space-y-6 text-zinc-600 leading-relaxed">
           <p>
-            ClientDining maintains a curated list of restaurants and private members’ clubs suited to business dining.
+            ClientDining maintains a curated list of restaurants and private members' clubs suited to business dining.
             Venues are selected for their ability to host professional conversations comfortably, across different group
             sizes.
           </p>
@@ -77,7 +77,7 @@ export default function AboutPage() {
 
         <p className="max-w-3xl text-zinc-600 leading-relaxed">
         Membership is designed to suit different hosting needs.
-        Standard works well when you’re flexible. Premium is designed for peak-time bookings and planning ahead, when certainty matters.
+        Standard works well when you're flexible. Premium is designed for peak-time bookings and planning ahead, when certainty matters.
         </p>
 
         <div className="grid md:grid-cols-2 gap-8 mt-12">
@@ -183,13 +183,13 @@ export default function AboutPage() {
 
         <div className="max-w-3xl space-y-6 text-zinc-600 leading-relaxed">
           <p>
-            ClientDining works with a deliberately small group of restaurants and private members’ clubs.
+            ClientDining works with a deliberately small group of restaurants and private members' clubs.
           </p>
           <p>
             Venues are chosen for reliability, discretion, and their ability to host low-key business dinners comfortably.
           </p>
           <p>
-            Availability is shared at the venue’s discretion, and bookings remain subject to their usual acceptance
+            Availability is shared at the venue's discretion, and bookings remain subject to their usual acceptance
             process. The list of venues is expanded carefully over time.
           </p>
         </div>
@@ -220,6 +220,24 @@ export default function AboutPage() {
           >
             Apply for membership
           </a>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="border-t border-zinc-200"></div>
+      </div>
+
+      {/* Company Information */}
+      <section className="max-w-4xl mx-auto px-6 py-16">
+        <div className="max-w-3xl">
+          <p className="text-sm text-zinc-500 leading-relaxed">
+            ClientDining is a trading name of CLIENTDINING LIMITED, a company registered in England and Wales.
+          </p>
+          <p className="text-sm text-zinc-500 leading-relaxed mt-2">
+            Company Registration No: 17018817<br />
+            Registered Office: 2 The Topiary, Ashtead, KT21 2TE
+          </p>
         </div>
       </section>
 

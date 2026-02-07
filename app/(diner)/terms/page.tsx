@@ -6,7 +6,7 @@ export default function TermsPage() {
         <h1 className="text-5xl md:text-6xl font-light text-zinc-900 mb-6 tracking-tight">
           Terms & Conditions
         </h1>
-        <p className="text-sm text-zinc-500 font-light">Last updated: January 2026</p>
+        <p className="text-sm text-zinc-500 font-light">Last updated: February 2026</p>
       </section>
 
       {/* Divider */}
@@ -17,8 +17,13 @@ export default function TermsPage() {
       {/* 1. Acceptance of Terms */}
       <section className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-light text-zinc-900 mb-8">1. Acceptance of Terms</h2>
-        <p className="text-zinc-600 leading-relaxed">
-          By accessing and using ClientDining ("the Platform"), you accept and agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our services.
+        <p className="text-zinc-600 leading-relaxed mb-4">
+          By accessing and using ClientDining, a trading name of CLIENTDINING LIMITED ("the Platform", "we", "our", "us"), you accept and agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our services.
+        </p>
+        <p className="text-sm text-zinc-600 leading-relaxed">
+          CLIENTDINING LIMITED is a company registered in England and Wales.<br />
+          Company Registration No: 17018817<br />
+          Registered Office: 2 The Topiary, Ashtead, KT21 2TE
         </p>
       </section>
 
@@ -204,8 +209,11 @@ export default function TermsPage() {
       {/* 8. Venue Relationships */}
       <section className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-light text-zinc-900 mb-8">8. Venue Relationships</h2>
+        <p className="text-zinc-600 leading-relaxed mb-4">
+          CLIENTDINING LIMITED acts as a booking platform only. We are not responsible for the quality of service, food, or experiences at venues. Disputes with venues should be resolved directly with the establishment.
+        </p>
         <p className="text-zinc-600 leading-relaxed">
-          ClientDining acts as a booking platform only. We are not responsible for the quality of service, food, or experiences at venues. Disputes with venues should be resolved directly with the establishment.
+          Each booking creates a direct contractual relationship between you and the venue. CLIENTDINING LIMITED is not a party to that contract.
         </p>
       </section>
 
@@ -268,7 +276,7 @@ export default function TermsPage() {
       <section className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-light text-zinc-900 mb-8">11. Intellectual Property</h2>
         <p className="text-zinc-600 leading-relaxed">
-          All content on the Platform, including text, graphics, logos, and software, is the property of ClientDining or its licensors and is protected by intellectual property laws.
+          All content on the Platform, including text, graphics, logos, and software, is the property of CLIENTDINING LIMITED or its licensors and is protected by intellectual property laws.
         </p>
       </section>
 
@@ -294,7 +302,7 @@ export default function TermsPage() {
       <section className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-light text-zinc-900 mb-8">13. Limitation of Liability</h2>
         <p className="text-zinc-600 leading-relaxed">
-          To the maximum extent permitted by law, ClientDining shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the Platform.
+          To the maximum extent permitted by law, CLIENTDINING LIMITED shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the Platform. Nothing in these terms excludes or limits our liability for death or personal injury caused by our negligence, fraud, or any liability that cannot be excluded under English law.
         </p>
       </section>
 
@@ -320,7 +328,7 @@ export default function TermsPage() {
       <section className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-light text-zinc-900 mb-8">15. Governing Law</h2>
         <p className="text-zinc-600 leading-relaxed">
-          These Terms are governed by the laws of England and Wales. Disputes shall be subject to the exclusive jurisdiction of courts in London.
+          These Terms are governed by the laws of England and Wales. Disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.
         </p>
       </section>
 
@@ -336,8 +344,10 @@ export default function TermsPage() {
           For questions about these Terms, contact us at:
         </p>
         <p className="text-zinc-600 leading-relaxed">
+          CLIENTDINING LIMITED<br />
           Email: support@clientdining.com<br />
-          Address: 2 The Topiary, Ashtead, Surrey, KT21 2TE
+          Address: 2 The Topiary, Ashtead, KT21 2TE<br />
+          Company Registration No: 17018817
         </p>
       </section>
 

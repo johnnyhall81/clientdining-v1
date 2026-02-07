@@ -22,9 +22,13 @@ export default function VenueAgreement({
         <div className="prose prose-sm max-w-none space-y-6">
           <div className="text-sm text-gray-600 mb-6">
             <p className="font-medium text-gray-900">This Agreement is entered into between:</p>
-            <p><strong>ClientDining Ltd</strong> ("ClientDining", "we", "us")</p>
-            <p>and</p>
-            <p><strong>The Venue</strong> ("Venue", "you")</p>
+            <p className="mt-2"><strong>CLIENTDINING LIMITED</strong></p>
+            <p className="text-xs">Company Registration No: 17018817</p>
+            <p className="text-xs">Registered Office: 2 The Topiary, Ashtead, KT21 2TE</p>
+            <p className="text-xs mb-4">Registered in England and Wales</p>
+            <p>("ClientDining", "we", "us")</p>
+            <p className="mt-2">and</p>
+            <p className="mt-2"><strong>The Venue</strong> ("Venue", "you")</p>
             <p className="mt-2">by electronic acceptance or written confirmation.</p>
           </div>
 
@@ -64,7 +68,7 @@ export default function VenueAgreement({
               Each reservation made via ClientDining is a direct agreement between you and the diner.
             </p>
             <p className="text-gray-700 mb-2">
-              ClientDining is not a party to the dining contract and is not responsible for:
+              CLIENTDINING LIMITED is not a party to the dining contract and is not responsible for:
             </p>
             <ul className="list-disc ml-6 text-gray-700 space-y-1">
               <li>service delivery,</li>
@@ -88,10 +92,10 @@ export default function VenueAgreement({
               </ul>
             </div>
             <p className="text-gray-700 text-sm">
-              ClientDining will invoice monthly. Payment is due within 30 days of invoice date.
+              CLIENTDINING LIMITED will invoice monthly. Payment is due within 30 days of invoice date.
             </p>
             <p className="text-gray-700 text-sm mt-2">
-              ClientDining does not collect or hold diner payments or deposits unless separately agreed in writing.
+              CLIENTDINING LIMITED does not collect or hold diner payments or deposits unless separately agreed in writing.
             </p>
           </section>
 
@@ -104,7 +108,7 @@ export default function VenueAgreement({
               If a booking does not proceed and no bill is raised: <strong>no commission is payable.</strong>
             </p>
             <p className="text-gray-700">
-              ClientDining does not guarantee replacement bookings.
+              CLIENTDINING LIMITED does not guarantee replacement bookings.
             </p>
           </section>
 
@@ -123,7 +127,7 @@ export default function VenueAgreement({
 
           <section>
             <h3 className="text-lg font-bold text-gray-900 mb-3">7. Liability</h3>
-            <p className="text-gray-700 mb-2">ClientDining is not liable for:</p>
+            <p className="text-gray-700 mb-2">CLIENTDINING LIMITED is not liable for:</p>
             <ul className="list-disc ml-6 text-gray-700 space-y-1">
               <li>acts or omissions of diners,</li>
               <li>quality of food, service, or experience,</li>
@@ -143,7 +147,7 @@ export default function VenueAgreement({
               Either party may terminate with <strong>30 days' written notice.</strong>
             </p>
             <p className="text-gray-700">
-              ClientDining may suspend or terminate immediately if continued participation risks reputational or operational harm.
+              CLIENTDINING LIMITED may suspend or terminate immediately if continued participation risks reputational or operational harm.
             </p>
           </section>
 
@@ -152,8 +156,11 @@ export default function VenueAgreement({
             <p className="text-gray-700 mb-2">
               This agreement is governed by the laws of <strong>England and Wales.</strong>
             </p>
-            <p className="text-gray-700">
+            <p className="text-gray-700 mb-2">
               Acceptance via click-to-accept onboarding is legally binding.
+            </p>
+            <p className="text-gray-700 text-sm mt-3">
+              This agreement is between the Venue and CLIENTDINING LIMITED (Company Registration No: 17018817), a company registered in England and Wales with its registered office at 2 The Topiary, Ashtead, KT21 2TE.
             </p>
           </section>
         </div>
@@ -170,7 +177,7 @@ export default function VenueAgreement({
             />
             <span className="text-sm text-gray-900">
               <strong>I have read and agree to the Venue Participation Agreement</strong> on behalf of the venue. 
-              I confirm that I have the authority to enter into this agreement and that the venue will comply with all terms, 
+              I confirm that I have the authority to enter into this agreement with CLIENTDINING LIMITED and that the venue will comply with all terms, 
               including the payment of 20% commission on food & beverage bills for bookings introduced via ClientDining.
             </span>
           </label>

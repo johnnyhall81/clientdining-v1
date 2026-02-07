@@ -129,6 +129,12 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 background: #FAFAFA;
                 border-color: #A1A1AA;
               }
+              .company-info {
+                font-size: 11px;
+                color: #A1A1AA;
+                margin-top: 16px;
+                line-height: 1.4;
+              }
             </style>
           </head>
           <body>
@@ -169,6 +175,11 @@ export async function sendAlertNotification(data: AlertEmailData) {
                 <p style="margin-top: 16px;">
                   <a href="https://clientdining.com/alerts">Manage alerts</a>
                 </p>
+                <div class="company-info">
+                  CLIENTDINING LIMITED<br />
+                  Company No: 17018817<br />
+                  2 The Topiary, Ashtead, KT21 2TE
+                </div>
               </div>
             </div>
           </body>
