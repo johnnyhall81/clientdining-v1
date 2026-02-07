@@ -123,9 +123,10 @@ export default function AlertsPage() {
     setError(null)
 
     try {
-      const { error } = await supabase.from('slot_alerts')
-      .update({ status: 'removed' })
-      .eq('id', alertToRemove.id)
+      const { error } = await supabase
+        .from('slot_alerts')
+        .update({ status: 'cancelled' })
+        .eq('id', alertToRemove.id)
 
       if (error) {
         console.error('Error removing alert:', error)
@@ -187,7 +188,7 @@ export default function AlertsPage() {
   
       const { error: deleteError } = await supabase
         .from('slot_alerts')
-        .delete()
+        .update({ status: 'cancelled' })
         .eq('id', selectedAlert.id)
   
       if (deleteError) {
