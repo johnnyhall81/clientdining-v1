@@ -43,15 +43,9 @@ export default function TopNav() {
             event: '*',
             schema: 'public',
             table: 'slot_alerts',
+            filter: `diner_user_id=eq.${user.id}`,
           },
-          (payload: any) => {
-            // Filter in JavaScript (DELETE events don't work with subscription filters)
-            const record = payload.new || payload.old
-            const recordUserId = record?.diner_user_id
-            if (recordUserId && recordUserId === user.id) {
-              loadCounts()
-            }
-          }
+          () => loadCounts()
         )
         .subscribe()
 
@@ -95,12 +89,12 @@ export default function TopNav() {
 
     setBookingCount(futureBookings.length)
 
-    // Get active alerts count
+    // Get active and notified alerts count
     const { data: alerts } = await supabase
       .from('slot_alerts')
       .select('id')
       .eq('diner_user_id', user.id)
-      .eq('status', 'active')
+      .in('status', ['active', 'notified'])
 
     setAlertCount(alerts?.length || 0)
   }
