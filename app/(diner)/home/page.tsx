@@ -23,5 +23,15 @@ export default async function HomePage() {
     console.error('Error fetching venues:', error)
   }
 
-  return <VenueGrid venues={venues || []} />
+  return (
+    <div className="space-y-8">
+      <div className="text-center">
+        <h1 className="text-4xl font-light text-zinc-900 mb-3">ClientDining</h1>
+        <p className="text-zinc-600 font-light text-lg">
+          A private booking platform for City professionals hosting business dinners in London.
+        </p>
+      </div>
+      <VenueGrid venues={venues || []} />
+    </div>
+  )
 }
