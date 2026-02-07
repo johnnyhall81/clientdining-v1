@@ -98,7 +98,7 @@ export default function TopNav() {
     const now = new Date().toISOString()
     console.log('   Current time:', now)
 
-    // Get active future bookings count - SIMPLIFIED QUERY
+    // Get active future bookings count
     const { data: bookings, error: bookingsError } = await supabase
       .from('bookings')
       .select('id, slot_id, status, slots(start_at)')
@@ -109,7 +109,9 @@ export default function TopNav() {
     
     // Filter for future bookings in JavaScript to debug
     const futureBookings = bookings?.filter(b => {
-      const slotStartAt = b.slots?.start_at
+      // Handle slots being an array (from the join)
+      const slot = Array.isArray(b.slots) ? b.slots[0] : b.slots
+      const slotStartAt = slot?.start_at
       const isFuture = slotStartAt && new Date(slotStartAt) >= new Date()
       console.log(`   Booking ${b.id}: start=${slotStartAt}, future=${isFuture}`)
       return isFuture
