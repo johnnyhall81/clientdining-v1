@@ -19,6 +19,41 @@ export default function TopNav() {
     if (user) {
       loadProfile()
       loadCounts()
+      
+      // Set up real-time subscriptions
+      const bookingsChannel = supabase
+        .channel('bookings-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'bookings',
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => loadCounts()
+        )
+        .subscribe()
+
+      const alertsChannel = supabase
+        .channel('alerts-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'slot_alerts',
+            filter: `diner_user_id=eq.${user.id}`,
+          },
+          () => loadCounts()
+        )
+        .subscribe()
+
+      // Cleanup subscriptions
+      return () => {
+        bookingsChannel.unsubscribe()
+        alertsChannel.unsubscribe()
+      }
     } else {
       setBookingCount(0)
       setAlertCount(0)
@@ -93,11 +128,6 @@ export default function TopNav() {
                 </svg>
               </Link>
 
-
-
-
-
-
               <Link
                 href="/bookings"
                 className={`relative flex items-center gap-1.5 text-sm font-light transition-colors ${
@@ -144,10 +174,6 @@ export default function TopNav() {
                       className="rounded-full object-cover border border-zinc-200"
                     />
                   </div>
-
-
-
-
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-sm font-light text-zinc-600">
                       {profile?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}
