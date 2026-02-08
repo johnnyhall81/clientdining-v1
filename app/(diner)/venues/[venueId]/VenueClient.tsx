@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase-client'
 import SlotRow from '@/components/slots/SlotRow'
 import PremiumUnlockModal from '@/components/modals/PremiumUnlockModal'
 import PartySizeModal from '@/components/modals/PartySizeModal'
+import CancelBookingModal from '@/components/modals/CancelBookingModal'
 
 interface VenueClientProps {
   venue: Venue
@@ -52,6 +53,11 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const [bookingError, setBookingError] = useState<string | null>(null)
   const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
   const [futureBookingsCount, setFutureBookingsCount] = useState(0)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [cancellingSlot, setCancellingSlot] = useState<{
+    slotId: string
+    venueName: string
+  } | null>(null)
 
   // Load existing alerts
   useEffect(() => {
@@ -210,29 +216,49 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     }
   }
 
-  const handleCancel = async (slotId: string) => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
+  const openCancelModal = (slotId: string) => {
+    setCancellingSlot({ slotId, venueName: venue.name })
+    setShowCancelModal(true)
+  }
+
+  const handleCancel = async () => {
+    if (!user || !cancellingSlot) return
 
     try {
+      // Need to get the bookingId from the slotId
+      const { data: booking } = await supabase
+        .from('bookings')
+        .select('id')
+        .eq('slot_id', cancellingSlot.slotId)
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single()
+
+      if (!booking) {
+        console.error('Booking not found')
+        return
+      }
+
       const response = await fetch('/api/bookings/cancel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId }),
+        body: JSON.stringify({ bookingId: booking.id }),
       })
 
       const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
         console.error('Cancel failed:', data?.error || 'Failed to cancel booking')
+        setShowCancelModal(false)
         return
       }
 
+      setShowCancelModal(false)
+      setCancellingSlot(null)
+
       setBookedSlots((prev) => {
         const next = new Set(prev)
-        next.delete(slotId)
+        next.delete(cancellingSlot.slotId)
         return next
       })
 
@@ -374,7 +400,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}
                 isBookedByMe={bookedSlots.has(slot.id)}
-                onCancel={handleCancel}
+                onCancelClick={openCancelModal}
                 onUnlock={() => setShowPremiumModal(true)}
               />
             ))}
@@ -397,6 +423,18 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           maxSize={selectedSlot.party_max}
           venueName={venue.name}
           error={bookingError}
+        />
+      )}
+
+      {showCancelModal && cancellingSlot && (
+        <CancelBookingModal
+          isOpen={showCancelModal}
+          onClose={() => {
+            setShowCancelModal(false)
+            setCancellingSlot(null)
+          }}
+          onConfirm={handleCancel}
+          venueName={cancellingSlot.venueName}
         />
       )}
     </div>

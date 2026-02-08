@@ -15,7 +15,7 @@ interface SlotRowProps {
   isAlertActive: boolean
   onToggleAlert: (slotId: string) => void
   isBookedByMe?: boolean
-  onCancel?: (slotId: string) => Promise<void> | void
+  onCancelClick?: (slotId: string) => void
   onUnlock?: () => void
 }
 
@@ -27,7 +27,7 @@ export default function SlotRow({
   isAlertActive,
   onToggleAlert,
   isBookedByMe = false,
-  onCancel,
+  onCancelClick,
   onUnlock,
 }: SlotRowProps) {
   const eligibility = checkBookingEligibility(
@@ -41,9 +41,34 @@ export default function SlotRow({
 
   return (
     <div 
-      className="flex items-center justify-between py-4 border-b border-zinc-200 last:border-b-0 cursor-pointer hover:bg-zinc-50 transition-colors"
+      className="relative flex items-center justify-between py-4 border-b border-zinc-200 last:border-b-0 cursor-pointer hover:bg-zinc-50 transition-colors"
       onClick={() => !isBookedByMe && isAvailable && eligibility.canBook && onBook(slot.id)}
     >
+      {/* Cancel X button for booked slots */}
+      {isBookedByMe && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onCancelClick?.(slot.id)
+          }}
+          className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors z-10"
+          aria-label="Cancel booking"
+          title="Cancel booking"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+
       <div className="flex-1 grid grid-cols-4 gap-4">
         {/* Date / time */}
         <div>
@@ -79,19 +104,7 @@ export default function SlotRow({
 
         {/* Action */}
         <div className="flex items-center gap-2 justify-end">
-          {isBookedByMe ? (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                onCancel?.(slot.id)
-              }}
-              className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-            >
-              Cancel
-            </button>
-
-          ) : eligibility.requiresPremium && !eligibility.isWithin24h && onUnlock ? (
+          {eligibility.requiresPremium && !eligibility.isWithin24h && onUnlock && !isBookedByMe ? (
             <button
               type="button"
               onClick={(e) => {
@@ -106,7 +119,7 @@ export default function SlotRow({
               Unlock
             </button>
 
-          ) : slot.slot_tier === 'premium' && dinerTier === 'premium' && isAvailable && eligibility.canBook ? (
+          ) : slot.slot_tier === 'premium' && dinerTier === 'premium' && isAvailable && eligibility.canBook && !isBookedByMe ? (
             <button
               type="button"
               onClick={(e) => {
@@ -118,7 +131,7 @@ export default function SlotRow({
               Book
             </button>
 
-          ) : isAvailable && eligibility.canBook ? (
+          ) : isAvailable && eligibility.canBook && !isBookedByMe ? (
             <button
               type="button"
               onClick={(e) => {
@@ -130,14 +143,14 @@ export default function SlotRow({
               Book
             </button>
 
-          ) : (
+          ) : !isBookedByMe ? (
             <div onClick={(e) => e.stopPropagation()}>
               <AlertToggle
                 isActive={isAlertActive}
                 onToggle={() => onToggleAlert(slot.id)}
               />
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
