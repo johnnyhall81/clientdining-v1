@@ -1,5 +1,7 @@
 'use client'
 
+
+import CancelBookingModal from '@/components/modals/CancelBookingModal'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -43,7 +45,15 @@ export default function SearchPage() {
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
   const [venues, setVenues] = useState<Venue[]>([])
+
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
+
+const [showCancelModal, setShowCancelModal] = useState(false)
+const [cancellingSlot, setCancellingSlot] = useState<{
+  slotId: string
+  venueName: string
+} | null>(null)
+
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
   const [showPremiumModal, setShowPremiumModal] = useState(false)
@@ -134,40 +144,6 @@ export default function SearchPage() {
     loadMyBookings()
   }, [user, results])
 
-  const handleCancel = async (slotId: string) => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    try {
-      const response = await fetch('/api/bookings/cancel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId }),
-      })
-
-      const data = await response.json().catch(() => ({}))
-
-      if (!response.ok) {
-        const message = data?.error || 'Could not create booking'
-        setBookingError(message)
-        setBookingSlotId(null)
-        return
-      }
-      
-      setBookingError(null)
-
-      setBookedSlots((prev) => {
-        const next = new Set(prev)
-        next.delete(slotId)
-        return next
-      })
-    } catch (e) {
-      console.error('Cancel error:', e)
-    }
-  }
-
   const loadAlerts = async () => {
     try {
       const response = await fetch('/api/alerts')
@@ -183,6 +159,62 @@ export default function SearchPage() {
       console.error('Error loading alerts:', error)
     }
   }
+
+
+const openCancelModal = (slotId: string, venueName: string) => {
+  setCancellingSlot({ slotId, venueName })
+  setShowCancelModal(true)
+}
+
+
+const handleCancel = async () => {
+  if (!user || !cancellingSlot) return
+
+  try {
+    // Need to get the bookingId from the slotId
+    const { data: booking } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('slot_id', cancellingSlot.slotId)
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .single()
+
+    if (!booking) {
+      setBookingError('Booking not found')
+      return
+    }
+
+    const response = await fetch('/api/bookings/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bookingId: booking.id }), // ✅ Now sending bookingId
+    })
+
+    const data = await response.json().catch(() => ({}))
+
+    if (!response.ok) {
+      const message = data?.error || 'Could not cancel booking'
+      setBookingError(message)
+      setShowCancelModal(false)
+      return
+    }
+    
+    setBookingError(null)
+    setShowCancelModal(false)
+    setCancellingSlot(null)
+
+    // Remove from booked slots
+    setBookedSlots((prev) => {
+      const next = new Set(prev)
+      next.delete(cancellingSlot.slotId)
+      return next
+    })
+  } catch (e) {
+    console.error('Cancel error:', e)
+    setBookingError('An error occurred while canceling')
+  }
+}
 
   const handleSearch = async () => {
     setLoading(true)
@@ -548,7 +580,7 @@ export default function SearchPage() {
                     {isBookedByMe ? (
                       <button
                         type="button"
-                        onClick={() => handleCancel(slot.id)}
+                        onClick={() => openCancelModal(slot.id, venue.name)}
                         className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
                       >
                         Cancel
@@ -652,6 +684,20 @@ export default function SearchPage() {
     maxSize={selectedSlot.party_max}
     venueName={selectedSlot.venue?.name || 'Venue'}
     error={bookingError}
+  />
+)}
+
+{/* Cancel Booking Modal */}
+{showCancelModal && cancellingSlot && (
+  <CancelBookingModal
+    isOpen={showCancelModal}
+    onClose={() => {
+      setShowCancelModal(false)
+      setCancellingSlot(null)
+      setBookingError(null)
+    }}
+    onConfirm={handleCancel}
+    venueName={cancellingSlot.venueName}
   />
 )}
 
