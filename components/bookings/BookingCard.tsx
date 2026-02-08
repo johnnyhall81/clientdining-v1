@@ -20,7 +20,29 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [showCancelModal, setShowCancelModal] = useState(false)
   
   return (
-    <div className={`bg-white rounded-lg shadow-sm border border-zinc-200 p-4 ${isCancelled ? 'opacity-60' : ''}`}>
+    <div className={`bg-white rounded-lg shadow-sm border border-zinc-200 p-4 relative ${isCancelled ? 'opacity-60' : ''}`}>
+      {/* Cancel X button for active upcoming bookings */}
+      {!isCancelled && !isPast && (
+        <button
+          type="button"
+          onClick={() => setShowCancelModal(true)}
+          className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors"
+          aria-label="Cancel booking"
+          title="Cancel booking"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+
       <div className="flex items-center justify-between gap-4">
         
       <Link 
@@ -80,14 +102,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           </div>
         </Link>
 
-        {!isCancelled && !isPast && (
-          <button
-          onClick={() => setShowCancelModal(true)}
-          className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-        >
-          Cancel
-        </button>
-       )}
        </div>
  
        <CancelBookingModal
