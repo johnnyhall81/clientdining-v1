@@ -521,8 +521,30 @@ const handleCancel = async () => {
             return (
               <div
                 key={slot.id}
-                className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4 hover:shadow-md transition-shadow"
+                className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4 hover:shadow-md transition-shadow relative"
               >
+                {/* Cancel X button for booked slots */}
+                {isBookedByMe && (
+                  <button
+                    type="button"
+                    onClick={() => openCancelModal(slot.id, venue.name)}
+                    className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors"
+                    aria-label="Cancel booking"
+                    title="Cancel booking"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-4 h-4"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+
                 <div className="flex items-center justify-between gap-4">
                   
                 <Link
@@ -576,16 +598,8 @@ const handleCancel = async () => {
 
                  
                   <div className="flex items-center gap-3">
-                    {/* Action button: Cancel OR Book OR Alert */}
-                    {isBookedByMe ? (
-                      <button
-                        type="button"
-                        onClick={() => openCancelModal(slot.id, venue.name)}
-                        className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    ) : slot.status === 'available' ? (
+                    {/* Action button: Book OR Alert */}
+                    {slot.status === 'available' && !isBookedByMe ? (
                       <div className="flex flex-col items-end">
                         {/* Check if slot is premium and user is free tier and >24h */}
                         {slot.slot_tier === 'premium' && dinerTier === 'free' && !lastMinute ? (
@@ -628,7 +642,7 @@ const handleCancel = async () => {
                         )}
                       </div>
 
-                    ) : (
+                    ) : !isBookedByMe && (
                       <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
                     )}
                   </div>
