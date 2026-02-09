@@ -271,7 +271,7 @@ export default function AlertsPage() {
                             alt={alert.venue.name}
                             fill
                             sizes="64px"
-                            quality={90}
+                            quality={50}
                             className="object-cover"
                           />
                         ) : (
