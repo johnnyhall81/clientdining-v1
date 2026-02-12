@@ -17,14 +17,14 @@ export default function AboutPage() {
           </p>
 
           <p>
-            It provides a reliable way to see availability, request tables, and manage bookings at a small number of
+            It provides a reliable way to see real availability, request tables, and manage bookings at a small number of
             leading restaurants and private members' clubs. Availability is shared directly by venues and updated as it
             changes.
           </p>
 
           <p>
-            The platform is designed for early-evening business dining, Monday to Friday. Reservations are discreet,
-            service-led, and low-key, sitting alongside a venue's existing operations without disruption.
+            The platform is designed for early evening business dining, Monday to Friday. Reservations are discreet,
+            service led, and low key, sitting alongside a venue's existing operations without disruption.
           </p>
 
           <p>
@@ -33,7 +33,7 @@ export default function AboutPage() {
           </p>
 
           <p>
-            The aim is simple: fewer emails, fewer follow-ups, and greater certainty when the table matters.
+            The aim is simple: fewer emails, fewer follow ups, and greater certainty when the table matters.
           </p>
         </div>
       </section>
@@ -60,7 +60,7 @@ export default function AboutPage() {
           </p>
 
           <p>
-            When tables are in demand, access is time-sensitive. Premium members see availability first. If unfilled,
+            When tables are in demand, access is time sensitive. Premium members see availability first. If unfilled,
             tables open to all members in the final 24 hours.
           </p>
         </div>
@@ -77,7 +77,7 @@ export default function AboutPage() {
 
         <p className="max-w-3xl text-zinc-600 leading-relaxed">
         Membership is designed to suit different hosting needs.
-        Standard works well when you're flexible. Premium is designed for peak-time bookings and planning ahead, when certainty matters.
+        Standard works well when timing is flexible. Premium is designed for peak time bookings and planning ahead, when certainty matters.
         </p>
 
         <div className="grid md:grid-cols-2 gap-8 mt-12">
@@ -104,7 +104,7 @@ export default function AboutPage() {
             </ul>
 
             <p className="text-sm text-zinc-600 leading-relaxed mt-6">
-              High-demand tables open to Standard members if still available within 24 hours.
+              High demand tables open to Standard members if still available within 24 hours.
             </p>
 
             <div className="mt-8">
@@ -121,7 +121,7 @@ export default function AboutPage() {
           <div className="border border-zinc-900/30 bg-white p-8">
             <div className="flex items-baseline justify-between gap-6 mb-2">
               <h3 className="text-2xl font-light text-zinc-900">Premium</h3>
-              <span className="text-zinc-600">£49/month</span>
+              <span className="text-zinc-600">£49 per month</span>
             </div>
 
             <p className="text-zinc-600 leading-relaxed mb-6">
@@ -131,7 +131,7 @@ export default function AboutPage() {
             <ul className="space-y-3 text-zinc-600 leading-relaxed">
               <li className="flex items-start">
                 <span className="mr-3 text-zinc-400">•</span>
-                <span>First access to high-demand tables</span>
+                <span>First access to high demand tables</span>
               </li>
               <li className="flex items-start">
                 <span className="mr-3 text-zinc-400">•</span>
@@ -189,7 +189,7 @@ export default function AboutPage() {
             Venues are chosen for reliability, discretion, and their ability to host low-key business dinners comfortably.
           </p>
           <p>
-            Availability is shared at the venue's discretion, and bookings remain subject to their usual acceptance
+            Availability is shared at the venue's discretion, and all bookings remain subject to their usual acceptance
             process. The list of venues is expanded carefully over time.
           </p>
         </div>
