@@ -32,7 +32,7 @@ export default function TopNav() {
             filter: `user_id=eq.${user.id}`,
           },
           () => loadCounts()
-        )å
+        )
         .subscribe()
 
       const alertsChannel = supabase
