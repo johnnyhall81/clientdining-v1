@@ -144,6 +144,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
     loadMyBookings()
   }, [user, results])
 
+ 
   const loadAlerts = async () => {
     try {
       const response = await fetch('/api/alerts')
@@ -151,7 +152,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
 
       if (data.alerts) {
         const activeAlertSlotIds = data.alerts
-          .filter((a: any) => a.status === 'active')
+          .filter((a: any) => a.status === 'active' || a.status === 'notified')
           .map((a: any) => a.slot_id)
         setAlerts(new Set(activeAlertSlotIds))
       }
@@ -159,6 +160,13 @@ const [cancellingSlot, setCancellingSlot] = useState<{
       console.error('Error loading alerts:', error)
     }
   }
+
+
+
+
+
+
+
 
 
 const openCancelModal = (slotId: string, venueName: string) => {
@@ -369,23 +377,48 @@ const handleCancel = async () => {
       return
     }
 
-    const response = await fetch('/api/alerts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slotId }),
-    })
+    // Check if alert exists
+    const hasAlert = alerts.has(slotId)
 
-    const data = await response.json().catch(() => ({}))
+    if (hasAlert) {
+      // Unfollow: Update status to 'cancelled' instead of deleting
+      const { error } = await supabase
+        .from('slot_alerts')
+        .update({ status: 'cancelled' })
+        .eq('slot_id', slotId)
+        .eq('diner_user_id', user.id)
 
-    if (!response.ok) {
-      throw new Error(data?.error || 'Failed to update alert')
+      if (error) {
+        throw new Error('Failed to update alert')
+      }
+
+      // Remove from local state
+      const newAlerts = new Set(alerts)
+      newAlerts.delete(slotId)
+      setAlerts(newAlerts)
+    } else {
+      // Follow: Create new alert
+      const response = await fetch('/api/alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slotId }),
+      })
+
+      const data = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        throw new Error(data?.error || 'Failed to create alert')
+      }
+
+      // Add to local state
+      const newAlerts = new Set(alerts)
+      newAlerts.add(slotId)
+      setAlerts(newAlerts)
     }
-
-    const newAlerts = new Set(alerts)
-    if (data.active) newAlerts.add(slotId)
-    else newAlerts.delete(slotId)
-    setAlerts(newAlerts)
   }
+
+
+
 
   const isLastMinute = (startAt: string) => {
     const now = new Date()
