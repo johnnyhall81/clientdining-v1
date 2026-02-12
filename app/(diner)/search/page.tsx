@@ -396,17 +396,37 @@ const handleCancel = async () => {
       newAlerts.delete(slotId)
       setAlerts(newAlerts)
     } else {
-      // Follow: Create new alert (direct Supabase INSERT for real-time consistency)
-      const { error } = await supabase
+      // Follow: Check if a cancelled alert exists first
+      const { data: existingAlert } = await supabase
         .from('slot_alerts')
-        .insert({
-          diner_user_id: user.id,
-          slot_id: slotId,
-          status: 'active',
-        })
+        .select('id, status')
+        .eq('slot_id', slotId)
+        .eq('diner_user_id', user.id)
+        .single()
 
-      if (error) {
-        throw new Error('Failed to create alert')
+      if (existingAlert) {
+        // Reactivate the cancelled alert
+        const { error } = await supabase
+          .from('slot_alerts')
+          .update({ status: 'active' })
+          .eq('id', existingAlert.id)
+
+        if (error) {
+          throw new Error('Failed to reactivate alert')
+        }
+      } else {
+        // Create new alert
+        const { error } = await supabase
+          .from('slot_alerts')
+          .insert({
+            diner_user_id: user.id,
+            slot_id: slotId,
+            status: 'active',
+          })
+
+        if (error) {
+          throw new Error('Failed to create alert')
+        }
       }
 
       // Add to local state
