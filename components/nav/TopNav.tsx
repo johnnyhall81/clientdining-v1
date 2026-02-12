@@ -29,10 +29,10 @@ export default function TopNav() {
             event: '*',
             schema: 'public',
             table: 'bookings',
-            filter: `user_id=eq.${user.id}`,å
+            filter: `user_id=eq.${user.id}`,
           },
           () => loadCounts()
-        )
+        )å
         .subscribe()
 
       const alertsChannel = supabase
@@ -149,6 +149,7 @@ export default function TopNav() {
                   </span>
                 )}
               </Link>
+
               <Link
                 href="/alerts"
                 className={`relative transition-colors ${
