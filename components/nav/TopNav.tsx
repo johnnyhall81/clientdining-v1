@@ -18,7 +18,7 @@ export default function TopNav() {
   useEffect(() => {
     if (user) {
       loadProfile()
-      loadCounts()å
+      loadCounts()
       
       // Set up real-time subscriptions
       const bookingsChannel = supabase
@@ -29,7 +29,7 @@ export default function TopNav() {
             event: '*',
             schema: 'public',
             table: 'bookings',
-            filter: `user_id=eq.${user.id}`,
+            filter: `user_id=eq.${user.id}`,å
           },
           () => loadCounts()
         )
