@@ -370,7 +370,6 @@ const handleCancel = async () => {
 
 
 
-
   const handleToggleAlert = async (slotId: string) => {
     if (!user) {
       router.push('/login')
@@ -381,7 +380,7 @@ const handleCancel = async () => {
     const hasAlert = alerts.has(slotId)
 
     if (hasAlert) {
-      // Unfollow: Update status to 'cancelled' instead of deleting
+      // Unfollow: Update status to 'cancelled'
       const { error } = await supabase
         .from('slot_alerts')
         .update({ status: 'cancelled' })
@@ -397,17 +396,17 @@ const handleCancel = async () => {
       newAlerts.delete(slotId)
       setAlerts(newAlerts)
     } else {
-      // Follow: Create new alert
-      const response = await fetch('/api/alerts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId }),
-      })
+      // Follow: Create new alert (direct Supabase INSERT for real-time consistency)
+      const { error } = await supabase
+        .from('slot_alerts')
+        .insert({
+          diner_user_id: user.id,
+          slot_id: slotId,
+          status: 'active',
+        })
 
-      const data = await response.json().catch(() => ({}))
-
-      if (!response.ok) {
-        throw new Error(data?.error || 'Failed to create alert')
+      if (error) {
+        throw new Error('Failed to create alert')
       }
 
       // Add to local state
@@ -416,7 +415,6 @@ const handleCancel = async () => {
       setAlerts(newAlerts)
     }
   }
-
 
 
 
