@@ -184,20 +184,13 @@ export default function AlertsPage() {
       setShowPartySizeModal(false)
       setBookingError(null)
   
+      // Remove the alert from the local state
+      // (The RPC function already marked it as 'booked' in the database)
       setAlerts((prev) => prev.filter((a) => a.id !== selectedAlert.id))
-  
-      const { error: deleteError } = await supabase
-        .from('slot_alerts')
-        .update({ status: 'cancelled' })
-        .eq('id', selectedAlert.id)
-  
-      if (deleteError) {
-        console.error('Could not remove alert after booking:', deleteError)
-        loadAlerts()
-      }
   
       router.push('/bookings')
       router.refresh()
+      
     } catch (e) {
       console.error('Booking error:', e)
       setBookingError('Could not create booking. Please try again.')
