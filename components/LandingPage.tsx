@@ -23,7 +23,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
   const router = useRouter()
   const whyRef = useRef<HTMLDivElement>(null)
   const howRef = useRef<HTMLDivElement>(null)
-  const [venuesVisible, setVenuesVisible] = useState(false)
+  const [venuesVisible, setVenuesVisible] = useState(true)
   const [whyVisible, setWhyVisible] = useState(false)
   const [howVisible, setHowVisible] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
@@ -37,13 +37,6 @@ export default function LandingPage({ venues }: LandingPageProps) {
       }
     })
   }, [])
-
-  // Trigger venue reveal shortly after mount — they're close to the fold
-  useEffect(() => {
-    if (!authChecked) return
-    const timer = setTimeout(() => setVenuesVisible(true), 400)
-    return () => clearTimeout(timer)
-  }, [authChecked])
 
   // Scroll reveal for why + how sections
   useEffect(() => {
@@ -104,7 +97,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
           Selected venues
         </p>
         {venues.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
             {venues.map((venue, i) => {
               const imageSrc = venue.image_venue || venue.image
               return (
@@ -118,7 +111,8 @@ export default function LandingPage({ venues }: LandingPageProps) {
                     transition: 'opacity 0.6s ease, transform 0.6s ease',
                   }}
                 >
-                  <div className="relative aspect-[16/10] bg-zinc-100 overflow-hidden">
+                  {/* Image — taller portrait ratio, no text overlay */}
+                  <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden mb-4">
                     {imageSrc ? (
                       <>
                         <Image
@@ -128,17 +122,20 @@ export default function LandingPage({ venues }: LandingPageProps) {
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
                         />
-                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300" />
                       </>
                     ) : (
                       <div className="w-full h-full bg-zinc-200" />
                     )}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent pt-12 pb-5 px-5">
-                      <p className="font-light text-sm text-white/90 tracking-wide">
-                        {venue.name}
-                      </p>
-                    </div>
                   </div>
+                  {/* Text below image — editorial style */}
+                  <p className="text-sm font-light text-zinc-900 tracking-wide">
+                    {venue.name}
+                  </p>
+                  {venue.area && (
+                    <p className="text-xs font-light text-zinc-400 mt-1 tracking-wide">
+                      {venue.area}
+                    </p>
+                  )}
                 </div>
               )
             })}
