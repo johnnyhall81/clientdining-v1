@@ -82,27 +82,6 @@ const [cancellingSlot, setCancellingSlot] = useState<{
     loadVenues()
   }, [])
 
-  // Load user tier
-  useEffect(() => {
-    const loadUserTier = async () => {
-      if (!user) {
-        setDinerTier('free')
-        return
-      }
-
-      const { data } = await supabase
-        .from('profiles')
-        .select('diner_tier')
-        .eq('user_id', user.id)
-        .single()
-
-      if (data) {
-        setDinerTier(data.diner_tier)
-      }
-    }
-    loadUserTier()
-  }, [user])
-
   useEffect(() => {
     handleSearch()
     if (user) {
