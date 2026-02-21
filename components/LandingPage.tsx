@@ -22,10 +22,11 @@ interface LandingPageProps {
 export default function LandingPage({ venues }: LandingPageProps) {
   const router = useRouter()
   const venuesRef = useRef<HTMLDivElement>(null)
+  const whyRef = useRef<HTMLDivElement>(null)
   const [venuesVisible, setVenuesVisible] = useState(false)
+  const [whyVisible, setWhyVisible] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
 
-  // Redirect logged-in users straight to /home
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -36,15 +37,18 @@ export default function LandingPage({ venues }: LandingPageProps) {
     })
   }, [])
 
-  // Scroll reveal for venues
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVenuesVisible(true)
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === venuesRef.current && entry.isIntersecting) setVenuesVisible(true)
+          if (entry.target === whyRef.current && entry.isIntersecting) setWhyVisible(true)
+        })
       },
       { threshold: 0.05 }
     )
     if (venuesRef.current) observer.observe(venuesRef.current)
+    if (whyRef.current) observer.observe(whyRef.current)
     return () => observer.disconnect()
   }, [])
 
@@ -53,18 +57,13 @@ export default function LandingPage({ venues }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-zinc-50">
 
-      {/* Nav — matches TopNav exactly */}
+      {/* Nav */}
       <header className="bg-white border-b border-zinc-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <span className="text-xl font-light text-zinc-900">
-              ClientDining
-            </span>
-            <Link
-              href="/login"
-              className="text-sm font-light text-zinc-900 hover:text-zinc-700"
-            >
-              Sign in
+            <span className="text-xl font-light text-zinc-900">ClientDining</span>
+            <Link href="/login" className="text-sm font-light text-zinc-900 hover:text-zinc-700">
+              Login
             </Link>
           </div>
         </div>
@@ -88,14 +87,12 @@ export default function LandingPage({ venues }: LandingPageProps) {
             </Link>
           </div>
         </div>
-
-        {/* Scroll cue */}
-        <div className="absolute bottom-10 flex flex-col items-center gap-2 opacity-30">
+        <div className="absolute bottom-10 flex flex-col items-center opacity-30">
           <div className="w-px h-10 bg-zinc-400 animate-pulse" />
         </div>
       </section>
 
-      {/* Venues — scroll reveal */}
+      {/* Selected Venues */}
       <section
         ref={venuesRef}
         className="px-8 md:px-12 pb-24"
@@ -145,6 +142,61 @@ export default function LandingPage({ venues }: LandingPageProps) {
             })}
           </div>
         )}
+      </section>
+
+      {/* Why it exists */}
+      <section
+        ref={whyRef}
+        className="px-8 md:px-12 pb-24 max-w-7xl mx-auto"
+      >
+        <div
+          className="border-t border-zinc-200 pt-16"
+          style={{
+            opacity: whyVisible ? 1 : 0,
+            transform: whyVisible ? 'translateY(0)' : 'translateY(16px)',
+            transition: 'opacity 0.7s ease, transform 0.7s ease',
+          }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+              <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-4">Curated</p>
+              <p className="text-sm font-light text-zinc-600 leading-relaxed">
+                A small selection of London's leading restaurants and private members' clubs, chosen for weekday business dining.
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-4">Professional</p>
+              <p className="text-sm font-light text-zinc-600 leading-relaxed">
+                Access is limited to City professionals hosting business dinners. Verified via LinkedIn. No exceptions.
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-4">Discreet</p>
+              <p className="text-sm font-light text-zinc-600 leading-relaxed">
+                Invitation only. Membership is by application. The platform is not publicly listed or advertised.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section
+        className="px-8 md:px-12 pb-24 flex flex-col items-center text-center"
+        style={{
+          opacity: whyVisible ? 1 : 0,
+          transition: 'opacity 0.7s ease 0.3s',
+        }}
+      >
+        <p className="text-sm font-light text-zinc-400 mb-6">
+          Membership is by application.
+        </p>
+        <Link
+          href="/signup"
+          className="inline-block px-10 py-3.5 bg-zinc-900 text-white text-xs font-light tracking-widest uppercase hover:bg-zinc-700 transition-colors duration-300"
+        >
+          Apply for membership
+        </Link>
       </section>
 
       {/* Footer */}
