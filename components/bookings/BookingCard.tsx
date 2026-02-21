@@ -20,13 +20,13 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [showCancelModal, setShowCancelModal] = useState(false)
 
   return (
-    <div className={`bg-white border border-zinc-200 p-6 relative ${isCancelled ? 'opacity-50' : ''}`}>
+    <div className={`bg-white border border-zinc-200 relative ${isCancelled ? 'opacity-50' : ''}`}>
       {/* Cancel button */}
       {!isCancelled && !isPast && (
         <button
           type="button"
           onClick={() => setShowCancelModal(true)}
-          className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
+          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
           aria-label="Cancel booking"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
@@ -38,46 +38,42 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
       <Link
         href={`/venues/${venue.id}`}
         prefetch={true}
-        className="flex items-start gap-6 hover:opacity-80 transition-opacity"
+        className="flex flex-col md:flex-row hover:opacity-90 transition-opacity"
       >
-        {/* Square venue thumbnail */}
-        <div className="relative w-20 h-20 bg-zinc-100 overflow-hidden flex-shrink-0">
+        {/* Wide landscape image — left half */}
+        <div className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0">
           {venue.image_venue ? (
             <Image
               src={venue.image_venue}
               alt={venue.name}
               fill
-              sizes="80px"
-              quality={50}
+              sizes="40vw"
+              quality={60}
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-zinc-300 text-xs font-light">
-              No image
-            </div>
+            <div className="w-full h-full bg-zinc-100" />
           )}
         </div>
 
-        <div className="flex-1 space-y-2">
-          <h3 className="font-light text-lg text-zinc-900">{venue.name}</h3>
-          <p className="text-sm text-zinc-400 font-light">{venue.area}</p>
-          <p className="text-sm text-zinc-700 font-light">{formatFullDateTime(slot.start_at)}</p>
-          <p className="text-sm text-zinc-500 font-light">
-            {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
-          </p>
-          {booking.notes && (
-            <p className="text-sm text-zinc-400 font-light">Note: {booking.notes}</p>
-          )}
-          <div className="pt-1">
-            {isCancelled && (
-              <span className="text-xs text-red-600 font-light">Cancelled</span>
+        {/* Details — right side */}
+        <div className="flex-1 p-6 flex flex-col justify-between">
+          <div className="space-y-2 pr-6">
+            <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
+            <p className="text-sm text-zinc-400 font-light">{venue.area}</p>
+            <p className="text-sm text-zinc-700 font-light pt-2">{formatFullDateTime(slot.start_at)}</p>
+            <p className="text-sm text-zinc-500 font-light">
+              {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
+            </p>
+            {booking.notes && (
+              <p className="text-sm text-zinc-400 font-light pt-1">Note: {booking.notes}</p>
             )}
-            {!isCancelled && !isPast && (
-              <span className="text-xs text-green-700 font-light">Confirmed</span>
-            )}
-            {!isCancelled && isPast && (
-              <span className="text-xs text-zinc-400 font-light">Completed</span>
-            )}
+          </div>
+
+          <div className="pt-4">
+            {isCancelled && <span className="text-xs text-red-500 font-light">Cancelled</span>}
+            {!isCancelled && !isPast && <span className="text-xs text-green-700 font-light">Confirmed</span>}
+            {!isCancelled && isPast && <span className="text-xs text-zinc-400 font-light">Completed</span>}
           </div>
         </div>
       </Link>

@@ -232,86 +232,72 @@ export default function AlertsPage() {
               const isBookingThis = bookingSlotId === alert.slot_id
 
               return (
-                <div key={alert.id} className="bg-white border border-zinc-200 p-6 relative">
+                <div key={alert.id} className="bg-white border border-zinc-200 relative">
+                  {/* Remove button */}
                   <button
                     type="button"
                     onClick={() => handleRemoveAlert(alert)}
-                    className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
+                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
                     aria-label="Remove alert"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="currentColor"
-                      className="w-4 h-4"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
 
-                  <div className="flex items-start justify-between gap-4 pr-8">
-                    <Link
-                      href={`/venues/${alert.venue.id}`}
-                      prefetch={true}
-                      className="flex items-start gap-6 flex-1 hover:opacity-80 transition-opacity"
-                    >
-                      <div className="relative w-20 h-20 bg-zinc-100 overflow-hidden flex-shrink-0">
-                        {alert.venue.image_venue ? (
-                          <Image
-                            src={alert.venue.image_venue}
-                            alt={alert.venue.name}
-                            fill
-                            sizes="64px"
-                            quality={50}
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs font-light">
-                            No image
-                          </div>
+                  <div className="flex flex-col md:flex-row">
+                    {/* Wide landscape image */}
+                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+                      {alert.venue.image_venue ? (
+                        <Image
+                          src={alert.venue.image_venue}
+                          alt={alert.venue.name}
+                          fill
+                          sizes="40vw"
+                          quality={60}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-zinc-100" />
+                      )}
+                    </Link>
+
+                    {/* Details */}
+                    <div className="flex-1 p-6 flex flex-col justify-between pr-10">
+                      <div className="space-y-2">
+                        <Link href={`/venues/${alert.venue.id}`} prefetch={true}>
+                          <h3 className="font-light text-xl text-zinc-900 hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
+                        </Link>
+                        <p className="text-sm text-zinc-400 font-light">{alert.venue.area}</p>
+                        <p className="text-sm text-zinc-700 font-light pt-2">{formatFullDateTime(alert.slot.start_at)}</p>
+                        <p className="text-sm text-zinc-500 font-light">
+                          {alert.slot.party_min === alert.slot.party_max
+                            ? `${alert.slot.party_min} guests`
+                            : `${alert.slot.party_min}–${alert.slot.party_max} guests`}
+                        </p>
+                        {alert.status === 'notified' && (
+                          <p className="text-xs text-blue-700 font-light pt-1">Table available — act now</p>
                         )}
                       </div>
 
-                      <div>
-                        <h3 className="font-light text-lg text-zinc-900 hover:underline">{alert.venue.name}</h3>
-                        <p className="text-sm text-zinc-600 font-light">{alert.venue.area}</p>
-                        <div className="flex items-center gap-3 mt-1 text-sm flex-wrap">
-                          <span className="text-zinc-700 font-light">{formatFullDateTime(alert.slot.start_at)}</span>
-                          <span className="text-zinc-600 font-light">
-                            {alert.slot.party_min}-{alert.slot.party_max} guests
-                          </span>
-
-                          {alert.status === 'notified' && (
-                            <span className="text-xs text-blue-700 font-light">
-                              Available
-                            </span>
-                          )}
-                          {alert.status === 'active' && (
-                            <span className="text-xs text-zinc-400 font-light">
-                              Active
-                            </span>
-                          )}
+                      {alert.status === 'notified' && (
+                        <div className="pt-4">
+                          <button
+                            type="button"
+                            onClick={() => handleBook(alert)}
+                            disabled={isBookingThis}
+                            className={[
+                              'h-10 px-6 text-sm font-light whitespace-nowrap transition-colors border border-zinc-300',
+                              isBookingThis
+                                ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
+                                : 'bg-white text-zinc-900 hover:bg-zinc-50',
+                            ].join(' ')}
+                          >
+                            {isBookingThis ? 'Booking...' : 'Book'}
+                          </button>
                         </div>
-                      </div>
-                    </Link>
-
-                    {alert.status === 'notified' && (
-                      <button
-                        type="button"
-                        onClick={() => handleBook(alert)}
-                        disabled={isBookingThis}
-                        className={[
-                          'inline-flex items-center justify-center h-10 px-6 text-sm font-light whitespace-nowrap transition-colors border border-zinc-300',
-                          isBookingThis
-                            ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
-                            : 'bg-white text-zinc-900 hover:bg-zinc-50',
-                        ].join(' ')}
-                      >
-                        {isBookingThis ? 'Booking...' : 'Book'}
-                      </button>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               )
