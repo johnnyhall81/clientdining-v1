@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase-client'
+import Footer from '@/components/common/Footer'
 
 interface LandingPageProps {
   venues: any[]
@@ -114,17 +115,7 @@ if (!authChecked) return null
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-zinc-100 px-8 md:px-12 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span className="text-xs font-light text-zinc-400 tracking-wide">
-          © {new Date().getFullYear()} ClientDining Limited
-        </span>
-        <div className="flex items-center gap-6">
-          <Link href="/privacy" className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors tracking-wide">Privacy</Link>
-          <Link href="/terms" className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors tracking-wide">Terms</Link>
-          <Link href="/overview" className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors tracking-wide">For venues</Link>
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   )
