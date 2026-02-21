@@ -32,6 +32,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+
+      // Refresh avatar_url from OAuth metadata on every login
+      if (session?.user) {
+        const freshAvatar =
+          session.user.user_metadata?.avatar_url ||
+          session.user.user_metadata?.picture
+        if (freshAvatar) {
+          supabase
+            .from('profiles')
+            .update({ avatar_url: freshAvatar })
+            .eq('user_id', session.user.id)
+            .then(() => {})
+        }
+      }
     })
 
     return () => subscription.unsubscribe()
