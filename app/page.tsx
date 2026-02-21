@@ -16,11 +16,15 @@ export default async function RootPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-  const { data: venues } = await supabase
+  const { data: venues, error } = await supabase
     .from('venues')
-    .select('id, name, image_venue, image, cuisine_type, area')
+    .select('*')
     .eq('is_active', true)
     .order('name')
+
+  if (error) {
+    console.error('Error fetching venues:', error)
+  }
 
   return <LandingPage venues={venues || []} />
 }
