@@ -213,7 +213,7 @@ export default function AlertsPage() {
       </div>
 
       {filteredAlerts.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-zinc-200">
+        <div className="text-center py-12 bg-white border border-zinc-200">
           <p className="text-zinc-500 font-light mb-4">No active alerts</p>
           <Link href="/search" className="text-zinc-900 font-light hover:underline">
             Search for tables to set alerts
@@ -232,11 +232,11 @@ export default function AlertsPage() {
               const isBookingThis = bookingSlotId === alert.slot_id
 
               return (
-                <div key={alert.id} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4 relative">
+                <div key={alert.id} className="bg-white border border-zinc-200 p-6 relative">
                   <button
                     type="button"
                     onClick={() => handleRemoveAlert(alert)}
-                    className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors"
+                    className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
                     aria-label="Remove alert"
                   >
                     <svg
@@ -251,13 +251,13 @@ export default function AlertsPage() {
                     </svg>
                   </button>
 
-                  <div className="flex items-center justify-between gap-4 pr-8">
+                  <div className="flex items-start justify-between gap-4 pr-8">
                     <Link
                       href={`/venues/${alert.venue.id}`}
                       prefetch={true}
-                      className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
+                      className="flex items-start gap-6 flex-1 hover:opacity-80 transition-opacity"
                     >
-                      <div className="relative w-16 h-16 aspect-square bg-zinc-100 rounded overflow-hidden flex-shrink-0">
+                      <div className="relative w-20 h-20 bg-zinc-100 overflow-hidden flex-shrink-0">
                         {alert.venue.image_venue ? (
                           <Image
                             src={alert.venue.image_venue}
@@ -284,12 +284,12 @@ export default function AlertsPage() {
                           </span>
 
                           {alert.status === 'notified' && (
-                            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-light">
+                            <span className="text-xs text-blue-700 font-light">
                               Available
                             </span>
                           )}
                           {alert.status === 'active' && (
-                            <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
+                            <span className="text-xs text-zinc-400 font-light">
                               Active
                             </span>
                           )}
@@ -303,7 +303,7 @@ export default function AlertsPage() {
                         onClick={() => handleBook(alert)}
                         disabled={isBookingThis}
                         className={[
-                          'inline-flex items-center justify-center h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap transition-colors border border-zinc-300',
+                          'inline-flex items-center justify-center h-10 px-6 text-sm font-light whitespace-nowrap transition-colors border border-zinc-300',
                           isBookingThis
                             ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
                             : 'bg-white text-zinc-900 hover:bg-zinc-50',

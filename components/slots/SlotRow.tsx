@@ -27,7 +27,7 @@ export default function SlotRow({
 
   return (
     <div
-      className="relative flex items-center justify-between py-4 border-b border-zinc-200 last:border-b-0 cursor-pointer hover:bg-zinc-50 transition-colors"
+      className="relative flex items-center justify-between py-6 border-b border-zinc-200 last:border-b-0 hover:bg-zinc-50 transition-colors"
       onClick={() => !isBookedByMe && isAvailable && eligibility.canBook && onBook(slot.id)}
     >
       {/* Cancel button for booked slots */}
