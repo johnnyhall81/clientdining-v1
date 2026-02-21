@@ -21,7 +21,6 @@ interface LandingPageProps {
 
 export default function LandingPage({ venues }: LandingPageProps) {
   const router = useRouter()
-  const venuesRef = useRef<HTMLDivElement>(null)
   const whyRef = useRef<HTMLDivElement>(null)
   const howRef = useRef<HTMLDivElement>(null)
   const [venuesVisible, setVenuesVisible] = useState(false)
@@ -39,18 +38,24 @@ export default function LandingPage({ venues }: LandingPageProps) {
     })
   }, [])
 
+  // Trigger venue reveal shortly after mount — they're close to the fold
+  useEffect(() => {
+    if (!authChecked) return
+    const timer = setTimeout(() => setVenuesVisible(true), 400)
+    return () => clearTimeout(timer)
+  }, [authChecked])
+
+  // Scroll reveal for why + how sections
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.target === venuesRef.current && entry.isIntersecting) setVenuesVisible(true)
           if (entry.target === whyRef.current && entry.isIntersecting) setWhyVisible(true)
           if (entry.target === howRef.current && entry.isIntersecting) setHowVisible(true)
         })
       },
       { threshold: 0.05 }
     )
-    if (venuesRef.current) observer.observe(venuesRef.current)
     if (whyRef.current) observer.observe(whyRef.current)
     if (howRef.current) observer.observe(howRef.current)
     return () => observer.disconnect()
@@ -74,7 +79,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
       </header>
 
       {/* Hero */}
-      <section className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-6 text-center relative">
+      <section className="flex flex-col items-center justify-center px-6 pt-24 pb-20 text-center">
         <div className="max-w-2xl mx-auto space-y-6">
           <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-light text-zinc-900 leading-tight tracking-tight">
             Reserve the tables<br className="hidden sm:block" /> that matter.
@@ -91,13 +96,10 @@ export default function LandingPage({ venues }: LandingPageProps) {
             </Link>
           </div>
         </div>
-        <div className="absolute bottom-10 flex flex-col items-center opacity-30">
-          <div className="w-px h-10 bg-zinc-400 animate-pulse" />
-        </div>
       </section>
 
       {/* Selected Venues */}
-      <section ref={venuesRef} className="px-8 md:px-12 pb-24">
+      <section className="px-8 md:px-12 pb-24">
         <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-10">
           Selected venues
         </p>
@@ -112,8 +114,8 @@ export default function LandingPage({ venues }: LandingPageProps) {
                   style={{
                     transitionDelay: `${i * 60}ms`,
                     opacity: venuesVisible ? 1 : 0,
-                    transform: venuesVisible ? 'translateY(0)' : 'translateY(16px)',
-                    transition: 'opacity 0.7s ease, transform 0.7s ease',
+                    transform: venuesVisible ? 'translateY(0)' : 'translateY(12px)',
+                    transition: 'opacity 0.6s ease, transform 0.6s ease',
                   }}
                 >
                   <div className="relative aspect-[16/10] bg-zinc-100 overflow-hidden">
@@ -144,9 +146,10 @@ export default function LandingPage({ venues }: LandingPageProps) {
         )}
       </section>
 
-      {/* Why it exists */}
-      <section ref={whyRef} className="border-t border-zinc-200 px-8 md:px-12 py-24 max-w-7xl mx-auto">
+      {/* About */}
+      <section ref={whyRef} className="border-t border-zinc-200 px-8 md:px-12 py-24">
         <div
+          className="max-w-7xl mx-auto"
           style={{
             opacity: whyVisible ? 1 : 0,
             transform: whyVisible ? 'translateY(0)' : 'translateY(16px)',
@@ -171,8 +174,9 @@ export default function LandingPage({ venues }: LandingPageProps) {
       </section>
 
       {/* How it works */}
-      <section ref={howRef} className="border-t border-zinc-200 px-8 md:px-12 py-24 max-w-7xl mx-auto">
+      <section ref={howRef} className="border-t border-zinc-200 px-8 md:px-12 py-24">
         <div
+          className="max-w-7xl mx-auto"
           style={{
             opacity: howVisible ? 1 : 0,
             transform: howVisible ? 'translateY(0)' : 'translateY(16px)',
