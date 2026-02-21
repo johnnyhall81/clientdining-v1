@@ -56,15 +56,13 @@ const [cancellingSlot, setCancellingSlot] = useState<{
 
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
-  const [showPremiumModal, setShowPremiumModal] = useState(false)
-  const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
+
 
   const [filters, setFilters] = useState({
     date: '',
     area: '',
     partySize: 2,
     within24h: false,
-    tier: 'all' as 'all' | 'free' | 'premium',
     venueId: '',
   })
 
@@ -113,7 +111,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
       setAlerts(new Set())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.date, filters.area, filters.partySize, filters.within24h, filters.tier, filters.venueId, user])
+  }, [filters.date, filters.area, filters.partySize, filters.within24h, filters.venueId, user])
 
   useEffect(() => {
     if (!user) {
@@ -274,9 +272,6 @@ const handleCancel = async () => {
       query = query.lte('start_at', in24h.toISOString())
     }
 
-    if (filters.tier !== 'all') {
-      query = query.eq('slot_tier', filters.tier)
-    }
 
     if (filters.venueId) {
       query = query.eq('venue_id', filters.venueId)
@@ -505,20 +500,6 @@ const handleCancel = async () => {
             </select>
           </div>
 
-          {/* Tier Filter */}
-          <div>
-            <label className="block text-sm font-light text-zinc-700 mb-2">Access</label>
-            <select
-              value={filters.tier}
-              onChange={(e) => setFilters({ ...filters, tier: e.target.value as 'all' | 'free' | 'premium' })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
-            >
-              <option value="all">All Tables</option>
-              <option value="free">Free Access</option>
-              <option value="premium">Premium Access</option>
-            </select>
-          </div>
-
           {/* Venue Filter */}
           <div>
             <label className="block text-sm font-light text-zinc-700 mb-2">Venue</label>
@@ -638,11 +619,7 @@ const handleCancel = async () => {
                             Confirmed
                           </span>
                         )}
-                        {slot.slot_tier === 'premium' && dinerTier === 'premium' && !isBookedByMe && (
-                          <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full font-light">
-                            Premium
-                          </span>
-                        )}
+
                       </div>
                     </div>
                   </Link>
@@ -651,47 +628,18 @@ const handleCancel = async () => {
                   <div className="flex items-center gap-3">
                     {/* Action button: Book OR Alert */}
                     {slot.status === 'available' && !isBookedByMe ? (
-                      <div className="flex flex-col items-end">
-                        {/* Check if slot is premium and user is free tier and >24h */}
-                        {slot.slot_tier === 'premium' && dinerTier === 'free' && !lastMinute ? (
-                          <button
-                            onClick={() => setShowPremiumModal(true)}
-                            className="h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-200 text-zinc-600 hover:border-zinc-300 transition-colors flex items-center gap-2"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Unlock
-                          </button>
-                        ) : slot.slot_tier === 'premium' && dinerTier === 'premium' ? (
-                        <button
-                          onClick={() => handleBook(slot.id)}
-                          disabled={bookingSlotId === slot.id}
-                          className={[
-                            'h-9 px-5 text-sm font-light rounded-lg whitespace-nowrap transition-colors border border-zinc-300',
-                            bookingSlotId === slot.id
-                              ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
-                              : 'bg-white text-zinc-900 hover:bg-zinc-50',
-                          ].join(' ')}
-                        >
-                          {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
-                        </button>
-
-                        ) : (
-                        <button
-                          onClick={() => handleBook(slot.id)}
-                          disabled={bookingSlotId === slot.id}
-                          className={[
-                            'h-9 px-5 text-sm font-light rounded-lg whitespace-nowrap transition-colors border border-zinc-300',
-                            bookingSlotId === slot.id
-                              ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
-                              : 'bg-white text-zinc-900 hover:bg-zinc-50',
-                          ].join(' ')}
-                        >
-                          {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
-                        </button>
-                        )}
-                      </div>
+                      <button
+                        onClick={() => handleBook(slot.id)}
+                        disabled={bookingSlotId === slot.id}
+                        className={[
+                          'h-9 px-5 text-sm font-light rounded-lg whitespace-nowrap transition-colors border border-zinc-300',
+                          bookingSlotId === slot.id
+                            ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
+                            : 'bg-white text-zinc-900 hover:bg-zinc-50',
+                        ].join(' ')}
+                      >
+                        {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
+                      </button>
 
                     ) : !isBookedByMe && (
                       <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
@@ -728,12 +676,6 @@ const handleCancel = async () => {
 )}
 
 
-
-      {/* Premium Unlock Modal */}
-      <PremiumUnlockModal 
-        isOpen={showPremiumModal}
-        onClose={() => setShowPremiumModal(false)}
-      />
 
 {selectedSlot && (
   <PartySizeModal
