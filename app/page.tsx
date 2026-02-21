@@ -1,10 +1,26 @@
 import { Metadata } from 'next'
+import { createClient } from '@supabase/supabase-js'
+import LandingPage from '@/components/LandingPage'
 
 export const metadata: Metadata = {
-  title: 'ClientDining - When the table matters.',
-  description: 'A private booking platform for City professionals hosting business dinners at Londons leading restaurants and private members clubs.',
+  title: 'ClientDining — Reserve the tables that matter.',
+  description: "Private access for City professionals. An invitation-only dining platform for London's senior executives.",
 }
 
-export default function RootPage() {
-  return null
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+export default async function RootPage() {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+
+  const { data: venues } = await supabase
+    .from('venues')
+    .select('id, name, image_venue, image, cuisine_type, area')
+    .eq('is_active', true)
+    .order('name')
+
+  return <LandingPage venues={venues || []} />
 }
