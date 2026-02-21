@@ -34,8 +34,7 @@ export default function SignupPage() {
       <div className="w-full max-w-md space-y-8">
 
         <div className="text-center">
-          <h1 className="text-3xl font-light text-zinc-900">Continue</h1>
-          <p className="mt-3 text-sm font-light text-zinc-400">
+          <p className="text-sm font-light text-zinc-400">
             Sign in with LinkedIn to confirm your professional profile.
           </p>
         </div>
