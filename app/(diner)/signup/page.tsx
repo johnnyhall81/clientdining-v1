@@ -33,8 +33,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-light text-zinc-900">Join ClientDining</h1>
-          <p className="mt-2 text-zinc-500 font-light">Access to London's finest restaurants and private members' clubs.</p>
+          <h1 className="text-3xl font-light text-zinc-900">Membership application</h1>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-8">
@@ -58,7 +57,7 @@ export default function SignupPage() {
           <div className="mt-6 p-4 bg-zinc-50 rounded-lg">
             <h3 className="text-sm font-light text-zinc-900 mb-2">Why LinkedIn?</h3>
             <p className="text-sm text-zinc-500 font-light leading-relaxed">
-              ClientDining is a private network for verified City professionals.
+              Professional status is confirmed via LinkedIn.
             </p>
           </div>
 
