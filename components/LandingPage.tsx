@@ -33,8 +33,16 @@ if (!authChecked) return null
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <span className="text-xl font-light text-zinc-900">ClientDining</span>
-            <Link href="/login" className="text-sm font-light text-zinc-900 hover:text-zinc-700">
-              Login
+            <Link
+              href="/login"
+              className="text-zinc-600 hover:text-zinc-900 transition-colors"
+              aria-label="Sign in"
+            >
+              <div className="w-8 h-8 rounded-full border border-zinc-300 flex items-center justify-center hover:border-zinc-500 transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+              </div>
             </Link>
           </div>
         </div>
