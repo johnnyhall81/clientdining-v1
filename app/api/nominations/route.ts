@@ -42,19 +42,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check nomination count
-    const { count } = await supabase
-      .from('nominations')
-      .select('*', { count: 'exact', head: true })
-      .eq('nominator_user_id', user.id)
-
-    if (count && count >= 3) {
-      return NextResponse.json(
-        { error: 'You have already used all 3 nominations' },
-        { status: 400 }
-      )
-    }
-
     // Create nomination
     const { data: nomination, error: insertError } = await supabase
       .from('nominations')
