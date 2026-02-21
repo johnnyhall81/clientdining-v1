@@ -23,8 +23,10 @@ export default function LandingPage({ venues }: LandingPageProps) {
   const router = useRouter()
   const venuesRef = useRef<HTMLDivElement>(null)
   const whyRef = useRef<HTMLDivElement>(null)
+  const howRef = useRef<HTMLDivElement>(null)
   const [venuesVisible, setVenuesVisible] = useState(false)
   const [whyVisible, setWhyVisible] = useState(false)
+  const [howVisible, setHowVisible] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
@@ -43,12 +45,14 @@ export default function LandingPage({ venues }: LandingPageProps) {
         entries.forEach((entry) => {
           if (entry.target === venuesRef.current && entry.isIntersecting) setVenuesVisible(true)
           if (entry.target === whyRef.current && entry.isIntersecting) setWhyVisible(true)
+          if (entry.target === howRef.current && entry.isIntersecting) setHowVisible(true)
         })
       },
       { threshold: 0.05 }
     )
     if (venuesRef.current) observer.observe(venuesRef.current)
     if (whyRef.current) observer.observe(whyRef.current)
+    if (howRef.current) observer.observe(howRef.current)
     return () => observer.disconnect()
   }, [])
 
@@ -93,14 +97,10 @@ export default function LandingPage({ venues }: LandingPageProps) {
       </section>
 
       {/* Selected Venues */}
-      <section
-        ref={venuesRef}
-        className="px-8 md:px-12 pb-24"
-      >
+      <section ref={venuesRef} className="px-8 md:px-12 pb-24">
         <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-10">
           Selected venues
         </p>
-
         {venues.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
             {venues.map((venue, i) => {
@@ -145,58 +145,67 @@ export default function LandingPage({ venues }: LandingPageProps) {
       </section>
 
       {/* Why it exists */}
-      <section
-        ref={whyRef}
-        className="px-8 md:px-12 pb-24 max-w-7xl mx-auto"
-      >
+      <section ref={whyRef} className="border-t border-zinc-200 px-8 md:px-12 py-24 max-w-7xl mx-auto">
         <div
-          className="border-t border-zinc-200 pt-16"
           style={{
             opacity: whyVisible ? 1 : 0,
             transform: whyVisible ? 'translateY(0)' : 'translateY(16px)',
             transition: 'opacity 0.7s ease, transform 0.7s ease',
           }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div>
-              <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-4">Curated</p>
-              <p className="text-sm font-light text-zinc-600 leading-relaxed">
-                A small selection of London's leading restaurants and private members' clubs, chosen for weekday business dining.
-              </p>
-            </div>
-            <div>
-              <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-4">Professional</p>
-              <p className="text-sm font-light text-zinc-600 leading-relaxed">
-                Access is limited to City professionals hosting business dinners. Verified via LinkedIn. No exceptions.
-              </p>
-            </div>
-            <div>
-              <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-4">Discreet</p>
-              <p className="text-sm font-light text-zinc-600 leading-relaxed">
-                Invitation only. Membership is by application. The platform is not publicly listed or advertised.
-              </p>
-            </div>
+          <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-12">
+            About
+          </p>
+          <div className="max-w-xl space-y-8">
+            <p className="text-sm font-light text-zinc-600 leading-relaxed">
+              A small selection of London's leading restaurants and private members' clubs, chosen specifically for weekday business dining. Not a directory. Not a marketplace.
+            </p>
+            <p className="text-sm font-light text-zinc-600 leading-relaxed">
+              Access is limited to City professionals hosting business dinners in a professional capacity. Professional status is verified via LinkedIn.
+            </p>
+            <p className="text-sm font-light text-zinc-600 leading-relaxed">
+              Invitation only. The platform is not publicly listed or advertised. Membership is by application.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <section
-        className="px-8 md:px-12 pb-24 flex flex-col items-center text-center"
-        style={{
-          opacity: whyVisible ? 1 : 0,
-          transition: 'opacity 0.7s ease 0.3s',
-        }}
-      >
-        <p className="text-sm font-light text-zinc-400 mb-6">
-          Membership is by application.
-        </p>
-        <Link
-          href="/signup"
-          className="inline-block px-10 py-3.5 bg-zinc-900 text-white text-xs font-light tracking-widest uppercase hover:bg-zinc-700 transition-colors duration-300"
+      {/* How it works */}
+      <section ref={howRef} className="border-t border-zinc-200 px-8 md:px-12 py-24 max-w-7xl mx-auto">
+        <div
+          style={{
+            opacity: howVisible ? 1 : 0,
+            transform: howVisible ? 'translateY(0)' : 'translateY(16px)',
+            transition: 'opacity 0.7s ease, transform 0.7s ease',
+          }}
         >
-          Apply for membership
-        </Link>
+          <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-12">
+            How it works
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+              <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-3">01</p>
+              <p className="text-sm font-light text-zinc-900 mb-2">Apply</p>
+              <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                Request membership via LinkedIn. Your professional status is verified before access is granted.
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-3">02</p>
+              <p className="text-sm font-light text-zinc-900 mb-2">Browse and book</p>
+              <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                View available tables at selected venues. Book directly for early evening weekday dining.
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-3">03</p>
+              <p className="text-sm font-light text-zinc-900 mb-2">Arrive</p>
+              <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                The venue is notified. Your table is confirmed. No follow-up required.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Footer */}
