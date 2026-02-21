@@ -53,15 +53,15 @@ if (!authChecked) return null
       <section className="flex flex-col items-center justify-center px-8 md:px-16 lg:px-24 pt-24 pb-20 text-center">
         <div className="max-w-2xl mx-auto space-y-6">
           <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-light text-zinc-900 leading-tight tracking-tight">
-            London's Best Tables.
+            London's Best Tables
           </h1>
           <p className="text-sm font-light text-zinc-400">
-            Reserved For City Professionals.
+            Reserved For City Professionals
           </p>
           <div className="pt-2">
             <Link
               href="/signup"
-              className="inline-block px-10 py-3.5 bg-zinc-900 text-white text-xs font-light tracking-widest uppercase hover:bg-zinc-700 transition-colors duration-300"
+              className="inline-block px-10 py-3.5 bg-zinc-900 text-white text-sm font-light hover:bg-zinc-700 transition-colors duration-300"
             >
               Apply for membership
             </Link>
