@@ -40,7 +40,7 @@ export default function AboutPage() {
             href="/signup"
             className="inline-block bg-zinc-900 text-zinc-50 px-8 py-4 text-sm font-light hover:bg-zinc-800 transition-colors duration-200"
           >
-            Apply for membership
+            Join
           </Link>
         </div>
       </section>

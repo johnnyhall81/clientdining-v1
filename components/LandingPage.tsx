@@ -50,20 +50,33 @@ if (!authChecked) return null
       </header>
 
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center px-8 md:px-16 lg:px-24 pt-24 pb-20 text-center">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-light text-zinc-900 leading-tight tracking-tight">
+      <section className="relative flex flex-col items-center justify-center text-center min-h-[85vh] overflow-hidden">
+        {/* Background image */}
+        <Image
+          src="/hero.jpg"
+          alt="Private dining"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/50" />
+
+        {/* Content */}
+        <div className="relative z-10 max-w-2xl mx-auto px-8 space-y-6">
+          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-light text-white leading-tight tracking-tight">
             London's Best Tables
           </h1>
-          <p className="text-sm font-light text-zinc-400">
+          <p className="text-sm font-light text-white/70 tracking-wide">
             Reserved For City Professionals
           </p>
           <div className="pt-2">
             <Link
               href="/signup"
-              className="inline-block px-10 py-3.5 bg-zinc-900 text-white text-sm font-light hover:bg-zinc-700 transition-colors duration-300"
+              className="inline-block px-10 py-3.5 bg-white text-zinc-900 text-sm font-light hover:bg-zinc-100 transition-colors duration-300"
             >
-              Apply for membership
+              Join
             </Link>
           </div>
         </div>
