@@ -270,7 +270,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
   return (
     <div className="space-y-8">
-      <div className="relative bg-zinc-100 rounded-lg aspect-[21/9] overflow-hidden">
+      <div className="relative bg-zinc-100 aspect-[21/9] overflow-hidden">
         <Image
           src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
           alt={venue.name}
