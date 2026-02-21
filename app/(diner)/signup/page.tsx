@@ -33,11 +33,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12">
       <div className="w-full max-w-md space-y-8">
 
-        <div className="text-center">
-          <p className="text-sm font-light text-zinc-400">
-            Sign in with LinkedIn to confirm your professional profile.
-          </p>
-        </div>
+        <div className="text-center" />
 
         <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-8">
           {error && (
