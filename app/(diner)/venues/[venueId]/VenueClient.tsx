@@ -8,7 +8,6 @@ import ReactMarkdown from 'react-markdown'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import SlotRow from '@/components/slots/SlotRow'
-import PremiumUnlockModal from '@/components/modals/PremiumUnlockModal'
 import PartySizeModal from '@/components/modals/PartySizeModal'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 
@@ -47,11 +46,9 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlot, setBookingSlot] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
-  const [showPremiumModal, setShowPremiumModal] = useState(false)
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
-  const [dinerTier, setDinerTier] = useState<'free' | 'premium'>('free')
   const [futureBookingsCount, setFutureBookingsCount] = useState(0)
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [cancellingSlot, setCancellingSlot] = useState<{
@@ -83,27 +80,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     }
 
     loadAlerts()
-  }, [user])
-
-  // Load user tier
-  useEffect(() => {
-    const loadUserTier = async () => {
-      if (!user) {
-        setDinerTier('free')
-        return
-      }
-
-      const { data } = await supabase
-        .from('profiles')
-        .select('diner_tier')
-        .eq('user_id', user.id)
-        .single()
-
-      if (data) {
-        setDinerTier(data.diner_tier)
-      }
-    }
-    loadUserTier()
   }, [user])
 
   // Load future bookings count
@@ -394,23 +370,19 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
               <SlotRow
                 key={slot.id}
                 slot={slot}
-                dinerTier={dinerTier}
                 currentFutureBookings={futureBookingsCount}
                 onBook={handleBook}
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}
                 isBookedByMe={bookedSlots.has(slot.id)}
                 onCancelClick={openCancelModal}
-                onUnlock={() => setShowPremiumModal(true)}
               />
             ))}
           </div>
         )}
       </div>
 
-      <PremiumUnlockModal isOpen={showPremiumModal} onClose={() => setShowPremiumModal(false)} />
-
-      {selectedSlot && (
+{selectedSlot && (
         <PartySizeModal
           isOpen={showPartySizeModal}
           onClose={() => {

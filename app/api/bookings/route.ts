@@ -61,29 +61,12 @@ export async function POST(request: Request) {
     // Get user's profile
     const { data: profile } = await supabase
       .from('profiles')
-      .select('diner_tier, email, full_name')
+      .select('email, full_name')
       .eq('user_id', user.id)
       .single()
 
     if (!profile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
-    }
-
-    // Check tier restrictions for premium slots
-    if (slot.slot_tier === 'premium' && profile.diner_tier === 'free') {
-      const slotTime = new Date(slot.start_at)
-      const now = new Date()
-      const hoursUntilSlot = (slotTime.getTime() - now.getTime()) / (1000 * 60 * 60)
-
-      if (hoursUntilSlot > 24) {
-        return NextResponse.json(
-          {
-            error:
-              'Premium membership required to book this slot in advance. Upgrade to Premium or book within 24 hours.',
-          },
-          { status: 403 }
-        )
-      }
     }
 
     // ✅ Booking limits: count FUTURE bookings only (past bookings don't count)
@@ -103,17 +86,11 @@ export async function POST(request: Request) {
     }
 
     const currentFutureBookings = futureBookingRows?.length || 0
-    const maxBookings = profile.diner_tier === 'premium' ? 10 : 3
+    const maxBookings = 10
 
     if (currentFutureBookings >= maxBookings) {
       return NextResponse.json(
-        {
-          error: `Booking limit reached (${currentFutureBookings}/${maxBookings}). ${
-            profile.diner_tier === 'free'
-              ? 'Free users can have up to 3 future bookings. Upgrade to Premium for 10.'
-              : 'Premium users can have up to 10 future bookings.'
-          }`,
-        },
+        { error: `Booking limit reached (${currentFutureBookings}/${maxBookings} future bookings). Cancel an existing booking to make room.` },
         { status: 403 }
       )
     }
