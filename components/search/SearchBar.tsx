@@ -150,11 +150,30 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               day_range_middle: 'bg-zinc-100 rounded-none',
               day_range_start: 'bg-zinc-900 text-white rounded-l',
               day_range_end: 'bg-zinc-900 text-white rounded-r',
-              day_today: 'text-zinc-900 font-medium',
+              day_today: 'font-medium',
               day_outside: 'text-zinc-300',
               day_disabled: 'text-zinc-200',
             }}
           />
+          {/* Anchored state prompt */}
+          <div className="mt-3 pt-3 border-t border-zinc-100 text-center">
+            {filters.dateFrom && !filters.dateTo ? (
+              <p className="text-sm font-light text-zinc-400 animate-pulse">Select an end date</p>
+            ) : filters.dateFrom && filters.dateTo ? (
+              <p className="text-sm font-light text-zinc-400">
+                {format(new Date(filters.dateFrom), 'd MMM')} – {format(new Date(filters.dateTo), 'd MMM')}
+                <button
+                  type="button"
+                  onClick={() => onChange({ ...filters, dateFrom: '', dateTo: '' })}
+                  className="ml-3 text-zinc-400 hover:text-zinc-900 transition-colors"
+                >
+                  ×
+                </button>
+              </p>
+            ) : (
+              <p className="text-sm font-light text-zinc-400">Select a start date</p>
+            )}
+          </div>
         </div>
       )}
 
