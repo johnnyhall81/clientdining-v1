@@ -14,6 +14,7 @@ interface LandingPageProps {
 export default function LandingPage({ venues }: LandingPageProps) {
   const router = useRouter()
   const [authChecked, setAuthChecked] = useState(false)
+  const [enterHovered, setEnterHovered] = useState(false)
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -86,13 +87,15 @@ if (!authChecked) return null
           <div className="pt-2">
             <Link
               href="/signup"
-              className="inline-block px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300 hover:bg-white/20 hover:border-white/50"
+              className="inline-block px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300"
               style={{
                 color: '#F3F1ED',
-                background: 'rgba(255,255,255,0.08)',
+                background: enterHovered ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)',
                 backdropFilter: 'blur(4px)',
-                border: '1px solid rgba(255,255,255,0.35)',
+                border: enterHovered ? '1px solid rgba(255,255,255,0.55)' : '1px solid rgba(255,255,255,0.35)',
               }}
+              onMouseEnter={() => setEnterHovered(true)}
+              onMouseLeave={() => setEnterHovered(false)}
             >
               Enter
             </Link>
