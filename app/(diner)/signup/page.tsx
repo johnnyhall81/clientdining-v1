@@ -42,6 +42,10 @@ export default function SignupPage() {
             </div>
           )}
 
+          <div className="mb-6 text-center space-y-1">
+            <p className="text-sm text-zinc-600 font-light">Access London&apos;s leading restaurants for business dining.</p>
+            <p className="text-sm text-zinc-400 font-light">Membership is verified via LinkedIn.</p>
+          </div>
           <button
             onClick={handleLinkedInSignup}
             disabled={loading}
