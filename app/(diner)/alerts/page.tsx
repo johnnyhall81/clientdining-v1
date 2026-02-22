@@ -268,8 +268,8 @@ export default function AlertsPage() {
                         <Link href={`/venues/${alert.venue.id}`} prefetch={true}>
                           <h3 className="font-light text-xl text-zinc-900 hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
                         </Link>
-                        <p className="text-sm text-zinc-400 font-light">{alert.venue.area}</p>
-                        <p className="text-sm text-zinc-700 font-light pt-2">{formatFullDateTime(alert.slot.start_at)}</p>
+                        <p className="text-sm text-zinc-500 font-light">{alert.venue.area}</p>
+                        <p className="text-sm text-zinc-500 font-light pt-2">{formatFullDateTime(alert.slot.start_at)}</p>
                         <p className="text-sm text-zinc-500 font-light">
                           {alert.slot.party_min === alert.slot.party_max
                             ? `${alert.slot.party_min} guests`
