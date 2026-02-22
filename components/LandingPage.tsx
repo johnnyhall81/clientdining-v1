@@ -31,15 +31,18 @@ if (!authChecked) return null
 
       {/* Nav */}
       <header className="absolute top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Subtle gradient fade behind nav for legibility */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%)' }} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex justify-between items-center h-16">
-            <span className="text-xl font-light text-white">ClientDining</span>
+            <span className="text-xl font-light" style={{ color: '#F2F1EE', WebkitFontSmoothing: 'antialiased' }}>ClientDining</span>
             <Link
               href="/login"
-              className="text-white/70 hover:text-white transition-colors"
+              className="transition-colors"
+              style={{ color: 'rgba(242,241,238,0.7)' }}
               aria-label="Sign in"
             >
-              <div className="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center hover:border-white transition-colors">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors" style={{ border: '1px solid rgba(242,241,238,0.35)' }}>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
@@ -60,20 +63,37 @@ if (!authChecked) return null
           sizes="100vw"
           className="object-cover object-center"
         />
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/45" />
+        {/* Gradient overlay - heavier at top for nav, lighter mid */}
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.35) 100%)'
+        }} />
+        {/* Radial overlay to dull bright ceiling light */}
+        <div className="absolute inset-0" style={{
+          background: 'radial-gradient(ellipse 60% 30% at 50% 0%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 100%)'
+        }} />
         {/* Text */}
-        <div className="relative z-10 max-w-2xl mx-auto px-8 space-y-6">
-          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-light text-white leading-tight tracking-tight">
+        <div className="relative z-10 max-w-2xl mx-auto px-8 space-y-6" style={{
+          WebkitFontSmoothing: 'antialiased',
+          MozOsxFontSmoothing: 'grayscale',
+        }}>
+          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-normal text-white leading-tight tracking-wide"
+            style={{ color: '#F2F1EE' }}
+          >
             London's Best Tables
           </h1>
-          <p className="text-lg font-light text-white/70">
+          <p className="text-lg font-light leading-relaxed" style={{ color: 'rgba(242,241,238,0.75)' }}>
             Reserved for City professionals
           </p>
           <div className="pt-2">
             <Link
               href="/signup"
-              className="inline-block px-10 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg hover:bg-zinc-100 transition-colors duration-300"
+              className="inline-block px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300"
+              style={{
+                color: '#F2F1EE',
+                background: 'rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(4px)',
+                border: '1px solid rgba(255,255,255,0.25)',
+              }}
             >
               Enter
             </Link>
