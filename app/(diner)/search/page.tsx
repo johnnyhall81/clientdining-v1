@@ -566,12 +566,12 @@ const handleCancel = async () => {
 
                   {/* Details — right */}
                   <div className="flex-1 p-6 flex flex-col justify-between">
-                    <div className="space-y-2 pr-6">
+                    <div className="space-y-1 pr-6">
                       <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-80 transition-opacity">
                         <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
                       </Link>
-                      <p className="text-sm text-zinc-400 font-light">{venue.area}</p>
-                      <p className="text-sm text-zinc-700 font-light pt-2">
+                      <p className="text-sm text-zinc-500 font-light">{venue.area}</p>
+                      <p className="text-sm text-zinc-500 font-light pt-2">
                         {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                       </p>
                       <p className="text-sm text-zinc-500 font-light">
