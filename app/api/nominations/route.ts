@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     await resend.emails.send({
       from: 'ClientDining <notifications@clientdining.com>',
       to: email,
-      subject: `${profile?.full_name || 'A colleague'} has invited you to ClientDining`,
+      subject: `${profile?.full_name?.split(' ')[0] || 'A colleague'} has invited you to ClientDining`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -70,31 +70,21 @@ export async function POST(request: Request) {
             <meta charset="utf-8">
             <style>
               body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #111827; }
-              .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
-              .header { margin-bottom: 32px; }
-              .content { background: #F9FAFB; padding: 32px; border-radius: 8px; margin: 24px 0; }
-              .button { display: inline-block; background: #111827; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 24px 0; }
-              .footer { color: #6B7280; font-size: 14px; margin-top: 32px; }
+              .container { max-width: 560px; margin: 0 auto; padding: 48px 24px; }
+              .button { display: inline-block; background: #111827; color: white; padding: 14px 32px; text-decoration: none; font-size: 14px; font-weight: 400; margin: 32px 0; }
+              .footer { color: #9CA3AF; font-size: 13px; margin-top: 48px; border-top: 1px solid #F3F4F6; padding-top: 24px; }
             </style>
           </head>
           <body>
             <div class="container">
-              <div class="header">
-                <h1 style="margin: 0; font-size: 24px; font-weight: 600;">You're Invited to ClientDining</h1>
-              </div>
+              <p style="font-size: 20px; font-weight: 300; margin-bottom: 24px;">${profile?.full_name?.split(' ')[0] || 'A colleague'} has invited you.</p>
 
-              <p>Hello ${name},</p>
+              <p style="color: #374151; font-weight: 300;">ClientDining is private access to London's best restaurants and members' clubs. Built for professionals who take business dining seriously.</p>
 
-              <p><strong>${profile?.full_name || 'A colleague'}</strong> has invited you to join ClientDining — access to London's most sought-after tables.</p>
-
-              <div class="content">
-                <p style="margin: 0; color: #374151;">Members' clubs, Michelin restaurants, and private rooms. The tables that matter, when they matter.</p>
-              </div>
-
-              <a href="https://clientdining.com/signup?ref=${user.id}" class="button">Accept Invitation</a>
+              <a href="https://clientdining.com/signup?ref=${user.id}" class="button">Accept invitation</a>
 
               <div class="footer">
-                <p>ClientDining · London's best tables</p>
+                <p>ClientDining · London</p>
               </div>
             </div>
           </body>

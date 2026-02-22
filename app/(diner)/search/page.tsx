@@ -525,104 +525,83 @@ const handleCancel = async () => {
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {results.map(({ slot, venue }) => {
-            const lastMinute = isLastMinute(slot.start_at)
             const hasAlert = alerts.has(slot.id)
             const isBookedByMe = bookedSlots.has(slot.id)
 
             return (
               <div
                 key={slot.id}
-                className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4 hover:shadow-md transition-shadow relative"
+                className="bg-white border border-zinc-200 relative"
               >
-                {/* Cancel X button for booked slots */}
+                {/* Cancel X for booked slots */}
                 {isBookedByMe && (
                   <button
                     type="button"
                     onClick={() => openCancelModal(slot.id, venue.name)}
-                    className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors"
+                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
                     aria-label="Cancel booking"
-                    title="Cancel booking"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="currentColor"
-                      className="w-4 h-4"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 )}
 
-                <div className="flex items-center justify-between gap-4">
-                  
-                <Link
-                  href={`/venues/${venue.id}`}
-                  prefetch={true}
-                  className="flex items-center gap-4 flex-1 hover:opacity-80 transition-opacity"
-                >
-
-
-
-
-                    <div className="relative w-16 h-16 aspect-square bg-zinc-100 rounded overflow-hidden flex-shrink-0">
-                  {venue.image_venue ? (
-                    <Image
-                      src={venue.image_venue}
-                      alt={venue.name}
-                      fill
-                      sizes="64px"
-                      quality={50}
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs font-light">
-                      No image
-                    </div>
-                  )}
-                </div>
-                    <div>
-                      <h3 className="font-light text-lg text-zinc-900 hover:underline">{venue.name}</h3>
-                      <p className="text-sm text-zinc-600 font-light">{venue.area}</p>
-                      <div className="flex items-center gap-3 mt-1 text-sm flex-wrap">
-                        <span className="text-zinc-700 font-light">
-                          {formatSlotDate(slot.start_at)} • {formatSlotTime(slot.start_at)}
-                        </span>
-                        <span className="text-zinc-600 font-light">
-                            Typical table: {slot.party_min}-{slot.party_max} guests
-                        </span>
-                        {isBookedByMe && (
-                          <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-light">
-                            Confirmed
-                          </span>
-                        )}
-
-                      </div>
-                    </div>
+                <div className="flex flex-col md:flex-row">
+                  {/* Large image — left */}
+                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+                    {venue.image_venue ? (
+                      <Image
+                        src={venue.image_venue}
+                        alt={venue.name}
+                        fill
+                        sizes="40vw"
+                        quality={60}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-zinc-100" />
+                    )}
                   </Link>
 
-                 
-                  <div className="flex items-center gap-3">
-                    {/* Action button: Book OR Alert */}
-                    {slot.status === 'available' && !isBookedByMe ? (
-                      <button
-                        onClick={() => handleBook(slot.id)}
-                        disabled={bookingSlotId === slot.id}
-                        className={[
-                          'h-9 px-5 text-sm font-light rounded-lg whitespace-nowrap transition-colors border border-zinc-300',
-                          bookingSlotId === slot.id
-                            ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
-                            : 'bg-white text-zinc-900 hover:bg-zinc-50',
-                        ].join(' ')}
-                      >
-                        {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
-                      </button>
+                  {/* Details — right */}
+                  <div className="flex-1 p-6 flex flex-col justify-between">
+                    <div className="space-y-2 pr-6">
+                      <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-80 transition-opacity">
+                        <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
+                      </Link>
+                      <p className="text-sm text-zinc-400 font-light">{venue.area}</p>
+                      <p className="text-sm text-zinc-700 font-light pt-2">
+                        {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
+                      </p>
+                      <p className="text-sm text-zinc-500 font-light">
+                        {slot.party_min}–{slot.party_max} guests
+                      </p>
+                    </div>
 
-                    ) : !isBookedByMe && (
-                      <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
-                    )}
+                    <div className="pt-6 flex items-center justify-between">
+                      <div>
+                        {isBookedByMe && <span className="text-xs text-green-700 font-light">Confirmed</span>}
+                      </div>
+                      <div>
+                        {slot.status === 'available' && !isBookedByMe ? (
+                          <button
+                            onClick={() => handleBook(slot.id)}
+                            disabled={bookingSlotId === slot.id}
+                            className={[
+                              'h-9 px-5 text-sm font-light border border-zinc-300 whitespace-nowrap transition-colors',
+                              bookingSlotId === slot.id
+                                ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
+                                : 'bg-white text-zinc-900 hover:bg-zinc-50',
+                            ].join(' ')}
+                          >
+                            {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
+                          </button>
+                        ) : !isBookedByMe && (
+                          <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
