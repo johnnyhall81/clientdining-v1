@@ -30,16 +30,16 @@ if (!authChecked) return null
     <div className="min-h-screen bg-zinc-50">
 
       {/* Nav */}
-      <header className="bg-white border-b border-zinc-200 sticky top-0 z-50">
+      <header className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <span className="text-xl font-light text-zinc-900">ClientDining</span>
+            <span className="text-xl font-light text-white">ClientDining</span>
             <Link
               href="/login"
-              className="text-zinc-600 hover:text-zinc-900 transition-colors"
+              className="text-zinc-400 hover:text-white transition-colors"
               aria-label="Sign in"
             >
-              <div className="w-8 h-8 rounded-full border border-zinc-300 flex items-center justify-center hover:border-zinc-500 transition-colors">
+              <div className="w-8 h-8 rounded-full border border-zinc-600 flex items-center justify-center hover:border-zinc-400 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
@@ -82,7 +82,7 @@ if (!authChecked) return null
       </section>
 
       {/* Now available */}
-      <section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pb-24">
+      <section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pt-24 pb-24">
         <p className="text-base font-light text-zinc-500 mb-8">From the collection</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">
           {venues.slice(0, 3).map((venue) => {
