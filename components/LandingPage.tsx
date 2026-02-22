@@ -148,7 +148,7 @@ if (!authChecked) return null
         </div>
 
         {/* CTA */}
-        <div className="mt-16 pt-16 border-t border-zinc-200 flex flex-col items-center text-center space-y-6">
+        <div className="mt-16 pt-16 pb-16 border-t border-zinc-200 flex flex-col items-center text-center space-y-6">
           <p className="text-base font-light text-zinc-500">The full collection is available to members</p>
           <Link
             href="/signup"
