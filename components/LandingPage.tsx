@@ -15,6 +15,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
   const router = useRouter()
   const [authChecked, setAuthChecked] = useState(false)
   const [enterHovered, setEnterHovered] = useState(false)
+  const [loginHovered, setLoginHovered] = useState(false)
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -37,11 +38,13 @@ if (!authChecked) return null
             <span className="text-xl font-normal" style={{ color: '#F3F1ED', WebkitFontSmoothing: 'antialiased' }}>ClientDining</span>
             <Link
               href="/login"
-              className="transition-colors"
-              style={{ color: 'rgba(242,241,238,0.7)' }}
+              className="transition-all duration-300"
+              style={{ color: loginHovered ? 'rgba(242,241,237,1)' : 'rgba(242,241,238,0.7)' }}
               aria-label="Sign in"
+              onMouseEnter={() => setLoginHovered(true)}
+              onMouseLeave={() => setLoginHovered(false)}
             >
-              <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors" style={{ border: '1px solid rgba(242,241,238,0.35)' }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300" style={{ border: loginHovered ? '1px solid rgba(242,241,237,0.8)' : '1px solid rgba(242,241,238,0.35)' }}>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
