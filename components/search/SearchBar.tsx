@@ -126,22 +126,26 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
       {open === 'date' && (
         <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-200 rounded-xl shadow-lg p-4">
           <style>{`
+            .rdp { --rdp-accent-color: #18181b; --rdp-background-color: #f4f4f5; }
             .rdp-day_range_start .rdp-day_button,
-            .rdp-day_range_end .rdp-day_button {
+            .rdp-day_range_end .rdp-day_button,
+            .rdp-day_selected .rdp-day_button {
               background-color: #18181b !important;
               color: white !important;
-              border-radius: 50% !important;
-            }
-            .rdp-day_range_middle .rdp-day_button {
-              background-color: #f4f4f5 !important;
-              border-radius: 0 !important;
-              color: #18181b !important;
             }
             .rdp-day_range_start:not(.rdp-day_range_end) .rdp-day_button {
               border-radius: 50% 0 0 50% !important;
             }
             .rdp-day_range_end:not(.rdp-day_range_start) .rdp-day_button {
               border-radius: 0 50% 50% 0 !important;
+            }
+            .rdp-day_range_start.rdp-day_range_end .rdp-day_button {
+              border-radius: 50% !important;
+            }
+            .rdp-day_range_middle .rdp-day_button {
+              background-color: #f4f4f5 !important;
+              color: #18181b !important;
+              border-radius: 0 !important;
             }
             .rdp-day_hover_preview .rdp-day_button {
               background-color: #f4f4f5 !important;
@@ -151,7 +155,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               background-color: #e4e4e7 !important;
               border-radius: 0 50% 50% 0 !important;
             }
-            .rdp-button:hover:not([disabled]):not(.rdp-day_selected) .rdp-day_button {
+            .rdp-button_reset.rdp-button:hover:not([disabled]) .rdp-day_button {
               background-color: #e4e4e7 !important;
               border-radius: 50% !important;
             }
