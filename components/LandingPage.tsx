@@ -55,7 +55,7 @@ if (!authChecked) return null
           <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-light text-zinc-900 leading-tight tracking-tight">
             London's Best Tables
           </h1>
-          <p className="text-sm font-light text-zinc-500">
+          <p className="text-lg font-light text-zinc-500">
             Reserved for City professionals
           </p>
           <div className="pt-2">
@@ -71,9 +71,7 @@ if (!authChecked) return null
 
       {/* Now available */}
       <section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pb-24">
-        <p className="text-sm font-light text-zinc-500 mb-8">
-          Now available
-        </p>
+        <p className="text-base font-light text-zinc-500 mb-8">From the collection</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">
           {venues.slice(0, 3).map((venue) => {
             const imageSrc = venue.image_venue || venue.image
