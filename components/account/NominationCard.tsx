@@ -134,7 +134,7 @@ export default function NominationCard() {
 
       {nominations.length > 0 && (
         <div>
-          <h3 className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-3">Sent</h3>
+          <h3 className="text-xs font-light text-zinc-400 mb-3">Sent</h3>
           <div className="space-y-2">
             {nominations.map((nom) => (
               <div key={nom.id} className="flex items-center justify-between py-2 border-b border-zinc-100 text-sm">
