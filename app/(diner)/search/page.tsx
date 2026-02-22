@@ -595,7 +595,7 @@ const handleCancel = async () => {
                             {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
                           </button>
                         ) : isBookedByMe ? (
-                          <span className="text-sm text-zinc-400 font-light">Booked</span>
+                          <span className="text-sm text-zinc-400 font-light">Reserved</span>
                         ) : (
                           <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
                         )}
