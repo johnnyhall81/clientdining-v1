@@ -23,7 +23,7 @@ export default function PrivacyPage() {
         <p className="text-sm text-zinc-600 leading-relaxed">
           CLIENTDINING LIMITED is a company registered in England and Wales.<br />
           Company Registration No: 17018817<br />
-          Registered Office: 2 The Topiary, Ashtead, KT21 2TE
+          Registered in England and Wales
         </p>
       </section>
 
@@ -308,7 +308,7 @@ export default function PrivacyPage() {
         <p className="text-zinc-600 leading-relaxed">
           CLIENTDINING LIMITED<br />
           Email: privacy@clientdining.com<br />
-          Address: 2 The Topiary, Ashtead, KT21 2TE<br />
+          
           Company Registration No: 17018817
         </p>
       </section>
