@@ -71,7 +71,7 @@ if (!authChecked) return null
 
       {/* Latest Additions — 3 venues, editorial style */}
       <section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pb-24">
-        <p className="text-xs font-light tracking-widest uppercase text-zinc-400 mb-8">
+        <p className="text-xs font-light tracking-widest text-zinc-400 mb-8">
           Latest additions
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">
