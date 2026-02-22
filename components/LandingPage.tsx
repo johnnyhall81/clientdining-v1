@@ -84,7 +84,7 @@ if (!authChecked) return null
                 className="group block"
               >
                 {/* Tall portrait image */}
-                <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden mb-4">
+                <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden mb-4 rounded-xl">
                   {imageSrc ? (
                     <>
                       <Image
