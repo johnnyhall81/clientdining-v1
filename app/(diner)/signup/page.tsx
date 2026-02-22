@@ -43,8 +43,7 @@ export default function SignupPage() {
           )}
 
           <div className="mb-8 space-y-3">
-            <p className="text-base text-zinc-500 font-light">ClientDining is a private platform for professional business dining in London.</p>
-            <p className="text-base text-zinc-500 font-light">Membership is verified for City professionals.</p>
+            <p className="text-base text-zinc-500 font-light">Business dining for City professionals</p>
           </div>
 
           <button
