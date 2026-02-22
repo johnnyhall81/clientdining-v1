@@ -172,11 +172,11 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
             }}
             modifiers={{
               hover_preview: filters.dateFrom && !filters.dateTo && hoverDate
-                ? { from: new Date(filters.dateFrom), to: hoverDate }
-                : undefined,
+                ? [{ from: new Date(filters.dateFrom), to: hoverDate }]
+                : [],
               hover_preview_end: filters.dateFrom && !filters.dateTo && hoverDate
-                ? hoverDate
-                : undefined,
+                ? [hoverDate]
+                : [],
             }}
             modifiersClassNames={{
               hover_preview: 'rdp-day_hover_preview',
