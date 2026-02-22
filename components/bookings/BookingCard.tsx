@@ -72,10 +72,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             )}
           </div>
 
-          <div className="pt-4">
-            {isCancelled && <span className="text-xs text-red-400 font-light">Cancelled</span>}
-            {!isCancelled && isPast && <span className="text-xs text-zinc-400 font-light">Completed</span>}
-          </div>
+
         </div>
       </Link>
 
