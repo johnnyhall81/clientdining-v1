@@ -29,6 +29,7 @@ type Panel = 'date' | 'area' | 'guests' | null
 
 export default function SearchBar({ filters, venues, onChange }: SearchBarProps) {
   const [open, setOpen] = useState<Panel>(null)
+  const [hoverDate, setHoverDate] = useState<Date | undefined>(undefined)
   const ref = useRef<HTMLDivElement>(null)
 
   // Close on outside click
@@ -124,6 +125,37 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
       {/* Date panel */}
       {open === 'date' && (
         <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-200 rounded-xl shadow-lg p-4">
+          <style>{`
+            .rdp-day_range_start .rdp-day_button,
+            .rdp-day_range_end .rdp-day_button {
+              background-color: #18181b !important;
+              color: white !important;
+              border-radius: 50% !important;
+            }
+            .rdp-day_range_middle .rdp-day_button {
+              background-color: #f4f4f5 !important;
+              border-radius: 0 !important;
+              color: #18181b !important;
+            }
+            .rdp-day_range_start:not(.rdp-day_range_end) .rdp-day_button {
+              border-radius: 50% 0 0 50% !important;
+            }
+            .rdp-day_range_end:not(.rdp-day_range_start) .rdp-day_button {
+              border-radius: 0 50% 50% 0 !important;
+            }
+            .rdp-day_hover_preview .rdp-day_button {
+              background-color: #f4f4f5 !important;
+              border-radius: 0 !important;
+            }
+            .rdp-day_hover_preview_end .rdp-day_button {
+              background-color: #e4e4e7 !important;
+              border-radius: 0 50% 50% 0 !important;
+            }
+            .rdp-button:hover:not([disabled]):not(.rdp-day_selected) .rdp-day_button {
+              background-color: #e4e4e7 !important;
+              border-radius: 50% !important;
+            }
+          `}</style>
           <DayPicker
             mode="range"
             selected={dateRange}
@@ -133,8 +165,29 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
                 dateFrom: range?.from ? format(range.from, 'yyyy-MM-dd') : '',
                 dateTo: range?.to ? format(range.to, 'yyyy-MM-dd') : '',
               })
-              if (range?.from && range?.to) setOpen(null)
+              if (range?.from && range?.to) {
+                setHoverDate(undefined)
+                setOpen(null)
+              }
             }}
+            modifiers={{
+              hover_preview: filters.dateFrom && !filters.dateTo && hoverDate
+                ? { from: new Date(filters.dateFrom), to: hoverDate }
+                : undefined,
+              hover_preview_end: filters.dateFrom && !filters.dateTo && hoverDate
+                ? hoverDate
+                : undefined,
+            }}
+            modifiersClassNames={{
+              hover_preview: 'rdp-day_hover_preview',
+              hover_preview_end: 'rdp-day_hover_preview_end',
+            }}
+            onDayMouseEnter={(day) => {
+              if (filters.dateFrom && !filters.dateTo) {
+                setHoverDate(day)
+              }
+            }}
+            onDayMouseLeave={() => setHoverDate(undefined)}
             numberOfMonths={2}
             fromDate={new Date()}
             toDate={addMonths(new Date(), 2)}
@@ -146,19 +199,14 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               months: 'flex gap-8',
               caption_label: 'text-sm font-light text-zinc-900',
               nav_button: 'text-zinc-400 hover:text-zinc-900',
-              day_selected: 'bg-zinc-900 text-white rounded',
-              day_range_middle: 'bg-zinc-100 rounded-none',
-              day_range_start: 'bg-zinc-900 text-white rounded-l',
-              day_range_end: 'bg-zinc-900 text-white rounded-r',
               day_today: 'font-medium',
               day_outside: 'text-zinc-300',
               day_disabled: 'text-zinc-200',
             }}
           />
-          {/* Anchored state prompt */}
-          <div className="mt-3 pt-3 border-t border-zinc-100 text-center">
+          <div className="mt-3 pt-3 border-t border-zinc-100 text-center min-h-[24px]">
             {filters.dateFrom && !filters.dateTo ? (
-              <p className="text-sm font-light text-zinc-400 animate-pulse">Select an end date</p>
+              <p className="text-sm font-light text-zinc-400">Select an end date</p>
             ) : filters.dateFrom && filters.dateTo ? (
               <p className="text-sm font-light text-zinc-400">
                 {format(new Date(filters.dateFrom), 'd MMM')} – {format(new Date(filters.dateTo), 'd MMM')}
@@ -170,9 +218,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
                   ×
                 </button>
               </p>
-            ) : (
-              <p className="text-sm font-light text-zinc-400">Select a start date</p>
-            )}
+            ) : null}
           </div>
         </div>
       )}
