@@ -12,6 +12,7 @@ import Link from 'next/link'
 import AlertToggle from '@/components/slots/AlertToggle'
 import PremiumUnlockModal from '@/components/modals/PremiumUnlockModal'
 import PartySizeModal from '@/components/modals/PartySizeModal'
+import SearchBar, { SearchFilters } from '@/components/search/SearchBar'
 
 interface SearchResult {
   slot: {
@@ -58,11 +59,11 @@ const [cancellingSlot, setCancellingSlot] = useState<{
   const [bookingError, setBookingError] = useState<string | null>(null)
 
 
-  const [filters, setFilters] = useState({
-    date: '',
+  const [filters, setFilters] = useState<SearchFilters>({
+    dateFrom: '',
+    dateTo: '',
     area: '',
     partySize: 2,
-    within24h: false,
     venueId: '',
   })
 
@@ -90,7 +91,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
       setAlerts(new Set())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.date, filters.area, filters.partySize, filters.within24h, filters.venueId, user])
+  }, [filters.dateFrom, filters.dateTo, filters.area, filters.partySize, filters.venueId, user])
 
   useEffect(() => {
     if (!user) {
@@ -228,12 +229,12 @@ const handleCancel = async () => {
       .order('start_at', { ascending: true })
       .limit(50)
 
-    if (filters.date) {
-      const startOfDay = new Date(filters.date)
+    if (filters.dateFrom) {
+      const startOfDay = new Date(filters.dateFrom)
       startOfDay.setHours(0, 0, 0, 0)
-      const endOfDay = new Date(filters.date)
+      const endDate = filters.dateTo || filters.dateFrom
+      const endOfDay = new Date(endDate)
       endOfDay.setHours(23, 59, 59, 999)
-
       query = query.gte('start_at', startOfDay.toISOString()).lte('start_at', endOfDay.toISOString())
     }
 
@@ -243,12 +244,6 @@ const handleCancel = async () => {
 
     if (filters.partySize) {
       query = query.lte('party_min', filters.partySize).gte('party_max', filters.partySize)
-    }
-
-    if (filters.within24h) {
-      const in24h = new Date()
-      in24h.setHours(in24h.getHours() + 24)
-      query = query.lte('start_at', in24h.toISOString())
     }
 
 
@@ -426,90 +421,8 @@ const handleCancel = async () => {
         
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-lg border border-zinc-200 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {/* Date */}
-          <div>
-            <label className="block text-sm font-light text-zinc-700 mb-2">Date</label>
-            <input
-              type="date"
-              value={filters.date}
-              onChange={(e) => setFilters({ ...filters, date: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
-            />
-          </div>
-
-          {/* Area */}
-          <div>
-            <label className="block text-sm font-light text-zinc-700 mb-2">Area</label>
-            <select
-              value={filters.area}
-              onChange={(e) => setFilters({ ...filters, area: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
-            >
-              <option value="">All Areas</option>
-              <option value="Mayfair">Mayfair</option>
-              <option value="Soho">Soho</option>
-              <option value="Covent Garden">Covent Garden</option>
-              <option value="Fitzrovia">Fitzrovia</option>
-              <option value="Marylebone">Marylebone</option>
-              <option value="Knightsbridge">Knightsbridge</option>
-              <option value="Chelsea">Chelsea</option>
-              <option value="Notting Hill">Notting Hill</option>
-              <option value="Shoreditch">Shoreditch</option>
-              <option value="City of London">City of London</option>
-              <option value="Canary Wharf">Canary Wharf</option>
-            </select>
-          </div>
-
-          {/* Party Size */}
-          <div>
-            <label className="block text-sm font-light text-zinc-700 mb-2">Party Size</label>
-            <select
-              value={filters.partySize}
-              onChange={(e) => setFilters({ ...filters, partySize: parseInt(e.target.value) })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
-            >
-              {[2, 3, 4, 5, 6, 7, 8].map((size) => (
-                <option key={size} value={size}>
-                  {size} guests
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Venue Filter */}
-          <div>
-            <label className="block text-sm font-light text-zinc-700 mb-2">Venue</label>
-            <select
-              value={filters.venueId}
-              onChange={(e) => setFilters({ ...filters, venueId: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
-            >
-              <option value="">All Venues</option>
-              {venues.map((venue) => (
-                <option key={venue.id} value={venue.id}>
-                  {venue.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Within 24h Checkbox */}
-          <div className="flex items-end">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={filters.within24h}
-                onChange={(e) => setFilters({ ...filters, within24h: e.target.checked })}
-                className="w-4 h-4 rounded border-zinc-200 accent-zinc-700 focus:ring-0 focus:ring-offset-0"
-              />
-              <span className="text-sm text-zinc-700 font-light">Within 24h</span>
-            </label>
-          </div>
-        </div>
-      </div>
+      {/* Search bar */}
+      <SearchBar filters={filters} venues={venues} onChange={setFilters} />
 
       {/* Results */}
       {loading ? (
