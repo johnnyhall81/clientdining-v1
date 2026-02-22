@@ -74,10 +74,7 @@ export default function NominationCard() {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-light text-zinc-900 mb-1">Invite a colleague</h2>
-        <p className="text-sm text-zinc-400 font-light">
-          All invitations are reviewed before approval.
-        </p>
+        <h2 className="text-xl font-light text-zinc-900">Invite</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 mb-6">
@@ -105,16 +102,6 @@ export default function NominationCard() {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-light text-zinc-700 mb-1">Company</label>
-          <input
-            type="text"
-            value={formData.company}
-            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-            className="input-field"
-          />
-        </div>
-
         {error && (
           <p className="text-sm text-red-600 font-light">{error}</p>
         )}
@@ -128,7 +115,7 @@ export default function NominationCard() {
           disabled={loading}
           className="px-8 bg-zinc-900 text-zinc-50 py-3 rounded-lg hover:bg-zinc-800 disabled:opacity-50 font-light transition-colors duration-200"
         >
-          {loading ? 'Sending...' : 'Send invitation'}
+          {loading ? 'Sending...' : 'Invite'}
         </button>
       </form>
 
