@@ -55,8 +55,8 @@ if (!authChecked) return null
           <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-light text-zinc-900 leading-tight tracking-tight">
             London's Best Tables
           </h1>
-          <p className="text-sm font-light text-zinc-400">
-            Reserved For City Professionals
+          <p className="text-sm font-light text-zinc-500">
+            Reserved for City professionals
           </p>
           <div className="pt-2">
             <Link
@@ -69,9 +69,9 @@ if (!authChecked) return null
         </div>
       </section>
 
-      {/* Latest Additions — 3 venues, editorial style */}
+      {/* Now available */}
       <section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pb-24">
-        <p className="text-xs font-light tracking-widest text-zinc-400 mb-8">
+        <p className="text-sm font-light text-zinc-500 mb-8">
           Now available
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">
@@ -83,7 +83,6 @@ if (!authChecked) return null
                 href={`/venues/${venue.id}`}
                 className="group block"
               >
-                {/* Tall portrait image */}
                 <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden mb-4 rounded-xl">
                   {imageSrc ? (
                     <>
@@ -100,12 +99,11 @@ if (!authChecked) return null
                     <div className="w-full h-full bg-zinc-200" />
                   )}
                 </div>
-                {/* Text below image */}
-                <p className="text-lg font-light text-zinc-900 tracking-wide mt-5">
+                <p className="text-base font-light text-zinc-900 mt-4">
                   {venue.name}
                 </p>
                 {venue.area && (
-                  <p className="text-sm font-light text-zinc-400 mt-1 tracking-wide">
+                  <p className="text-sm font-light text-zinc-500 mt-1">
                     {venue.area}
                   </p>
                 )}
