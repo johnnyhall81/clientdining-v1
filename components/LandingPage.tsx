@@ -86,7 +86,7 @@ if (!authChecked) return null
           <div className="pt-2">
             <Link
               href="/signup"
-              className="inline-block px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300"
+              className="inline-block px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300 hover:bg-white/20 hover:border-white/50"
               style={{
                 color: '#F3F1ED',
                 background: 'rgba(255,255,255,0.08)',
