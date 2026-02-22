@@ -91,22 +91,16 @@ export default function AlertToggle(props: AlertToggleProps) {
         disabled={isLoading}
         title={isActive ? 'Alert is on for this slot' : 'Turn on an alert for this slot'}
         className={[
-          'h-10 px-6 text-sm rounded-lg whitespace-nowrap transition-colors font-light',
+          'h-9 px-5 text-sm rounded-lg whitespace-nowrap transition-colors font-light',
           'focus:outline-none focus-visible:outline-none',
           isLoading ? 'cursor-not-allowed opacity-60' : '',
-
-          // Inactive: Follow
-          !isActive &&
-            'border border-zinc-200 text-zinc-600 bg-white hover:border-zinc-300',
-
-          // Active: Following
-          isActive &&
-            'border border-zinc-300 text-zinc-700 bg-zinc-50 hover:border-zinc-400',
+          !isActive && 'border border-zinc-300 text-zinc-900 bg-white hover:bg-zinc-50',
+          isActive && 'border border-zinc-300 text-zinc-900 bg-zinc-50 hover:bg-zinc-100',
         ]
           .filter(Boolean)
           .join(' ')}
       >
-        {isLoading ? 'Saving…' : isActive ? '✓ Following' : '+ Follow'}
+        {isLoading ? 'Saving…' : isActive ? 'Following' : 'Follow'}
       </button>
 
       {error ? (
