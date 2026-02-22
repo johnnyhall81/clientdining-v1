@@ -8,7 +8,7 @@ export default function AboutPage() {
     <div>
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <h1 className="text-5xl md:text-6xl font-light text-zinc-900 mb-12 tracking-tight">
-          About ClientDining
+          About
         </h1>
 
         <div className="max-w-2xl space-y-8 text-zinc-500 font-light leading-relaxed">
