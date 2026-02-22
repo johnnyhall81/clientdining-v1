@@ -1,7 +1,11 @@
-'use client'
-
+import type { Metadata } from 'next'
 import React from 'react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'About — ClientDining',
+  description: 'ClientDining is a private booking platform for professionals who host business dining in London. Membership is verified for City professionals.',
+}
 
 export default function AboutPage() {
   return (

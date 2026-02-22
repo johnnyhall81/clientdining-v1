@@ -39,11 +39,20 @@ export const metadata: Metadata = {
     siteName: 'ClientDining',
     locale: 'en_GB',
     type: 'website',
+    images: [
+      {
+        url: 'https://www.clientdining.com/og.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'ClientDining — Business dining in London',
+      }
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: "ClientDining — Business dining in London",
     description: "A private booking platform for professionals who host business dining in London.",
+    images: ['https://www.clientdining.com/og.jpg'],
   },
   robots: {
     index: true,
@@ -78,6 +87,23 @@ export default function RootLayout({
         <SpeedInsights />
       </AuthProvider>
       <GoogleAnalytics gaId="G-CYRRR3H4T9" />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "ClientDining",
+            "url": "https://www.clientdining.com",
+            "description": "A private booking platform for professionals who host business dining in London.",
+            "publisher": {
+              "@type": "Organization",
+              "name": "ClientDining",
+              "url": "https://www.clientdining.com"
+            }
+          })
+        }}
+      />
     </body>
     </html>
   );

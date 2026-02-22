@@ -3,7 +3,10 @@ import Footer from '@/components/common/Footer'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'ClientDining',
+  title: {
+    default: 'ClientDining',
+    template: '%s — ClientDining',
+  },
   description: 'Business dining in London for City professionals.',
 }
 

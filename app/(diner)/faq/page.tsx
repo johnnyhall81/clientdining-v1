@@ -1,5 +1,6 @@
 'use client'
 
+import type { Metadata } from 'next'
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
@@ -11,6 +12,11 @@ interface FAQItem {
 interface FAQCategory {
   title: string
   questions: FAQItem[]
+}
+
+export const metadata: Metadata = {
+  title: 'FAQ — ClientDining',
+  description: 'How ClientDining works. A private booking platform for business dining in London.',
 }
 
 export default function FAQPage() {
@@ -187,7 +193,7 @@ export default function FAQPage() {
                     </button>
 
                     {isOpen && (
-                      <div className="mt-3 text-sm text-zinc-600 font-light leading-relaxed">
+                      <div className="mt-3 text-sm text-zinc-500 font-light leading-relaxed">
                         {item.a}
                       </div>
                     )}
