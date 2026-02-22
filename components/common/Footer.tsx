@@ -21,7 +21,7 @@ export default function Footer() {
             <Link href="/faq" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">FAQ</Link>
             <Link href="/privacy" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">Terms & Conditions</Link>
-            <a href="mailto:support@clientdining.com" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">Contact us</a>
+            <a href="mailto:support@clientdining.com" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">Contact</a>
           </nav>
 
         </div>
