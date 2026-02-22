@@ -19,7 +19,7 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
       className="group block cursor-pointer focus:outline-none focus-visible:shadow-sm"
     >
       {/* Tall portrait image — no rounded corners, no text overlay */}
-      <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden mb-4">
+      <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden mb-4 rounded-xl">
         {imageSrc ? (
           <>
             <Image

@@ -20,7 +20,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [showCancelModal, setShowCancelModal] = useState(false)
 
   return (
-    <div className={`bg-white border border-zinc-200 relative ${isCancelled ? 'opacity-50' : ''}`}>
+    <div className={`bg-white border border-zinc-200 rounded-xl overflow-hidden relative ${isCancelled ? 'opacity-50' : ''}`}>
       {/* Cancel button */}
       {!isCancelled && !isPast && (
         <button
@@ -41,7 +41,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         className="flex flex-col md:flex-row hover:opacity-90 transition-opacity"
       >
         {/* Wide landscape image — left half */}
-        <div className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0">
+        <div className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 rounded-l-xl">
           {venue.image_venue ? (
             <Image
               src={venue.image_venue}

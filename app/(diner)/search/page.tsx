@@ -431,7 +431,7 @@ const handleCancel = async () => {
           <p className="mt-4 text-zinc-600 font-light">Searching...</p>
         </div>
       ) : results.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-zinc-200">
+        <div className="text-center py-12 bg-white rounded-xl border border-zinc-200">
           <p className="text-zinc-600 font-light">No slots found matching your criteria.</p>
           <p className="text-sm text-zinc-500 font-light mt-2">Try adjusting your filters</p>
         </div>
@@ -444,7 +444,7 @@ const handleCancel = async () => {
             return (
               <div
                 key={slot.id}
-                className="bg-white border border-zinc-200 relative"
+                className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative"
               >
                 {/* Cancel X for booked slots */}
                 {isBookedByMe && (
@@ -462,7 +462,7 @@ const handleCancel = async () => {
 
                 <div className="flex flex-col md:flex-row">
                   {/* Large image — left */}
-                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-xl">
                     {venue.image_venue ? (
                       <Image
                         src={venue.image_venue}

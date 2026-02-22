@@ -213,7 +213,7 @@ export default function AlertsPage() {
       </div>
 
       {filteredAlerts.length === 0 ? (
-        <div className="text-center py-12 bg-white border border-zinc-200">
+        <div className="text-center py-12 bg-white border border-zinc-200 rounded-xl">
           <p className="text-zinc-500 font-light mb-4">No active alerts</p>
           <Link href="/search" className="text-zinc-900 font-light hover:underline">
             Search for tables to set alerts
@@ -232,7 +232,7 @@ export default function AlertsPage() {
               const isBookingThis = bookingSlotId === alert.slot_id
 
               return (
-                <div key={alert.id} className="bg-white border border-zinc-200 relative">
+                <div key={alert.id} className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative">
                   {/* Remove button */}
                   <button
                     type="button"
@@ -247,7 +247,7 @@ export default function AlertsPage() {
 
                   <div className="flex flex-col md:flex-row">
                     {/* Wide landscape image */}
-                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-xl">
                       {alert.venue.image_venue ? (
                         <Image
                           src={alert.venue.image_venue}
