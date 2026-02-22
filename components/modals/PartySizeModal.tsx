@@ -43,7 +43,7 @@ export default function PartySizeModal({
           Complete Your Booking
         </h2>
 
-        <p className="text-sm text-zinc-600 font-light mb-6">
+        <p className="text-sm text-zinc-500 font-light mb-6">
           {venueName}
         </p>
 

@@ -55,8 +55,8 @@ export default function LoginPage() {
     <div className="flex items-center justify-center px-4 py-24">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-light text-zinc-900">Welcome back</h1>
-          <p className="mt-2 text-zinc-600 font-light">Sign in to your account</p>
+          <h1 className="text-4xl font-light text-zinc-900">Welcome back</h1>
+          <p className="mt-2 text-zinc-500 font-light">Sign in to your account</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-8">
@@ -90,7 +90,7 @@ export default function LoginPage() {
           {/* Email Login */}
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-light text-zinc-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-light text-zinc-500 mb-2">
                 Email
               </label>
               <input
@@ -105,7 +105,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-light text-zinc-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-light text-zinc-500 mb-2">
                 Password
               </label>
               <input
@@ -128,7 +128,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-zinc-600 font-light">
+          <p className="mt-6 text-center text-sm text-zinc-500 font-light">
             Don't have an account?{' '}
             <Link href="/signup" className="font-light text-zinc-900 hover:underline">
               Join

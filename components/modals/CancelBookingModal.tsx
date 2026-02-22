@@ -22,7 +22,7 @@ export default function CancelBookingModal({
           Cancel booking
         </h2>
 
-        <p className="text-zinc-700 font-light mb-2">
+        <p className="text-zinc-500 font-light mb-2">
           This booking will be released back to the venue.
         </p>
 
@@ -47,7 +47,7 @@ export default function CancelBookingModal({
           <button
             type="button"
             onClick={onConfirm}
-            className="flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
+            className="flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-500 hover:bg-zinc-50 transition-colors"
           >
             Cancel booking
           </button>

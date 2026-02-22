@@ -11,7 +11,7 @@ export default function VenuesOverview() {
           For Restaurants and Private Members’ Clubs
         </h1>
 
-        <div className="max-w-3xl space-y-6 text-zinc-600 leading-relaxed">
+        <div className="max-w-3xl space-y-6 text-zinc-500 leading-relaxed">
           <p>
             ClientDining is a private booking platform for early evening business
             dining during the working week.

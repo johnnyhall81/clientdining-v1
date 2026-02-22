@@ -33,8 +33,8 @@ function VenueSpecRow({ children }: { children: any }) {
 
   return (
     <div className="grid grid-cols-[120px_1fr] gap-3 text-sm leading-snug py-0.5">
-      <div className="text-zinc-500 font-medium">{labelNode}</div>
-      <div className="text-zinc-700 font-light">{valueNodes}</div>
+      <div className="text-zinc-500 font-light">{labelNode}</div>
+      <div className="text-zinc-500 font-light">{valueNodes}</div>
     </div>
   )
 }
@@ -296,7 +296,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     <div>
       <h1 className="text-4xl font-light text-zinc-900 mb-3">{venue.name}</h1>
 
-      <div className="flex items-center gap-4 text-zinc-600 font-light mb-1">
+      <div className="flex items-center gap-4 text-zinc-500 font-light mb-1">
         <span>{venue.area}</span>
         <span>•</span>
         <span className="capitalize">{venue.venue_type}</span>
@@ -333,15 +333,15 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
               return (
                 <div className="text-sm leading-snug mb-1.5 last:mb-0">
-                  <span className="text-zinc-600 font-medium">{label}:</span>{' '}
-                  <span className="text-zinc-700 font-light">{value}</span>
+                  <span className="text-zinc-500 font-light">{label}:</span>{' '}
+                  <span className="text-zinc-500 font-light">{value}</span>
                 </div>
               )
             }
 
             // Summary paragraph (match spec sizing/leading for restraint)
             return (
-              <p className="text-sm text-zinc-600 font-light leading-snug mb-3 last:mb-0">
+              <p className="text-sm text-zinc-500 font-light leading-snug mb-3 last:mb-0">
                 {children}
               </p>
             )
@@ -349,7 +349,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
           // If any bold appears in summary text, keep it restrained
           strong: ({ children }) => (
-            <strong className="font-medium text-zinc-700">{children}</strong>
+            <strong className="font-light text-zinc-500">{children}</strong>
           ),
         }}
       >
