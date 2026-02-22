@@ -74,7 +74,7 @@ export default function NominationCard() {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-light text-zinc-900">Invite</h2>
+        <h2 className="text-xl font-light text-zinc-900">Invite a colleague</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 mb-6">

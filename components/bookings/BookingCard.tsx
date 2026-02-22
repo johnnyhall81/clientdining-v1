@@ -61,9 +61,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           <div className="space-y-2 pr-6">
             <div className="flex items-center gap-3">
               <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
-              {isCancelled && <span className="text-xs text-red-400 font-light">Cancelled</span>}
-              {!isCancelled && !isPast && <span className="text-xs text-green-700 font-light">Confirmed</span>}
-              {!isCancelled && isPast && <span className="text-xs text-zinc-400 font-light">Completed</span>}
             </div>
             <p className="text-sm text-zinc-400 font-light">{venue.area}</p>
             <p className="text-sm text-zinc-700 font-light pt-2">{formatFullDateTime(slot.start_at)}</p>
@@ -75,7 +72,10 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             )}
           </div>
 
-          <div className="pt-4" />
+          <div className="pt-4">
+            {isCancelled && <span className="text-xs text-red-400 font-light">Cancelled</span>}
+            {!isCancelled && isPast && <span className="text-xs text-zinc-400 font-light">Completed</span>}
+          </div>
         </div>
       </Link>
 

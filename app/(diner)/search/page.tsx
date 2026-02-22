@@ -579,10 +579,7 @@ const handleCancel = async () => {
                       </p>
                     </div>
 
-                    <div className="pt-6 flex items-center justify-between">
-                      <div>
-                        {isBookedByMe && <span className="text-xs text-green-700 font-light">Confirmed</span>}
-                      </div>
+                    <div className="pt-6 flex items-center justify-end">
                       <div>
                         {slot.status === 'available' && !isBookedByMe ? (
                           <button
@@ -597,7 +594,9 @@ const handleCancel = async () => {
                           >
                             {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
                           </button>
-                        ) : !isBookedByMe && (
+                        ) : isBookedByMe ? (
+                          <span className="text-sm text-zinc-400 font-light">Booked</span>
+                        ) : (
                           <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
                         )}
                       </div>
