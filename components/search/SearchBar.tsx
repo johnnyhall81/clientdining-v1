@@ -126,11 +126,11 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
       {open === 'date' && (
         <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-200 rounded-xl shadow-lg p-4">
           <style>{`
-            .rdp { --rdp-accent-color: #18181b; --rdp-background-color: #f4f4f5; }
+            .rdp { --rdp-accent-color: #3f3f46; --rdp-background-color: #f4f4f5; }
             .rdp-day_range_start .rdp-day_button,
             .rdp-day_range_end .rdp-day_button,
             .rdp-day_selected .rdp-day_button {
-              background-color: #18181b !important;
+              background-color: #3f3f46 !important;
               color: white !important;
             }
             .rdp-day_range_start:not(.rdp-day_range_end) .rdp-day_button {
