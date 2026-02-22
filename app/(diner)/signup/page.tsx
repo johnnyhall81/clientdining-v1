@@ -35,7 +35,7 @@ export default function SignupPage() {
 
         <div className="text-center" />
 
-        <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-8">
+        <div className="bg-white rounded-lg border border-zinc-200 p-8">
           {error && (
             <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm font-light">
               {error}
@@ -43,9 +43,10 @@ export default function SignupPage() {
           )}
 
           <div className="mb-6 text-center space-y-1">
-            <p className="text-sm text-zinc-600 font-light">Access London&apos;s leading restaurants for business dining.</p>
-            <p className="text-sm text-zinc-400 font-light">Membership is verified via LinkedIn.</p>
+            <p className="text-base text-zinc-500 font-light">Access leading London restaurants for business dining.</p>
+            <p className="text-sm text-zinc-400 font-light">Membership is verified for City professionals.</p>
           </div>
+
           <button
             onClick={handleLinkedInSignup}
             disabled={loading}
@@ -57,7 +58,7 @@ export default function SignupPage() {
             {loading ? 'Connecting...' : 'Continue with LinkedIn'}
           </button>
 
-          <p className="mt-6 text-center text-sm text-zinc-500 font-light">
+          <p className="mt-6 text-center text-sm text-zinc-400 font-light">
             Already a member?{' '}
             <Link href="/login" className="font-light text-zinc-900 hover:underline">
               Sign in
@@ -66,9 +67,9 @@ export default function SignupPage() {
 
           <p className="mt-4 text-center text-xs text-zinc-400 font-light">
             By continuing, you agree to our{' '}
-            <Link href="/terms" className="underline hover:text-zinc-700">Terms of Service</Link>
+            <Link href="/terms" className="underline hover:text-zinc-500">Terms of Service</Link>
             {' '}and{' '}
-            <Link href="/privacy" className="underline hover:text-zinc-700">Privacy Policy</Link>
+            <Link href="/privacy" className="underline hover:text-zinc-500">Privacy Policy</Link>
           </p>
         </div>
 
