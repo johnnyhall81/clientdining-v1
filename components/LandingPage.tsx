@@ -31,11 +31,9 @@ if (!authChecked) return null
 
       {/* Nav */}
       <header className="absolute top-0 left-0 right-0 z-50">
-        {/* Subtle gradient fade behind nav for legibility */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%)' }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex justify-between items-center h-16">
-            <span className="text-xl font-light" style={{ color: '#F2F1EE', WebkitFontSmoothing: 'antialiased' }}>ClientDining</span>
+            <span className="text-xl font-normal" style={{ color: '#F3F1ED', WebkitFontSmoothing: 'antialiased' }}>ClientDining</span>
             <Link
               href="/login"
               className="transition-colors"
@@ -43,7 +41,7 @@ if (!authChecked) return null
               aria-label="Sign in"
             >
               <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors" style={{ border: '1px solid rgba(242,241,238,0.35)' }}>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
               </div>
@@ -65,7 +63,7 @@ if (!authChecked) return null
         />
         {/* Gradient overlay - tight to top only, preserves image below */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 35%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0) 75%)'
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.1) 65%, rgba(0,0,0,0) 80%)'
         }} />
         {/* Radial vignette behind text only */}
         <div className="absolute inset-0" style={{
@@ -82,7 +80,7 @@ if (!authChecked) return null
           >
             London's Best Tables
           </h1>
-          <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '0.95rem', letterSpacing: '0.2px' }}>
+          <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '1rem', letterSpacing: '0.3px' }}>
             Reserved for City professionals
           </p>
           <div className="pt-2">
