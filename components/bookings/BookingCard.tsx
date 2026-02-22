@@ -59,22 +59,23 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         {/* Details — right side */}
         <div className="flex-1 p-6 flex flex-col justify-between">
           <div className="space-y-2 pr-6">
-            <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
+            <div className="flex items-center gap-3">
+              <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
+              {isCancelled && <span className="text-xs text-red-400 font-light">Cancelled</span>}
+              {!isCancelled && !isPast && <span className="text-xs text-green-700 font-light">Confirmed</span>}
+              {!isCancelled && isPast && <span className="text-xs text-zinc-400 font-light">Completed</span>}
+            </div>
             <p className="text-sm text-zinc-400 font-light">{venue.area}</p>
             <p className="text-sm text-zinc-700 font-light pt-2">{formatFullDateTime(slot.start_at)}</p>
             <p className="text-sm text-zinc-500 font-light">
               {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
             </p>
             {booking.notes && (
-              <p className="text-sm text-zinc-400 font-light pt-1">Note: {booking.notes}</p>
+              <p className="text-sm text-zinc-400 font-light italic pt-1">{booking.notes}</p>
             )}
           </div>
 
-          <div className="pt-4">
-            {isCancelled && <span className="text-xs text-red-500 font-light">Cancelled</span>}
-            {!isCancelled && !isPast && <span className="text-xs text-green-700 font-light">Confirmed</span>}
-            {!isCancelled && isPast && <span className="text-xs text-zinc-400 font-light">Completed</span>}
-          </div>
+          <div className="pt-4" />
         </div>
       </Link>
 
