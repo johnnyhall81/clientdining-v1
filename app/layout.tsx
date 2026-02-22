@@ -5,14 +5,16 @@ import './globals.css'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500'],
   variable: '--font-cormorant',
+  display: 'swap',
 })
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500'],
   variable: '--font-inter',
+  display: 'swap',
 })
 
 import { AuthProvider } from '@/contexts/AuthContext'
@@ -20,9 +22,9 @@ import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
-  title: "ClientDining - Premium Restaurant & Club Reservations for City Professionals",
-  description: "Exclusive access to London's finest restaurants and private members' clubs. Verified professional network for City executives. Book premium tables at top venues.",
-  keywords: "London restaurants, fine dining, private members clubs, City professionals, premium reservations, exclusive dining",
+  title: "ClientDining — Business dining in London",
+  description: "A private booking platform for professionals who host business dining in London. Membership is verified for City professionals.",
+  keywords: "London business dining, City professionals, private members clubs, professional dining, business entertainment London",
   authors: [{ name: "ClientDining" }],
   creator: "ClientDining",
   publisher: "ClientDining",
@@ -31,8 +33,8 @@ export const metadata: Metadata = {
     canonical: 'https://www.clientdining.com',
   },
   openGraph: {
-    title: "ClientDining - Premium Restaurant Reservations",
-    description: "Exclusive access to London's finest restaurants and private members' clubs for verified City professionals.",
+    title: "ClientDining — Business dining in London",
+    description: "A private booking platform for professionals who host business dining in London.",
     url: 'https://www.clientdining.com',
     siteName: 'ClientDining',
     locale: 'en_GB',
@@ -40,8 +42,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "ClientDining - Premium Restaurant Reservations",
-    description: "Exclusive access to London's finest restaurants and private members' clubs.",
+    title: "ClientDining — Business dining in London",
+    description: "A private booking platform for professionals who host business dining in London.",
   },
   robots: {
     index: true,

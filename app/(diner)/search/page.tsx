@@ -428,11 +428,11 @@ const handleCancel = async () => {
       {loading ? (
         <div className="text-center py-12">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-zinc-900 border-r-transparent"></div>
-          <p className="mt-4 text-zinc-600 font-light">Searching...</p>
+          <p className="mt-4 text-zinc-500 font-light">Searching...</p>
         </div>
       ) : results.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl border border-zinc-200">
-          <p className="text-zinc-600 font-light">No slots found matching your criteria.</p>
+          <p className="text-zinc-500 font-light">No slots found matching your criteria.</p>
           <p className="text-sm text-zinc-500 font-light mt-2">Try adjusting your filters</p>
         </div>
       ) : (
@@ -451,7 +451,7 @@ const handleCancel = async () => {
                   <button
                     type="button"
                     onClick={() => openCancelModal(slot.id, venue.name)}
-                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
+                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
                     aria-label="Cancel booking"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
@@ -468,7 +468,7 @@ const handleCancel = async () => {
                         src={venue.image_venue}
                         alt={venue.name}
                         fill
-                        sizes="40vw"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
                         quality={60}
                         className="object-cover"
                       />
@@ -483,11 +483,11 @@ const handleCancel = async () => {
                       <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-80 transition-opacity">
                         <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
                       </Link>
-                      <p className="text-sm text-zinc-500 font-light">{venue.area}</p>
-                      <p className="text-sm text-zinc-500 font-light pt-2">
+                      <p className="text-base text-zinc-500 font-light">{venue.area}</p>
+                      <p className="text-base text-zinc-500 font-light pt-2">
                         {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                       </p>
-                      <p className="text-sm text-zinc-500 font-light">
+                      <p className="text-base text-zinc-500 font-light">
                         {slot.party_min}–{slot.party_max} guests
                       </p>
                     </div>
@@ -508,7 +508,7 @@ const handleCancel = async () => {
                             {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
                           </button>
                         ) : isBookedByMe ? (
-                          <span className="text-sm text-zinc-400 font-light">Reserved</span>
+                          <span className="text-base text-zinc-500 font-light">Reserved</span>
                         ) : (
                           <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
                         )}

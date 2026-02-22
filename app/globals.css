@@ -5,3 +5,17 @@
 body {
   background-color: white;
 }
+
+@layer components {
+  .btn-primary {
+    @apply bg-zinc-900 text-white px-4 py-2 rounded-lg hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-light;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-zinc-900 px-4 py-2 rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-colors font-light;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400 font-light text-zinc-900 placeholder:text-zinc-400;
+  }
+}

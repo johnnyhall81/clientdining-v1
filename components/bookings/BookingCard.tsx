@@ -47,7 +47,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
               src={venue.image_venue}
               alt={venue.name}
               fill
-              sizes="40vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
               quality={60}
               className="object-cover"
             />

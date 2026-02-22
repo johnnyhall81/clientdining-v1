@@ -208,7 +208,7 @@ export default function AlertsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-light text-zinc-900 mb-2">Alerts</h1>
+        <h1 className="text-4xl font-light text-zinc-900 mb-2">Alerts</h1>
         
       </div>
 
@@ -237,7 +237,7 @@ export default function AlertsPage() {
                   <button
                     type="button"
                     onClick={() => handleRemoveAlert(alert)}
-                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
+                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
                     aria-label="Remove alert"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
@@ -253,7 +253,7 @@ export default function AlertsPage() {
                           src={alert.venue.image_venue}
                           alt={alert.venue.name}
                           fill
-                          sizes="40vw"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
                           quality={60}
                           className="object-cover"
                         />
@@ -268,9 +268,9 @@ export default function AlertsPage() {
                         <Link href={`/venues/${alert.venue.id}`} prefetch={true}>
                           <h3 className="font-light text-xl text-zinc-900 hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
                         </Link>
-                        <p className="text-sm text-zinc-500 font-light">{alert.venue.area}</p>
-                        <p className="text-sm text-zinc-500 font-light pt-2">{formatFullDateTime(alert.slot.start_at)}</p>
-                        <p className="text-sm text-zinc-500 font-light">
+                        <p className="text-base text-zinc-500 font-light">{alert.venue.area}</p>
+                        <p className="text-base text-zinc-500 font-light pt-2">{formatFullDateTime(alert.slot.start_at)}</p>
+                        <p className="text-base text-zinc-500 font-light">
                           {alert.slot.party_min === alert.slot.party_max
                             ? `${alert.slot.party_min} guests`
                             : `${alert.slot.party_min}–${alert.slot.party_max} guests`}
