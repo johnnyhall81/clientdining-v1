@@ -5,8 +5,8 @@ import Link from 'next/link'
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <section className="max-w-4xl mx-auto px-6 pt-24 pb-16">
+    <div>
+      <section className="max-w-4xl mx-auto px-6 pb-16">
         <h1 className="text-5xl md:text-6xl font-light text-zinc-900 mb-12 tracking-tight">
           About ClientDining
         </h1>

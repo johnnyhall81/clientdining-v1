@@ -1,6 +1,6 @@
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="">
       {/* Hero Section */}
       <section className="max-w-4xl mx-auto px-6 pt-24 pb-16">
         <h1 className="text-5xl md:text-6xl font-light text-zinc-900 mb-6 tracking-tight">
