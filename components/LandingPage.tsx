@@ -146,7 +146,7 @@ if (!authChecked) return null
 
         {/* CTA */}
         <div className="mt-16 pt-16 border-t border-zinc-200 flex flex-col items-center text-center space-y-6">
-          <p className="text-base font-light text-zinc-500">Full access is limited to verified City professionals.</p>
+          <p className="text-base font-light text-zinc-500">The full collection is available to members.</p>
           <Link
             href="/signup"
             className="inline-block px-10 py-3.5 bg-zinc-900 text-white text-sm font-light rounded-lg hover:bg-zinc-700 transition-colors duration-300"
