@@ -25,7 +25,6 @@ export default async function HomePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-4xl font-light text-zinc-900 mb-2">Venues</h1>
-        <p className="text-zinc-600 font-light">Restaurants and members&apos; clubs available to book.</p>
       </div>
       <VenueGrid venues={venues || []} />
     </div>
