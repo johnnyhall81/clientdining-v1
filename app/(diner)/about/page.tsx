@@ -38,7 +38,7 @@ export default function AboutPage() {
         <div className="mt-16">
           <Link
             href="/signup"
-            className="inline-block bg-zinc-900 text-zinc-50 px-8 py-4 text-sm font-light hover:bg-zinc-800 transition-colors duration-200"
+            className="inline-block bg-zinc-900 text-zinc-50 px-8 py-4 text-sm font-light rounded-lg hover:bg-zinc-800 transition-colors duration-200"
           >
             Join
           </Link>

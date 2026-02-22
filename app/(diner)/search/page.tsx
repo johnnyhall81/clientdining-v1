@@ -589,7 +589,7 @@ const handleCancel = async () => {
                             onClick={() => handleBook(slot.id)}
                             disabled={bookingSlotId === slot.id}
                             className={[
-                              'h-9 px-5 text-sm font-light border border-zinc-300 whitespace-nowrap transition-colors',
+                              'h-9 px-5 text-sm font-light border border-zinc-300 rounded-lg whitespace-nowrap transition-colors',
                               bookingSlotId === slot.id
                                 ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
                                 : 'bg-white text-zinc-900 hover:bg-zinc-50',

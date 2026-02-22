@@ -61,7 +61,7 @@ if (!authChecked) return null
           <div className="pt-2">
             <Link
               href="/signup"
-              className="inline-block px-10 py-3.5 bg-zinc-900 text-white text-sm font-light hover:bg-zinc-700 transition-colors duration-300"
+              className="inline-block px-10 py-3.5 bg-zinc-900 text-white text-sm font-light rounded-lg hover:bg-zinc-700 transition-colors duration-300"
             >
               Join
             </Link>
