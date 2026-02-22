@@ -119,7 +119,7 @@ export default function BookingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-light text-zinc-900 mb-2">Bookings</h1>
-        <p className="text-zinc-600 font-light">View and manage your bookings</p>
+        
       </div>
 
       {/* Tabs */}

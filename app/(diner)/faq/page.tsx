@@ -147,7 +147,7 @@ export default function FAQPage() {
           Questions
         </h1>
         <p className="text-xl text-zinc-500 font-light leading-relaxed">
-          How ClientDining works.
+          
         </p>
       </section>
 

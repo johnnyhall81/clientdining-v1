@@ -209,7 +209,7 @@ export default function AlertsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-light text-zinc-900 mb-2">Alerts</h1>
-        <p className="text-zinc-600 font-light">View and manage your alerts</p>
+        
       </div>
 
       {filteredAlerts.length === 0 ? (
