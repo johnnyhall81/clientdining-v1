@@ -42,9 +42,9 @@ export default function SignupPage() {
             </div>
           )}
 
-          <div className="mb-6 text-center space-y-1">
-            <p className="text-base text-zinc-500 font-light">Access leading London restaurants for business dining.</p>
-            <p className="text-sm text-zinc-400 font-light">Membership is verified for City professionals.</p>
+          <div className="mb-8 space-y-3">
+            <p className="text-base text-zinc-500 font-light">ClientDining is a private platform for professional business dining in London.</p>
+            <p className="text-base text-zinc-500 font-light">Membership is verified for City professionals.</p>
           </div>
 
           <button
