@@ -63,25 +63,26 @@ if (!authChecked) return null
           sizes="100vw"
           className="object-cover object-center"
         />
-        {/* Gradient overlay - heavier at top for nav, lighter mid */}
+        {/* Gradient overlay - tight to top only, preserves image below */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.35) 100%)'
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 35%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0) 75%)'
         }} />
-        {/* Radial overlay to dull bright ceiling light */}
+        {/* Radial vignette behind text only */}
         <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse 60% 30% at 50% 0%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 100%)'
+          background: 'radial-gradient(ellipse 70% 50% at 50% 42%, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0) 70%)'
         }} />
-        {/* Text */}
-        <div className="relative z-10 max-w-2xl mx-auto px-8 space-y-6" style={{
+        {/* Text — shifted slightly above centre into darker sky area */}
+        <div className="relative z-10 max-w-2xl mx-auto px-8 space-y-5 -mt-24" style={{
           WebkitFontSmoothing: 'antialiased',
           MozOsxFontSmoothing: 'grayscale',
         }}>
-          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-normal text-white leading-tight tracking-wide"
-            style={{ color: '#F2F1EE' }}
+          <h1
+            className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl leading-tight"
+            style={{ color: '#F3F1ED', fontWeight: 500, letterSpacing: '0.4px', lineHeight: 1.15 }}
           >
             London's Best Tables
           </h1>
-          <p className="text-lg font-light leading-relaxed" style={{ color: 'rgba(242,241,238,0.75)' }}>
+          <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '0.95rem', letterSpacing: '0.2px' }}>
             Reserved for City professionals
           </p>
           <div className="pt-2">
@@ -89,10 +90,10 @@ if (!authChecked) return null
               href="/signup"
               className="inline-block px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300"
               style={{
-                color: '#F2F1EE',
-                background: 'rgba(255,255,255,0.1)',
+                color: '#F3F1ED',
+                background: 'rgba(255,255,255,0.08)',
                 backdropFilter: 'blur(4px)',
-                border: '1px solid rgba(255,255,255,0.25)',
+                border: '1px solid rgba(255,255,255,0.35)',
               }}
             >
               Enter
