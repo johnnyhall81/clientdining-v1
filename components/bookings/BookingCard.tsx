@@ -20,13 +20,13 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [showCancelModal, setShowCancelModal] = useState(false)
 
   return (
-    <div className={`bg-white border border-zinc-200 rounded-xl overflow-hidden relative ${isCancelled ? 'opacity-50' : ''}`}>
+    <div className={`bg-white border border-zinc-200 rounded-xl overflow-hidden relative`}>
       {/* Cancel button */}
       {!isCancelled && !isPast && (
         <button
           type="button"
           onClick={() => setShowCancelModal(true)}
-          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
+          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
           aria-label="Cancel booking"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
@@ -62,9 +62,9 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             <div className="flex items-center gap-3">
               <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
             </div>
-            <p className="text-sm text-zinc-500 font-light">{venue.area}</p>
-            <p className="text-sm text-zinc-500 font-light pt-2">{formatFullDateTime(slot.start_at)}</p>
-            <p className="text-sm text-zinc-500 font-light">
+            <p className="text-base text-zinc-500 font-light">{venue.area}</p>
+            <p className="text-base text-zinc-500 font-light pt-2">{formatFullDateTime(slot.start_at)}</p>
+            <p className="text-base text-zinc-500 font-light">
               {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
             </p>
             {booking.notes && (
