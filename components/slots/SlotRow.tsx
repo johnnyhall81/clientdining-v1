@@ -52,15 +52,12 @@ export default function SlotRow({
         </div>
 
         {/* Party size */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center">
           <p className="text-sm text-zinc-500 font-light">
             {slot.party_min === slot.party_max
               ? `${slot.party_min} guests`
               : `${slot.party_min}–${slot.party_max} guests`}
           </p>
-          {isBookedByMe && (
-            <span className="text-xs font-light text-zinc-400">Reserved</span>
-          )}
         </div>
 
         {/* Spacer */}
@@ -68,7 +65,9 @@ export default function SlotRow({
 
         {/* Action */}
         <div className="flex items-center gap-2 justify-end">
-          {isAvailable && eligibility.canBook && !isBookedByMe ? (
+          {isBookedByMe ? (
+            <span className="text-sm font-light text-zinc-500">Reserved</span>
+          ) : isAvailable && eligibility.canBook ? (
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onBook(slot.id) }}
@@ -76,11 +75,11 @@ export default function SlotRow({
             >
               Book
             </button>
-          ) : !isBookedByMe ? (
+          ) : (
             <div onClick={(e) => e.stopPropagation()}>
               <AlertToggle isActive={isAlertActive} onToggle={() => onToggleAlert(slot.id)} />
             </div>
-          ) : null}
+          )}
         </div>
       </div>
     </div>
