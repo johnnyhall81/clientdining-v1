@@ -35,6 +35,10 @@ interface SearchResult {
 interface Venue {
   id: string
   name: string
+  area?: string
+  address?: string
+  postcode?: string
+  image_venue?: string
 }
 
 export default function SearchPage() {
@@ -220,6 +224,8 @@ const handleCancel = async () => {
           id,
           name,
           area,
+          address,
+          postcode,
           venue_type,
           image_venue
         )
@@ -483,6 +489,11 @@ const handleCancel = async () => {
                       <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-80 transition-opacity">
                         <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
                       </Link>
+                      {venue.address && (
+                        <p className="text-sm font-light text-zinc-500">
+                          {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                        </p>
+                      )}
                       <p className="text-sm font-light text-zinc-500 pt-1">
                         {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                       </p>

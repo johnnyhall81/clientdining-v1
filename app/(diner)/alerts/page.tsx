@@ -29,6 +29,8 @@ interface AlertWithDetails {
     id: string
     name: string
     area: string
+    address?: string
+    postcode?: string
     image_venue: string | null
   }
 }
@@ -83,6 +85,8 @@ export default function AlertsPage() {
               id,
               name,
               area,
+              address,
+              postcode,
               image_venue
             )
           )
@@ -268,6 +272,11 @@ export default function AlertsPage() {
                         <Link href={`/venues/${alert.venue.id}`} prefetch={true}>
                           <h3 className="text-lg font-light text-zinc-900 hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
                         </Link>
+                        {alert.venue.address && (
+                          <p className="text-sm font-light text-zinc-500">
+                            {alert.venue.address}{alert.venue.postcode ? `, ${alert.venue.postcode}` : ''}
+                          </p>
+                        )}
                         <p className="text-sm font-light text-zinc-500 pt-1">{formatFullDateTime(alert.slot.start_at)}</p>
                         <p className="text-sm font-light text-zinc-500">
                           {alert.slot.party_min === alert.slot.party_max
