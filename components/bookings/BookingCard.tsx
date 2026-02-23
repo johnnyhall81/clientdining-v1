@@ -15,7 +15,7 @@ interface BookingCardProps {
 }
 
 const PencilIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
     <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
   </svg>
 )
@@ -67,7 +67,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   }
 
   return (
-    <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative">
+    <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden">
       {!isCancelled && !isPast && (
         <button
           type="button"
@@ -75,14 +75,14 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
           aria-label="Cancel booking"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       )}
 
       <div className="flex flex-col md:flex-row">
-        {/* Image — left */}
+        {/* Image */}
         <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 md:rounded-l-xl hover:opacity-90 transition-opacity">
           {venue.image_venue ? (
             <Image src={venue.image_venue} alt={venue.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" quality={60} className="object-cover" />
@@ -91,67 +91,59 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           )}
         </Link>
 
-        {/* Details — right */}
-        <div className="flex-1 p-6 space-y-4 pr-10">
+        {/* Details */}
+        <div className="flex-1 px-6 py-5 pr-10 flex flex-col gap-4">
 
-          {/* Core info */}
-          <div className="space-y-0.5">
+          {/* Core info block */}
+          <div>
             <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity">
-              <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
+              <h3 className="text-lg font-light text-zinc-900 mb-0.5">{venue.name}</h3>
             </Link>
             {venue.address && (
               mapsUrl ? (
-                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-400 font-light hover:text-zinc-700 transition-colors block">
+                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors block">
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </a>
               ) : (
-                <p className="text-sm text-zinc-400 font-light">{venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}</p>
+                <p className="text-sm font-light text-zinc-500">{venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}</p>
               )
             )}
-            <p className="text-base text-zinc-500 font-light pt-1">{formatFullDateTime(slot.start_at)}</p>
-            <p className="text-base text-zinc-500 font-light">
-              {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
-            </p>
-            {/* Utility links — grouped under date/guests */}
-            <div className="flex items-center gap-1 pt-1">
-              {!isPast && !isCancelled && (
-                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
-                  Add to calendar
-                </a>
-              )}
-              {!isPast && !isCancelled && mapsUrl && (
-                <span className="text-xs text-zinc-300">·</span>
-              )}
-              {mapsUrl && (
-                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
-                  Open in Maps
-                </a>
-              )}
-            </div>
+            <p className="text-sm font-light text-zinc-500 mt-2">{formatFullDateTime(slot.start_at)}</p>
+            <p className="text-sm font-light text-zinc-500">{booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}</p>
+            {((!isPast && !isCancelled) || mapsUrl) && (
+              <div className="flex items-center gap-1 mt-1.5">
+                {!isPast && !isCancelled && (
+                  <a href={calendarUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                    Add to calendar
+                  </a>
+                )}
+                {!isPast && !isCancelled && mapsUrl && <span className="text-xs text-zinc-300">·</span>}
+                {mapsUrl && (
+                  <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                    Open in Maps
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Restaurant note */}
           {booking.notes && (
-            <div className="space-y-1">
-              <p className="text-xs font-light text-zinc-400">
-                <span className="uppercase tracking-wide text-zinc-500">Restaurant note</span>
-                <span className="mx-1.5">·</span>
-                <span>Sent with booking</span>
+            <div>
+              <p className="text-xs font-light text-zinc-500 mb-1">
+                Restaurant note <span className="text-zinc-400">· Sent with booking</span>
               </p>
-              <p className="text-sm font-light text-zinc-600 bg-zinc-50/60 border border-zinc-100 rounded-lg px-3 py-2">
+              <p className="text-sm font-light text-zinc-500 border border-zinc-100 rounded-md px-3 py-2 bg-zinc-50/50">
                 {booking.notes}
               </p>
             </div>
           )}
 
           {/* Private notes */}
-          <div className="space-y-1">
-            <p className="text-xs font-light text-zinc-400">
-              <span className="uppercase tracking-wide text-zinc-500">Private notes</span>
-              <span className="mx-1.5">·</span>
-              <span>Visible only to you</span>
+          <div>
+            <p className="text-xs font-light text-zinc-500 mb-1">
+              Private notes <span className="text-zinc-400">· Visible only to you</span>
             </p>
-
             {notesEditing ? (
               <div>
                 <textarea
@@ -160,7 +152,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                   placeholder="Add private notes..."
                   rows={3}
                   autoFocus
-                  className="w-full text-sm font-light text-zinc-700 placeholder:text-zinc-300 bg-zinc-50/60 border border-zinc-100 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-300 resize-none"
+                  className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-300 border border-zinc-100 rounded-md px-3 py-2 bg-zinc-50/50 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
                 />
                 <div className="flex items-center justify-end gap-3 mt-1.5">
                   <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
@@ -181,10 +173,10 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 className="relative group cursor-pointer"
                 onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
               >
-                <p className="text-sm font-light text-zinc-600 bg-zinc-50/60 border border-zinc-100 rounded-lg px-3 py-2 pr-8 min-h-[38px]">
+                <p className="text-sm font-light text-zinc-500 border border-zinc-100 rounded-md px-3 py-2 bg-zinc-50/50 pr-7 min-h-[36px]">
                   {savedNotes || <span className="text-zinc-300">No notes added</span>}
                 </p>
-                <span className="absolute top-2 right-2.5 text-zinc-300 group-hover:text-zinc-500 transition-colors">
+                <span className="absolute top-2.5 right-2.5 text-zinc-300 group-hover:text-zinc-500 transition-colors">
                   <PencilIcon />
                 </span>
               </div>
