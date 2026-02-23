@@ -375,7 +375,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}
                 isBookedByMe={bookedSlots.has(slot.id)}
-                onCancelClick={openCancelModal}
               />
             ))}
           </div>
