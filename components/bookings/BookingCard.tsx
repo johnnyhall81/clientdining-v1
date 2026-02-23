@@ -18,12 +18,11 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
-  const [notesOpen, setNotesOpen] = useState(false)
+  const [notesEditing, setNotesEditing] = useState(false)
   const [privateNotes, setPrivateNotes] = useState(booking.private_notes || '')
   const [savedNotes, setSavedNotes] = useState(booking.private_notes || '')
+  const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
   const [notesSaving, setNotesSaving] = useState(false)
-  const [notesSaved, setNotesSaved] = useState(false)
-  const saveTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const mapsUrl = venue.address
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, ${venue.postcode || ''} London`)}`
@@ -40,27 +39,30 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Dinner — ${venue.name}`)}&dates=${fmt(start)}/${fmt(end)}&details=${details}&location=${location}`
   })()
 
-  const handleNotesChange = (value: string) => {
-    setPrivateNotes(value)
-    setNotesSaved(false)
-    if (saveTimeout.current) clearTimeout(saveTimeout.current)
-    saveTimeout.current = setTimeout(async () => {
-      setNotesSaving(true)
-      try {
-        await fetch(`/api/bookings/${booking.id}/notes`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ private_notes: value }),
-        })
-        setSavedNotes(value)
-        setNotesSaved(true)
-      } catch {
-        // fail silently
-      } finally {
-        setNotesSaving(false)
-      }
-    }, 800)
+  const handleSaveNotes = async () => {
+    setNotesSaving(true)
+    try {
+      await fetch(`/api/bookings/${booking.id}/notes`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ private_notes: notesEditValue }),
+      })
+      setSavedNotes(notesEditValue)
+      setPrivateNotes(notesEditValue)
+      setNotesEditing(false)
+    } catch {
+      // fail silently
+    } finally {
+      setNotesSaving(false)
+    }
   }
+
+  const handleCancelEdit = () => {
+    setNotesEditValue(savedNotes)
+    setNotesEditing(false)
+  }
+
+  const noteBoxStyle = "w-full text-sm font-light text-zinc-700 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2.5"
 
   return (
     <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative">
@@ -79,7 +81,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
       <div className="flex flex-col md:flex-row">
         {/* Image — left */}
-        <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 rounded-l-xl hover:opacity-90 transition-opacity">
+        <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 md:rounded-l-xl hover:opacity-90 transition-opacity">
           {venue.image_venue ? (
             <Image src={venue.image_venue} alt={venue.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" quality={60} className="object-cover" />
           ) : (
@@ -88,77 +90,104 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         </Link>
 
         {/* Details — right */}
-        <div className="flex-1 p-6 flex flex-col justify-between">
-          <div className="space-y-1 pr-6">
+        <div className="flex-1 p-6 space-y-4 pr-10">
+
+          {/* Core info */}
+          <div className="space-y-1">
             <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity">
               <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
             </Link>
-            {/* Address — clickable → Maps */}
             {venue.address && (
               mapsUrl ? (
-                <a
-                  href={mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-zinc-400 font-light hover:text-zinc-700 transition-colors block"
-                >
+                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-400 font-light hover:text-zinc-700 transition-colors block">
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </a>
               ) : (
-                <p className="text-sm text-zinc-400 font-light">
-                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                </p>
+                <p className="text-sm text-zinc-400 font-light">{venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}</p>
               )
             )}
-
-            <p className="text-base text-zinc-500 font-light pt-2">{formatFullDateTime(slot.start_at)}</p>
+            <p className="text-base text-zinc-500 font-light pt-1">{formatFullDateTime(slot.start_at)}</p>
             <p className="text-base text-zinc-500 font-light">
               {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
             </p>
+          </div>
 
-            {/* Notes to restaurant */}
-            {booking.notes && (
-              <p className="text-sm text-zinc-400 font-light italic pt-1">{booking.notes}</p>
+          {/* Utility links */}
+          <div className="flex items-center gap-4">
+            {!isPast && !isCancelled && (
+              <a href={calendarUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
+                Add to calendar
+              </a>
             )}
-
-            {/* Saved private notes — always visible once set */}
-            {savedNotes && !notesOpen && (
-              <p className="text-sm text-zinc-400 font-light pt-1">{savedNotes}</p>
+            {mapsUrl && (
+              <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
+                Open in Maps
+              </a>
             )}
+          </div>
 
-            {/* Private notes editor */}
-            {notesOpen && (
-              <div className="pt-2">
+          {/* Restaurant note */}
+          {booking.notes && (
+            <div className="space-y-1.5">
+              <div>
+                <p className="text-xs font-normal text-zinc-500 tracking-wide uppercase">Restaurant note</p>
+                <p className="text-xs font-light text-zinc-400">Sent with your booking</p>
+              </div>
+              <p className={noteBoxStyle}>{booking.notes}</p>
+            </div>
+          )}
+
+          {/* Private notes */}
+          <div className="space-y-1.5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-normal text-zinc-500 tracking-wide uppercase">Private notes</p>
+                <p className="text-xs font-light text-zinc-400">Visible only to you</p>
+              </div>
+              {!notesEditing && (
+                <button
+                  type="button"
+                  onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
+                  className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors"
+                >
+                  {savedNotes ? 'Edit' : 'Add'}
+                </button>
+              )}
+            </div>
+
+            {notesEditing ? (
+              <div className="space-y-2">
                 <textarea
-                  value={privateNotes}
-                  onChange={e => handleNotesChange(e.target.value)}
-                  placeholder="Private notes — visible only to you"
+                  value={notesEditValue}
+                  onChange={e => setNotesEditValue(e.target.value)}
+                  placeholder="Add private notes..."
                   rows={3}
                   autoFocus
-                  className="w-full text-sm font-light text-zinc-700 placeholder:text-zinc-300 border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-300 resize-none"
+                  className="w-full text-sm font-light text-zinc-700 placeholder:text-zinc-300 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-zinc-300 resize-none"
                 />
-                <p className="text-xs text-zinc-300 font-light mt-1 h-4">
-                  {notesSaving ? 'Saving...' : notesSaved ? 'Saved' : ''}
-                </p>
+                <div className="flex items-center justify-end gap-3">
+                  <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveNotes}
+                    disabled={notesSaving}
+                    className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded-md hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                  >
+                    {notesSaving ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
               </div>
+            ) : (
+              savedNotes ? (
+                <p className={noteBoxStyle}>{savedNotes}</p>
+              ) : (
+                <p className="text-sm font-light text-zinc-300 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2.5">No notes added</p>
+              )
             )}
-
-            {/* Inline actions */}
-            <div className="flex items-center gap-4 pt-3">
-              {!isPast && !isCancelled && (
-                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
-                  Add to calendar
-                </a>
-              )}
-              <button
-                type="button"
-                onClick={() => setNotesOpen(o => !o)}
-                className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors"
-              >
-                {notesOpen ? 'Done' : savedNotes ? 'Edit notes' : 'Add notes'}
-              </button>
-            </div>
           </div>
+
         </div>
       </div>
 
