@@ -20,6 +20,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [notesOpen, setNotesOpen] = useState(false)
   const [privateNotes, setPrivateNotes] = useState(booking.private_notes || '')
+  const [savedNotes, setSavedNotes] = useState(booking.private_notes || '')
   const [notesSaving, setNotesSaving] = useState(false)
   const [notesSaved, setNotesSaved] = useState(false)
   const saveTimeout = useRef<NodeJS.Timeout | null>(null)
@@ -39,16 +40,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Dinner — ${venue.name}`)}&dates=${fmt(start)}/${fmt(end)}&details=${details}&location=${location}`
   })()
 
-  const handleShareBooking = () => {
-    const text = [
-      venue.name,
-      venue.address ? `${venue.address}${venue.postcode ? `, ${venue.postcode}` : ''}` : null,
-      formatFullDateTime(slot.start_at),
-      `${booking.party_size} ${booking.party_size === 1 ? 'guest' : 'guests'}`,
-    ].filter(Boolean).join('\n')
-    if (navigator.clipboard) navigator.clipboard.writeText(text)
-  }
-
   const handleNotesChange = (value: string) => {
     setPrivateNotes(value)
     setNotesSaved(false)
@@ -61,6 +52,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ private_notes: value }),
         })
+        setSavedNotes(value)
         setNotesSaved(true)
       } catch {
         // fail silently
@@ -85,69 +77,92 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         </button>
       )}
 
-      <Link href={`/venues/${venue.id}`} prefetch={true} className="flex flex-col md:flex-row hover:opacity-90 transition-opacity">
-        <div className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 rounded-l-xl">
+      <div className="flex flex-col md:flex-row">
+        {/* Image — left */}
+        <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 rounded-l-xl hover:opacity-90 transition-opacity">
           {venue.image_venue ? (
             <Image src={venue.image_venue} alt={venue.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" quality={60} className="object-cover" />
           ) : (
             <div className="w-full h-full bg-zinc-100" />
           )}
-        </div>
+        </Link>
+
+        {/* Details — right */}
         <div className="flex-1 p-6 flex flex-col justify-between">
           <div className="space-y-1 pr-6">
-            <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
+            <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity">
+              <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
+            </Link>
             <p className="text-base text-zinc-500 font-light">{venue.area}</p>
+
+            {/* Address — clickable → Maps */}
             {venue.address && (
-              <p className="text-sm text-zinc-400 font-light">
-                {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-              </p>
+              mapsUrl ? (
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-zinc-400 font-light hover:text-zinc-700 transition-colors block"
+                >
+                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                </a>
+              ) : (
+                <p className="text-sm text-zinc-400 font-light">
+                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                </p>
+              )
             )}
+
             <p className="text-base text-zinc-500 font-light pt-2">{formatFullDateTime(slot.start_at)}</p>
             <p className="text-base text-zinc-500 font-light">
               {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
             </p>
+
+            {/* Notes to restaurant */}
             {booking.notes && (
               <p className="text-sm text-zinc-400 font-light italic pt-1">{booking.notes}</p>
             )}
+
+            {/* Saved private notes — always visible once set */}
+            {savedNotes && !notesOpen && (
+              <p className="text-sm text-zinc-400 font-light pt-1">{savedNotes}</p>
+            )}
+
+            {/* Private notes editor */}
+            {notesOpen && (
+              <div className="pt-2">
+                <textarea
+                  value={privateNotes}
+                  onChange={e => handleNotesChange(e.target.value)}
+                  placeholder="Private notes — visible only to you"
+                  rows={3}
+                  autoFocus
+                  className="w-full text-sm font-light text-zinc-700 placeholder:text-zinc-300 border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-300 resize-none"
+                />
+                <p className="text-xs text-zinc-300 font-light mt-1 h-4">
+                  {notesSaving ? 'Saving...' : notesSaved ? 'Saved' : ''}
+                </p>
+              </div>
+            )}
+
+            {/* Inline actions */}
+            <div className="flex items-center gap-4 pt-3">
+              {!isPast && !isCancelled && (
+                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
+                  Add to calendar
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() => setNotesOpen(o => !o)}
+                className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors"
+              >
+                {notesOpen ? 'Done' : savedNotes ? 'Edit notes' : 'Add notes'}
+              </button>
+            </div>
           </div>
         </div>
-      </Link>
-
-      {/* Action bar */}
-      <div className="px-6 pb-4 flex items-center gap-5 border-t border-zinc-100 pt-3">
-        {mapsUrl && (
-          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
-            Open in Maps
-          </a>
-        )}
-        {!isPast && !isCancelled && (
-          <a href={calendarUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
-            Add to Calendar
-          </a>
-        )}
-        <button type="button" onClick={handleShareBooking} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
-          Copy details
-        </button>
-        <button type="button" onClick={() => setNotesOpen(o => !o)} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors ml-auto">
-          {notesOpen ? 'Close notes' : privateNotes ? 'Edit notes' : 'Add notes'}
-        </button>
       </div>
-
-      {/* Private notes panel */}
-      {notesOpen && (
-        <div className="px-6 pb-5">
-          <textarea
-            value={privateNotes}
-            onChange={e => handleNotesChange(e.target.value)}
-            placeholder="Private notes — visible only to you"
-            rows={3}
-            className="w-full text-sm font-light text-zinc-700 placeholder:text-zinc-300 border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-300 resize-none"
-          />
-          <p className="text-xs text-zinc-300 font-light mt-1 h-4">
-            {notesSaving ? 'Saving...' : notesSaved ? 'Saved' : ''}
-          </p>
-        </div>
-      )}
 
       <CancelBookingModal
         isOpen={showCancelModal}
