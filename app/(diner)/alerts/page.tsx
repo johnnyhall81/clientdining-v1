@@ -301,19 +301,18 @@ export default function AlertsPage() {
                             ? `${alert.slot.party_min} guests`
                             : `${alert.slot.party_min}–${alert.slot.party_max} guests`}
                         </p>
-                        {alert.status === 'notified' && (
-                          <p className="text-xs text-blue-700 font-light pt-1">Table available — act now</p>
-                        )}
+
                       </div>
 
                       {alert.status === 'notified' && (
-                        <div className="pt-4">
+                        <div className="flex items-center justify-between pt-4">
+                          <p className="text-xs font-light text-zinc-400">Table available</p>
                           <button
                             type="button"
                             onClick={() => handleBook(alert)}
                             disabled={isBookingThis}
                             className={[
-                              'h-10 px-6 text-sm font-light whitespace-nowrap transition-colors border border-zinc-300',
+                              'h-9 px-5 text-sm font-light whitespace-nowrap transition-colors border border-zinc-300 rounded-lg',
                               isBookingThis
                                 ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
                                 : 'bg-white text-zinc-900 hover:bg-zinc-50',
