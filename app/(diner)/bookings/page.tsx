@@ -55,6 +55,7 @@ export default function BookingsPage() {
           venue_id: item.venue_id,
           party_size: item.party_size,
           notes: item.notes,
+	  private_notes: item.private_notes,
           status: item.status,
           bill_amount_gbp: item.bill_amount_gbp,
           commission_amount_gbp: item.commission_amount_gbp,
