@@ -93,8 +93,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity">
               <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
             </Link>
-            <p className="text-base text-zinc-500 font-light">{venue.area}</p>
-
             {/* Address — clickable → Maps */}
             {venue.address && (
               mapsUrl ? (
