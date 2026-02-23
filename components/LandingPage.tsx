@@ -67,7 +67,7 @@ if (!authChecked) return null
         />
         {/* Gradient overlay - tight to top only, preserves image below */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.1) 65%, rgba(0,0,0,0) 80%)'
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.42) 40%, rgba(0,0,0,0.17) 65%, rgba(0,0,0,0.07) 80%)'
         }} />
         {/* Radial vignette behind text only */}
         <div className="absolute inset-0" style={{
@@ -104,6 +104,24 @@ if (!authChecked) return null
             </Link>
           </div>
         </div>
+
+        {/* Down arrow — bottom centre */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10" style={{ animation: 'heroArrowFloat 2.8s ease-in-out infinite' }}>
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center"
+            style={{ border: '1px solid rgba(255,255,255,0.35)' }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="rgba(255,255,255,0.7)" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+        </div>
+        <style>{`
+          @keyframes heroArrowFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.7; }
+            50% { transform: translateX(-50%) translateY(6px); opacity: 1; }
+          }
+        `}</style>
       </section>
 
       {/* Now available */}
