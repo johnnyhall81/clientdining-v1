@@ -63,6 +63,11 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
               <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
             </div>
             <p className="text-base text-zinc-500 font-light">{venue.area}</p>
+            {venue.address && (
+              <p className="text-sm text-zinc-400 font-light">
+                {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+              </p>
+            )}
             <p className="text-base text-zinc-500 font-light pt-2">{formatFullDateTime(slot.start_at)}</p>
             <p className="text-base text-zinc-500 font-light">
               {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
