@@ -35,10 +35,10 @@ export default function SlotRow({
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onCancelClick?.(slot.id) }}
-          className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors z-10"
+          className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-100 text-zinc-300 hover:text-zinc-500 transition-colors z-10"
           aria-label="Cancel booking"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -48,20 +48,18 @@ export default function SlotRow({
         {/* Date / time */}
         <div>
           <p className="text-sm font-light text-zinc-900">{formatSlotDate(slot.start_at)}</p>
-          <p className="text-sm text-zinc-600 font-light">{formatSlotTime(slot.start_at)}</p>
+          <p className="text-sm text-zinc-500 font-light">{formatSlotTime(slot.start_at)}</p>
         </div>
 
         {/* Party size */}
         <div className="flex items-center gap-2">
-          <p className="text-sm text-zinc-600 font-light">
+          <p className="text-sm text-zinc-500 font-light">
             {slot.party_min === slot.party_max
               ? `${slot.party_min} guests`
               : `${slot.party_min}–${slot.party_max} guests`}
           </p>
           {isBookedByMe && (
-            <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-light">
-              Confirmed
-            </span>
+            <span className="text-xs font-light text-zinc-400">Reserved</span>
           )}
         </div>
 
