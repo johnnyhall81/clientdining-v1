@@ -28,6 +28,8 @@ interface SearchResult {
     name: string
     area: string
     venue_type: string
+    address?: string
+    postcode?: string
     image_venue: string | null
   }
 }
