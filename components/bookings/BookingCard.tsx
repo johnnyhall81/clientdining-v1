@@ -6,6 +6,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
+import { useEffect } from 'react'
+
+useEffect(() => {
+  setSavedNotes(booking.private_notes || '')
+  setNotesEditValue(booking.private_notes || '')
+}, [booking.private_notes])
 
 interface BookingCardProps {
   booking: Booking
