@@ -8,10 +8,7 @@ import { useState } from 'react'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 import { useEffect } from 'react'
 
-useEffect(() => {
-  setSavedNotes(booking.private_notes || '')
-  setNotesEditValue(booking.private_notes || '')
-}, [booking.private_notes])
+
 
 interface BookingCardProps {
   booking: Booking
@@ -46,6 +43,13 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [savedNotes, setSavedNotes] = useState(booking.private_notes || '')
   const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
   const [notesSaving, setNotesSaving] = useState(false)
+
+
+useEffect(() => {
+  setSavedNotes(booking.private_notes || '')
+  setNotesEditValue(booking.private_notes || '')
+}, [booking.private_notes])
+
 
   const mapsUrl = venue.address
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, ${venue.postcode || ''} London`)}`
