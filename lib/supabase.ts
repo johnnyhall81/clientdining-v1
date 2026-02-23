@@ -42,6 +42,7 @@ export interface Booking {
   venue_id: string
   party_size: number
   notes?: string
+  private_notes?: string
   status: 'active' | 'cancelled' | 'completed' | 'no_show'
   bill_amount_gbp?: number
   commission_amount_gbp?: number

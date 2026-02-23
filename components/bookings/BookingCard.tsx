@@ -4,7 +4,7 @@ import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 
 interface BookingCardProps {
@@ -18,10 +18,60 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
+  const [notesOpen, setNotesOpen] = useState(false)
+  const [privateNotes, setPrivateNotes] = useState(booking.private_notes || '')
+  const [notesSaving, setNotesSaving] = useState(false)
+  const [notesSaved, setNotesSaved] = useState(false)
+  const saveTimeout = useRef<NodeJS.Timeout | null>(null)
+
+  const mapsUrl = venue.address
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, ${venue.postcode || ''} London`)}`
+    : null
+
+  const calendarUrl = (() => {
+    const start = new Date(slot.start_at)
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000)
+    const pad = (n: number) => String(n).padStart(2, '0')
+    const fmt = (d: Date) =>
+      `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`
+    const details = encodeURIComponent(`Business dinner at ${venue.name}${venue.address ? `\n${venue.address}${venue.postcode ? `, ${venue.postcode}` : ''}` : ''}`)
+    const location = encodeURIComponent(`${venue.name}${venue.address ? `, ${venue.address}` : ''}`)
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Dinner — ${venue.name}`)}&dates=${fmt(start)}/${fmt(end)}&details=${details}&location=${location}`
+  })()
+
+  const handleShareBooking = () => {
+    const text = [
+      venue.name,
+      venue.address ? `${venue.address}${venue.postcode ? `, ${venue.postcode}` : ''}` : null,
+      formatFullDateTime(slot.start_at),
+      `${booking.party_size} ${booking.party_size === 1 ? 'guest' : 'guests'}`,
+    ].filter(Boolean).join('\n')
+    if (navigator.clipboard) navigator.clipboard.writeText(text)
+  }
+
+  const handleNotesChange = (value: string) => {
+    setPrivateNotes(value)
+    setNotesSaved(false)
+    if (saveTimeout.current) clearTimeout(saveTimeout.current)
+    saveTimeout.current = setTimeout(async () => {
+      setNotesSaving(true)
+      try {
+        await fetch(`/api/bookings/${booking.id}/notes`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ private_notes: value }),
+        })
+        setNotesSaved(true)
+      } catch {
+        // fail silently
+      } finally {
+        setNotesSaving(false)
+      }
+    }, 800)
+  }
 
   return (
-    <div className={`bg-white border border-zinc-200 rounded-xl overflow-hidden relative`}>
-      {/* Cancel button */}
+    <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative">
       {!isCancelled && !isPast && (
         <button
           type="button"
@@ -35,33 +85,17 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         </button>
       )}
 
-      <Link
-        href={`/venues/${venue.id}`}
-        prefetch={true}
-        className="flex flex-col md:flex-row hover:opacity-90 transition-opacity"
-      >
-        {/* Wide landscape image — left half */}
+      <Link href={`/venues/${venue.id}`} prefetch={true} className="flex flex-col md:flex-row hover:opacity-90 transition-opacity">
         <div className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 rounded-l-xl">
           {venue.image_venue ? (
-            <Image
-              src={venue.image_venue}
-              alt={venue.name}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-              quality={60}
-              className="object-cover"
-            />
+            <Image src={venue.image_venue} alt={venue.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" quality={60} className="object-cover" />
           ) : (
             <div className="w-full h-full bg-zinc-100" />
           )}
         </div>
-
-        {/* Details — right side */}
         <div className="flex-1 p-6 flex flex-col justify-between">
           <div className="space-y-1 pr-6">
-            <div className="flex items-center gap-3">
-              <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
-            </div>
+            <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
             <p className="text-base text-zinc-500 font-light">{venue.area}</p>
             {venue.address && (
               <p className="text-sm text-zinc-400 font-light">
@@ -76,18 +110,49 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
               <p className="text-sm text-zinc-400 font-light italic pt-1">{booking.notes}</p>
             )}
           </div>
-
-
         </div>
       </Link>
+
+      {/* Action bar */}
+      <div className="px-6 pb-4 flex items-center gap-5 border-t border-zinc-100 pt-3">
+        {mapsUrl && (
+          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
+            Open in Maps
+          </a>
+        )}
+        {!isPast && !isCancelled && (
+          <a href={calendarUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
+            Add to Calendar
+          </a>
+        )}
+        <button type="button" onClick={handleShareBooking} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
+          Copy details
+        </button>
+        <button type="button" onClick={() => setNotesOpen(o => !o)} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors ml-auto">
+          {notesOpen ? 'Close notes' : privateNotes ? 'Edit notes' : 'Add notes'}
+        </button>
+      </div>
+
+      {/* Private notes panel */}
+      {notesOpen && (
+        <div className="px-6 pb-5">
+          <textarea
+            value={privateNotes}
+            onChange={e => handleNotesChange(e.target.value)}
+            placeholder="Private notes — visible only to you"
+            rows={3}
+            className="w-full text-sm font-light text-zinc-700 placeholder:text-zinc-300 border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-300 resize-none"
+          />
+          <p className="text-xs text-zinc-300 font-light mt-1 h-4">
+            {notesSaving ? 'Saving...' : notesSaved ? 'Saved' : ''}
+          </p>
+        </div>
+      )}
 
       <CancelBookingModal
         isOpen={showCancelModal}
         onClose={() => setShowCancelModal(false)}
-        onConfirm={() => {
-          setShowCancelModal(false)
-          onCancel(booking.id)
-        }}
+        onConfirm={() => { setShowCancelModal(false); onCancel(booking.id) }}
         venueName={venue.name}
       />
     </div>
