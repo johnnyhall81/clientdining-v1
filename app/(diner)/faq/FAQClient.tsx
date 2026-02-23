@@ -45,8 +45,8 @@ export default function FAQClient() {
           a: 'Professionals working in finance, law, consulting, and related sectors, primarily in London\'s business districts. If you are unsure, contact support@clientdining.com.'
         },
         {
-          q: 'Is membership free?',
-          a: 'Yes. Membership is free. ClientDining generates revenue through a commission on bookings, paid by venues.'
+          q: 'Who can join ClientDining?',
+          a: 'ClientDining is open to verified City professionals. Membership is free. The platform generates revenue through a commission on bookings, paid by venues.'
         }
       ]
     },

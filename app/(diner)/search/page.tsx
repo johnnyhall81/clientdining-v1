@@ -10,7 +10,6 @@ import { supabase } from '@/lib/supabase-client'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import AlertToggle from '@/components/slots/AlertToggle'
-import PremiumUnlockModal from '@/components/modals/PremiumUnlockModal'
 import PartySizeModal from '@/components/modals/PartySizeModal'
 import SearchBar, { SearchFilters } from '@/components/search/SearchBar'
 
