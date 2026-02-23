@@ -35,6 +35,12 @@ interface AlertWithDetails {
   }
 }
 
+const MapIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+  </svg>
+)
+
 export default function AlertsPage() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
@@ -273,9 +279,21 @@ export default function AlertsPage() {
                           <h3 className="text-lg font-light text-zinc-900 hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
                         </Link>
                         {alert.venue.address && (
-                          <p className="text-sm font-light text-zinc-500">
-                            {alert.venue.address}{alert.venue.postcode ? `, ${alert.venue.postcode}` : ''}
-                          </p>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-light text-zinc-500">
+                              {alert.venue.address}{alert.venue.postcode ? `, ${alert.venue.postcode}` : ''}
+                            </span>
+                            <a
+                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${alert.venue.name}, ${alert.venue.address} London`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Open in Maps"
+                              onClick={e => e.stopPropagation()}
+                              className="text-zinc-300 hover:text-zinc-600 transition-colors flex-shrink-0"
+                            >
+                              <MapIcon />
+                            </a>
+                          </div>
                         )}
                         <p className="text-sm font-light text-zinc-500 pt-1">{formatFullDateTime(alert.slot.start_at)}</p>
                         <p className="text-sm font-light text-zinc-500">
