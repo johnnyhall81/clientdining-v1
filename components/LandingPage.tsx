@@ -106,7 +106,7 @@ if (!authChecked) return null
         </div>
 
         {/* Down arrow — bottom centre */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10" style={{ animation: 'heroArrowFloat 2.8s ease-in-out infinite' }}>
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10" style={{ animation: 'heroArrowFloat 3.5s ease-in-out infinite' }}>
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center"
             style={{ border: '1px solid rgba(255,255,255,0.35)' }}
@@ -118,8 +118,8 @@ if (!authChecked) return null
         </div>
         <style>{`
           @keyframes heroArrowFloat {
-            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.7; }
-            50% { transform: translateX(-50%) translateY(6px); opacity: 1; }
+            0%, 100% { transform: translateX(-50%); opacity: 0.5; }
+            50% { transform: translateX(-50%); opacity: 0.9; }
           }
         `}</style>
       </section>
