@@ -4,7 +4,7 @@ import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 
 interface BookingCardProps {
@@ -14,12 +14,17 @@ interface BookingCardProps {
   onCancel: (bookingId: string) => void
 }
 
+const PencilIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+  </svg>
+)
+
 export default function BookingCard({ booking, venue, slot, onCancel }: BookingCardProps) {
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [notesEditing, setNotesEditing] = useState(false)
-  const [privateNotes, setPrivateNotes] = useState(booking.private_notes || '')
   const [savedNotes, setSavedNotes] = useState(booking.private_notes || '')
   const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
   const [notesSaving, setNotesSaving] = useState(false)
@@ -48,7 +53,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         body: JSON.stringify({ private_notes: notesEditValue }),
       })
       setSavedNotes(notesEditValue)
-      setPrivateNotes(notesEditValue)
       setNotesEditing(false)
     } catch {
       // fail silently
@@ -61,8 +65,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
     setNotesEditValue(savedNotes)
     setNotesEditing(false)
   }
-
-  const noteBoxStyle = "w-full text-sm font-light text-zinc-700 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2.5"
 
   return (
     <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative">
@@ -93,7 +95,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         <div className="flex-1 p-6 space-y-4 pr-10">
 
           {/* Core info */}
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity">
               <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
             </Link>
@@ -110,62 +112,57 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             <p className="text-base text-zinc-500 font-light">
               {booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}
             </p>
-          </div>
-
-          {/* Utility links */}
-          <div className="flex items-center gap-4">
-            {!isPast && !isCancelled && (
-              <a href={calendarUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
-                Add to calendar
-              </a>
-            )}
-            {mapsUrl && (
-              <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
-                Open in Maps
-              </a>
-            )}
+            {/* Utility links — grouped under date/guests */}
+            <div className="flex items-center gap-1 pt-1">
+              {!isPast && !isCancelled && (
+                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                  Add to calendar
+                </a>
+              )}
+              {!isPast && !isCancelled && mapsUrl && (
+                <span className="text-xs text-zinc-300">·</span>
+              )}
+              {mapsUrl && (
+                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                  Open in Maps
+                </a>
+              )}
+            </div>
           </div>
 
           {/* Restaurant note */}
           {booking.notes && (
-            <div className="space-y-1.5">
-              <div>
-                <p className="text-xs font-normal text-zinc-500 tracking-wide uppercase">Restaurant note</p>
-                <p className="text-xs font-light text-zinc-400">Sent with your booking</p>
-              </div>
-              <p className={noteBoxStyle}>{booking.notes}</p>
+            <div className="space-y-1">
+              <p className="text-xs font-light text-zinc-400">
+                <span className="uppercase tracking-wide text-zinc-500">Restaurant note</span>
+                <span className="mx-1.5">·</span>
+                <span>Sent with booking</span>
+              </p>
+              <p className="text-sm font-light text-zinc-600 bg-zinc-50/60 border border-zinc-100 rounded-lg px-3 py-2">
+                {booking.notes}
+              </p>
             </div>
           )}
 
           {/* Private notes */}
-          <div className="space-y-1.5">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-normal text-zinc-500 tracking-wide uppercase">Private notes</p>
-                <p className="text-xs font-light text-zinc-400">Visible only to you</p>
-              </div>
-              {!notesEditing && (
-                <button
-                  type="button"
-                  onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
-                  className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors"
-                >
-                  {savedNotes ? 'Edit' : 'Add'}
-                </button>
-              )}
-            </div>
+          <div className="space-y-1">
+            <p className="text-xs font-light text-zinc-400">
+              <span className="uppercase tracking-wide text-zinc-500">Private notes</span>
+              <span className="mx-1.5">·</span>
+              <span>Visible only to you</span>
+            </p>
 
             {notesEditing ? (
-              <div className="space-y-2">
+              <div>
                 <textarea
                   value={notesEditValue}
                   onChange={e => setNotesEditValue(e.target.value)}
                   placeholder="Add private notes..."
                   rows={3}
                   autoFocus
-                  className="w-full text-sm font-light text-zinc-700 placeholder:text-zinc-300 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-zinc-300 resize-none"
+                  className="w-full text-sm font-light text-zinc-700 placeholder:text-zinc-300 bg-zinc-50/60 border border-zinc-100 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-300 resize-none"
                 />
-                <div className="flex items-center justify-end gap-3">
+                <div className="flex items-center justify-end gap-3 mt-1.5">
                   <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
                     Cancel
                   </button>
@@ -180,11 +177,17 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 </div>
               </div>
             ) : (
-              savedNotes ? (
-                <p className={noteBoxStyle}>{savedNotes}</p>
-              ) : (
-                <p className="text-sm font-light text-zinc-300 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2.5">No notes added</p>
-              )
+              <div
+                className="relative group cursor-pointer"
+                onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
+              >
+                <p className="text-sm font-light text-zinc-600 bg-zinc-50/60 border border-zinc-100 rounded-lg px-3 py-2 pr-8 min-h-[38px]">
+                  {savedNotes || <span className="text-zinc-300">No notes added</span>}
+                </p>
+                <span className="absolute top-2 right-2.5 text-zinc-300 group-hover:text-zinc-500 transition-colors">
+                  <PencilIcon />
+                </span>
+              </div>
             )}
           </div>
 
