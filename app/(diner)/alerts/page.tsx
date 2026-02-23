@@ -232,7 +232,7 @@ export default function AlertsPage() {
               const isBookingThis = bookingSlotId === alert.slot_id
 
               return (
-                <div key={alert.id} className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative">
+                <div key={alert.id} className="bg-white border border-zinc-200 rounded-lg overflow-hidden relative">
                   {/* Remove button */}
                   <button
                     type="button"
@@ -240,14 +240,14 @@ export default function AlertsPage() {
                     className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
                     aria-label="Remove alert"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
 
                   <div className="flex flex-col md:flex-row">
                     {/* Wide landscape image */}
-                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-xl">
+                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-lg">
                       {alert.venue.image_venue ? (
                         <Image
                           src={alert.venue.image_venue}
@@ -264,13 +264,12 @@ export default function AlertsPage() {
 
                     {/* Details */}
                     <div className="flex-1 p-6 flex flex-col justify-between pr-10">
-                      <div className="space-y-2">
+                      <div className="space-y-0.5">
                         <Link href={`/venues/${alert.venue.id}`} prefetch={true}>
-                          <h3 className="font-light text-xl text-zinc-900 hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
+                          <h3 className="text-lg font-light text-zinc-900 hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
                         </Link>
-                        <p className="text-base text-zinc-500 font-light">{alert.venue.area}</p>
-                        <p className="text-base text-zinc-500 font-light pt-2">{formatFullDateTime(alert.slot.start_at)}</p>
-                        <p className="text-base text-zinc-500 font-light">
+                        <p className="text-sm font-light text-zinc-500 pt-1">{formatFullDateTime(alert.slot.start_at)}</p>
+                        <p className="text-sm font-light text-zinc-500">
                           {alert.slot.party_min === alert.slot.party_max
                             ? `${alert.slot.party_min} guests`
                             : `${alert.slot.party_min}–${alert.slot.party_max} guests`}

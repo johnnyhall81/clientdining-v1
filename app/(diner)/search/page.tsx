@@ -444,7 +444,7 @@ const handleCancel = async () => {
             return (
               <div
                 key={slot.id}
-                className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative"
+                className="bg-white border border-zinc-200 rounded-lg overflow-hidden relative"
               >
                 {/* Cancel X for booked slots */}
                 {isBookedByMe && (
@@ -462,7 +462,7 @@ const handleCancel = async () => {
 
                 <div className="flex flex-col md:flex-row">
                   {/* Large image — left */}
-                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-xl">
+                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-lg">
                     {venue.image_venue ? (
                       <Image
                         src={venue.image_venue}
@@ -481,13 +481,12 @@ const handleCancel = async () => {
                   <div className="flex-1 p-6 flex flex-col justify-between">
                     <div className="space-y-1 pr-6">
                       <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-80 transition-opacity">
-                        <h3 className="font-light text-xl text-zinc-900">{venue.name}</h3>
+                        <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
                       </Link>
-                      <p className="text-base text-zinc-500 font-light">{venue.area}</p>
-                      <p className="text-base text-zinc-500 font-light pt-2">
+                      <p className="text-sm font-light text-zinc-500 pt-1">
                         {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                       </p>
-                      <p className="text-base text-zinc-500 font-light">
+                      <p className="text-sm font-light text-zinc-500">
                         {slot.party_min}–{slot.party_max} guests
                       </p>
                     </div>
