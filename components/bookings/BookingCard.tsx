@@ -199,9 +199,14 @@ useEffect(() => {
                 className="relative group cursor-pointer"
                 onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
               >
-                <p className="text-sm font-light text-zinc-500 border border-zinc-100 rounded px-3 py-2 bg-zinc-50/40 pr-7 min-h-[36px]">
-                  {savedNotes || <span className="text-zinc-300">No notes added</span>}
-                </p>
+              
+<p className="text-sm whitespace-pre-line font-light text-zinc-500 border border-zinc-100 rounded px-3 py-2 bg-zinc-50/40 pr-7 min-h-[36px]">
+  {savedNotes || <span className="text-zinc-300">No notes added</span>}
+</p>
+
+
+
+
                 <span className="absolute top-2.5 right-2.5 text-zinc-300 group-hover:text-zinc-500 transition-colors">
                   <PencilIcon />
                 </span>
