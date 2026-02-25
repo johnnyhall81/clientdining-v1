@@ -126,7 +126,7 @@ if (!authChecked) return null
 
       {/* Now available */}
       <section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pt-16">
-        <p className="text-lg font-light text-zinc-900 mb-10">From the collection</p>
+        <p className="font-serif text-zinc-900 mb-10 tracking-tight" style={{ fontSize: '28px', lineHeight: '1.1', letterSpacing: '-0.01em' }}>Selected London Venues</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">
           {venues.slice(0, 3).map((venue) => {
             const imageSrc = venue.image_venue || venue.image
