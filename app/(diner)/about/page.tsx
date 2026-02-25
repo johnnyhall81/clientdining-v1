@@ -20,19 +20,25 @@ export default function AboutPage() {
             ClientDining is a private booking platform for professionals who host business dining in London.
           </p>
           <p>
-            It provides access to a small group of established restaurants and private members' clubs suited to professional hosting.
+            It provides access to a deliberately small group of established restaurants and private members&apos; clubs suited to professional hosting.
           </p>
           <p>
-            Business dining remains a normal part of working life in the City. Yet arranging these tables often relies on informal emails, personal contacts, or general reservation platforms not designed for this purpose.
+            Business dining remains a normal part of working life in the City. The way it is arranged has never been designed for it.
           </p>
           <p>
-            ClientDining formalises that coordination.
+            Emails. Personal contacts. General reservation platforms built for something else.
           </p>
           <p>
-            The platform is selective by design. Membership is verified and intended for professionals who host as part of their role. Venue participation is controlled and expanded deliberately.
+            ClientDining formalises what already happens.
           </p>
           <p>
-            ClientDining focuses on weekday business dining in London.
+            A defined circle. Not a directory.
+          </p>
+          <p>
+            Membership is verified and intended for professionals who host as part of their role. The venue list is controlled and expanded deliberately.
+          </p>
+          <p>
+            Business dining, formalised.
           </p>
         </div>
 
