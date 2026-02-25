@@ -74,9 +74,9 @@ export default function NominationCard() {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-light text-zinc-900 mb-2">Extend access</h2>
+        <h2 className="text-xl font-light text-zinc-900 mb-2">Share access</h2>
         <p className="text-sm font-light text-zinc-400 leading-relaxed">
-          Access is limited to verified professionals. Colleagues you invite join directly. There is no public sign-up.
+          ClientDining is a private network. Invite colleagues who host regularly.
         </p>
       </div>
 
