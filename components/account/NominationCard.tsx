@@ -59,7 +59,7 @@ export default function NominationCard() {
         throw new Error(data.error || 'Failed to send invitation')
       }
 
-      setSuccess(`Invitation sent to ${formData.name}.`)
+      setSuccess('Invitation sent.')
       setFormData({ name: '', email: '', company: '' })
       loadNominations()
     } catch (err: any) {
@@ -74,31 +74,22 @@ export default function NominationCard() {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-light text-zinc-900">Invite a colleague</h2>
+        <h2 className="text-xl font-light text-zinc-900 mb-2">Extend access</h2>
+        <p className="text-sm font-light text-zinc-400 leading-relaxed">
+          Access is limited to verified professionals. Colleagues you invite join directly. There is no public sign-up.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 mb-6">
         <div>
-          <label className="block text-sm font-light text-zinc-700 mb-1">Name</label>
-          <input
-            type="text"
-            required
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="input-field"
-            placeholder="Jane Smith"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-light text-zinc-700 mb-1">Email</label>
+          <label className="block text-sm font-light text-zinc-500 mb-1">Colleague&apos;s email</label>
           <input
             type="email"
             required
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className="input-field"
-            placeholder="jane@company.com"
+            placeholder="colleague@company.com"
           />
         </div>
 
