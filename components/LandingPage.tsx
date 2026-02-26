@@ -166,12 +166,13 @@ if (!authChecked) return null
         </div>
 
         {/* CTA */}
-        <div className="mt-16 pt-16 pb-16 border-t border-zinc-200 flex justify-center">
+        <div className="mt-10 pb-16 flex justify-center">
           <Link
             href="/signup"
-            className="inline-block px-8 py-3 text-sm font-light text-zinc-500 rounded-lg border border-zinc-200 bg-white/60 backdrop-blur-sm hover:border-zinc-300 hover:text-zinc-700 hover:bg-white/80 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-zinc-900 text-white text-sm font-light rounded-lg hover:bg-zinc-700 transition-colors duration-300"
           >
-            View full list
+            See all venues
+            <span className="translate-x-0 group-hover:translate-x-1 transition-transform duration-300">→</span>
           </Link>
         </div>
       </section>
