@@ -169,7 +169,7 @@ if (!authChecked) return null
         <div className="mt-10 pb-16 flex justify-center">
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-zinc-900 text-white text-sm font-light rounded-lg hover:bg-zinc-700 transition-colors duration-300"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-colors duration-300"
           >
             See all venues
             <span className="translate-x-0 group-hover:translate-x-1 transition-transform duration-300">→</span>
