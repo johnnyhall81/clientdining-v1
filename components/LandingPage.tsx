@@ -171,8 +171,7 @@ if (!authChecked) return null
             href="/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-colors duration-300"
           >
-            See all venues
-            <span className="translate-x-0 group-hover:translate-x-1 transition-transform duration-300">→</span>
+            View full list
           </Link>
         </div>
       </section>
