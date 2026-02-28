@@ -76,9 +76,7 @@ export default function BookingsPage() {
   }
 
   const handleCancel = async (bookingId: string) => {
-
     try {
-      // Call the cancel API endpoint
       const response = await fetch('/api/bookings/cancel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -90,7 +88,14 @@ export default function BookingsPage() {
         throw new Error(data.error || 'Failed to cancel booking')
       }
 
-      fetchBookings()
+      // Update state directly — no need to re-fetch
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.booking.id === bookingId
+            ? { ...b, booking: { ...b.booking, status: 'cancelled' } }
+            : b
+        )
+      )
     } catch (error: any) {
       console.error('Error cancelling booking:', error)
     }
