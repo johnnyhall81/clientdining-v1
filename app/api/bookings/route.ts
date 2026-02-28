@@ -83,12 +83,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: bookingError.message }, { status: 400 })
     }
 
-    // Check if the function returned an error
-    if (booking && !booking.success) {
-      console.error('Booking function error:', booking.error)
-      return NextResponse.json({ error: booking.error }, { status: 400 })
-    }
-
     // Send confirmation email (async, don't wait for it)
     const venue = (slot as any).venues
     console.log('📧 About to send booking email to:', profile.email)
