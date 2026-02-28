@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import NominationCard from '@/components/account/NominationCard'
@@ -46,27 +47,52 @@ export default function AccountPage() {
   }
 
   const memberSince = new Date(profile.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+  const displayName = profile.full_name
+    ? profile.full_name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+    : null
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-
-      {/* Account header — no card, editorial */}
       <div>
         <h1 className="text-3xl font-light text-zinc-900">Account</h1>
-        <p className="text-sm font-light text-zinc-400 mt-1">
-          {profile.full_name
-            ? profile.full_name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
-            : profile.email}
-          {' · '}{profile.email}
-          {' · '}Member since {memberSince}
-        </p>
       </div>
 
-      {/* Introduce section */}
+      {/* Profile card — no heading, more breathing room */}
+      <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-8">
+        <div className="flex items-center gap-8">
+          {/* Avatar */}
+          {profile.avatar_url ? (
+            <div className="relative w-16 h-16 flex-shrink-0">
+              <Image
+                src={profile.avatar_url}
+                alt={displayName || 'Profile'}
+                fill
+                sizes="64px"
+                quality={70}
+                className="rounded-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center text-xl font-light text-zinc-500 flex-shrink-0">
+              {(displayName || profile.email)?.charAt(0).toUpperCase()}
+            </div>
+          )}
+
+          {/* Details */}
+          <div className="flex-1 space-y-2">
+            {displayName && (
+              <p className="text-zinc-900 font-light">{displayName}</p>
+            )}
+            <p className="text-sm font-light text-zinc-500">{profile.email}</p>
+            <p className="text-sm font-light text-zinc-400">Member since {memberSince}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Introduce */}
       <div className="pt-8">
         <NominationCard userId={user!.id} canNominate={profile.can_nominate || false} />
       </div>
-
     </div>
   )
 }

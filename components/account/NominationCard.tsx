@@ -103,7 +103,9 @@ export default function NominationCard({ userId, canNominate }: Props) {
             {nominations.map((nom) => (
               <div key={nom.id} className="flex items-center justify-between py-3 border-b border-zinc-200 last:border-b-0">
                 <div>
-                  <p className="text-sm font-light text-zinc-900">{nom.nominee_name}</p>
+                  <p className="text-sm font-light text-zinc-900">
+                    {nom.nominee_name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
+                  </p>
                   <p className="text-xs font-light text-zinc-400">
                     {nom.nominee_email}{nom.nominee_company ? ` · ${nom.nominee_company}` : ''}
                   </p>
