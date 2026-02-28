@@ -49,7 +49,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
-  const [futureBookingsCount, setFutureBookingsCount] = useState(0)
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [cancellingSlot, setCancellingSlot] = useState<{
     slotId: string
@@ -81,30 +80,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
     loadAlerts()
   }, [user])
-
-  // Load future bookings count
-  useEffect(() => {
-    const loadFutureBookingsCount = async () => {
-      if (!user) {
-        setFutureBookingsCount(0)
-        return
-      }
-
-      const nowIso = new Date().toISOString()
-
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .gte('slot_start_at', nowIso)
-
-      if (!error && data) {
-        setFutureBookingsCount(data.length || 0)
-      }
-    }
-    loadFutureBookingsCount()
-  }, [user, bookedSlots])
 
   // Load my bookings for the slots on this venue page
   useEffect(() => {
@@ -370,7 +345,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
               <SlotRow
                 key={slot.id}
                 slot={slot}
-                currentFutureBookings={futureBookingsCount}
                 onBook={handleBook}
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}

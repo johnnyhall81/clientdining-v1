@@ -69,32 +69,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    // ✅ Booking limits: count FUTURE bookings only (past bookings don't count)
-    // This is based on the slot's start_at, since bookings doesn't store slot time.
-    const nowIso = new Date().toISOString()
-
-    const { data: futureBookingRows, error: futureCountError } = await supabase
-      .from('bookings')
-      .select('slot_id, slots!inner(start_at)')
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .gt('slots.start_at', nowIso)
-
-    if (futureCountError) {
-      console.error('Future booking count error:', futureCountError)
-      return NextResponse.json({ error: 'Failed to validate booking limits' }, { status: 500 })
-    }
-
-    const currentFutureBookings = futureBookingRows?.length || 0
-    const maxBookings = 10
-
-    if (currentFutureBookings >= maxBookings) {
-      return NextResponse.json(
-        { error: `Booking limit reached (${currentFutureBookings}/${maxBookings} future bookings). Cancel an existing booking to make room.` },
-        { status: 403 }
-      )
-    }
-
     // Create booking
     const { data: booking, error: bookingError } = await supabase.rpc('create_booking', {
       p_slot_id: slotId,

@@ -1,11 +1,10 @@
 import { Slot } from '@/lib/supabase'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
-import { checkBookingEligibility } from '@/lib/booking-rules'
+import { isWithin24Hours } from '@/lib/date-utils'
 import AlertToggle from './AlertToggle'
 
 interface SlotRowProps {
   slot: Slot
-  currentFutureBookings: number
   onBook: (slotId: string) => void
   isAlertActive: boolean
   onToggleAlert: (slotId: string) => void
@@ -14,19 +13,19 @@ interface SlotRowProps {
 
 export default function SlotRow({
   slot,
-  currentFutureBookings,
   onBook,
   isAlertActive,
   onToggleAlert,
   isBookedByMe = false,
 }: SlotRowProps) {
-  const eligibility = checkBookingEligibility(slot.start_at, currentFutureBookings)
   const isAvailable = slot.status === 'available'
+  const within24h = isWithin24Hours(slot.start_at)
+  const canBook = isAvailable && !within24h
 
   return (
     <div
       className="flex items-center justify-between py-6 border-b border-zinc-200 last:border-b-0 hover:bg-zinc-50 transition-colors"
-      onClick={() => !isBookedByMe && isAvailable && eligibility.canBook && onBook(slot.id)}
+      onClick={() => !isBookedByMe && canBook && onBook(slot.id)}
     >
 
 
@@ -53,7 +52,7 @@ export default function SlotRow({
         <div className="flex items-center gap-2 justify-end">
           {isBookedByMe ? (
             <span className="text-sm font-light text-zinc-500">Reserved</span>
-          ) : isAvailable && eligibility.canBook ? (
+          ) : canBook ? (
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onBook(slot.id) }}
