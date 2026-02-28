@@ -90,7 +90,7 @@ export default function AccountPage() {
       </div>
 
       {/* Nominations - only shows if enabled for this user */}
-      <NominationCard userId={user.id} canNominate={profile.can_nominate || false} />
+      <NominationCard userId={user!.id} canNominate={profile.can_nominate || false} />
     </div>
   )
 }
