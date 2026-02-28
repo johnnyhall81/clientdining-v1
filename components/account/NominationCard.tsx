@@ -65,19 +65,15 @@ export default function NominationCard({ userId, canNominate }: Props) {
 
   return (
     <div>
-      {/* Heading — matches Account / Search pattern */}
-      <div className="mb-6">
+      <div className="mb-8">
         <h1 className="text-3xl font-light text-zinc-900">Share access</h1>
-        <p className="text-sm font-light text-zinc-400 mt-1">
-          ClientDining is a private network. Invite colleagues who host regularly.
-        </p>
+        <p className="text-sm font-light text-zinc-400 mt-1">Invite a colleague.</p>
       </div>
 
-      {/* Invite bar — floats on grey like the search bar */}
+      {/* Invite bar */}
       <form onSubmit={handleSubmit}>
         <div className="flex items-stretch bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
           <div className="flex-1 px-5 py-4">
-            <span className="block text-xs text-zinc-400 font-light mb-0.5">Colleague&apos;s email</span>
             <input
               type="email"
               required
