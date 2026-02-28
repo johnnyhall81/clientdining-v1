@@ -11,6 +11,7 @@ export interface Venue {
   area: string
   venue_type: 'restaurant' | 'club'
   description: string
+  private_hire_available?: boolean
   address?: string
   postcode?: string
   phone?: string
