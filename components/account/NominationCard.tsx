@@ -73,29 +73,30 @@ export default function NominationCard({ userId, canNominate }: Props) {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-        <div>
-          <label className="block text-sm font-light text-zinc-500 mb-1">Colleague&apos;s email</label>
+      <form onSubmit={handleSubmit} className="mb-6">
+      <div className="mb-6">
+        <label className="block text-sm font-light text-zinc-500 mb-1">Colleague&apos;s email</label>
+        <div className="flex items-center border border-zinc-200 rounded-lg px-4 bg-white focus-within:ring-2 focus-within:ring-zinc-900 focus-within:border-transparent">
           <input
             type="email"
             required
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="input-field"
+            className="flex-1 py-3 text-sm font-light text-zinc-900 placeholder-zinc-400 bg-transparent outline-none"
             placeholder="colleague@company.com"
           />
+          <button
+            type="submit"
+            disabled={loading}
+            className="text-sm font-light text-zinc-500 hover:text-zinc-900 disabled:opacity-40 transition-colors whitespace-nowrap pl-4"
+          >
+            {loading ? 'Sending...' : 'Invite'}
+          </button>
         </div>
 
-        {error && <p className="text-sm text-red-600 font-light">{error}</p>}
-        {success && <p className="text-sm text-zinc-500 font-light">{success}</p>}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-8 bg-zinc-900 text-zinc-50 py-3 rounded-lg hover:bg-zinc-800 disabled:opacity-50 font-light transition-colors duration-200"
-        >
-          {loading ? 'Sending...' : 'Invite'}
-        </button>
+        {error && <p className="text-sm text-red-600 font-light mt-2">{error}</p>}
+        {success && <p className="text-sm text-zinc-500 font-light mt-2">{success}</p>}
+      </div>
       </form>
 
       {nominations.length > 0 && (
