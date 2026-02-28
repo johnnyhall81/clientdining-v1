@@ -55,6 +55,7 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false)
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
+  const [isConfirming, setIsConfirming] = useState(false)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
   const [bookingIdsBySlot, setBookingIdsBySlot] = useState<Map<string, string>>(new Map())
   const [venues, setVenues] = useState<Venue[]>([])
@@ -321,7 +322,7 @@ const handleCancel = async () => {
   const confirmBooking = async (partySize: number, notes?: string) => {
     if (!selectedSlot) return
   
-    setBookingSlotId(selectedSlot.id)
+    setIsConfirming(true)
     setBookingError(null)
   
     try {
@@ -340,6 +341,7 @@ const handleCancel = async () => {
       if (!response.ok) {
         const message = data?.error || 'Could not create booking'
         setBookingError(message)
+        setIsConfirming(false)
         setBookingSlotId(null)
         return
       }
@@ -360,6 +362,7 @@ const handleCancel = async () => {
       console.error('Booking error:', error)
       setBookingError('Could not create booking. Please try again.')
     } finally {
+      setIsConfirming(false)
       setBookingSlotId(null)
     }
   }
@@ -620,13 +623,14 @@ const handleCancel = async () => {
       setSelectedSlot(null)
       setBookingError(null)
       setBookingSlotId(null)
+      setIsConfirming(false)
     }}
     onConfirm={confirmBooking}
     minSize={selectedSlot.party_min}
     maxSize={selectedSlot.party_max}
     venueName={selectedSlot.venue?.name || 'Venue'}
     error={bookingError}
-    isSubmitting={!!bookingSlotId && showPartySizeModal}
+    isSubmitting={isConfirming}
   />
 )}
 
