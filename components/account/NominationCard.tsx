@@ -75,20 +75,23 @@ export default function NominationCard({ userId, canNominate }: Props) {
 
       <form onSubmit={handleSubmit} className="mb-6">
       <div className="mb-6">
-        <label className="block text-sm font-light text-zinc-500 mb-1">Colleague&apos;s email</label>
-        <div className="flex items-center border border-zinc-200 rounded-lg px-4 bg-white focus-within:ring-2 focus-within:ring-zinc-900 focus-within:border-transparent">
-          <input
-            type="email"
-            required
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="flex-1 py-3 text-sm font-light text-zinc-900 placeholder-zinc-400 bg-transparent outline-none"
-            placeholder="colleague@company.com"
-          />
+        <div className="flex items-stretch bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="flex-1 px-5 py-4">
+            <span className="block text-xs text-zinc-400 font-light mb-0.5">Colleague&apos;s email</span>
+            <input
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full text-sm font-light text-zinc-900 placeholder-zinc-400 bg-transparent outline-none"
+              placeholder="colleague@company.com"
+            />
+          </div>
+          <div className="w-px bg-zinc-200 my-3" />
           <button
             type="submit"
             disabled={loading}
-            className="text-sm font-light text-zinc-500 hover:text-zinc-900 disabled:opacity-40 transition-colors whitespace-nowrap pl-4"
+            className="px-4 text-xs text-zinc-400 hover:text-zinc-600 font-light transition-colors disabled:opacity-40 whitespace-nowrap"
           >
             {loading ? 'Sending...' : 'Invite'}
           </button>
