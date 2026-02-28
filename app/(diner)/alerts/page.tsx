@@ -98,6 +98,7 @@ export default function AlertsPage() {
           )
         `)
         .eq('diner_user_id', user.id)
+        .gt('slots.start_at', new Date().toISOString())
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -209,7 +210,10 @@ export default function AlertsPage() {
     }
   }
 
-  const filteredAlerts = alerts.filter((a) => a.status === 'active' || a.status === 'notified')
+  const filteredAlerts = alerts.filter((a) =>
+    (a.status === 'active' || a.status === 'notified') &&
+    new Date(a.slot.start_at) > new Date()
+  )
 
   if (authLoading || loading) {
     return <div className="flex items-center justify-center min-h-[400px] text-zinc-500 font-light">Loading...</div>
