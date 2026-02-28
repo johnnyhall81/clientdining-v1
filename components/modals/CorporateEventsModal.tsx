@@ -335,13 +335,15 @@ export default function CorporateEventsModal({
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading || success}
-            className="w-full py-3 rounded-lg border border-zinc-800 text-zinc-800 hover:bg-zinc-50 disabled:opacity-50 font-light transition-colors"
-          >
-            {loading ? 'Sending...' : success ? 'Sent' : 'Send enquiry'}
-          </button>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={loading || success}
+              className="px-6 py-2.5 text-sm font-light text-zinc-600 hover:text-zinc-900 bg-zinc-50 hover:bg-zinc-100 rounded-lg transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Sending...' : success ? 'Sent' : 'Send enquiry'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
