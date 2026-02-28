@@ -5,28 +5,6 @@ import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
 import 'react-day-picker/dist/style.css'
 
-// Generate time slots in 30-minute increments
-const generateTimeSlots = () => {
-  const slots = []
-  for (let hour = 0; hour < 24; hour++) {
-    for (let minute of [0, 30]) {
-      const h = hour.toString().padStart(2, '0')
-      const m = minute.toString().padStart(2, '0')
-      const time24 = `${h}:${m}`
-      
-      // Format for display (12-hour with AM/PM)
-      const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
-      const period = hour < 12 ? 'AM' : 'PM'
-      const display = `${hour12}:${m} ${period}`
-      
-      slots.push({ value: time24, label: display })
-    }
-  }
-  return slots
-}
-
-const TIME_SLOTS = generateTimeSlots()
-
 interface CorporateEventsModalProps {
   isOpen: boolean
   onClose: () => void
@@ -50,24 +28,21 @@ export default function CorporateEventsModal({
     lastName: '',
     email: '',
     phone: '',
-    phoneExt: '',
     company: '',
-    eventType: 'business_dinner',
-    eventNature: '',
+    eventType: '',
     eventDate: '',
-    startTime: '',
-    endTime: '',
-    numberOfPeople: '',
+    flexibleOnDate: false,
+    timing: '',
+    guestRange: '',
     additionalInfo: '',
-    hearAboutUs: 'clientdining_member',
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Validate date is selected
-    if (!formData.eventDate) {
-      setError('Please select an event date')
+    // Validate required fields
+    if (!formData.firstName || !formData.lastName || !formData.email) {
+      setError('Please fill in all required fields')
       return
     }
     
@@ -79,9 +54,22 @@ export default function CorporateEventsModal({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...formData,
           venueId,
           venueName,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone || null,
+          phoneExt: null,
+          company: formData.company || null,
+          eventType: formData.eventType || 'other',
+          eventNature: formData.eventType || 'Private event',
+          eventDate: formData.eventDate || new Date().toISOString().split('T')[0],
+          startTime: formData.timing === 'lunch' ? '12:00' : formData.timing === 'early_evening' ? '18:00' : '19:00',
+          endTime: formData.timing === 'lunch' ? '15:00' : formData.timing === 'early_evening' ? '21:00' : '23:00',
+          numberOfPeople: formData.guestRange || '12',
+          additionalInfo: `${formData.flexibleOnDate ? '[Flexible on date] ' : ''}${formData.additionalInfo}`,
+          hearAboutUs: 'clientdining_member',
         }),
       })
 
@@ -100,16 +88,13 @@ export default function CorporateEventsModal({
           lastName: '',
           email: '',
           phone: '',
-          phoneExt: '',
           company: '',
-          eventType: 'business_dinner',
-          eventNature: '',
+          eventType: '',
           eventDate: '',
-          startTime: '',
-          endTime: '',
-          numberOfPeople: '',
+          flexibleOnDate: false,
+          timing: '',
+          guestRange: '',
           additionalInfo: '',
-          hearAboutUs: 'clientdining_member',
         })
       }, 2000)
     } catch (err: any) {
@@ -123,11 +108,11 @@ export default function CorporateEventsModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-zinc-200 px-6 py-4 flex items-center justify-between">
+      <div className="bg-white rounded-lg max-w-xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-zinc-200 px-8 py-5 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-light text-zinc-900">Corporate Event Inquiry</h2>
-            <p className="text-sm text-zinc-600 font-light mt-1">{venueName}</p>
+            <h2 className="text-xl font-light text-zinc-900">Private Rooms & Events</h2>
+            <p className="text-sm text-zinc-500 font-light mt-1">{venueName}</p>
           </div>
           <button
             onClick={onClose}
@@ -137,141 +122,107 @@ export default function CorporateEventsModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Contact Information */}
+        <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          {/* Contact */}
           <div className="space-y-4">
-            <h3 className="text-sm font-medium text-zinc-900">Contact Information</h3>
-            
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-light text-zinc-700 mb-1">
-                  First Name <span className="text-red-600">*</span>
+                <label className="block text-sm font-light text-zinc-700 mb-2">
+                  First name
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  className="input-field"
+                  className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-light text-zinc-700 mb-1">
-                  Last Name <span className="text-red-600">*</span>
+                <label className="block text-sm font-light text-zinc-700 mb-2">
+                  Last name
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  className="input-field"
+                  className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-light text-zinc-700 mb-1">
-                Email Address <span className="text-red-600">*</span>
+              <label className="block text-sm font-light text-zinc-700 mb-2">
+                Email
               </label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="input-field"
+                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2">
-                <label className="block text-sm font-light text-zinc-700 mb-1">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-light text-zinc-700 mb-1">
-                  Ext.
-                </label>
-                <input
-                  type="text"
-                  value={formData.phoneExt}
-                  onChange={(e) => setFormData({ ...formData, phoneExt: e.target.value })}
-                  className="input-field"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-light text-zinc-500 mb-2">
+                Phone <span className="text-zinc-400">(optional)</span>
+              </label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+              />
             </div>
 
             <div>
-              <label className="block text-sm font-light text-zinc-700 mb-1">
-                Company <span className="text-red-600">*</span>
+              <label className="block text-sm font-light text-zinc-500 mb-2">
+                Company <span className="text-zinc-400">(optional)</span>
               </label>
               <input
                 type="text"
-                required
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                className="input-field"
+                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
               />
             </div>
           </div>
 
           {/* Event Details */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium text-zinc-900">Event Details</h3>
-
+          <div className="space-y-4 pt-4 border-t border-zinc-100">
             <div>
-              <label className="block text-sm font-light text-zinc-700 mb-1">
-                Event Style <span className="text-red-600">*</span>
+              <label className="block text-sm font-light text-zinc-700 mb-2">
+                Event type
               </label>
               <select
-                required
                 value={formData.eventType}
                 onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
-                className="input-field"
+                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
               >
-                <option value="business_dinner">Business Dinner</option>
-                <option value="board_dinner">Board Dinner</option>
-                <option value="firm_reception">Firm Reception</option>
-                <option value="offsite">Off-site</option>
-                <option value="private_breakfast">Private Breakfast</option>
+                <option value="">Select type</option>
+                <option value="business_dinner">Business dinner</option>
+                <option value="private_dining_room">Private dining room</option>
+                <option value="drinks_reception">Drinks reception</option>
+                <option value="full_venue_hire">Full venue hire</option>
                 <option value="other">Other</option>
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-light text-zinc-700 mb-1">
-                Nature of Event <span className="text-red-600">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="e.g., Client dinner, Partner celebration"
-                value={formData.eventNature}
-                onChange={(e) => setFormData({ ...formData, eventNature: e.target.value })}
-                className="input-field"
-              />
-            </div>
-
             <div className="relative">
-              <label className="block text-sm font-light text-zinc-700 mb-1">
-                Preferred Event Date <span className="text-red-600">*</span>
+              <label className="block text-sm font-light text-zinc-700 mb-2">
+                Preferred date
               </label>
               <button
                 type="button"
                 onClick={() => setShowCalendar(!showCalendar)}
-                className={`w-full px-3 py-2 border rounded-lg text-left transition-colors ${
-                  formData.eventDate ? 'text-zinc-900 border-zinc-300' : 'text-zinc-400 border-zinc-300'
-                } hover:border-zinc-400`}
+                className={`w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-left text-sm font-light transition-colors ${
+                  formData.eventDate ? 'text-zinc-900' : 'text-zinc-400'
+                } hover:border-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400`}
               >
-                {formData.eventDate ? format(new Date(formData.eventDate), 'd MMM yyyy') : 'Select date'}
+                {formData.eventDate ? format(new Date(formData.eventDate), 'd MMMM yyyy') : 'Select date'}
               </button>
               
               {showCalendar && (
@@ -312,72 +263,62 @@ export default function CorporateEventsModal({
                   />
                 </div>
               )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-light text-zinc-700 mb-1">
-                  Start Time <span className="text-red-600">*</span>
-                </label>
-                <select
-                  required
-                  value={formData.startTime}
-                  onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                  className="input-field"
-                >
-                  <option value="">Select time</option>
-                  {TIME_SLOTS.map((slot) => (
-                    <option key={slot.value} value={slot.value}>
-                      {slot.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
               
-              <div>
-                <label className="block text-sm font-light text-zinc-700 mb-1">
-                  End Time <span className="text-red-600">*</span>
-                </label>
-                <select
-                  required
-                  value={formData.endTime}
-                  onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                  className="input-field"
-                >
-                  <option value="">Select time</option>
-                  {TIME_SLOTS.map((slot) => (
-                    <option key={slot.value} value={slot.value}>
-                      {slot.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-light text-zinc-700 mb-1">
-                Number of People <span className="text-red-600">*</span>
+              <label className="flex items-center gap-2 mt-3">
+                <input
+                  type="checkbox"
+                  checked={formData.flexibleOnDate}
+                  onChange={(e) => setFormData({ ...formData, flexibleOnDate: e.target.checked })}
+                  className="rounded h-4 w-4"
+                />
+                <span className="text-sm font-light text-zinc-600">Flexible on date</span>
               </label>
-              <input
-                type="number"
-                required
-                min="1"
-                value={formData.numberOfPeople}
-                onChange={(e) => setFormData({ ...formData, numberOfPeople: e.target.value })}
-                className="input-field"
-              />
             </div>
 
             <div>
-              <label className="block text-sm font-light text-zinc-700 mb-1">
-                Additional Information
+              <label className="block text-sm font-light text-zinc-700 mb-2">
+                Preferred timing
+              </label>
+              <select
+                value={formData.timing}
+                onChange={(e) => setFormData({ ...formData, timing: e.target.value })}
+                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+              >
+                <option value="">Select timing</option>
+                <option value="lunch">Lunch</option>
+                <option value="early_evening">Early evening</option>
+                <option value="evening">Evening</option>
+                <option value="flexible">Flexible</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-light text-zinc-700 mb-2">
+                Estimated guests
+              </label>
+              <select
+                value={formData.guestRange}
+                onChange={(e) => setFormData({ ...formData, guestRange: e.target.value })}
+                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+              >
+                <option value="">Select range</option>
+                <option value="8-12">8–12</option>
+                <option value="12-20">12–20</option>
+                <option value="20-40">20–40</option>
+                <option value="40+">40+</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-light text-zinc-700 mb-2">
+                Additional details
               </label>
               <textarea
                 rows={4}
                 value={formData.additionalInfo}
                 onChange={(e) => setFormData({ ...formData, additionalInfo: e.target.value })}
-                placeholder="Budget, dietary requirements, special requests..."
-                className="input-field resize-none"
+                placeholder="Any budget guidance, dietary needs, or context we should know?"
+                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light resize-none focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400 placeholder:text-zinc-400"
               />
             </div>
           </div>
@@ -390,16 +331,16 @@ export default function CorporateEventsModal({
 
           {success && (
             <div className="text-sm text-green-600 bg-green-50 p-3 rounded-lg font-light">
-              Request submitted successfully! The venue will be in touch soon.
+              Enquiry sent successfully. The venue will be in touch soon.
             </div>
           )}
 
           <button
             type="submit"
             disabled={loading || success}
-            className="w-full bg-zinc-900 text-zinc-50 py-3 rounded-lg hover:bg-zinc-800 disabled:opacity-50 font-light"
+            className="w-full bg-zinc-900 text-zinc-50 py-3 rounded-lg hover:bg-zinc-800 disabled:opacity-50 font-light transition-colors"
           >
-            {loading ? 'Submitting...' : success ? 'Submitted!' : 'Submit Inquiry'}
+            {loading ? 'Sending...' : success ? 'Sent' : 'Send enquiry'}
           </button>
         </form>
       </div>
