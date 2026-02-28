@@ -5,6 +5,28 @@ import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
 import 'react-day-picker/dist/style.css'
 
+// Generate time slots in 30-minute increments
+const generateTimeSlots = () => {
+  const slots = []
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute of [0, 30]) {
+      const h = hour.toString().padStart(2, '0')
+      const m = minute.toString().padStart(2, '0')
+      const time24 = `${h}:${m}`
+      
+      // Format for display (12-hour with AM/PM)
+      const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+      const period = hour < 12 ? 'AM' : 'PM'
+      const display = `${hour12}:${m} ${period}`
+      
+      slots.push({ value: time24, label: display })
+    }
+  }
+  return slots
+}
+
+const TIME_SLOTS = generateTimeSlots()
+
 interface CorporateEventsModalProps {
   isOpen: boolean
   onClose: () => void
@@ -297,26 +319,38 @@ export default function CorporateEventsModal({
                 <label className="block text-sm font-light text-zinc-700 mb-1">
                   Start Time <span className="text-red-600">*</span>
                 </label>
-                <input
-                  type="time"
+                <select
                   required
                   value={formData.startTime}
                   onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                   className="input-field"
-                />
+                >
+                  <option value="">Select time</option>
+                  {TIME_SLOTS.map((slot) => (
+                    <option key={slot.value} value={slot.value}>
+                      {slot.label}
+                    </option>
+                  ))}
+                </select>
               </div>
               
               <div>
                 <label className="block text-sm font-light text-zinc-700 mb-1">
                   End Time <span className="text-red-600">*</span>
                 </label>
-                <input
-                  type="time"
+                <select
                   required
                   value={formData.endTime}
                   onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                   className="input-field"
-                />
+                >
+                  <option value="">Select time</option>
+                  {TIME_SLOTS.map((slot) => (
+                    <option key={slot.value} value={slot.value}>
+                      {slot.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
