@@ -56,6 +56,7 @@ export default function SearchPage() {
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
+  const [bookingIdsBySlot, setBookingIdsBySlot] = useState<Map<string, string>>(new Map())
   const [venues, setVenues] = useState<Venue[]>([])
 
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
@@ -124,7 +125,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
 
         const { data, error } = await supabase
           .from('bookings')
-          .select('slot_id')
+          .select('id, slot_id')
           .eq('user_id', user.id)
           .eq('status', 'active')
           .in('slot_id', slotIds)
@@ -132,6 +133,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
         if (error) throw error
 
         setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
+        setBookingIdsBySlot(new Map((data || []).map((b: any) => [b.slot_id, b.id])))
       } catch (e) {
         console.error('Error loading bookings:', e)
       }
@@ -174,25 +176,17 @@ const openCancelModal = (slotId: string, venueName: string) => {
 const handleCancel = async () => {
   if (!user || !cancellingSlot) return
 
+  const bookingId = bookingIdsBySlot.get(cancellingSlot.slotId)
+  if (!bookingId) {
+    setBookingError('Booking not found')
+    return
+  }
+
   try {
-    // Need to get the bookingId from the slotId
-    const { data: booking } = await supabase
-      .from('bookings')
-      .select('id')
-      .eq('slot_id', cancellingSlot.slotId)
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .single()
-
-    if (!booking) {
-      setBookingError('Booking not found')
-      return
-    }
-
     const response = await fetch('/api/bookings/cancel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bookingId: booking.id }), // ✅ Now sending bookingId
+      body: JSON.stringify({ bookingId }),
     })
 
     const data = await response.json().catch(() => ({}))
@@ -211,6 +205,11 @@ const handleCancel = async () => {
     // Remove from booked slots and restore slot status in results
     setBookedSlots((prev) => {
       const next = new Set(prev)
+      next.delete(cancellingSlot.slotId)
+      return next
+    })
+    setBookingIdsBySlot((prev) => {
+      const next = new Map(prev)
       next.delete(cancellingSlot.slotId)
       return next
     })
