@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase-client'
 
 interface Nomination {
   id: string
@@ -10,35 +11,29 @@ interface Nomination {
   created_at: string
 }
 
-export default function NominationCard() {
+interface Props {
+  userId: string
+  canNominate: boolean
+}
+
+export default function NominationCard({ userId, canNominate }: Props) {
   const [nominations, setNominations] = useState<Nomination[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [canNominate, setCanNominate] = useState(false)
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-  })
+  const [formData, setFormData] = useState({ name: '', email: '', company: '' })
 
   useEffect(() => {
-    loadNominations()
-  }, [])
+    if (!canNominate) return
+    supabase
+      .from('nominations')
+      .select('id, nominee_name, nominee_email, nominee_company, created_at')
+      .eq('nominator_user_id', userId)
+      .order('created_at', { ascending: false })
+      .then(({ data }) => { if (data) setNominations(data) })
+  }, [userId, canNominate])
 
-  const loadNominations = async () => {
-    try {
-      const response = await fetch('/api/nominations')
-      const data = await response.json()
-      if (response.ok) {
-        setNominations(data.nominations || [])
-        setCanNominate(data.can_nominate || false)
-      }
-    } catch (err) {
-      console.error('Failed to load nominations:', err)
-    }
-  }
+  if (!canNominate) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,21 +50,19 @@ export default function NominationCard() {
 
       const data = await response.json()
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to send invitation')
-      }
+      if (!response.ok) throw new Error(data.error || 'Failed to send invitation')
 
       setSuccess('Invitation sent.')
       setFormData({ name: '', email: '', company: '' })
-      loadNominations()
+      if (data.nomination) {
+        setNominations((prev) => [data.nomination, ...prev])
+      }
     } catch (err: any) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
   }
-
-  if (!canNominate) return null
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
@@ -93,13 +86,8 @@ export default function NominationCard() {
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-red-600 font-light">{error}</p>
-        )}
-
-        {success && (
-          <p className="text-sm text-zinc-500 font-light">{success}</p>
-        )}
+        {error && <p className="text-sm text-red-600 font-light">{error}</p>}
+        {success && <p className="text-sm text-zinc-500 font-light">{success}</p>}
 
         <button
           type="submit"
