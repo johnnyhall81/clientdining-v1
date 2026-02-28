@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import NominationCard from '@/components/account/NominationCard'
@@ -46,53 +45,28 @@ export default function AccountPage() {
     return <div className="text-center py-12 text-zinc-500 font-light">Profile not found</div>
   }
 
+  const memberSince = new Date(profile.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
+
+      {/* Account header — no card, editorial */}
       <div>
         <h1 className="text-3xl font-light text-zinc-900">Account</h1>
+        <p className="text-sm font-light text-zinc-400 mt-1">
+          {profile.full_name
+            ? profile.full_name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+            : profile.email}
+          {' · '}{profile.email}
+          {' · '}Member since {memberSince}
+        </p>
       </div>
 
-      {/* Profile Info */}
-      <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
-        <h2 className="text-xl font-light text-zinc-900 mb-4">Profile</h2>
-        <div className="flex items-start gap-6">
-          {profile.avatar_url ? (
-            <div className="relative w-20 h-20">
-              <Image
-                src={profile.avatar_url}
-                alt={profile.full_name || 'Profile'}
-                fill
-                sizes="80px"
-                quality={70}
-                className="rounded-full object-cover border-2 border-zinc-200"
-              />
-            </div>
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-zinc-100 flex items-center justify-center text-2xl font-light text-zinc-600">
-              {profile.full_name?.charAt(0) || profile.email?.charAt(0).toUpperCase()}
-            </div>
-          )}
-          <div className="flex-1 space-y-3">
-            <div>
-              <label className="text-sm text-zinc-600 font-light">Name</label>
-              <p className="text-zinc-900 font-light">{profile.full_name || 'Not set'}</p>
-            </div>
-            <div>
-              <label className="text-sm text-zinc-600 font-light">Email</label>
-              <p className="text-zinc-900 font-light">{profile.email}</p>
-            </div>
-            <div>
-              <label className="text-sm text-zinc-600 font-light">Member since</label>
-              <p className="text-zinc-900 font-light">{new Date(profile.created_at).toLocaleDateString()}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Nominations - only shows if enabled for this user */}
+      {/* Introduce section */}
       <div className="pt-8">
         <NominationCard userId={user!.id} canNominate={profile.can_nominate || false} />
       </div>
+
     </div>
   )
 }
