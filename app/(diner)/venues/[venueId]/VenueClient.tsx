@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase-client'
 import SlotRow from '@/components/slots/SlotRow'
 import PartySizeModal from '@/components/modals/PartySizeModal'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
+import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
 
 interface VenueClientProps {
   venue: Venue
@@ -267,12 +268,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
 
 
 
-
-
-
-
-
-
       <div>
   <div className="flex items-start justify-between">
     <div>
@@ -291,7 +286,19 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         </p>
       )}
     </div>
+
+    <button
+      onClick={() => setShowCorporateEventsModal(true)}
+      className="px-4 py-2 bg-white border border-zinc-800 text-zinc-800 rounded-lg hover:bg-zinc-50 transition-colors font-light text-sm whitespace-nowrap"
+    >
+      Corporate Events
+    </button>
   </div>
+
+
+
+
+
 
   {venue.description && (
     <div className="mt-7 max-w-3xl">
@@ -393,6 +400,15 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           venueName={cancellingSlot.venueName}
         />
       )}
+
+<CorporateEventsModal
+        isOpen={showCorporateEventsModal}
+        onClose={() => setShowCorporateEventsModal(false)}
+        venueName={venue.name}
+        venueId={venue.id}
+      />
+
+      
     </div>
   )
 }
