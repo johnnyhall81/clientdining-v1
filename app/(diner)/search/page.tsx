@@ -208,12 +208,19 @@ const handleCancel = async () => {
     setShowCancelModal(false)
     setCancellingSlot(null)
 
-    // Remove from booked slots
+    // Remove from booked slots and restore slot status in results
     setBookedSlots((prev) => {
       const next = new Set(prev)
       next.delete(cancellingSlot.slotId)
       return next
     })
+    setResults((prev) =>
+      prev.map((r) =>
+        r.slot.id === cancellingSlot.slotId
+          ? { ...r, slot: { ...r.slot, status: 'available' } }
+          : r
+      )
+    )
   } catch (e) {
     console.error('Cancel error:', e)
     setBookingError('An error occurred while canceling')
