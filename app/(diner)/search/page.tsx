@@ -68,6 +68,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
 
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
+  const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null)
 
 
   const [filters, setFilters] = useState<SearchFilters>({
@@ -93,6 +94,12 @@ const [cancellingSlot, setCancellingSlot] = useState<{
     }
     loadVenues()
   }, [])
+
+  // Load profile for reserved-by display
+  useEffect(() => {
+    if (!user) return
+    supabase.from('profiles').select('full_name, avatar_url').eq('user_id', user.id).single().then(({ data }) => { if (data) setProfile(data) })
+  }, [user])
 
   useEffect(() => {
     handleSearch()
@@ -537,7 +544,29 @@ const handleCancel = async () => {
                             {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
                           </button>
                         ) : isBookedByMe ? (
-                          <span className="text-base text-zinc-500 font-light">Reserved</span>
+                          <div className="flex flex-col items-end gap-1">
+                            <span className="text-xs font-light tracking-wide text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">
+                              Confirmed
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              {profile?.avatar_url ? (
+                                <img
+                                  src={profile.avatar_url}
+                                  alt={profile.full_name || ''}
+                                  className="w-4 h-4 rounded-full object-cover opacity-70"
+                                />
+                              ) : (
+                                <div className="w-4 h-4 rounded-full bg-zinc-300 flex items-center justify-center">
+                                  <span className="text-[8px] font-medium text-zinc-600">
+                                    {profile?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || '?'}
+                                  </span>
+                                </div>
+                              )}
+                              <span className="text-xs font-light text-zinc-400">
+                                Reserved for {profile?.full_name?.split(' ')[0] || 'You'}
+                              </span>
+                            </div>
+                          </div>
                         ) : (
                           <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
                         )}
