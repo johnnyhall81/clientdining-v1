@@ -112,6 +112,12 @@ export default function AdminPage() {
               🔔 Process Alerts
             </Link>
             <Link
+              href="/admin/corporate-events"
+              className="flex items-center justify-center h-20 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors font-light"
+            >
+              Corporate Events
+            </Link>
+            <Link
               href="/admin/dashboard"
               className="flex items-center justify-center h-20 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors font-light"
             >

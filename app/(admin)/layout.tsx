@@ -72,6 +72,9 @@ export default function AdminLayout({
   <Link href="/admin/bookings" className="text-sm text-zinc-100 hover:text-white transition-colors">
     Bookings
   </Link>
+  <Link href="/admin/corporate-events" className="text-sm text-zinc-100 hover:text-white transition-colors">
+    Corporate Events
+  </Link>
   <Link href="/admin/alerts" className="text-sm text-zinc-100 hover:text-white transition-colors">
     Alerts
   </Link>
