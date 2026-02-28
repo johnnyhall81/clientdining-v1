@@ -1,6 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { DayPicker } from 'react-day-picker'
+import { format } from 'date-fns'
+import 'react-day-picker/dist/style.css'
 
 interface CorporateEventsModalProps {
   isOpen: boolean
@@ -18,6 +21,7 @@ export default function CorporateEventsModal({
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+  const [showCalendar, setShowCalendar] = useState(false)
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -38,6 +42,13 @@ export default function CorporateEventsModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate date is selected
+    if (!formData.eventDate) {
+      setError('Please select an event date')
+      return
+    }
+    
     setLoading(true)
     setError('')
 
@@ -105,6 +116,7 @@ export default function CorporateEventsModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Contact Information */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-zinc-900">Contact Information</h3>
             
@@ -189,6 +201,7 @@ export default function CorporateEventsModal({
             </div>
           </div>
 
+          {/* Event Details */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-zinc-900">Event Details</h3>
 
@@ -225,17 +238,58 @@ export default function CorporateEventsModal({
               />
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-sm font-light text-zinc-700 mb-1">
                 Preferred Event Date <span className="text-red-600">*</span>
               </label>
-              <input
-                type="date"
-                required
-                value={formData.eventDate}
-                onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                className="input-field"
-              />
+              <button
+                type="button"
+                onClick={() => setShowCalendar(!showCalendar)}
+                className={`w-full px-3 py-2 border rounded-lg text-left transition-colors ${
+                  formData.eventDate ? 'text-zinc-900 border-zinc-300' : 'text-zinc-400 border-zinc-300'
+                } hover:border-zinc-400`}
+              >
+                {formData.eventDate ? format(new Date(formData.eventDate), 'd MMM yyyy') : 'Select date'}
+              </button>
+              
+              {showCalendar && (
+                <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-200 rounded-xl shadow-lg p-4">
+                  <style>{`
+                    .rdp { --rdp-accent-color: #3f3f46; --rdp-background-color: #f4f4f5; }
+                    .rdp-day_selected .rdp-day_button {
+                      background-color: #3f3f46 !important;
+                      color: white !important;
+                      border-radius: 50% !important;
+                    }
+                    .rdp-button_reset.rdp-button:hover:not([disabled]) .rdp-day_button {
+                      background-color: #e4e4e7 !important;
+                      border-radius: 50% !important;
+                    }
+                  `}</style>
+                  <DayPicker
+                    mode="single"
+                    selected={formData.eventDate ? new Date(formData.eventDate) : undefined}
+                    onSelect={(date) => {
+                      if (date) {
+                        setFormData({ ...formData, eventDate: format(date, 'yyyy-MM-dd') })
+                        setShowCalendar(false)
+                      }
+                    }}
+                    fromDate={new Date()}
+                    styles={{
+                      caption: { fontWeight: 300 },
+                      day: { fontWeight: 300 },
+                    }}
+                    classNames={{
+                      caption_label: 'text-sm font-light text-zinc-900',
+                      nav_button: 'text-zinc-400 hover:text-zinc-900',
+                      day_today: 'font-medium',
+                      day_outside: 'text-zinc-300',
+                      day_disabled: 'text-zinc-200',
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
