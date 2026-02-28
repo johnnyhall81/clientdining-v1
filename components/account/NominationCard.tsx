@@ -49,7 +49,6 @@ export default function NominationCard({ userId, canNominate }: Props) {
       })
 
       const data = await response.json()
-
       if (!response.ok) throw new Error(data.error || 'Failed to send invitation')
 
       setSuccess('Invitation sent.')
@@ -65,16 +64,17 @@ export default function NominationCard({ userId, canNominate }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
+    <div>
+      {/* Heading — matches Account / Search pattern */}
       <div className="mb-6">
-        <h2 className="text-xl font-light text-zinc-900 mb-2">Share access</h2>
-        <p className="text-sm font-light text-zinc-400 leading-relaxed">
+        <h1 className="text-3xl font-light text-zinc-900">Share access</h1>
+        <p className="text-sm font-light text-zinc-400 mt-1">
           ClientDining is a private network. Invite colleagues who host regularly.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="mb-6">
-      <div className="mb-6">
+      {/* Invite bar — floats on grey like the search bar */}
+      <form onSubmit={handleSubmit}>
         <div className="flex items-stretch bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
           <div className="flex-1 px-5 py-4">
             <span className="block text-xs text-zinc-400 font-light mb-0.5">Colleague&apos;s email</span>
@@ -96,21 +96,22 @@ export default function NominationCard({ userId, canNominate }: Props) {
             {loading ? 'Sending...' : 'Invite'}
           </button>
         </div>
-
         {error && <p className="text-sm text-red-600 font-light mt-2">{error}</p>}
         {success && <p className="text-sm text-zinc-500 font-light mt-2">{success}</p>}
-      </div>
       </form>
 
+      {/* Sent list — plain, no card wrapper */}
       {nominations.length > 0 && (
-        <div>
-          <h3 className="text-xs font-light text-zinc-400 mb-3">Sent</h3>
-          <div className="space-y-2">
+        <div className="mt-8">
+          <p className="text-xs font-light text-zinc-400 mb-3">Sent</p>
+          <div>
             {nominations.map((nom) => (
-              <div key={nom.id} className="flex items-center justify-between py-2 border-b border-zinc-100 text-sm">
+              <div key={nom.id} className="flex items-center justify-between py-3 border-b border-zinc-200 last:border-b-0">
                 <div>
-                  <p className="font-light text-zinc-900">{nom.nominee_name}</p>
-                  <p className="text-zinc-400 font-light text-xs">{nom.nominee_email}{nom.nominee_company ? ` · ${nom.nominee_company}` : ''}</p>
+                  <p className="text-sm font-light text-zinc-900">{nom.nominee_name}</p>
+                  <p className="text-xs font-light text-zinc-400">
+                    {nom.nominee_email}{nom.nominee_company ? ` · ${nom.nominee_company}` : ''}
+                  </p>
                 </div>
                 <span className="text-xs text-zinc-400 font-light">
                   {new Date(nom.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
