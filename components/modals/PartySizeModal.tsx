@@ -5,11 +5,12 @@ import { useState, useEffect } from 'react'
 interface PartySizeModalProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: (partySize: number, notes?: string) => void  // ✨ CHANGED: Added notes parameter
+  onConfirm: (partySize: number, notes?: string) => void
   minSize: number
   maxSize: number
   venueName: string
   error?: string | null
+  isSubmitting?: boolean
 }
 
 export default function PartySizeModal({
@@ -20,6 +21,7 @@ export default function PartySizeModal({
   maxSize,
   venueName,
   error,
+  isSubmitting = false,
 }: PartySizeModalProps) {
   const [partySize, setPartySize] = useState(minSize)
   const [notes, setNotes] = useState('')  // ✨ NEW: State for notes
@@ -121,9 +123,15 @@ export default function PartySizeModal({
               </button>
               <button
                 type="submit"
-                className="flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-zinc-900 text-zinc-50 hover:bg-zinc-800 transition-colors"
+                disabled={isSubmitting}
+                className={[
+                  'flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap transition-colors',
+                  isSubmitting
+                    ? 'bg-zinc-600 text-zinc-300 cursor-not-allowed'
+                    : 'bg-zinc-900 text-zinc-50 hover:bg-zinc-800',
+                ].join(' ')}
               >
-                Confirm Booking
+                {isSubmitting ? 'Confirming...' : 'Confirm Booking'}
               </button>
             </div>
           )}

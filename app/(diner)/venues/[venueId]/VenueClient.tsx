@@ -371,12 +371,14 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
             setShowPartySizeModal(false)
             setSelectedSlot(null)
             setBookingError(null)
+            setBookingSlot(null)
           }}
           onConfirm={confirmBooking}
           minSize={selectedSlot.party_min}
           maxSize={selectedSlot.party_max}
           venueName={venue.name}
           error={bookingError}
+          isSubmitting={!!bookingSlot}
         />
       )}
 

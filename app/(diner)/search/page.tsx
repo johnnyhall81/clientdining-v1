@@ -309,6 +309,7 @@ const handleCancel = async () => {
     const result = results.find(r => r.slot.id === slotId)
     if (!result) return
   
+    setBookingSlotId(slotId)
     setSelectedSlot({
       ...result.slot,
       venue: result.venue
@@ -625,6 +626,7 @@ const handleCancel = async () => {
     maxSize={selectedSlot.party_max}
     venueName={selectedSlot.venue?.name || 'Venue'}
     error={bookingError}
+    isSubmitting={!!bookingSlotId && showPartySizeModal}
   />
 )}
 
