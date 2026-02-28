@@ -265,12 +265,12 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           className="object-cover"
         />
         
-        {/* Corporate Events Button */}
+        {/* Private Hire Button */}
         <button
           onClick={() => setShowCorporateEventsModal(true)}
           className="absolute bottom-4 right-4 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all font-light text-sm"
         >
-          Corporate Events
+          Private Hire
         </button>
       </div>
 
