@@ -66,7 +66,7 @@ export default function NominationCard({ userId, canNominate }: Props) {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-light text-zinc-900">Invite</h1>
+        <h1 className="text-3xl font-light text-zinc-900">Introduce</h1>
       </div>
 
       {/* Invite bar */}
