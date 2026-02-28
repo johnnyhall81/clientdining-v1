@@ -56,7 +56,8 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     venueName: string
   } | null>(null)
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null)
-
+  const [showCorporateEventsModal, setShowCorporateEventsModal] = useState(false)
+  
   // Load existing alerts
   useEffect(() => {
     if (!user) {
@@ -408,7 +409,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         venueId={venue.id}
       />
 
-      
+
     </div>
   )
 }
