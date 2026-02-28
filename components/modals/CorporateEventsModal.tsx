@@ -338,7 +338,7 @@ export default function CorporateEventsModal({
           <button
             type="submit"
             disabled={loading || success}
-            className="w-full bg-zinc-900 text-zinc-50 py-3 rounded-lg hover:bg-zinc-800 disabled:opacity-50 font-light transition-colors"
+            className="w-full py-3 rounded-lg border border-zinc-800 text-zinc-800 hover:bg-zinc-50 disabled:opacity-50 font-light transition-colors"
           >
             {loading ? 'Sending...' : success ? 'Sent' : 'Send enquiry'}
           </button>
