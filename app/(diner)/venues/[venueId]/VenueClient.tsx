@@ -21,8 +21,8 @@ interface VenueClientProps {
  * BEST VERSION NOTES
  * - Treats venue.description as:
  *   - one (or more) normal paragraphs = summary
- *   - bold-led lines (e.g. **Best for:** ...) = compact “spec rows”
- * - Renders spec rows as a 2-column grid for a premium “metadata” feel
+ *   - bold-led lines (e.g. **Best for:** ...) = compact "spec rows"
+ * - Renders spec rows as a 2-column grid for a premium "metadata" feel
  * - Keeps everything visually bound as a single block
  */
 
@@ -264,99 +264,81 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
           className="object-cover"
         />
-      </div>
-
-
-
-
-      <div>
-  <div className="flex items-start justify-between">
-    <div>
-      <h1 className="text-4xl font-light text-zinc-900 mb-3">{venue.name}</h1>
-
-      <div className="flex items-center gap-4 text-zinc-500 font-light mb-1">
-        <span>{venue.area}</span>
-        <span>•</span>
-        <span className="capitalize">{venue.venue_type}</span>
-      </div>
-
-      {venue.address && (
-        <p className="mt-1 text-xs text-zinc-500 font-light">
-          📍 {venue.address}
-          {venue.postcode ? `, ${venue.postcode}` : ''}
-        </p>
-      )}
-    </div>
-
-    
-
-{/* Corporate Events */}
-<div className="mt-6">
+        
+        {/* Corporate Events Button */}
         <button
           onClick={() => setShowCorporateEventsModal(true)}
-          className="text-sm text-zinc-600 font-light hover:text-zinc-900 underline decoration-dotted underline-offset-4"
+          className="absolute bottom-4 right-4 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all font-light text-sm"
         >
-          Enquire about larger corporate events →
+          Corporate Events
         </button>
       </div>
 
-      {/* Available Tables heading */}
+      <div>
+        <div>
+          <h1 className="text-4xl font-light text-zinc-900 mb-3">{venue.name}</h1>
 
+          <div className="flex items-center gap-4 text-zinc-500 font-light mb-1">
+            <span>{venue.area}</span>
+            <span>•</span>
+            <span className="capitalize">{venue.venue_type}</span>
+          </div>
 
-  </div>
+          {venue.address && (
+            <p className="mt-1 text-xs text-zinc-500 font-light">
+              📍 {venue.address}
+              {venue.postcode ? `, ${venue.postcode}` : ''}
+            </p>
+          )}
+        </div>
 
+        {venue.description && (
+          <div className="mt-7 max-w-3xl">
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => {
+                  const isArray = Array.isArray(children)
+                  const first = isArray ? children[0] : null
+                  const startsWithStrong =
+                    first &&
+                    typeof first === 'object' &&
+                    // @ts-ignore
+                    first?.type?.name === 'strong'
 
+                  // Spec lines: **Label:** Value  ->  Label: Value (single line, calm)
+                  if (startsWithStrong) {
+                    const parts = isArray ? children : [children]
+                    const rawLabel = parts[0]?.props?.children
+                    const label = String(rawLabel || '').replace(/:\s*$/, '')
+                    const value = parts.slice(1)
 
+                    return (
+                      <div className="text-sm leading-snug mb-1.5 last:mb-0">
+                        <span className="text-zinc-500 font-light">{label}:</span>{' '}
+                        <span className="text-zinc-500 font-light">{value}</span>
+                      </div>
+                    )
+                  }
 
+                  // Summary paragraph (match spec sizing/leading for restraint)
+                  return (
+                    <p className="text-sm text-zinc-500 font-light leading-snug mb-3 last:mb-0">
+                      {children}
+                    </p>
+                  )
+                },
 
-
-  {venue.description && (
-    <div className="mt-7 max-w-3xl">
-      <ReactMarkdown
-        components={{
-          p: ({ children }) => {
-            const isArray = Array.isArray(children)
-            const first = isArray ? children[0] : null
-            const startsWithStrong =
-              first &&
-              typeof first === 'object' &&
-              // @ts-ignore
-              first?.type?.name === 'strong'
-
-            // Spec lines: **Label:** Value  ->  Label: Value (single line, calm)
-            if (startsWithStrong) {
-              const parts = isArray ? children : [children]
-              const rawLabel = parts[0]?.props?.children
-              const label = String(rawLabel || '').replace(/:\s*$/, '')
-              const value = parts.slice(1)
-
-              return (
-                <div className="text-sm leading-snug mb-1.5 last:mb-0">
-                  <span className="text-zinc-500 font-light">{label}:</span>{' '}
-                  <span className="text-zinc-500 font-light">{value}</span>
-                </div>
-              )
-            }
-
-            // Summary paragraph (match spec sizing/leading for restraint)
-            return (
-              <p className="text-sm text-zinc-500 font-light leading-snug mb-3 last:mb-0">
-                {children}
-              </p>
-            )
-          },
-
-          // If any bold appears in summary text, keep it restrained
-          strong: ({ children }) => (
-            <strong className="font-light text-zinc-500">{children}</strong>
-          ),
-        }}
-      >
-        {venue.description}
-      </ReactMarkdown>
-    </div>
-  )}
-</div>
+                // If any bold appears in summary text, keep it restrained
+                strong: ({ children }) => (
+                  <strong className="font-light text-zinc-500">{children}</strong>
+                ),
+              }}
+            >
+              {venue.description}
+            </ReactMarkdown>
+          </div>
+        )}
+      </div>
 
       <div className="card">
         <h2 className="text-2xl font-light text-zinc-900 mb-6">Available Tables</h2>
@@ -381,7 +363,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         )}
       </div>
 
-{selectedSlot && (
+      {selectedSlot && (
         <PartySizeModal
           isOpen={showPartySizeModal}
           onClose={() => {
@@ -411,14 +393,12 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
         />
       )}
 
-<CorporateEventsModal
+      <CorporateEventsModal
         isOpen={showCorporateEventsModal}
         onClose={() => setShowCorporateEventsModal(false)}
         venueName={venue.name}
         venueId={venue.id}
       />
-
-
     </div>
   )
 }
