@@ -54,6 +54,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     slotId: string
     venueName: string
   } | null>(null)
+  const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null)
 
   // Load existing alerts
   useEffect(() => {
@@ -79,6 +80,12 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     }
 
     loadAlerts()
+  }, [user])
+
+  // Load profile for reserved-by display
+  useEffect(() => {
+    if (!user) return
+    supabase.from('profiles').select('full_name, avatar_url').eq('user_id', user.id).single().then(({ data }) => { if (data) setProfile(data) })
   }, [user])
 
   // Load my bookings for the slots on this venue page
@@ -349,6 +356,8 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 isAlertActive={alerts.has(slot.id)}
                 onToggleAlert={handleToggleAlert}
                 isBookedByMe={bookedSlots.has(slot.id)}
+                userName={profile?.full_name || null}
+                avatarUrl={profile?.avatar_url || null}
               />
             ))}
           </div>
