@@ -17,6 +17,7 @@ export default function EditVenuePage() {
     area: '',
     venue_type: 'restaurant' as 'restaurant' | 'club',
     description: '',
+    private_hire_available: false, 
     address: '',
     postcode: '',
     phone: '',
@@ -52,6 +53,7 @@ export default function EditVenuePage() {
       area: data.area,
       venue_type: data.venue_type,
       description: data.description,
+      private_hire_available: data.private_hire_available || false,
       address: data.address || '',
       postcode: data.postcode || '',
       phone: data.phone || '',
@@ -183,6 +185,21 @@ export default function EditVenuePage() {
             </div>
           )}
         </div>
+
+
+<div className="flex items-center gap-2 py-2">
+  <input
+    type="checkbox"
+    id="private_hire"
+    checked={formData.private_hire_available}
+    onChange={(e) => setFormData({ ...formData, private_hire_available: e.target.checked })}
+    className="rounded h-4 w-4"
+  />
+  <label htmlFor="private_hire" className="text-sm font-medium">
+    Private hire available
+  </label>
+</div>
+
 
         <div>
           <label className="block text-sm font-medium mb-2">Address</label>
