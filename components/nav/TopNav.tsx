@@ -89,12 +89,13 @@ export default function TopNav() {
 
     setBookingCount(futureBookings.length)
 
-    // Get active and notified alerts count
+    // Get active and notified alerts count — future slots only
     const { data: alerts } = await supabase
       .from('slot_alerts')
-      .select('id')
+      .select('id, slots!inner(start_at)')
       .eq('diner_user_id', user.id)
       .in('status', ['active', 'notified'])
+      .gt('slots.start_at', new Date().toISOString())
 
     setAlertCount(alerts?.length || 0)
   }
