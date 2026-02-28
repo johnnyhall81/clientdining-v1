@@ -57,7 +57,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   } | null>(null)
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null)
   const [showCorporateEventsModal, setShowCorporateEventsModal] = useState(false)
-  
+
   // Load existing alerts
   useEffect(() => {
     if (!user) {
@@ -288,12 +288,21 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       )}
     </div>
 
-    <button
-      onClick={() => setShowCorporateEventsModal(true)}
-      className="px-4 py-2 bg-white border border-zinc-800 text-zinc-800 rounded-lg hover:bg-zinc-50 transition-colors font-light text-sm whitespace-nowrap"
-    >
-      Corporate Events
-    </button>
+    
+
+{/* Corporate Events */}
+<div className="mt-6">
+        <button
+          onClick={() => setShowCorporateEventsModal(true)}
+          className="text-sm text-zinc-600 font-light hover:text-zinc-900 underline decoration-dotted underline-offset-4"
+        >
+          Enquire about larger corporate events →
+        </button>
+      </div>
+
+      {/* Available Tables heading */}
+
+
   </div>
 
 
