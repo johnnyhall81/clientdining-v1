@@ -265,13 +265,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           className="object-cover"
         />
         
-        {/* Private Hire Button */}
-        <button
-          onClick={() => setShowCorporateEventsModal(true)}
-          className="absolute bottom-4 right-4 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all font-light text-sm"
-        >
-          Private Hire
-        </button>
+      
       </div>
 
       <div>
@@ -336,6 +330,23 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
             >
               {venue.description}
             </ReactMarkdown>
+
+
+
+            {venue.private_hire_available && (
+              <div className="text-sm leading-snug mt-4 pt-3 border-t border-zinc-200">
+                <span className="text-zinc-500 font-light">Private rooms and events:</span>{' '}
+                <button
+                  onClick={() => setShowCorporateEventsModal(true)}
+                  className="text-zinc-600 font-light underline decoration-dotted underline-offset-4 hover:text-zinc-900 transition-colors"
+                >
+                  Enquire
+                </button>
+              </div>
+            )}
+
+
+
           </div>
         )}
       </div>
