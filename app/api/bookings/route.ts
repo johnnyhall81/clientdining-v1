@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     // Get slot details with venue info
     const { data: slot, error: slotError } = await supabase
       .from('slots')
-      .select('venue_id, party_min, party_max, status, slot_tier, start_at, venues(name, address, postcode, phone, booking_email)')
+      .select('venue_id, party_min, party_max, status, slot_tier, start_at, venues(name, area, address, postcode, phone, booking_email, image_venue)')
       .eq('id', slotId)
       .single()
 
@@ -93,10 +93,12 @@ export async function POST(request: Request) {
       userEmail: profile.email,
       userName: profile.full_name || 'Guest',
       venueName: venue?.name || 'Venue',
+      venueArea: venue?.area,
       venueAddress: venue?.address || 'London',
       venuePostcode: venue?.postcode || '',
       venuePhone: venue?.phone,
       venueEmail: venue?.booking_email,
+      venueImageUrl: venue?.image_venue,
       slotTime: formatFullDateTime(slot.start_at),
       slotStartISO: slot.start_at,
       partySize: partySize,

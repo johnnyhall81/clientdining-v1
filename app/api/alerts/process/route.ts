@@ -77,7 +77,7 @@ export async function GET(request: Request) {
         // Get venue details
         const { data: venue } = await supabase
           .from('venues')
-          .select('id, name, area, venue_type, description')
+          .select('id, name, area, venue_type, description, image_venue')
           .eq('id', slot.venue_id)
           .single()
 
@@ -109,7 +109,9 @@ export async function GET(request: Request) {
           userEmail: authUser.user.email,
           userName: fullName,
           venueName: venue.name,
+          venueArea: venue.area,
           venueAddress: venue.area || 'London',
+          venueImageUrl: (venue as any).image_venue,
           slotTime: formatFullDateTime(slot.start_at),
           partySize: `${slot.party_min}-${slot.party_max} guests`,
           slotId: alert.slot_id,
