@@ -40,7 +40,7 @@ export default function RemoveAlertModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-zinc-900 text-zinc-50 hover:bg-zinc-800 transition-colors"
+            className="flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap text-zinc-600 hover:text-zinc-900 bg-zinc-50 hover:bg-zinc-100 transition-colors"
           >
             Keep alert
           </button>

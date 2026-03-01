@@ -261,8 +261,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                 <p><a href="https://clientdining.com">clientdining.com</a></p>
                 <div class="company-info">
                   CLIENTDINING LIMITED<br />
-                  Company No: 17018817<br />
-                  2 The Topiary, Ashtead, KT21 2TE
+                  Company No: 17018817
                 </div>
               </div>
             </div>

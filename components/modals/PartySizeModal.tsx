@@ -107,7 +107,7 @@ export default function PartySizeModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-zinc-900 text-zinc-50 hover:bg-zinc-800 transition-colors"
+                className="w-full h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap text-zinc-600 hover:text-zinc-900 bg-zinc-50 hover:bg-zinc-100 transition-colors"
               >
                 Close
               </button>
@@ -127,8 +127,8 @@ export default function PartySizeModal({
                 className={[
                   'flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap transition-colors',
                   isSubmitting
-                    ? 'bg-zinc-600 text-zinc-300 cursor-not-allowed'
-                    : 'bg-zinc-900 text-zinc-50 hover:bg-zinc-800',
+                    ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
+                    : 'text-zinc-600 hover:text-zinc-900 bg-zinc-50 hover:bg-zinc-100',
                 ].join(' ')}
               >
                 {isSubmitting ? 'Confirming...' : 'Confirm Booking'}
