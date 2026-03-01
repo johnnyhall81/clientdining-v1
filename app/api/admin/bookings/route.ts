@@ -3,6 +3,7 @@ export const revalidate = 0
 
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAdmin } from '@/lib/admin-guard'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,6 +11,9 @@ const supabaseAdmin = createClient(
 )
 
 export async function GET(request: Request) {
+  const auth = await requireAdmin()
+  if (!auth.ok) return auth.response
+
   try {
     const { data: bookings, error } = await supabaseAdmin
       .from('bookings')
@@ -36,7 +40,7 @@ export async function GET(request: Request) {
         },
       }
     )
-    
+
   } catch (error: any) {
     console.error('Error fetching bookings:', error)
     return NextResponse.json(

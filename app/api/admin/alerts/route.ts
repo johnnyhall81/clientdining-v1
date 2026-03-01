@@ -3,8 +3,8 @@ export const revalidate = 0
 
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/admin-guard'
 
-// Service role client - bypasses RLS to see ALL data
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -17,14 +17,13 @@ const supabaseAdmin = createClient(
 )
 
 export async function GET(request: Request) {
+  const auth = await requireAdmin()
+  if (!auth.ok) return auth.response
+
   try {
-    // Get the status filter from URL (e.g., ?status=active)
     const { searchParams } = new URL(request.url)
     const filterStatus = searchParams.get('status') || 'active'
 
-    console.log('🔍 Admin loading alerts with status:', filterStatus)
-
-    // Query ALL alerts (not filtered by user)
     let query = supabaseAdmin
       .from('slot_alerts')
       .select(`
@@ -50,40 +49,28 @@ export async function GET(request: Request) {
       `)
       .order('created_at', { ascending: false })
 
-    // Apply status filter if not "all"
     if (filterStatus !== 'all') {
       query = query.eq('status', filterStatus)
     }
 
     const { data, error } = await query
 
-    if (error) {
-      console.error('❌ Error loading alerts:', error)
-      throw error
-    }
+    if (error) throw error
 
-    console.log('✅ Loaded', data?.length || 0, 'alerts')
-
-    // Get all unique diner user IDs from the alerts
     const dinerUserIds = Array.from(
       new Set((data || []).map(item => item.diner_user_id))
     )
 
-    console.log('👥 Loading profiles for', dinerUserIds.length, 'users')
-
-    // Fetch all the diner profiles (emails, names)
     const { data: profiles } = await supabaseAdmin
       .from('profiles')
       .select('user_id, email, full_name')
       .in('user_id', dinerUserIds)
 
-    // Create a map for quick lookup
     const profileMap = new Map()
     profiles?.forEach((profile: any) => {
       profileMap.set(profile.user_id, profile)
     })
 
-    // Transform the data to match what the frontend expects
     const transformedAlerts = (data || []).map((item: any) => {
       const dinerProfile = profileMap.get(item.diner_user_id) || {
         user_id: item.diner_user_id,
@@ -103,8 +90,6 @@ export async function GET(request: Request) {
       }
     })
 
-    console.log('📤 Returning', transformedAlerts.length, 'transformed alerts')
-
     return NextResponse.json(
       { alerts: transformedAlerts },
       {
@@ -115,12 +100,11 @@ export async function GET(request: Request) {
         },
       }
     )
-    
 
   } catch (error: any) {
-    console.error('💥 Admin alerts API error:', error)
+    console.error('Admin alerts API error:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to load alerts' }, 
+      { error: error.message || 'Failed to load alerts' },
       { status: 500 }
     )
   }

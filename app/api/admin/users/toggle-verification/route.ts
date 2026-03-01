@@ -3,6 +3,7 @@ export const revalidate = 0
 
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAdmin } from '@/lib/admin-guard'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,12 +11,15 @@ const supabaseAdmin = createClient(
 )
 
 export async function POST(request: Request) {
+  const auth = await requireAdmin()
+  if (!auth.ok) return auth.response
+
   try {
     const { userId, verified } = await request.json()
 
     const { error } = await supabaseAdmin
       .from('profiles')
-      .update({ 
+      .update({
         is_professionally_verified: verified,
         verified_at: verified ? new Date().toISOString() : null
       })
@@ -23,15 +27,8 @@ export async function POST(request: Request) {
 
     if (error) throw error
 
-    return NextResponse.json(
-      { success: true },
-      {
-        headers: {
-          'Cache-Control': 'no-store',
-        },
-      }
-    )
-    
+    return NextResponse.json({ success: true })
+
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }

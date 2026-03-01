@@ -4,8 +4,12 @@ export const runtime = 'nodejs'
 
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/admin-guard'
 
 export async function GET() {
+  const auth = await requireAdmin()
+  if (!auth.ok) return auth.response
+
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -108,7 +112,7 @@ export async function GET() {
       }
     }))
 
-    // Load active alerts (using same pattern as working alerts endpoint)
+    // Load active alerts
     const { data: alertsRaw } = await supabase
       .from('slot_alerts')
       .select(`
@@ -131,7 +135,6 @@ export async function GET() {
       .order('created_at', { ascending: false })
       .limit(100)
 
-    // Get diner profiles (same pattern as working alerts endpoint)
     const dinerUserIds = Array.from(
       new Set((alertsRaw || []).map(item => item.diner_user_id))
     )
@@ -150,9 +153,7 @@ export async function GET() {
       ...alert,
       slot: {
         start_at: alert.slots.start_at,
-        venue: {
-          name: alert.slots.venues.name
-        }
+        venue: { name: alert.slots.venues.name }
       },
       user: alertProfileMap.get(alert.diner_user_id) || {
         email: 'N/A',
@@ -220,7 +221,7 @@ export async function GET() {
         },
       }
     )
-    
+
   } catch (error: any) {
     console.error('Dashboard API error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
