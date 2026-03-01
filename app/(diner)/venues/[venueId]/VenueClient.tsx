@@ -17,29 +17,6 @@ interface VenueClientProps {
   slots: Slot[]
 }
 
-/**
- * BEST VERSION NOTES
- * - Treats venue.description as:
- *   - one (or more) normal paragraphs = summary
- *   - bold-led lines (e.g. **Best for:** ...) = compact "spec rows"
- * - Renders spec rows as a 2-column grid for a premium "metadata" feel
- * - Keeps everything visually bound as a single block
- */
-
-function VenueSpecRow({ children }: { children: any }) {
-  // children is typically: [<strong>Label</strong>, ' value...']
-  const parts = Array.isArray(children) ? children : [children]
-  const labelNode = parts[0]
-  const valueNodes = parts.slice(1)
-
-  return (
-    <div className="grid grid-cols-[120px_1fr] gap-3 text-sm leading-snug py-0.5">
-      <div className="text-zinc-500 font-light">{labelNode}</div>
-      <div className="text-zinc-500 font-light">{valueNodes}</div>
-    </div>
-  )
-}
-
 export default function VenueClient({ venue, slots }: VenueClientProps) {
   const router = useRouter()
   const { user } = useAuth()
@@ -185,7 +162,6 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     if (!user || !cancellingSlot) return
 
     try {
-      // Need to get the bookingId from the slotId
       const { data: booking } = await supabase
         .from('bookings')
         .select('id')
@@ -253,125 +229,127 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="relative bg-zinc-100 aspect-[21/9] overflow-hidden rounded-xl">
-        <Image
-          src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
-          alt={venue.name}
-          fill
-          priority
-          quality={75}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-          className="object-cover"
-        />
-        
-      
-      </div>
-
-      <div>
-        <div>
-          <h1 className="text-4xl font-light text-zinc-900 mb-3">{venue.name}</h1>
-
-          <div className="flex items-center gap-4 text-zinc-500 font-light mb-1">
-            <span>{venue.area}</span>
-            <span>•</span>
-            <span className="capitalize">{venue.venue_type}</span>
+    <div className="min-h-screen bg-zinc-50/30">
+      {/* Container with max width */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* White card wrapper */}
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          {/* Image - full width of card */}
+          <div className="relative bg-zinc-100 aspect-[21/9] overflow-hidden">
+            <Image
+              src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
+              alt={venue.name}
+              fill
+              priority
+              quality={75}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              className="object-cover"
+            />
           </div>
 
-          {venue.address && (
-            <p className="mt-1 text-xs text-zinc-500 font-light">
-              📍 {venue.address}
-              {venue.postcode ? `, ${venue.postcode}` : ''}
-            </p>
-          )}
-        </div>
+          {/* Content padding */}
+          <div className="p-8 sm:p-10 lg:p-12">
+            {/* Header */}
+            <div className="mb-10">
+              <h1 className="text-4xl sm:text-5xl font-light text-zinc-900 mb-4 tracking-tight">{venue.name}</h1>
 
-        {venue.description && (
-          <div className="mt-7 max-w-3xl">
-            <ReactMarkdown
-              components={{
-                p: ({ children }) => {
-                  const isArray = Array.isArray(children)
-                  const first = isArray ? children[0] : null
-                  const startsWithStrong =
-                    first &&
-                    typeof first === 'object' &&
-                    // @ts-ignore
-                    first?.type?.name === 'strong'
+              <div className="flex items-center gap-3 text-zinc-400 font-light text-sm mb-2">
+                <span>{venue.area}</span>
+                <span>•</span>
+                <span className="capitalize">{venue.venue_type}</span>
+              </div>
 
-                  // Spec lines: **Label:** Value  ->  Label: Value (single line, calm)
-                  if (startsWithStrong) {
-                    const parts = isArray ? children : [children]
-                    const rawLabel = parts[0]?.props?.children
-                    const label = String(rawLabel || '').replace(/:\s*$/, '')
-                    const value = parts.slice(1)
+              {venue.address && (
+                <p className="text-xs text-zinc-400 font-light">
+                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                </p>
+              )}
+            </div>
 
-                    return (
-                      <div className="text-sm leading-snug mb-1.5 last:mb-0">
-                        <span className="text-zinc-500 font-light">{label}:</span>{' '}
-                        <span className="text-zinc-500 font-light">{value}</span>
-                      </div>
-                    )
-                  }
+            {/* Description and specs */}
+            {venue.description && (
+              <div className="mb-12 max-w-3xl">
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => {
+                      const isArray = Array.isArray(children)
+                      const first = isArray ? children[0] : null
+                      const startsWithStrong =
+                        first &&
+                        typeof first === 'object' &&
+                        // @ts-ignore
+                        first?.type?.name === 'strong'
 
-                  // Summary paragraph (match spec sizing/leading for restraint)
-                  return (
-                    <p className="text-sm text-zinc-500 font-light leading-snug mb-3 last:mb-0">
-                      {children}
-                    </p>
-                  )
-                },
+                      // Spec lines in 2-column layout
+                      if (startsWithStrong) {
+                        const parts = isArray ? children : [children]
+                        const rawLabel = parts[0]?.props?.children
+                        const label = String(rawLabel || '').replace(/:\s*$/, '')
+                        const value = parts.slice(1)
 
-                // If any bold appears in summary text, keep it restrained
-                strong: ({ children }) => (
-                  <strong className="font-light text-zinc-500">{children}</strong>
-                ),
-              }}
-            >
-              {venue.description}
-            </ReactMarkdown>
+                        return (
+                          <div className="grid grid-cols-[140px_1fr] gap-4 text-sm leading-relaxed mb-2">
+                            <div className="text-zinc-400 font-light">{label}</div>
+                            <div className="text-zinc-600 font-light">{value}</div>
+                          </div>
+                        )
+                      }
 
-
-
-            {venue.private_hire_available && (
-              <div className="text-sm leading-snug mt-4 pt-3 border-t border-zinc-200">
-                <span className="text-zinc-500 font-light">Private rooms and events:</span>{' '}
-                <button
-                  onClick={() => setShowCorporateEventsModal(true)}
-                  className="text-zinc-600 font-light underline decoration-dotted underline-offset-4 hover:text-zinc-900 transition-colors"
+                      // Summary paragraph
+                      return (
+                        <p className="text-sm text-zinc-600 font-light leading-relaxed mb-4">
+                          {children}
+                        </p>
+                      )
+                    },
+                    strong: ({ children }) => (
+                      <strong className="font-light text-zinc-600">{children}</strong>
+                    ),
+                  }}
                 >
-                  Enquire
-                </button>
+                  {venue.description}
+                </ReactMarkdown>
+
+                {/* Private hire link */}
+                {venue.private_hire_available && (
+                  <div className="grid grid-cols-[140px_1fr] gap-4 text-sm leading-relaxed mt-3 pt-3 border-t border-zinc-100">
+                    <div className="text-zinc-400 font-light">Private rooms and events</div>
+                    <button
+                      onClick={() => setShowCorporateEventsModal(true)}
+                      className="text-zinc-600 font-light text-left hover:text-zinc-900 transition-colors group"
+                    >
+                      Enquire <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
+            {/* Available Tables */}
+            <div className="pt-8 border-t border-zinc-100">
+              <h2 className="text-2xl font-light text-zinc-900 mb-8 tracking-wide">Available Tables</h2>
 
-
+              {slots.length === 0 ? (
+                <p className="text-zinc-500 font-light">No tables available at this time.</p>
+              ) : (
+                <div className="space-y-3">
+                  {slots.map((slot) => (
+                    <SlotRow
+                      key={slot.id}
+                      slot={slot}
+                      onBook={handleBook}
+                      isAlertActive={alerts.has(slot.id)}
+                      onToggleAlert={handleToggleAlert}
+                      isBookedByMe={bookedSlots.has(slot.id)}
+                      userName={profile?.full_name || null}
+                      avatarUrl={profile?.avatar_url || null}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div>
-
-      <div className="card">
-        <h2 className="text-2xl font-light text-zinc-900 mb-6">Available Tables</h2>
-
-        {slots.length === 0 ? (
-          <p className="text-zinc-500 font-light">No tables available at this time.</p>
-        ) : (
-          <div>
-            {slots.map((slot) => (
-              <SlotRow
-                key={slot.id}
-                slot={slot}
-                onBook={handleBook}
-                isAlertActive={alerts.has(slot.id)}
-                onToggleAlert={handleToggleAlert}
-                isBookedByMe={bookedSlots.has(slot.id)}
-                userName={profile?.full_name || null}
-                avatarUrl={profile?.avatar_url || null}
-              />
-            ))}
-          </div>
-        )}
+        </div>
       </div>
 
       {selectedSlot && (
