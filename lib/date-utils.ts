@@ -1,3 +1,4 @@
+// Date formatting utilities
 import { format, formatDistance, isWithinInterval, addHours } from 'date-fns'
 
 export function formatSlotDate(dateString: string): string {
