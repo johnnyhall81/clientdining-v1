@@ -161,11 +161,15 @@ if (!authChecked) return null
 
     {/* Statement */}
     <p
-      className="text-[11px] font-light text-zinc-400 uppercase mt-14"
-      style={{ letterSpacing: '0.14em' }}
-    >
-      For when the table matters
-    </p>
+  className="text-[11px] uppercase mt-8"
+  style={{
+    color: '#5A5A5A',
+    letterSpacing: '0.16em',
+    fontWeight: 400
+  }}
+>
+  For when the table matters
+</p>
   </div>
 </section>
 
