@@ -125,10 +125,8 @@ if (!authChecked) return null
       </section>
 
       
-
-
 {/* Brand copy block */}
-<section className="bg-zinc-50 py-24 px-8">
+<section className="bg-zinc-50 py-28 px-8">
   <div
     className="max-w-2xl mx-auto text-center"
     style={{ WebkitFontSmoothing: 'antialiased' }}
@@ -137,44 +135,34 @@ if (!authChecked) return null
     <p
       className="font-[family-name:var(--font-cormorant)] text-zinc-900"
       style={{
-        fontSize: '30px',
+        fontSize: '32px',
         fontWeight: 400,
-        lineHeight: 1.42,        // slightly increased
-        letterSpacing: '0.005em' // slightly tightened
+        lineHeight: 1.48,
+        letterSpacing: '0.005em'
       }}
     >
       Private booking network for professionals who host business dining in London.
     </p>
 
     {/* Divider */}
-    <div className="w-8 h-px bg-zinc-300 mx-auto my-8" />
+    <div className="w-8 h-px bg-zinc-300 mx-auto my-10" />
 
     {/* Body */}
     <p
-      className="text-sm font-light text-zinc-500 leading-relaxed mx-auto"
+      className="text-base font-light text-zinc-600 mx-auto"
       style={{
-        maxWidth: '520px',
-        lineHeight: 1.75
+        maxWidth: '560px',
+        lineHeight: 1.85
       }}
     >
       A defined circle of established restaurants and private members’ clubs.
+      Trusted venues. Clear standards. Built for professional hosting.
     </p>
-    <p
-      className="text-sm font-light text-zinc-500 leading-relaxed mx-auto"
-      style={{
-        maxWidth: '520px',
-        lineHeight: 1.75
-      }}
-    >
-      Trusted venues. Clear standards. Chosen for professional hosting.
-    </p>
-    {/* Statement */}
 
+    {/* Statement */}
     <p
-      className="text-[11px] font-light text-zinc-400 uppercase mt-2"
-      style={{
-        letterSpacing: '0.12em'
-      }}
+      className="text-[11px] font-light text-zinc-400 uppercase mt-14"
+      style={{ letterSpacing: '0.14em' }}
     >
       For when the table matters
     </p>
@@ -182,11 +170,19 @@ if (!authChecked) return null
 </section>
 
 
-
-
-      {/* Now available */}
-      <section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pt-16">
-        <p className="font-serif text-zinc-900 mb-10 tracking-tight" style={{ fontSize: '28px', lineHeight: '1.1', letterSpacing: '-0.01em' }}>Selected London Venues</p>
+{/* The Circle */}
+<section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pt-28">
+  <p
+    className="font-serif text-zinc-900 mb-14 tracking-tight"
+    style={{
+      fontSize: '30px',
+      lineHeight: 1.1,
+      letterSpacing: '-0.01em'
+    }}
+  >
+    The Circle
+  </p>
+ 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">
           {venues.slice(0, 3).map((venue) => {
             const imageSrc = venue.image_venue || venue.image
