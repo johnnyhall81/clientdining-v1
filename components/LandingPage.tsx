@@ -58,7 +58,7 @@ if (!authChecked) return null
       <section className="relative h-screen flex flex-col items-center justify-center text-center overflow-hidden">
         {/* Background image */}
         <Image
-          src="/hero.webp"
+          src="/hero.jpg"
           alt="ClientDining"
           fill
           priority
@@ -122,6 +122,25 @@ if (!authChecked) return null
             50% { transform: translateX(-50%); opacity: 0.9; }
           }
         `}</style>
+      </section>
+
+      {/* Brand copy block */}
+      <section className="bg-zinc-50 py-20 px-8">
+        <div className="max-w-2xl mx-auto text-center space-y-6" style={{ WebkitFontSmoothing: 'antialiased' }}>
+          <p
+            className="font-[family-name:var(--font-cormorant)] text-zinc-900"
+            style={{ fontSize: '28px', fontWeight: 400, lineHeight: 1.3, letterSpacing: '0.01em' }}
+          >
+            A private booking network for professionals who host business dining in London.
+          </p>
+          <div className="w-8 h-px bg-zinc-300 mx-auto" />
+          <p className="text-sm font-light text-zinc-500 leading-relaxed">
+            A defined circle of established restaurants and private members' clubs, selected for those who entertain as part of their role. Access is controlled. The environment is discreet.
+          </p>
+          <p className="text-xs font-light text-zinc-400 tracking-widest uppercase">
+            Built for weekday professional hosting. For when the table matters.
+          </p>
+        </div>
       </section>
 
       {/* Now available */}
