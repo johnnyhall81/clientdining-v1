@@ -58,7 +58,7 @@ if (!authChecked) return null
       <section className="relative h-screen flex flex-col items-center justify-center text-center overflow-hidden">
         {/* Background image */}
         <Image
-          src="/hero.jpg"
+          src="/hero.webp"
           alt="ClientDining"
           fill
           priority
