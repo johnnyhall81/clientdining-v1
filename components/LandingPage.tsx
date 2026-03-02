@@ -158,18 +158,10 @@ if (!authChecked) return null
       }}
     >
       A defined circle of established restaurants and private members’ clubs.
-      Controlled access. Discreet rooms. Deliberate membership.
+      Trusted venues. Clear standards. Chosen for professional hosting.
     </p>
 
     {/* Statement */}
-    <p
-      className="text-[11px] font-light text-zinc-400 uppercase mt-12"
-      style={{
-        letterSpacing: '0.12em' // reduced from tracking-widest
-      }}
-    >
-      Built for weekday professional hosting.
-    </p>
 
     <p
       className="text-[11px] font-light text-zinc-400 uppercase mt-2"
