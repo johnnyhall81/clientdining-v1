@@ -40,7 +40,7 @@ export default function SlotRow({
       <div className="flex-1 grid grid-cols-4 gap-4">
         {/* Date / time */}
         <div>
-          <p className="text-sm font-light text-zinc-900">{formatSlotDate(slot.start_at)}</p>
+          <p className="text-sm font-light text-zinc-900 whitespace-nowrap">{formatSlotDate(slot.start_at)}</p>
           <p className="text-sm text-zinc-500 font-light">{formatSlotTime(slot.start_at)}</p>
         </div>
 
