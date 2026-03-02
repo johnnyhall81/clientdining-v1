@@ -124,24 +124,66 @@ if (!authChecked) return null
         `}</style>
       </section>
 
-      {/* Brand copy block */}
-      <section className="bg-zinc-50 py-20 px-8">
-        <div className="max-w-2xl mx-auto text-center space-y-6" style={{ WebkitFontSmoothing: 'antialiased' }}>
-          <p
-            className="font-[family-name:var(--font-cormorant)] text-zinc-900"
-            style={{ fontSize: '28px', fontWeight: 400, lineHeight: 1.3, letterSpacing: '0.01em' }}
-          >
-            A private booking network for professionals who host business dining in London.
-          </p>
-          <div className="w-8 h-px bg-zinc-300 mx-auto" />
-          <p className="text-sm font-light text-zinc-500 leading-relaxed">
-            A defined circle of established restaurants and private members' clubs, selected for those who entertain as part of their role. Access is controlled. The environment is discreet.
-          </p>
-          <p className="text-xs font-light text-zinc-400 tracking-widest uppercase">
-            Built for weekday professional hosting. For when the table matters.
-          </p>
-        </div>
-      </section>
+      
+
+
+{/* Brand copy block */}
+<section className="bg-zinc-50 py-24 px-8">
+  <div
+    className="max-w-2xl mx-auto text-center"
+    style={{ WebkitFontSmoothing: 'antialiased' }}
+  >
+    {/* Headline */}
+    <p
+      className="font-[family-name:var(--font-cormorant)] text-zinc-900"
+      style={{
+        fontSize: '30px',
+        fontWeight: 400,
+        lineHeight: 1.42,        // slightly increased
+        letterSpacing: '0.005em' // slightly tightened
+      }}
+    >
+      A private booking network for professionals who host business dining in London.
+    </p>
+
+    {/* Divider */}
+    <div className="w-8 h-px bg-zinc-300 mx-auto my-8" />
+
+    {/* Body */}
+    <p
+      className="text-sm font-light text-zinc-500 leading-relaxed mx-auto"
+      style={{
+        maxWidth: '520px',
+        lineHeight: 1.75
+      }}
+    >
+      A defined circle of established restaurants and private members’ clubs.
+      Controlled access. Discreet rooms. Deliberate membership.
+    </p>
+
+    {/* Statement */}
+    <p
+      className="text-[11px] font-light text-zinc-400 uppercase mt-12"
+      style={{
+        letterSpacing: '0.12em' // reduced from tracking-widest
+      }}
+    >
+      Built for weekday professional hosting.
+    </p>
+
+    <p
+      className="text-[11px] font-light text-zinc-400 uppercase mt-2"
+      style={{
+        letterSpacing: '0.12em'
+      }}
+    >
+      For when the table matters.
+    </p>
+  </div>
+</section>
+
+
+
 
       {/* Now available */}
       <section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pt-16">
