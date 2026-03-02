@@ -143,7 +143,7 @@ if (!authChecked) return null
         letterSpacing: '0.005em' // slightly tightened
       }}
     >
-      A private booking network for professionals who host business dining in London.
+      Private booking network for professionals who host business dining in London.
     </p>
 
     {/* Divider */}
@@ -158,9 +158,16 @@ if (!authChecked) return null
       }}
     >
       A defined circle of established restaurants and private members’ clubs.
+    </p>
+    <p
+      className="text-sm font-light text-zinc-500 leading-relaxed mx-auto"
+      style={{
+        maxWidth: '520px',
+        lineHeight: 1.75
+      }}
+    >
       Trusted venues. Clear standards. Chosen for professional hosting.
     </p>
-
     {/* Statement */}
 
     <p
@@ -169,7 +176,7 @@ if (!authChecked) return null
         letterSpacing: '0.12em'
       }}
     >
-      For when the table matters.
+      For when the table matters
     </p>
   </div>
 </section>
