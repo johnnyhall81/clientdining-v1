@@ -46,7 +46,7 @@ export default function SlotRow({
 
         {/* Party size */}
         <div className="flex items-center">
-          <p className="text-sm text-zinc-500 font-light">
+          <p className="text-sm text-zinc-500 font-light whitespace-nowrap">
             {slot.party_min === slot.party_max
               ? `${slot.party_min} guests`
               : `${slot.party_min}–${slot.party_max} guests`}

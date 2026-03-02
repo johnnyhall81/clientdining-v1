@@ -3,7 +3,7 @@ import { format, formatDistance, isWithinInterval, addHours } from 'date-fns'
 
 export function formatSlotDate(dateString: string): string {
   const date = new Date(dateString)
-  return format(date, 'EEE, MMM d')
+  return format(date, 'EEE d MMM')
 }
 
 export function formatSlotTime(dateString: string): string {
