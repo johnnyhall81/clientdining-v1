@@ -166,7 +166,7 @@ export default function AlertsPage() {
     setShowPartySizeModal(true)
   }
 
-  const confirmBooking = async (partySize: number, notes?: string) => {
+  const confirmBooking = async (partySize: number, notes?: string, guestNames?: string[]) => {
     if (!selectedAlert) return
   
     setBookingSlotId(selectedAlert.slot_id)
@@ -180,6 +180,7 @@ export default function AlertsPage() {
           slotId: selectedAlert.slot_id,
           partySize: Number(partySize),
           notes,
+          guestNames,
         }),
       })
   
@@ -362,8 +363,11 @@ export default function AlertsPage() {
           onConfirm={confirmBooking}
           minSize={selectedAlert.slot.party_min}
           maxSize={selectedAlert.slot.party_max}
+
           venueName={selectedAlert.venue?.name || 'Venue'}
+          requiresGuestNames={selectedAlert.venue?.requires_guest_names}
           error={bookingError}
+
         />
       )}
     </div>

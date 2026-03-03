@@ -319,7 +319,7 @@ const handleCancel = async () => {
   }
 
   
-  const confirmBooking = async (partySize: number, notes?: string) => {
+  const confirmBooking = async (partySize: number, notes?: string, guestNames?: string[]) => {
     if (!selectedSlot) return
   
     setIsConfirming(true)
@@ -333,6 +333,7 @@ const handleCancel = async () => {
           slotId: selectedSlot.id,
           partySize,
           notes,
+          guestNames,
         }),
       })
   
@@ -635,7 +636,9 @@ const handleCancel = async () => {
     onConfirm={confirmBooking}
     minSize={selectedSlot.party_min}
     maxSize={selectedSlot.party_max}
+
     venueName={selectedSlot.venue?.name || 'Venue'}
+    requiresGuestNames={selectedSlot.venue?.requires_guest_names}
     error={bookingError}
     isSubmitting={isConfirming}
   />

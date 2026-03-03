@@ -6,7 +6,7 @@ import { formatFullDateTime } from '@/lib/date-utils'
 
 export async function POST(request: Request) {
   try {
-    const { slotId, partySize, notes } = await request.json()
+    const { slotId, partySize, notes, guestNames } = await request.json()
 
     const cookieStore = cookies()
 
@@ -42,21 +42,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Slot not found' }, { status: 404 })
     }
 
-   
     if (slot.status !== 'available') {
       return NextResponse.json({ error: 'Slot is no longer available' }, { status: 400 })
     }
-    
+
     if (!partySize || partySize < slot.party_min || partySize > (slot as any).party_max) {
       return NextResponse.json(
         { error: `Party size must be between ${slot.party_min} and ${(slot as any).party_max} guests` },
         { status: 400 }
       )
     }
-
-
-
-
 
     // Get user's profile
     const { data: profile } = await supabase
@@ -83,7 +78,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: bookingError.message }, { status: 400 })
     }
 
-    // Send confirmation email (async, don't wait for it)
+    // Store guest names if provided
+    if (guestNames && Array.isArray(guestNames) && guestNames.length > 0) {
+      await supabase
+        .from('bookings')
+        .update({ guest_names: guestNames })
+        .eq('id', booking.id)
+    }
+
+    // Send confirmation email
     const venue = (slot as any).venues
     console.log('📧 About to send booking email to:', profile.email)
     console.log('📧 Venue data:', venue)
@@ -103,6 +106,7 @@ export async function POST(request: Request) {
       slotStartISO: slot.start_at,
       partySize: partySize,
       bookingId: booking.id || slotId,
+      guestNames: guestNames || undefined,
     }).catch((err) => console.error('Email send failed:', err))
 
     return NextResponse.json({ booking })

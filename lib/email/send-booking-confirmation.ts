@@ -17,6 +17,7 @@ interface BookingEmailData {
   slotStartISO: string
   partySize: number
   bookingId: string
+  guestNames?: string[]
 }
 
 export async function sendBookingConfirmation(data: BookingEmailData) {

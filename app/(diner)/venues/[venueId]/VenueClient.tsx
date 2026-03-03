@@ -117,12 +117,12 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
     setShowPartySizeModal(true)
   }
 
-  const confirmBooking = async (partySize: number, notes?: string) => {
-    if (!selectedSlot) return
+  
 
+  const confirmBooking = async (partySize: number, notes?: string, guestNames?: string[]) => {
+    if (!selectedSlot) return
     setShowPartySizeModal(false)
     setBookingSlot(selectedSlot.id)
-
     try {
       const response = await fetch('/api/bookings', {
         method: 'POST',
@@ -131,8 +131,16 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           slotId: selectedSlot.id,
           partySize,
           notes,
+          guestNames,
         }),
       })
+
+
+
+
+
+
+
 
       const data = await response.json().catch(() => ({}))
 
@@ -391,6 +399,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
           minSize={selectedSlot.party_min}
           maxSize={selectedSlot.party_max}
           venueName={venue.name}
+          requiresGuestNames={venue.requires_guest_names}
           error={bookingError}
           isSubmitting={!!bookingSlot}
         />
