@@ -12,6 +12,14 @@ import PartySizeModal from '@/components/modals/PartySizeModal'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
 
+
+const MapIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+  </svg>
+)
+
+
 interface VenueClientProps {
   venue: Venue
   slots: Slot[]
@@ -259,11 +267,29 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                 <span className="capitalize">{venue.venue_type}</span>
               </div>
 
+
               {venue.address && (
-                <p className="text-xs text-zinc-400 font-light">
-                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                </p>
-              )}
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs text-zinc-400 font-light">
+                      {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                    </p>
+                    
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      className="text-zinc-300 hover:text-zinc-600 transition-colors"
+                    >
+                      <MapIcon />
+                    </a>
+                  </div>
+                )}
+
+
+
+
+
+
             </div>
 
             {/* Description and specs */}
