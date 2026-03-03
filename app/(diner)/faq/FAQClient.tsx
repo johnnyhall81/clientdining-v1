@@ -63,7 +63,7 @@ export default function FAQClient() {
         },
         {
           q: 'Can I change a booking?',
-          a: 'Yes. Use the Change booking option on your bookings page or in your confirmation email. This cancels your existing booking and returns you to the venue to select a new time.'
+          a: 'For small changes — party size, a note to the kitchen — contact the venue directly. Their details are in your confirmation email. To change the date or time, cancel and rebook through your account.'
         },
         {
           q: 'Can I cancel a booking?',
@@ -105,11 +105,11 @@ export default function FAQClient() {
       questions: [
         {
           q: 'What types of venues are listed?',
-          a: 'A carefully chosen set of London restaurants and private members\' clubs. Each is selected for the quality of its food, the comfort of its rooms, and its suitability for a conversation you wouldn\'t want overheard.'
+          a: 'A defined circle of established London restaurants and private members\' clubs. Each holds its place on the platform because it meets a clear standard for professional hosting — not because it is fashionable.'
         },
         {
           q: 'How are venues selected?',
-          a: 'Every venue on ClientDining has been assessed for the things that matter at a client dinner — reliable cooking, attentive but unobtrusive service, and tables spaced far enough apart. We add venues slowly and remove them if standards slip.'
+          a: 'Venues are assessed on the things that matter when the table is yours to host: consistent food, reliable service, and rooms where a business conversation can be had properly. The list is small by design and kept that way.'
         },
         {
           q: 'Do venues know I booked through ClientDining?',

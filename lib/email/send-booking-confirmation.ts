@@ -117,7 +117,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                           ` : ''}
 
                           <tr>
-                            <td style="padding:14px 0;font-size:13px;font-weight:300;color:#A1A1AA;vertical-align:top;">Reference</td>
+                            <td style="padding:14px 0;font-size:13px;font-weight:300;color:#A1A1AA;vertical-align:top;">ClientDining Reference</td>
                             <td style="padding:14px 0;font-size:14px;font-weight:300;color:#18181B;text-align:right;letter-spacing:0.05em;">${ref}</td>
                           </tr>
 
@@ -144,7 +144,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
 
                         <!-- Policy note -->
                         <p style="margin:28px 0 0 0;font-size:12px;font-weight:300;color:#A1A1AA;line-height:1.6;">
-                          You can cancel up to 24 hours in advance from your bookings page.
+                          To make changes, contact the venue directly and quote your ClientDining reference. To change the date or time, cancel and rebook from your bookings page.
                         </p>
 
                       </td>
