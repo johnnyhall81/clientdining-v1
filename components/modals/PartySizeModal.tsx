@@ -37,7 +37,13 @@ export default function PartySizeModal({
 
   useEffect(() => {
     if (requiresGuestNames) {
-      setGuestNames(Array(partySize - 1).fill(''))
+      setGuestNames(prev => {
+        const needed = partySize - 1
+        if (prev.length < needed) {
+          return [...prev, ...Array(needed - prev.length).fill('')]
+        }
+        return prev.slice(0, needed)
+      })
     }
   }, [partySize, requiresGuestNames])
 
@@ -66,23 +72,34 @@ export default function PartySizeModal({
               Party size <span className="text-red-500">*</span>
             </label>
 
-            <select
-              id="partySize"
-              value={partySize}
-              onChange={(e) => setPartySize(Number(e.target.value))}
-              className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light"
-              required
-            >
-              {Array.from({ length: maxSize - minSize + 1 }, (_, i) => minSize + i).map((size) => (
-                <option key={size} value={size}>
-                  {size} {size === 1 ? 'guest' : 'guests'}
-                </option>
-              ))}
-            </select>
+            
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setPartySize(p => Math.max(minSize, p - 1))}
+                disabled={partySize <= minSize}
+                className="w-8 h-8 rounded-full border border-zinc-300 flex items-center justify-center text-zinc-600 hover:border-zinc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                −
+              </button>
+              <span className="text-lg font-light text-zinc-900 w-6 text-center">{partySize}</span>
+              <button
+                type="button"
+                onClick={() => setPartySize(p => Math.min(maxSize, p + 1))}
+                disabled={partySize >= maxSize}
+                className="w-8 h-8 rounded-full border border-zinc-300 flex items-center justify-center text-zinc-600 hover:border-zinc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                +
+              </button>
+              <span className="text-sm font-light text-zinc-400">
+                {partySize === 1 ? 'guest' : 'guests'}
+              </span>
+            </div>
 
             <p className="mt-2 text-xs text-zinc-500 font-light">
               We will confirm suitability with the venue if needed.
             </p>
+
           </div>
 
           {requiresGuestNames && guestNames.length > 0 && (
