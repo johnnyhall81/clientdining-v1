@@ -55,140 +55,146 @@ export default function PartySizeModal({
     onConfirm(partySize, notes.trim() || undefined, requiresGuestNames ? guestNames : undefined)
   }
 
+  const guestCount = partySize - 1
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
-        <h2 className="text-xl font-light text-zinc-900 mb-4">
-          Complete Your Booking
-        </h2>
+      <div className="bg-white rounded-2xl max-w-md w-full shadow-xl overflow-hidden">
 
-        <p className="text-sm text-zinc-500 font-light mb-6">
-          {venueName}
-        </p>
+        {/* Header */}
+        <div className="px-8 pt-8 pb-6 border-b border-zinc-100">
+          <h2 className="text-xl font-light text-zinc-900">Complete your booking</h2>
+          <p className="text-sm font-light text-zinc-400 mt-1">{venueName}</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="partySize" className="block text-sm font-light text-zinc-900 mb-2">
-              Party size <span className="text-red-500">*</span>
-            </label>
+        <form onSubmit={handleSubmit}>
+          <div className="px-8 py-6 space-y-7">
 
-            
-            <div className="flex items-center gap-4">
-              <button
-                type="button"
-                onClick={() => setPartySize(p => Math.max(minSize, p - 1))}
-                disabled={partySize <= minSize}
-                className="w-8 h-8 rounded-full border border-zinc-300 flex items-center justify-center text-zinc-600 hover:border-zinc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              >
-                −
-              </button>
-              <span className="text-lg font-light text-zinc-900 w-6 text-center">{partySize}</span>
-              <button
-                type="button"
-                onClick={() => setPartySize(p => Math.min(maxSize, p + 1))}
-                disabled={partySize >= maxSize}
-                className="w-8 h-8 rounded-full border border-zinc-300 flex items-center justify-center text-zinc-600 hover:border-zinc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              >
-                +
-              </button>
-              <span className="text-sm font-light text-zinc-400">
-                {partySize === 1 ? 'guest' : 'guests'}
-              </span>
-            </div>
-
-            <p className="mt-2 text-xs text-zinc-500 font-light">
-              We will confirm suitability with the venue if needed.
-            </p>
-
-          </div>
-
-          {requiresGuestNames && guestNames.length > 0 && (
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-light text-zinc-900 mb-1">
-                  Guest names <span className="text-red-500">*</span>
-                </label>
-                <p className="text-xs text-zinc-500 font-light">
-                  Required by this venue. Host not included.
-                </p>
+            {/* Party size stepper */}
+            <div>
+              <label className="block text-sm font-light text-zinc-700 mb-3">
+                Party size <span className="text-red-400">*</span>
+              </label>
+              <div className="flex items-center gap-5">
+                <button
+                  type="button"
+                  onClick={() => setPartySize(p => Math.max(minSize, p - 1))}
+                  disabled={partySize <= minSize}
+                  className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-400 hover:text-zinc-800 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-lg leading-none"
+                >
+                  −
+                </button>
+                <span className="text-2xl font-light text-zinc-900 w-6 text-center tabular-nums">{partySize}</span>
+                <button
+                  type="button"
+                  onClick={() => setPartySize(p => Math.min(maxSize, p + 1))}
+                  disabled={partySize >= maxSize}
+                  className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-400 hover:text-zinc-800 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-lg leading-none"
+                >
+                  +
+                </button>
+                <span className="text-sm font-light text-zinc-400">
+                  {partySize === 1 ? 'guest' : 'guests'}
+                </span>
               </div>
-              {guestNames.map((name, i) => (
-                <input
-                  key={i}
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    const updated = [...guestNames]
-                    updated[i] = e.target.value
-                    setGuestNames(updated)
-                  }}
-                  placeholder={`Guest ${i + 1}`}
-                  required
-                  className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light text-sm"
-                />
-              ))}
+              <p className="mt-2.5 text-xs text-zinc-400 font-light">
+                We will confirm suitability with the venue if needed.
+              </p>
             </div>
-          )}
 
-          <div>
-            <label htmlFor="notes" className="block text-sm font-light text-zinc-900 mb-2">
-              Is there anything else we should know?
-            </label>
+            {/* Guest names */}
+            {requiresGuestNames && guestNames.length > 0 && (
+              <div>
+                <div className="mb-3">
+                  <label className="block text-sm font-light text-zinc-700">
+                    Guest names <span className="text-red-400">*</span>
+                  </label>
+                  <p className="text-xs text-zinc-400 font-light mt-0.5">
+                    {guestCount === 1 ? '1 name required' : `${guestCount} names required`} · host not included
+                  </p>
+                </div>
+                <div className="space-y-2.5">
+                  {guestNames.map((name, i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      value={name}
+                      onChange={(e) => {
+                        const updated = [...guestNames]
+                        updated[i] = e.target.value
+                        setGuestNames(updated)
+                      }}
+                      placeholder={`Guest ${i + 1}`}
+                      required
+                      className="w-full px-4 py-2.5 border border-zinc-200 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light text-sm text-zinc-900 placeholder:text-zinc-300 transition-all"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
-            <textarea
-              id="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. dietary requirements, allergies, special occasions..."
-              className="w-full px-4 py-3 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light resize-none"
-              rows={3}
-              maxLength={500}
-            />
+            {/* Additional notes */}
+            <div>
+              <label htmlFor="notes" className="block text-sm font-light text-zinc-700 mb-3">
+                Anything else we should know?
+              </label>
+              <textarea
+                id="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Allergies, dietary needs, special occasions..."
+                className="w-full px-4 py-3 border border-zinc-200 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light text-sm text-zinc-900 placeholder:text-zinc-300 resize-none transition-all"
+                rows={2}
+                maxLength={500}
+              />
+              <p className="mt-1.5 text-xs text-zinc-400 font-light">
+                Optional · sent directly to the venue
+              </p>
+            </div>
 
-            <p className="mt-1 text-xs text-zinc-500 font-light">
-              Optional - Let the venue know about allergies, dietary needs, or special occasions.
-            </p>
+            {/* Error */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-100 rounded-xl">
+                <p className="text-sm text-red-600 font-light">{error}</p>
+              </div>
+            )}
+
           </div>
 
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-700 font-light">{error}</p>
-            </div>
-          )}
-
-          {error ? (
-            <div className="pt-4">
+          {/* Buttons */}
+          <div className="px-8 pb-8">
+            {error ? (
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-zinc-900 text-zinc-50 hover:bg-zinc-800 transition-colors"
+                className="w-full h-11 text-sm font-light rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 transition-colors"
               >
                 Close
               </button>
-            </div>
-          ) : (
-            <div className="flex gap-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={[
-                  'flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap transition-colors',
-                  isSubmitting
-                    ? 'bg-zinc-600 text-zinc-300 cursor-not-allowed'
-                    : 'bg-zinc-900 text-zinc-50 hover:bg-zinc-800',
-                ].join(' ')}
-              >
-                {isSubmitting ? 'Confirming...' : 'Confirm Booking'}
-              </button>
-            </div>
-          )}
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="h-11 px-6 text-sm font-light rounded-xl text-zinc-500 hover:text-zinc-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={[
+                    'flex-1 h-11 text-sm font-light rounded-xl transition-colors',
+                    isSubmitting
+                      ? 'bg-zinc-300 text-zinc-500 cursor-not-allowed'
+                      : 'bg-zinc-900 text-white hover:bg-zinc-800',
+                  ].join(' ')}
+                >
+                  {isSubmitting ? 'Confirming...' : 'Confirm booking'}
+                </button>
+              </div>
+            )}
+          </div>
 
         </form>
       </div>
