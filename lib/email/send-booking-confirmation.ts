@@ -118,9 +118,18 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                           ` : ''}
 
                           <tr>
-                            <td style="padding:14px 0;font-size:13px;font-weight:300;color:#A1A1AA;vertical-align:top;">ClientDining Reference</td>
-                            <td style="padding:14px 0;font-size:14px;font-weight:300;color:#18181B;text-align:right;letter-spacing:0.05em;">${ref}</td>
+                            <td style="padding:14px 0;${data.guestNames?.length ? 'border-bottom:1px solid #F4F4F5;' : ''}font-size:13px;font-weight:300;color:#A1A1AA;vertical-align:top;">ClientDining Reference</td>
+                            <td style="padding:14px 0;${data.guestNames?.length ? 'border-bottom:1px solid #F4F4F5;' : ''}font-size:14px;font-weight:300;color:#18181B;text-align:right;letter-spacing:0.05em;">${ref}</td>
                           </tr>
+
+                          ${data.guestNames?.length ? `
+                          <tr>
+                            <td style="padding:14px 0;font-size:13px;font-weight:300;color:#A1A1AA;vertical-align:top;">Guests</td>
+                            <td style="padding:14px 0;font-size:14px;font-weight:300;color:#18181B;text-align:right;line-height:1.8;">
+                              ${data.guestNames.join('<br/>')}
+                            </td>
+                          </tr>
+                          ` : ''}
 
                         </table>
 
