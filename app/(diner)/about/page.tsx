@@ -37,9 +37,6 @@ export default function AboutPage() {
           <p>
             Membership is verified and intended for professionals who host as part of their role. The venue list is controlled and expanded deliberately.
           </p>
-          <p>
-            Business dining, formalised.
-          </p>
         </div>
 
         <div className="mt-16">
