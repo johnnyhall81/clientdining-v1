@@ -5,10 +5,11 @@ import { useState, useEffect } from 'react'
 interface PartySizeModalProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: (partySize: number, notes?: string) => void
+  onConfirm: (partySize: number, notes?: string, guestNames?: string[]) => void
   minSize: number
   maxSize: number
   venueName: string
+  requiresGuestNames?: boolean
   error?: string | null
   isSubmitting?: boolean
 }
@@ -20,22 +21,32 @@ export default function PartySizeModal({
   minSize,
   maxSize,
   venueName,
+  requiresGuestNames = false,
   error,
   isSubmitting = false,
 }: PartySizeModalProps) {
   const [partySize, setPartySize] = useState(minSize)
-  const [notes, setNotes] = useState('')  // ✨ NEW: State for notes
+  const [notes, setNotes] = useState('')
+  const [guestNames, setGuestNames] = useState<string[]>([])
 
   useEffect(() => {
     setPartySize(minSize)
-    setNotes('')  // ✨ NEW: Reset notes when modal opens
+    setNotes('')
+    setGuestNames(requiresGuestNames ? Array(minSize - 1).fill('') : [])
   }, [minSize, isOpen])
+
+  useEffect(() => {
+    if (requiresGuestNames) {
+      setGuestNames(Array(partySize - 1).fill(''))
+    }
+  }, [partySize, requiresGuestNames])
 
   if (!isOpen) return null
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onConfirm(partySize, notes.trim() || undefined)  // ✨ CHANGED: Pass notes to onConfirm
+    if (requiresGuestNames && guestNames.some(n => !n.trim())) return
+    onConfirm(partySize, notes.trim() || undefined, requiresGuestNames ? guestNames : undefined)
   }
 
   return (
@@ -54,7 +65,7 @@ export default function PartySizeModal({
             <label htmlFor="partySize" className="block text-sm font-light text-zinc-900 mb-2">
               Party size <span className="text-red-500">*</span>
             </label>
-            
+
             <select
               id="partySize"
               value={partySize}
@@ -70,16 +81,43 @@ export default function PartySizeModal({
             </select>
 
             <p className="mt-2 text-xs text-zinc-500 font-light">
-              We'll confirm suitability with the venue if needed.
+              We will confirm suitability with the venue if needed.
             </p>
           </div>
 
-          {/* ✨ NEW: Notes textarea field */}
+          {requiresGuestNames && guestNames.length > 0 && (
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-light text-zinc-900 mb-1">
+                  Guest names <span className="text-red-500">*</span>
+                </label>
+                <p className="text-xs text-zinc-500 font-light">
+                  Required by this venue. Host not included.
+                </p>
+              </div>
+              {guestNames.map((name, i) => (
+                <input
+                  key={i}
+                  type="text"
+                  value={name}
+                  onChange={(e) => {
+                    const updated = [...guestNames]
+                    updated[i] = e.target.value
+                    setGuestNames(updated)
+                  }}
+                  placeholder={`Guest ${i + 1}`}
+                  required
+                  className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-light text-sm"
+                />
+              ))}
+            </div>
+          )}
+
           <div>
             <label htmlFor="notes" className="block text-sm font-light text-zinc-900 mb-2">
               Is there anything else we should know?
             </label>
-            
+
             <textarea
               id="notes"
               value={notes}
@@ -95,7 +133,6 @@ export default function PartySizeModal({
             </p>
           </div>
 
-         
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-700 font-light">{error}</p>
@@ -135,9 +172,6 @@ export default function PartySizeModal({
               </button>
             </div>
           )}
-
-
-
 
         </form>
       </div>
