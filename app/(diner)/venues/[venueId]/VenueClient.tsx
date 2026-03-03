@@ -273,7 +273,7 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
                     <p className="text-xs text-zinc-400 font-light">
                       {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                     </p>
-                    
+                    <a
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
