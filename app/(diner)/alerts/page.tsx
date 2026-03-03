@@ -32,6 +32,7 @@ interface AlertWithDetails {
     address?: string
     postcode?: string
     image_venue: string | null
+    requires_guest_names?: boolean
   }
 }
 
@@ -94,6 +95,7 @@ export default function AlertsPage() {
               address,
               postcode,
               image_venue
+              requires_guest_names
             )
           )
         `)
