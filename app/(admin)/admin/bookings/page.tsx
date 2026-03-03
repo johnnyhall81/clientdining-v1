@@ -7,6 +7,9 @@ interface BookingWithDetails {
   id: string
   status: string
   created_at: string
+  party_size: number
+  notes?: string
+  guest_names?: string[]
   slots: {
     start_at: string
     party_min: number
@@ -26,6 +29,7 @@ export default function AdminBookingsPage() {
   const [bookings, setBookings] = useState<BookingWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'active' | 'cancelled'>('all')
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   useEffect(() => {
     loadBookings()
@@ -33,11 +37,9 @@ export default function AdminBookingsPage() {
 
   const loadBookings = async () => {
     setLoading(true)
-
     try {
       const response = await fetch('/api/admin/bookings')
       const data = await response.json()
-      
       if (data.bookings) {
         setBookings(data.bookings)
       }
@@ -115,36 +117,80 @@ export default function AdminBookingsPage() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredBookings.map((booking) => (
-              <tr key={booking.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="font-medium text-gray-900">{booking.profiles.full_name}</div>
-                  <div className="text-sm text-gray-500">{booking.profiles.email}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="font-medium text-gray-900">{booking.venues.name}</div>
-                  <div className="text-sm text-gray-500">{booking.venues.area}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                  {formatFullDateTime(booking.slots.start_at)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                  {booking.slots.party_min}-{booking.slots.party_max} guests
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-3 py-1 text-xs rounded-full font-medium ${
-                    booking.status === 'active'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {booking.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {new Date(booking.created_at).toLocaleDateString()}
-                </td>
-              </tr>
-            ))}
+            {filteredBookings.map((booking) => {
+              const isExpanded = expandedId === booking.id
+              const hasGuests = booking.guest_names && booking.guest_names.length > 0
+              const hasNotes = !!booking.notes
+
+              return (
+                <>
+                  <tr
+                    key={booking.id}
+                    onClick={() => setExpandedId(isExpanded ? null : booking.id)}
+                    className={`hover:bg-gray-50 ${hasGuests || hasNotes ? 'cursor-pointer' : ''}`}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="font-medium text-gray-900">{booking.profiles.full_name}</div>
+                      <div className="text-sm text-gray-500">{booking.profiles.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="font-medium text-gray-900">{booking.venues.name}</div>
+                      <div className="text-sm text-gray-500">{booking.venues.area}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                      {formatFullDateTime(booking.slots.start_at)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                      {booking.party_size ? `${booking.party_size} guests` : `${booking.slots.party_min}–${booking.slots.party_max} guests`}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1 text-xs rounded-full font-medium ${
+                        booking.status === 'active'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {booking.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <div className="flex items-center justify-between gap-4">
+                        {new Date(booking.created_at).toLocaleDateString()}
+                        {(hasGuests || hasNotes) && (
+                          <span className="text-gray-300 text-xs">
+                            {isExpanded ? '▲' : '▼'}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+
+                  {isExpanded && (hasGuests || hasNotes) && (
+                    <tr key={`${booking.id}-detail`} className="bg-gray-50">
+                      <td colSpan={6} className="px-6 py-4">
+                        <div className="flex gap-12 text-sm">
+                          {hasGuests && (
+                            <div>
+                              <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Guests</p>
+                              <div className="space-y-0.5">
+                                {booking.guest_names!.map((name, i) => (
+                                  <p key={i} className="text-gray-700">{name}</p>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {hasNotes && (
+                            <div>
+                              <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Note</p>
+                              <p className="text-gray-700">{booking.notes}</p>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
+              )
+            })}
           </tbody>
         </table>
 

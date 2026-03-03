@@ -165,6 +165,22 @@ useEffect(() => {
             </div>
           )}
 
+          {/* Guest names */}
+          {booking.guest_names && booking.guest_names.length > 0 && (
+            <div>
+              <p className="text-xs font-light text-zinc-400 mb-1">
+                Guests <span className="text-zinc-300">· Sent with booking</span>
+              </p>
+              <div className="border border-zinc-100 rounded px-3 py-2 bg-zinc-50/40">
+                {booking.guest_names.map((name, i) => (
+                  <p key={i} className="text-sm font-light text-zinc-500">{name}</p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Private notes */}
+
           {/* Private notes */}
           <div>
             <p className="text-xs font-light text-zinc-400 mb-1">
