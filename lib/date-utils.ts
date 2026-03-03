@@ -11,12 +11,21 @@ export function formatSlotTime(dateString: string): string {
   return format(date, 'h:mm a')
 }
 
+
+
 export function formatFullDateTime(dateString: string): string {
   const date = new Date(dateString)
-  const datePart = format(date, 'EEE, MMM d, yyyy')
+  const datePart = format(date, 'EEE d MMM')
   const timePart = format(date, 'h:mm a')
-  return `${datePart} at ${timePart}`
+  return `${datePart} · ${timePart}`
 }
+
+
+
+
+
+
+
 
 export function getRelativeTime(dateString: string): string {
   const date = new Date(dateString)

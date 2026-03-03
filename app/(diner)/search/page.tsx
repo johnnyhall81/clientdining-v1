@@ -530,12 +530,19 @@ const handleCancel = async () => {
                           </a>
                         </div>
                       )}
+                      
                       <p className="text-sm font-light text-zinc-500 pt-1">
-                        {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
+                        {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)} · {slot.party_min === slot.party_max ? `${slot.party_min} guests` : `${slot.party_min}–${slot.party_max} guests`}
                       </p>
-                      <p className="text-sm font-light text-zinc-500">
-                        {slot.party_min}–{slot.party_max} guests
-                      </p>
+
+
+
+
+
+
+
+
+
                     </div>
 
                     <div className="pt-6 flex items-center justify-end">

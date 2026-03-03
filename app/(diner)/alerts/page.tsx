@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
-import { formatFullDateTime } from '@/lib/date-utils'
+import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
 import RemoveAlertModal from '@/components/modals/RemoveAlertModal'
@@ -299,12 +299,17 @@ export default function AlertsPage() {
                             </a>
                           </div>
                         )}
-                        <p className="text-sm font-light text-zinc-500 pt-1">{formatFullDateTime(alert.slot.start_at)}</p>
-                        <p className="text-sm font-light text-zinc-500">
-                          {alert.slot.party_min === alert.slot.party_max
-                            ? `${alert.slot.party_min} guests`
-                            : `${alert.slot.party_min}–${alert.slot.party_max} guests`}
+                        
+
+
+                        <p className="text-sm font-light text-zinc-500 pt-1">
+                          {formatSlotDate(alert.slot.start_at)} · {formatSlotTime(alert.slot.start_at)} · {alert.slot.party_min === alert.slot.party_max ? `${alert.slot.party_min} guests` : `${alert.slot.party_min}–${alert.slot.party_max} guests`}
                         </p>
+
+
+
+
+
 
                       </div>
 
