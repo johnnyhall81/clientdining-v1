@@ -41,7 +41,6 @@ export default function AboutPage() {
 
 
         <div className="mt-16">
-          <p className="text-sm font-light text-zinc-400 mb-5">Membership is by application.</p>
           <Link
             href="/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-colors duration-300"
