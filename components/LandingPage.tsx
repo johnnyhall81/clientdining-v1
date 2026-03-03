@@ -168,7 +168,7 @@ if (!authChecked) return null
     fontWeight: 400
   }}
 >
-  For when the table matters
+  When the table matters
 </p>
   </div>
 </section>
