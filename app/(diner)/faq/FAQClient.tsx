@@ -30,7 +30,7 @@ export default function FAQClient() {
       questions: [
         {
           q: 'How do I join?',
-          a: 'Apply via LinkedIn. This allows us to confirm your professional background quickly and discreetly. Once approved, you can book immediately.'
+          a: 'Apply via LinkedIn. This lets us confirm your professional background quickly and discreetly. Once approved, you can book immediately.'
         },
         {
           q: 'Why is LinkedIn required?',
@@ -41,12 +41,8 @@ export default function FAQClient() {
           a: 'Applications are typically reviewed within one business day.'
         },
         {
-          q: 'What qualifies as a City professional?',
-          a: 'Professionals working in finance, law, consulting, and related sectors, primarily in London\'s business districts. If you are unsure, contact support@clientdining.com.'
-        },
-        {
-          q: 'Who can join ClientDining?',
-          a: 'ClientDining is open to verified City professionals. Membership is free. The platform generates revenue through a commission on bookings, paid by venues.'
+          q: 'Who qualifies for membership?',
+          a: 'Professionals working in finance, law, consulting, and related sectors, primarily in London\'s business districts. Membership is free. If you are unsure whether you qualify, contact support@clientdining.com.'
         }
       ]
     },
@@ -54,28 +50,32 @@ export default function FAQClient() {
       title: 'Bookings',
       questions: [
         {
-          q: 'How many bookings can I hold at once?',
-          a: 'Members may hold up to 10 future bookings at any one time.'
+          q: 'How do I make a booking?',
+          a: 'Search by date, area, or party size. Select a slot and confirm your party size. You will receive an email confirmation and the booking will appear in your account.'
         },
         {
-          q: 'Can I book for larger groups?',
-          a: 'Yes. Tables accommodate various party sizes as indicated on each slot. For larger gatherings or private dining rooms, contact support@clientdining.com.'
+          q: 'Can I book for larger groups or private dining?',
+          a: 'Tables accommodate various party sizes as shown on each listing. For larger groups or private dining, use the enquiry link on the venue page.'
+        },
+        {
+          q: 'I am booking on behalf of colleagues or directors. Can I make multiple bookings at the same time?',
+          a: 'The platform is designed for single hosts booking one table at a time. If you need to arrange simultaneous bookings for different people, contact support@clientdining.com and we will assist directly.'
+        },
+        {
+          q: 'Can I change a booking?',
+          a: 'Yes. Use the Change booking option on your bookings page or in your confirmation email. This cancels your existing booking and returns you to the venue to select a new time.'
         },
         {
           q: 'Can I cancel a booking?',
-          a: 'Yes. Cancellations are managed through your account. Late cancellations may affect future access to that venue.'
+          a: 'Yes. Cancellations are handled through your account. Late cancellations may affect future access to that venue.'
         },
         {
           q: 'What happens if I don\'t show up?',
           a: 'No-shows affect venues and other members. Repeated no-shows may result in booking restrictions or account suspension.'
         },
         {
-          q: 'Can I modify a booking?',
-          a: 'Cancel and rebook if availability allows. For assistance, contact support@clientdining.com.'
-        },
-        {
           q: 'Who pays for the meal?',
-          a: 'The member who makes the booking is responsible for the bill. ClientDining is designed for professionals hosting clients or colleagues.'
+          a: 'The member who makes the booking is responsible for the bill. ClientDining is intended for professionals hosting clients or colleagues.'
         }
       ]
     },
@@ -88,14 +88,14 @@ export default function FAQClient() {
         },
         {
           q: 'How many alerts can I set?',
-          a: 'There is no hard limit. Alerts should only be set for slots you are genuinely prepared to book.'
+          a: 'There is no hard limit. Set alerts only for slots you are genuinely prepared to book.'
         },
         {
-          q: 'What happens if I miss an alert?',
-          a: 'If the claim window expires, the slot is offered to the next member in the queue.'
+          q: 'What happens if I miss an alert notification?',
+          a: 'If the claim window expires, the slot is released to the next member in the queue.'
         },
         {
-          q: 'Can I cancel an alert?',
+          q: 'Can I remove an alert?',
           a: 'Yes. Alerts can be removed from the venue page at any time.'
         }
       ]
@@ -104,16 +104,16 @@ export default function FAQClient() {
       title: 'Venues',
       questions: [
         {
-          q: 'What types of venues are on ClientDining?',
-          a: 'A small, curated selection of London\'s leading restaurants and private members\' clubs, chosen for their suitability for professional business dining.'
+          q: 'What types of venues are listed?',
+          a: 'A carefully chosen set of London restaurants and private members\' clubs. Each is selected for the quality of its food, the comfort of its rooms, and its suitability for a conversation you wouldn\'t want overheard.'
         },
         {
           q: 'How are venues selected?',
-          a: 'Venues are chosen for consistency, discretion, and their ability to host business conversations comfortably. The list is expanded carefully over time.'
+          a: 'Every venue on ClientDining has been assessed for the things that matter at a client dinner — reliable cooking, attentive but unobtrusive service, and tables spaced far enough apart. We add venues slowly and remove them if standards slip.'
         },
         {
           q: 'Do venues know I booked through ClientDining?',
-          a: 'Yes. Venues receive bookings via ClientDining and are familiar with how the platform works.'
+          a: 'Yes. Venues receive bookings through the platform and understand how it works.'
         },
         {
           q: 'How do I suggest a venue?',
@@ -125,12 +125,12 @@ export default function FAQClient() {
       title: 'Account',
       questions: [
         {
-          q: 'How do I delete my account?',
-          a: 'Email support@clientdining.com. Any active bookings will be cancelled before deletion.'
+          q: 'Can I invite a colleague?',
+          a: 'Yes, if your account has nomination rights enabled. All nominations are reviewed before approval.'
         },
         {
-          q: 'Can I invite a colleague?',
-          a: 'Yes, if your account has nomination rights enabled. All invitations are reviewed before approval.'
+          q: 'How do I delete my account?',
+          a: 'Email support@clientdining.com. Any active bookings will be cancelled before deletion.'
         },
         {
           q: 'Who do I contact if something goes wrong?',
