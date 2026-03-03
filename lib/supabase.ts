@@ -19,6 +19,7 @@ export interface Venue {
   image_venue?: string
   image_food?: string
   is_active: boolean
+  requires_guest_names: boolean
   created_at: string
   updated_at?: string
 }
@@ -44,6 +45,7 @@ export interface Booking {
   party_size: number
   notes?: string
   private_notes?: string
+  guest_names?: string[]
   status: 'active' | 'cancelled' | 'completed' | 'no_show'
   bill_amount_gbp?: number
   commission_amount_gbp?: number

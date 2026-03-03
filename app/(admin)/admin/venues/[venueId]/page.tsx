@@ -18,6 +18,7 @@ export default function EditVenuePage() {
     venue_type: 'restaurant' as 'restaurant' | 'club',
     description: '',
     private_hire_available: false, 
+    requires_guest_names: false,
     address: '',
     postcode: '',
     phone: '',
@@ -54,6 +55,7 @@ export default function EditVenuePage() {
       venue_type: data.venue_type,
       description: data.description,
       private_hire_available: data.private_hire_available || false,
+      requires_guest_names: data.requires_guest_names || false,
       address: data.address || '',
       postcode: data.postcode || '',
       phone: data.phone || '',
@@ -187,18 +189,39 @@ export default function EditVenuePage() {
         </div>
 
 
-<div className="flex items-center gap-2 py-2">
-  <input
-    type="checkbox"
-    id="private_hire"
-    checked={formData.private_hire_available}
-    onChange={(e) => setFormData({ ...formData, private_hire_available: e.target.checked })}
-    className="rounded h-4 w-4"
-  />
-  <label htmlFor="private_hire" className="text-sm font-medium">
-    Private hire available
-  </label>
-</div>
+
+
+        <div className="flex items-center gap-2 py-2">
+          <input
+            type="checkbox"
+            id="private_hire"
+            checked={formData.private_hire_available}
+            onChange={(e) => setFormData({ ...formData, private_hire_available: e.target.checked })}
+            className="rounded h-4 w-4"
+          />
+          <label htmlFor="private_hire" className="text-sm font-medium">
+            Private hire available
+          </label>
+        </div>
+
+        <div className="flex items-center gap-2 py-2">
+          <input
+            type="checkbox"
+            id="requires_guest_names"
+            checked={formData.requires_guest_names}
+            onChange={(e) => setFormData({ ...formData, requires_guest_names: e.target.checked })}
+            className="rounded h-4 w-4"
+          />
+          <label htmlFor="requires_guest_names" className="text-sm font-medium">
+            Requires guest names at booking
+          </label>
+        </div>
+
+
+
+
+
+
 
 
         <div>
