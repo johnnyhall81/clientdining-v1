@@ -94,7 +94,7 @@ export default function AlertsPage() {
               area,
               address,
               postcode,
-              image_venue
+              image_venue,
               requires_guest_names
             )
           )
