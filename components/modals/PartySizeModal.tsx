@@ -93,13 +93,9 @@ export default function PartySizeModal({
                 >
                   +
                 </button>
-                <span className="text-sm font-light text-zinc-400">
-                  {partySize === 1 ? 'guest' : 'guests'}
-                </span>
+
               </div>
-              <p className="mt-2.5 text-xs text-zinc-400 font-light">
-                We will confirm suitability with the venue if needed.
-              </p>
+
             </div>
 
             {/* Guest names */}
@@ -147,9 +143,7 @@ export default function PartySizeModal({
                 rows={2}
                 maxLength={500}
               />
-              <p className="mt-1.5 text-xs text-zinc-400 font-light">
-                Optional · sent directly to the venue
-              </p>
+
             </div>
 
             {/* Error */}
