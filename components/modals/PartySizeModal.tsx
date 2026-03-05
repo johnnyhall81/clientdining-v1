@@ -9,6 +9,7 @@ interface PartySizeModalProps {
   minSize: number
   maxSize: number
   venueName: string
+  slotTime?: string
   requiresGuestNames?: boolean
   error?: string | null
   isSubmitting?: boolean
@@ -21,6 +22,7 @@ export default function PartySizeModal({
   minSize,
   maxSize,
   venueName,
+  slotTime,
   requiresGuestNames = false,
   error,
   isSubmitting = false,
@@ -65,6 +67,9 @@ export default function PartySizeModal({
         <div className="px-8 pt-8 pb-6 border-b border-zinc-100">
           <h2 className="text-xl font-light text-zinc-900">Complete your booking</h2>
           <p className="text-sm font-light text-zinc-400 mt-1">{venueName}</p>
+          {slotTime && (
+            <p className="text-sm font-light text-zinc-600 mt-3">{slotTime}</p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit}>

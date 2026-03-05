@@ -7,7 +7,7 @@ import { Venue, Slot, VenueImage } from '@/lib/supabase'
 import ReactMarkdown from 'react-markdown'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
-import SlotRow from '@/components/slots/SlotRow'
+import { formatFullDateTime } from '@/lib/date-utils'
 import PartySizeModal from '@/components/modals/PartySizeModal'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
@@ -395,6 +395,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
           minSize={selectedSlot.party_min}
           maxSize={selectedSlot.party_max}
           venueName={venue.name}
+          slotTime={formatFullDateTime(selectedSlot.start_at)}
           requiresGuestNames={venue.requires_guest_names}
           error={bookingError}
           isSubmitting={!!bookingSlot}
