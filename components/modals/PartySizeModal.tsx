@@ -64,7 +64,12 @@ export default function PartySizeModal({
       <div className="bg-white rounded-2xl max-w-md w-full shadow-xl overflow-hidden">
 
         {/* Header */}
-        <div className="px-8 pt-8 pb-6 border-b border-zinc-100">
+        <div className="relative px-8 pt-8 pb-6 border-b border-zinc-100">
+          <button type="button" onClick={onClose} className="absolute top-5 right-5 text-zinc-300 hover:text-zinc-600 transition-colors">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
           <h2 className="text-xl font-light text-zinc-900">Complete your booking</h2>
           <p className="text-sm font-light text-zinc-400 mt-1">{venueName}</p>
           {slotTime && (
@@ -172,13 +177,6 @@ export default function PartySizeModal({
               </button>
             ) : (
               <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="h-11 px-6 text-sm font-light rounded-xl text-zinc-500 hover:text-zinc-800 transition-colors"
-                >
-                  Cancel
-                </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
