@@ -269,6 +269,28 @@ export default function EditVenuePage() {
           />
         </div>
 
+        <div>
+          <label className="block text-sm font-medium mb-2">Venue Image URL</label>
+          <input
+            type="text"
+            placeholder="https://...supabase.co/storage/v1/object/public/venue-images/venues/image.jpg"
+            value={formData.image_venue}
+            onChange={(e) => setFormData({ ...formData, image_venue: e.target.value })}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Food Image URL</label>
+          <input
+            type="text"
+            placeholder="https://...supabase.co/storage/v1/object/public/venue-images/venues/image.jpg"
+            value={formData.image_food}
+            onChange={(e) => setFormData({ ...formData, image_food: e.target.value })}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </div>
+
         <div className="flex gap-4">
           <button
             type="submit"
