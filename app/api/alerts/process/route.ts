@@ -11,21 +11,19 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-// Verify this is a legitimate cron request
 function verifyCronRequest(request: Request): boolean {
   const authHeader = request.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
   
   if (!cronSecret) {
     console.warn('⚠️  CRON_SECRET not set - endpoint is unprotected!')
-    return true // Allow in development
+    return true
   }
   
   return authHeader === `Bearer ${cronSecret}`
 }
 
 export async function GET(request: Request) {
-  // Verify authorization
   if (!verifyCronRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -33,7 +31,6 @@ export async function GET(request: Request) {
   try {
     console.log('Starting alert email processing...')
     
-    // Get all notified alerts that haven't been emailed yet
     const { data: alerts, error } = await supabase
       .from('slot_alerts')
       .select(`
@@ -65,19 +62,16 @@ export async function GET(request: Request) {
       })
     }
 
-    // Process each alert
     let processed = 0
     let failed = 0
 
     for (const alert of alerts) {
       try {
-        // Get slot details (already in joined data)
         const slot = alert.slots as any
 
-        // Get venue details
         const { data: venue } = await supabase
           .from('venues')
-          .select('id, name, area, venue_type, description, image_venue')
+          .select('id, name, area, venue_type, description, image_hero')
           .eq('id', slot.venue_id)
           .single()
 
@@ -87,7 +81,6 @@ export async function GET(request: Request) {
           continue
         }
 
-        // Get user details from auth
         const { data: authUser } = await supabase.auth.admin.getUserById(
           alert.diner_user_id
         )
@@ -104,21 +97,19 @@ export async function GET(request: Request) {
 
         console.log(`Sending email to: ${authUser.user.email}`)
 
-        // Send email
         await sendAlertNotification({
           userEmail: authUser.user.email,
           userName: fullName,
           venueName: venue.name,
           venueArea: venue.area,
           venueAddress: venue.area || 'London',
-          venueImageUrl: (venue as any).image_venue,
+          venueImageUrl: (venue as any).image_hero,
           slotTime: formatFullDateTime(slot.start_at),
           partySize: `${slot.party_min}-${slot.party_max} guests`,
           slotId: alert.slot_id,
           venueId: venue.id,
         })
 
-        // Mark as emailed
         await supabase
           .from('slot_alerts')
           .update({ notified_at: new Date().toISOString() })
@@ -132,8 +123,6 @@ export async function GET(request: Request) {
         failed++
       }
     }
-
-    console.log(`\n📊 Summary: ${processed} processed, ${failed} failed`)
 
     return NextResponse.json({ 
       success: true,

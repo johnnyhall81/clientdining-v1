@@ -29,7 +29,7 @@ interface SearchResult {
     venue_type: string
     address?: string
     postcode?: string
-    image_venue: string | null
+    image_hero: string | null
   }
 }
 
@@ -39,7 +39,7 @@ interface Venue {
   area?: string
   address?: string
   postcode?: string
-  image_venue?: string
+  image_hero?: string
 }
 
 const MapIcon = () => (
@@ -248,7 +248,7 @@ const handleCancel = async () => {
           address,
           postcode,
           venue_type,
-          image_venue
+          image_hero
         )
       `
       )
@@ -494,9 +494,9 @@ const handleCancel = async () => {
                 <div className="flex flex-col md:flex-row">
                   {/* Large image — left */}
                   <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-lg">
-                    {venue.image_venue ? (
+                    {venue.image_hero ? (
                       <Image
-                        src={venue.image_venue}
+                        src={venue.image_hero}
                         alt={venue.name}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"

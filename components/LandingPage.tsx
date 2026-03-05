@@ -189,7 +189,7 @@ if (!authChecked) return null
  
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">
           {venues.slice(0, 3).map((venue) => {
-            const imageSrc = venue.image_venue || venue.image
+            const imageSrc = venue.image_hero || venue.image
             return (
               <Link
                 key={venue.id}

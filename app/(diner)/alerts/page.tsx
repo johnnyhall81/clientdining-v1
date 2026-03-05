@@ -31,7 +31,7 @@ interface AlertWithDetails {
     area: string
     address?: string
     postcode?: string
-    image_venue: string | null
+    image_hero: string | null
     requires_guest_names?: boolean
   }
 }
@@ -94,7 +94,7 @@ export default function AlertsPage() {
               area,
               address,
               postcode,
-              image_venue,
+              image_hero,
               requires_guest_names
             )
           )
@@ -265,9 +265,9 @@ export default function AlertsPage() {
                   <div className="flex flex-col md:flex-row">
                     {/* Wide landscape image */}
                     <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-lg">
-                      {alert.venue.image_venue ? (
+                      {alert.venue.image_hero ? (
                         <Image
-                          src={alert.venue.image_venue}
+                          src={alert.venue.image_hero}
                           alt={alert.venue.name}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"

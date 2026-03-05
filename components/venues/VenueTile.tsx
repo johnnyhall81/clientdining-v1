@@ -10,7 +10,7 @@ interface VenueTileProps {
 }
 
 export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps) {
-  const imageSrc = venue.image_venue || venue.image
+  const imageSrc = venue.image_hero || venue.image
 
   return (
     <Link

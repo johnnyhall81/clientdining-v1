@@ -18,8 +18,8 @@ export default function EditVenuePage() {
     venue_type: 'restaurant' as 'restaurant' | 'club',
     description: '',
     address: '',
-    image_venue: '',
-    image_food: '',
+    image_hero: '',
+    image_hero: '',
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -50,8 +50,8 @@ export default function EditVenuePage() {
       venue_type: data.venue_type,
       description: data.description,
       address: data.address || '',
-      image_venue: data.image_venue || '',
-      image_food: data.image_food || '',
+      image_hero: data.image_hero || '',
+      image_hero: data.image_hero || '',
     })
     setLoading(false)
   }
@@ -198,8 +198,8 @@ export default function EditVenuePage() {
           </label>
           <input
             type="text"
-            value={formData.image_venue}
-            onChange={(e) => setFormData({ ...formData, image_venue: e.target.value })}
+            value={formData.image_hero}
+            onChange={(e) => setFormData({ ...formData, image_hero: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
         </div>
@@ -210,8 +210,8 @@ export default function EditVenuePage() {
           </label>
           <input
             type="text"
-            value={formData.image_food}
-            onChange={(e) => setFormData({ ...formData, image_food: e.target.value })}
+            value={formData.image_hero}
+            onChange={(e) => setFormData({ ...formData, image_hero: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
         </div>

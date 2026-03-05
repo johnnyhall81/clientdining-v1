@@ -13,8 +13,8 @@ export default function NewVenuePage() {
     venue_type: 'restaurant' as 'restaurant' | 'club',
     description: '',
     address: '',
-    image_venue: '',
-    image_food: '',
+    image_hero: '',
+    image_hero: '',
   })
   const [saving, setSaving] = useState(false)
 
@@ -156,8 +156,8 @@ export default function NewVenuePage() {
           </label>
           <input
             type="text"
-            value={formData.image_venue}
-            onChange={(e) => setFormData({ ...formData, image_venue: e.target.value })}
+            value={formData.image_hero}
+            onChange={(e) => setFormData({ ...formData, image_hero: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="/venues/venue-name.jpg"
           />
@@ -169,8 +169,8 @@ export default function NewVenuePage() {
           </label>
           <input
             type="text"
-            value={formData.image_food}
-            onChange={(e) => setFormData({ ...formData, image_food: e.target.value })}
+            value={formData.image_hero}
+            onChange={(e) => setFormData({ ...formData, image_hero: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="/venues/food-name.jpg"
           />
