@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { adminGuard } from '@/lib/admin-guard'
+import { requireAdmin } from '@/lib/admin-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,8 +10,8 @@ const supabase = createClient(
 )
 
 export async function POST(request: Request) {
-  const guardResult = await adminGuard(request)
-  if (guardResult) return guardResult
+  const auth = await requireAdmin()
+  if (!auth.ok) return auth.response
 
   try {
     const { proposalIds, action } = await request.json()
