@@ -1,0 +1,246 @@
+#!/usr/bin/env npx ts-node
+/**
+ * ClientDining — Slot Sync Agent
+ * 
+ * Run with: npx ts-node scripts/sync-slots.ts
+ * Or:       npx ts-node scripts/sync-slots.ts --venue home-house --days 14
+ * 
+ * What it does:
+ *   1. Fetches active venues with a booking_widget_url
+ *   2. Calls the booking system API to get available times (next N days)
+ *   3. Compares against existing slots in Supabase
+ *   4. Writes proposed adds/removes to slot_proposals table
+ *   5. Prints a summary — then you approve via /admin/sync
+ */
+
+import { createClient } from '@supabase/supabase-js'
+
+// ─── Config ──────────────────────────────────────────────────────────────────
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+const DAYS_AHEAD = parseInt(process.argv.find(a => a.startsWith('--days='))?.split('=')[1] || '30')
+const VENUE_FILTER = process.argv.find(a => a.startsWith('--venue='))?.split('=')[1]
+
+// Party sizes to query — we check each to get full availability picture
+const PARTY_SIZES = [2, 4, 6]
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function dateRange(days: number): string[] {
+  const dates: string[] = []
+  for (let i = 0; i < days; i++) {
+    const d = new Date()
+    d.setDate(d.getDate() + i)
+    dates.push(d.toISOString().split('T')[0])
+  }
+  return dates
+}
+
+function toUTC(date: string, time: string): string {
+  // SevenRooms returns times in venue local time (London = UTC+0/+1)
+  // We store as UTC in Supabase
+  return new Date(`${date}T${time}:00Z`).toISOString()
+}
+
+// ─── Scrapers ─────────────────────────────────────────────────────────────────
+
+async function fetchSevenRoomsSlots(
+  venueId: string, // e.g. "restauranthomehouse"
+  dates: string[]
+): Promise<{ start_at: string; party_min: number; party_max: number }[]> {
+  const slots: Map<string, { party_min: number; party_max: number }> = new Map()
+
+  for (const date of dates) {
+    for (const partySize of PARTY_SIZES) {
+      const url = `https://www.sevenrooms.com/api-yoa/availability/widget/range` +
+        `?venue=${venueId}` +
+        `&time_slot=19:00` +
+        `&party_size=${partySize}` +
+        `&halo_size_interval=16` +
+        `&start_date=${date}` +
+        `&num_days=1` +
+        `&channel=SEVENROOMS_WIDGET`
+
+      try {
+        const res = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            'Accept': 'application/json',
+          }
+        })
+
+        if (!res.ok) {
+          console.warn(`  ⚠ SevenRooms returned ${res.status} for ${date} party:${partySize}`)
+          continue
+        }
+
+        const data = await res.json()
+
+        // SevenRooms response: { availability: { [date]: [ { time_slot, type, ... } ] } }
+        const daySlots = data?.availability?.[date] || []
+
+        for (const slot of daySlots) {
+          if (slot.type !== 'book') continue // skip non-bookable slots
+
+          const key = `${date}T${slot.time_slot}`
+          const existing = slots.get(key)
+
+          if (!existing) {
+            slots.set(key, { party_min: partySize, party_max: partySize })
+          } else {
+            // Expand the party range as we find more sizes
+            slots.set(key, {
+              party_min: Math.min(existing.party_min, partySize),
+              party_max: Math.max(existing.party_max, partySize),
+            })
+          }
+        }
+      } catch (err) {
+        console.warn(`  ⚠ Error fetching ${date} party:${partySize}:`, err)
+      }
+
+      // Small delay to be polite
+      await new Promise(r => setTimeout(r, 200))
+    }
+  }
+
+  return Array.from(slots.entries()).map(([key, sizes]) => ({
+    start_at: toUTC(key.split('T')[0], key.split('T')[1]),
+    ...sizes,
+  }))
+}
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
+
+async function main() {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+    console.error('❌ Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY')
+    process.exit(1)
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+  const dates = dateRange(DAYS_AHEAD)
+  const cutoff = new Date().toISOString()
+  const horizon = new Date()
+  horizon.setDate(horizon.getDate() + DAYS_AHEAD)
+
+  console.log(`\n🔍 ClientDining Slot Sync`)
+  console.log(`   Checking ${DAYS_AHEAD} days ahead (${dates[0]} → ${dates[dates.length - 1]})`)
+  if (VENUE_FILTER) console.log(`   Filtering to venue: ${VENUE_FILTER}`)
+
+  // 1. Load venues
+  let venueQuery = supabase
+    .from('venues')
+    .select('id, name, slug, booking_system, booking_widget_url')
+    .eq('is_active', true)
+    .not('booking_widget_url', 'is', null)
+
+  if (VENUE_FILTER) venueQuery = venueQuery.eq('slug', VENUE_FILTER)
+
+  const { data: venues, error: venueError } = await venueQuery
+  if (venueError) throw venueError
+  if (!venues?.length) {
+    console.log('\n⚠ No venues with booking_widget_url found.')
+    return
+  }
+
+  console.log(`\n   Found ${venues.length} venue(s) to sync\n`)
+
+  let totalAdds = 0
+  let totalRemoves = 0
+
+  for (const venue of venues) {
+    console.log(`\n📍 ${venue.name} (${venue.booking_system})`)
+
+    // 2. Extract venue ID from widget URL
+    const venueSlug = venue.booking_widget_url
+      .replace(/^https?:\/\/www\.sevenrooms\.com\/reservations\//, '')
+      .replace(/\/$/, '')
+      .split('?')[0]
+
+    // 3. Fetch live availability
+    console.log(`   Fetching availability...`)
+    let liveSlots: { start_at: string; party_min: number; party_max: number }[] = []
+
+    if (venue.booking_system === 'sevenrooms') {
+      liveSlots = await fetchSevenRoomsSlots(venueSlug, dates)
+    } else {
+      console.log(`   ⚠ Booking system '${venue.booking_system}' not yet supported, skipping`)
+      continue
+    }
+
+    console.log(`   Found ${liveSlots.length} live available slots`)
+
+    // 4. Load existing slots from Supabase
+    const { data: existingSlots } = await supabase
+      .from('slots')
+      .select('id, start_at, party_min, party_max, status')
+      .eq('venue_id', venue.id)
+      .eq('status', 'available')
+      .gte('start_at', cutoff)
+      .lte('start_at', horizon.toISOString())
+
+    const existingMap = new Map((existingSlots || []).map(s => [s.start_at, s]))
+    const liveMap = new Map(liveSlots.map(s => [s.start_at, s]))
+
+    // 5. Diff: what's new?
+    const toAdd = liveSlots.filter(s => !existingMap.has(s.start_at))
+
+    // 6. Diff: what's gone?
+    const toRemove = (existingSlots || []).filter(s => !liveMap.has(s.start_at))
+
+    console.log(`   +${toAdd.length} new slots to add, -${toRemove.length} slots to remove`)
+
+    // 7. Clear existing pending proposals for this venue
+    await supabase
+      .from('slot_proposals')
+      .delete()
+      .eq('venue_id', venue.id)
+      .eq('status', 'pending')
+
+    // 8. Write new proposals
+    if (toAdd.length > 0) {
+      const { error } = await supabase.from('slot_proposals').insert(
+        toAdd.map(s => ({
+          venue_id: venue.id,
+          action: 'add',
+          start_at: s.start_at,
+          party_min: s.party_min,
+          party_max: s.party_max,
+          slot_tier: 'free',
+          source: venue.booking_system,
+        }))
+      )
+      if (error) console.error(`   ❌ Error writing add proposals:`, error.message)
+    }
+
+    if (toRemove.length > 0) {
+      const { error } = await supabase.from('slot_proposals').insert(
+        toRemove.map(s => ({
+          venue_id: venue.id,
+          action: 'remove',
+          start_at: s.start_at,
+          party_min: s.party_min,
+          party_max: s.party_max,
+          slot_tier: 'free',
+          source: venue.booking_system,
+        }))
+      )
+      if (error) console.error(`   ❌ Error writing remove proposals:`, error.message)
+    }
+
+    totalAdds += toAdd.length
+    totalRemoves += toRemove.length
+  }
+
+  console.log(`\n✅ Sync complete`)
+  console.log(`   ${totalAdds} slots to add, ${totalRemoves} slots to remove`)
+  console.log(`\n👉 Review and apply at: https://clientdining.com/admin/sync\n`)
+}
+
+main().catch(err => {
+  console.error('❌ Fatal error:', err)
+  process.exit(1)
+})
