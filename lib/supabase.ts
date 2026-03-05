@@ -16,12 +16,20 @@ export interface Venue {
   postcode?: string
   phone?: string
   booking_email?: string
-  image_venue?: string
-  image_food?: string
+  image_hero?: string
   is_active: boolean
   requires_guest_names: boolean
   created_at: string
   updated_at?: string
+}
+
+export interface VenueImage {
+  id: string
+  venue_id: string
+  url: string
+  sort_order: number
+  alt_text?: string
+  created_at: string
 }
 
 export interface Slot {

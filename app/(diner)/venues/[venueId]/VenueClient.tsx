@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Venue, Slot } from '@/lib/supabase'
+import { Venue, Slot, VenueImage } from '@/lib/supabase'
 import ReactMarkdown from 'react-markdown'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
@@ -11,6 +11,7 @@ import SlotRow from '@/components/slots/SlotRow'
 import PartySizeModal from '@/components/modals/PartySizeModal'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
+import VenueGallery from '@/components/venues/VenueGallery'
 
 
 const MapIcon = () => (
@@ -23,9 +24,10 @@ const MapIcon = () => (
 interface VenueClientProps {
   venue: Venue
   slots: Slot[]
+  galleryImages: VenueImage[]
 }
 
-export default function VenueClient({ venue, slots }: VenueClientProps) {
+export default function VenueClient({ venue, slots, galleryImages }: VenueClientProps) {
   const router = useRouter()
   const { user } = useAuth()
 
@@ -250,18 +252,12 @@ export default function VenueClient({ venue, slots }: VenueClientProps) {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* White card wrapper */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          {/* Image - full width of card */}
-          <div className="relative bg-zinc-100 aspect-[21/9] overflow-hidden">
-            <Image
-              src={venue.image_food || venue.image_venue || '/placeholder-venue.jpg'}
-              alt={venue.name}
-              fill
-              priority
-              quality={75}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-              className="object-cover"
-            />
-          </div>
+          {/* Gallery — swipeable, hero first then venue_images */}
+          <VenueGallery
+            heroImage={venue.image_hero}
+            galleryImages={galleryImages}
+            venueName={venue.name}
+          />
 
           {/* Content padding */}
           <div className="p-8 sm:p-10 lg:p-12">
