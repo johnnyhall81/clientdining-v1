@@ -176,7 +176,7 @@ export default function BookingsPage() {
             </p>
           </div>
         ) : (
-          filteredBookings.map(({ booking, venue, slot }) => (
+          filteredBookings.filter(({ venue, slot }) => venue && slot).map(({ booking, venue, slot }) => (
             <BookingCard
               key={booking.id}
               booking={booking}
