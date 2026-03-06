@@ -135,7 +135,7 @@ export default function PartySizeModal({
                     setGuestNames(updated)
                     if (nameError) setNameError(false)
                   }}
-                  placeholder={`Guest ${i + 1}`}
+                  placeholder={requiresGuestNames ? `Guest ${i + 1} (required)` : `Guest ${i + 1} (optional)`}
                   className={[
                     'w-full px-4 py-2.5 bg-zinc-50 border rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-300 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all',
                     nameError && !name.trim() ? 'border-red-200 bg-red-50' : 'border-zinc-100',
