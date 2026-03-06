@@ -13,7 +13,8 @@
  *   5. Prints a summary — then you approve via /admin/sync
  */
 
-import { createClient } from '@supabase/supabase-js'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { createClient } = require('@supabase/supabase-js')
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
@@ -76,25 +77,28 @@ async function fetchSevenRoomsSlots(
           continue
         }
 
-        const data = await res.json()
+        const data: any = await res.json()
 
-        // SevenRooms response: { availability: { [date]: [ { time_slot, type, ... } ] } }
-        const daySlots = data?.availability?.[date] || []
+        // SevenRooms actual response: { status: 200, data: { availability: { [date]: [ { times: [{time, type}] } ] } } }
+        const shifts = data?.data?.availability?.[date] || []
 
-        for (const slot of daySlots) {
-          if (slot.type !== 'book') continue // skip non-bookable slots
+        for (const shift of shifts) {
+          for (const slot of (shift.times || [])) {
+            // Use utc_datetime directly if available, otherwise construct from date + time
+            const start_at = slot.utc_datetime
+              ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
+              : toUTC(date, slot.time)
+            const key = start_at
+            const existing = slots.get(key)
 
-          const key = `${date}T${slot.time_slot}`
-          const existing = slots.get(key)
-
-          if (!existing) {
-            slots.set(key, { party_min: partySize, party_max: partySize })
-          } else {
-            // Expand the party range as we find more sizes
-            slots.set(key, {
-              party_min: Math.min(existing.party_min, partySize),
-              party_max: Math.max(existing.party_max, partySize),
-            })
+            if (!existing) {
+              slots.set(key, { party_min: partySize, party_max: partySize })
+            } else {
+              slots.set(key, {
+                party_min: Math.min(existing.party_min, partySize),
+                party_max: Math.max(existing.party_max, partySize),
+              })
+            }
           }
         }
       } catch (err) {
@@ -106,8 +110,8 @@ async function fetchSevenRoomsSlots(
     }
   }
 
-  return Array.from(slots.entries()).map(([key, sizes]) => ({
-    start_at: toUTC(key.split('T')[0], key.split('T')[1]),
+  return Array.from(slots.entries()).map(([start_at, sizes]) => ({
+    start_at,
     ...sizes,
   }))
 }
@@ -182,14 +186,14 @@ async function main() {
       .gte('start_at', cutoff)
       .lte('start_at', horizon.toISOString())
 
-    const existingMap = new Map((existingSlots || []).map(s => [s.start_at, s]))
+    const existingMap = new Map((existingSlots || []).map((s: any) => [s.start_at, s]))
     const liveMap = new Map(liveSlots.map(s => [s.start_at, s]))
 
     // 5. Diff: what's new?
     const toAdd = liveSlots.filter(s => !existingMap.has(s.start_at))
 
     // 6. Diff: what's gone?
-    const toRemove = (existingSlots || []).filter(s => !liveMap.has(s.start_at))
+    const toRemove = (existingSlots || []).filter((s: any) => !liveMap.has(s.start_at))
 
     console.log(`   +${toAdd.length} new slots to add, -${toRemove.length} slots to remove`)
 
@@ -218,7 +222,7 @@ async function main() {
 
     if (toRemove.length > 0) {
       const { error } = await supabase.from('slot_proposals').insert(
-        toRemove.map(s => ({
+        toRemove.map((s: any) => ({
           venue_id: venue.id,
           action: 'remove',
           start_at: s.start_at,
