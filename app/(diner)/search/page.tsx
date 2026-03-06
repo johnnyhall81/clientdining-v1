@@ -520,8 +520,6 @@ const handleCancel = async () => {
                     <div className="flex flex-wrap gap-2">
                       {visibleSlots.map(slot => {
                         const isBookedByMe = bookedSlots.has(slot.id)
-                        const hasAlert = alerts.has(slot.id)
-                        const lastMinute = isLastMinute(slot.start_at)
 
                         if (isBookedByMe) {
                           return (
@@ -538,24 +536,6 @@ const handleCancel = async () => {
                                 <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                               </button>
                             </div>
-                          )
-                        }
-
-                        if (lastMinute) {
-                          return (
-                            <button
-                              key={slot.id}
-                              onClick={() => handleToggleAlert(slot.id)}
-                              className={[
-                                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-light border transition-colors',
-                                hasAlert
-                                  ? 'bg-zinc-50 border-zinc-300 text-zinc-500'
-                                  : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:border-zinc-300',
-                              ].join(' ')}
-                            >
-                              {formatSlotTime(slot.start_at)}
-                              <span className="text-[10px] ml-1">{hasAlert ? '🔔' : 'Alert me'}</span>
-                            </button>
                           )
                         }
 
