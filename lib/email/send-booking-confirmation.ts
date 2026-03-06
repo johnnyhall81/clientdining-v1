@@ -64,8 +64,8 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                     <!-- Hero image -->
                     ${data.venueImageUrl ? `
                     <tr>
-                      <td style="padding:0;line-height:0;">
-                        <img src="${data.venueImageUrl}" alt="${data.venueName}" width="600" style="width:100%;height:240px;object-fit:cover;display:block;" />
+                      <td style="padding:0;line-height:0;font-size:0;">
+                        <img src="${data.venueImageUrl}" alt="${data.venueName}" width="600" height="240" style="width:100%;max-width:600px;height:240px;object-fit:cover;display:block;border:0;outline:none;text-decoration:none;" />
                       </td>
                     </tr>
                     ` : `
