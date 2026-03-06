@@ -35,9 +35,9 @@ export default function SignupPage() {
 
         {/* Heading */}
         <div className="mb-10 text-center">
-          <h1 className="text-3xl font-light text-zinc-900 tracking-tight mb-4">Professional membership,<br />verified</h1>
+          <h1 className="text-3xl font-light text-zinc-900 tracking-tight mb-4">A trusted network for<br />professional hosting</h1>
           <p className="text-sm font-light text-zinc-500 leading-relaxed">
-            ClientDining is a private booking network for professionals who host business dining in London. We use LinkedIn to verify membership and maintain a trusted, relevant network.
+            ClientDining is a private booking network for professionals who host business dining in London. We use LinkedIn to help verify membership and maintain a relevant, trusted network.
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export default function SignupPage() {
           </button>
 
           <p className="mt-5 text-center text-xs text-zinc-400 font-light leading-relaxed">
-            We only use LinkedIn to confirm professional identity.<br />We never post on your behalf.
+            LinkedIn is used only to confirm professional identity.
           </p>
 
           <p className="mt-5 text-center text-sm text-zinc-400 font-light">
