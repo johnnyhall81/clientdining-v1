@@ -60,8 +60,8 @@ export default function PartySizeModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (requiresGuestNames && guestNames.some(n => !n.trim())) return
-    const allNames = (requiresGuestNames || showGuestNames)
-      ? [hostField, ...guestNames]
+    const allNames = (requiresGuestNames || showGuestNames) && hostField.trim()
+      ? [hostField.trim(), ...guestNames]
       : undefined
     onConfirm(partySize, notes.trim() || undefined, allNames)
   }
@@ -79,29 +79,28 @@ export default function PartySizeModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
       <div className="bg-white rounded-2xl max-w-sm w-full shadow-xl overflow-hidden">
 
-        {/* Close */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 text-zinc-300 hover:text-zinc-600 transition-colors z-10"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-
         <form onSubmit={handleSubmit}>
 
           {/* Reservation card header */}
-          <div className="px-7 pt-7 pb-6 border-b border-zinc-100">
-            <h2 className="text-[22px] font-semibold text-zinc-900 tracking-tight">{venueName}</h2>
+          <div className="relative px-7 pt-7 pb-7 border-b border-zinc-100">
+            {/* Close */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute top-5 right-5 text-zinc-300 hover:text-zinc-600 transition-colors"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            <h2 className="text-[22px] font-semibold text-zinc-900 tracking-tight pr-8">{venueName}</h2>
             {slotTime && (
-              <p className="text-sm font-medium text-zinc-500 mt-1">{slotTime}</p>
+              <p className="text-sm font-medium text-zinc-500 mt-1.5">{slotTime}</p>
             )}
             <p className="text-sm font-medium text-zinc-400 mt-0.5">Table for {partySize}</p>
           </div>
 
-          <div className="px-7 py-6 space-y-5">
+          <div className="px-7 py-7 space-y-7">
 
             {/* Guest stepper */}
             <div>
@@ -177,7 +176,6 @@ export default function PartySizeModal({
                         setGuestNames(updated)
                       }}
                       placeholder={`Guest ${i + 1}`}
-                      required={requiresGuestNames}
                       className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-100 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-300 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
                     />
                   ))}
