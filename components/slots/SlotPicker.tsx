@@ -141,7 +141,7 @@ export default function SlotPicker({
               className={[
                 'px-4 py-1.5 rounded-full text-sm font-light transition-all border',
                 isActive
-                  ? 'bg-zinc-900 border-zinc-900 text-white'
+                  ? 'bg-zinc-100 border-zinc-300 text-zinc-800'
                   : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-400',
               ].join(' ')}
             >
@@ -170,7 +170,7 @@ export default function SlotPicker({
               className={[
                 'flex-shrink-0 flex flex-col items-center justify-center w-14 h-16 rounded-xl transition-all text-center border',
                 isActive
-                  ? 'bg-zinc-900 border-zinc-900 text-white'
+                  ? 'bg-zinc-100 border-zinc-300 text-zinc-900'
                   : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-400',
               ].join(' ')}
             >

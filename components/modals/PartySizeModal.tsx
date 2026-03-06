@@ -57,11 +57,15 @@ export default function PartySizeModal({
     }
   }, [partySize, requiresGuestNames, showGuestNames])
 
-  if (!isOpen) return null
+  const [nameError, setNameError] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (requiresGuestNames && guestNames.some(n => !n.trim())) return
+    if (requiresGuestNames && guestNames.some(n => !n.trim())) {
+      setNameError(true)
+      return
+    }
+    setNameError(false)
     const allNames = (requiresGuestNames || showGuestNames) && hostField.trim()
       ? [hostField.trim(), ...guestNames]
       : undefined
@@ -128,23 +132,24 @@ export default function PartySizeModal({
               </div>
             </div>
 
-            {/* Guest names — progressive */}
-            <div>
-              {!requiresGuestNames && (
-                <button
-                  type="button"
-                  onClick={handleToggleGuestNames}
-                  className="text-[13px] font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
-                >
-                  {showGuestNames ? 'Remove guest names' : 'Add guest names'}
-                </button>
-              )}
+            {/* Guest names */}
+            {partySize > 1 && (
+              <div>
+                {!requiresGuestNames && (
+                  <button
+                    type="button"
+                    onClick={handleToggleGuestNames}
+                    className="text-[13px] font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
+                  >
+                    {showGuestNames ? 'Remove guest names' : 'Add guest names'}
+                  </button>
+                )}
 
-              {showingNames && (
-                <div
-                  className="space-y-2 mt-3"
-                  style={{ animation: 'slideDown 120ms ease-out' }}
-                >
+                {(requiresGuestNames || showGuestNames) && (
+                  <div
+                    className="space-y-2 mt-3"
+                    style={{ animation: showGuestNames && !requiresGuestNames ? 'slideDown 120ms ease-out' : 'none' }}
+                  >
                   <style>{`
                     @keyframes slideDown {
                       from { opacity: 0; transform: translateY(-6px); }
@@ -176,11 +181,18 @@ export default function PartySizeModal({
                         const updated = [...guestNames]
                         updated[i] = e.target.value
                         setGuestNames(updated)
+                        if (nameError) setNameError(false)
                       }}
                       placeholder={`Guest ${i + 1}`}
-                      className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-100 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-300 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
+                      className={[
+                        'w-full px-4 py-2.5 bg-zinc-50 border rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-300 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all',
+                        nameError && !name.trim() ? 'border-red-200 bg-red-50' : 'border-zinc-100',
+                      ].join(' ')}
                     />
                   ))}
+                  {nameError && (
+                    <p className="text-xs font-light text-red-400 mt-1">Please add all guest names to continue.</p>
+                  )}
                 </div>
               )}
             </div>
