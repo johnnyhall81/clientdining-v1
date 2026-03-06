@@ -93,143 +93,143 @@ useEffect(() => {
   const guestStr = `${booking.party_size} ${booking.party_size === 1 ? 'guest' : 'guests'}`
 
   return (
-    <div className="bg-white border border-zinc-100 rounded-2xl overflow-hidden">
+    <div className="bg-white border border-zinc-200 rounded-lg overflow-hidden relative">
+      {!isCancelled && !isPast && (
+        <button
+          type="button"
+          onClick={() => setShowCancelModal(true)}
+          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
+          aria-label="Cancel booking"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+
       <div className="flex flex-col md:flex-row">
-        {/* Image — slightly narrower so content breathes */}
-        <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-[38%] aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+        {/* Image */}
+        <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 md:rounded-l-lg hover:opacity-90 transition-opacity">
           {venue.image_hero ? (
-            <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 38vw" quality={60} className="object-cover" />
+            <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" quality={60} className="object-cover" />
           ) : (
             <div className="w-full h-full bg-zinc-100" />
           )}
         </Link>
 
         {/* Details */}
-        <div className="flex-1 px-8 pt-7 pb-8 flex flex-col">
+        <div className="flex-1 px-7 py-5 pr-12 flex flex-col gap-4">
 
-          {/* Zone 1 — booking identity */}
-          <div className="pr-8">
-            <div className="flex items-start justify-between">
-              <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity">
-                <h3 className="text-xl font-light text-zinc-900 tracking-tight">{venue.name}</h3>
-              </Link>
-              {!isCancelled && !isPast && (
-                <button
-                  type="button"
-                  onClick={() => setShowCancelModal(true)}
-                  className="flex-shrink-0 ml-4 text-zinc-200 hover:text-zinc-400 transition-colors"
-                  aria-label="Cancel booking"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              )}
-            </div>
+          {/* Core info */}
+          <div>
+            <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity">
+              <h3 className="text-lg font-light text-zinc-900 mb-2">{venue.name}</h3>
+            </Link>
 
+            {/* Address + map icon */}
             {venue.address && (
-              <div className="flex items-center gap-1.5 mt-1.5">
+              <div className="flex items-center gap-1.5 mb-0.5">
                 <span className="text-sm font-light text-zinc-400">
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </span>
                 {mapsUrl && (
-                  <a href={mapsUrl} target="_blank" rel="noopener noreferrer" title="Open in Maps" className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
+                  <a href={mapsUrl} target="_blank" rel="noopener noreferrer" title="Open in Maps" className="text-zinc-300 hover:text-zinc-600 transition-colors flex-shrink-0">
                     <MapIcon />
                   </a>
                 )}
               </div>
             )}
 
-            <div className="flex items-center gap-1.5 mt-1">
-              <span className="text-sm font-light text-zinc-400">
+            {/* Date · time · guests + calendar icon */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-light text-zinc-500">
                 {dateStr} · {timeStr} · {guestStr}
               </span>
               {!isPast && !isCancelled && (
-                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
+                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-300 hover:text-zinc-600 transition-colors flex-shrink-0">
                   <CalendarIcon />
                 </a>
               )}
             </div>
           </div>
 
-          {/* Zone 2 — notes, separated with generous gap */}
-          <div className="mt-8 flex flex-col gap-5">
-
-            {/* Restaurant note */}
-            {booking.notes && (
-              <div>
-                <p className="text-xs font-light text-zinc-300 mb-2">
-                  Restaurant note <span className="text-zinc-200">· Sent with booking</span>
-                </p>
-                <p className="text-sm font-light text-zinc-500 border border-zinc-100 rounded-lg px-4 py-3 bg-zinc-50/50">
-                  {booking.notes}
-                </p>
-              </div>
-            )}
-
-            {/* Guest names */}
-            {booking.guest_names && booking.guest_names.length > 0 && (
-              <div>
-                <p className="text-xs font-light text-zinc-300 mb-2">
-                  Guests <span className="text-zinc-200">· Sent with booking</span>
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {booking.guest_names.map((name, i) => (
-                    <span key={i} className="px-3 py-1 text-xs font-light text-zinc-400 bg-zinc-50 border border-zinc-100 rounded-full">
-                      {name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Private notes */}
+          {/* Restaurant note */}
+          {booking.notes && (
             <div>
-              <p className="text-xs font-light text-zinc-300 mb-2">
-                Private notes <span className="text-zinc-200">· Visible only to you</span>
+              <p className="text-xs font-light text-zinc-400 mb-1">
+                Restaurant note <span className="text-zinc-300">· Sent with booking</span>
               </p>
-              {notesEditing ? (
-                <div>
-                  <textarea
-                    value={notesEditValue}
-                    onChange={e => setNotesEditValue(e.target.value)}
-                    placeholder="Add private notes..."
-                    rows={3}
-                    autoFocus
-                    className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-300 border border-zinc-200 rounded-lg px-4 py-3 bg-white focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
-                  />
-                  <div className="flex items-center justify-end gap-3 mt-2">
-                    <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleSaveNotes}
-                      disabled={notesSaving}
-                      className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded-lg hover:bg-zinc-700 transition-colors disabled:opacity-50"
-                    >
-                      {notesSaving ? 'Saving...' : 'Save'}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div
-                  className="relative group cursor-pointer"
-                  onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
-                >
-                  <div className="border border-zinc-100 rounded-lg bg-zinc-50/50 pr-8 min-h-[42px] max-h-40 overflow-y-auto">
-                    <p className="text-sm whitespace-pre-line font-light text-zinc-500 px-4 py-3">
-                      {savedNotes || <span className="text-zinc-300">No notes added</span>}
-                    </p>
-                  </div>
-                  <span className="absolute top-3 right-3 text-zinc-200 group-hover:text-zinc-400 transition-colors">
-                    <PencilIcon />
-                  </span>
-                </div>
-              )}
+              <p className="text-sm font-light text-zinc-500 border border-zinc-100 rounded px-3 py-2 bg-zinc-50/40">
+                {booking.notes}
+              </p>
             </div>
+          )}
 
+          {/* Guest names */}
+          {booking.guest_names && booking.guest_names.length > 0 && (
+            <div>
+              <p className="text-xs font-light text-zinc-400 mb-2">
+                Guests <span className="text-zinc-300">· Sent with booking</span>
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {booking.guest_names.map((name, i) => (
+                  <span
+                    key={i}
+                    className="px-2.5 py-1 text-xs font-light text-zinc-500 bg-zinc-50 border border-zinc-100 rounded-full"
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Private notes */}
+          <div>
+            <p className="text-xs font-light text-zinc-400 mb-1">
+              Private notes <span className="text-zinc-300">· Visible only to you</span>
+            </p>
+            {notesEditing ? (
+              <div>
+                <textarea
+                  value={notesEditValue}
+                  onChange={e => setNotesEditValue(e.target.value)}
+                  placeholder="Add private notes..."
+                  rows={3}
+                  autoFocus
+                  className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-300 border border-zinc-100 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
+                />
+                <div className="flex items-center justify-end gap-3 mt-1.5">
+                  <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveNotes}
+                    disabled={notesSaving}
+                    className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                  >
+                    {notesSaving ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div
+                className="relative group cursor-pointer"
+                onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
+              >
+                <div className="border border-zinc-100 rounded bg-zinc-50/40 pr-7 min-h-[36px] max-h-40 overflow-y-auto">
+                  <p className="text-sm whitespace-pre-line font-light text-zinc-500 px-3 py-2">
+                    {savedNotes || <span className="text-zinc-300">No notes added</span>}
+                  </p>
+                </div>
+                <span className="absolute top-2.5 right-2.5 text-zinc-300 group-hover:text-zinc-500 transition-colors">
+                  <PencilIcon />
+                </span>
+              </div>
+            )}
           </div>
+
         </div>
       </div>
 
