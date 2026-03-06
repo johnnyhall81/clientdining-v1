@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { Slot } from '@/lib/supabase'
-import { isWithin24Hours } from '@/lib/date-utils'
 
 interface SlotPickerProps {
   slots: Slot[]
@@ -187,8 +186,6 @@ export default function SlotPicker({
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {daySlots.map(slot => {
           const isBookedByMe = bookedSlots.has(slot.id)
-          const within24h = isWithin24Hours(slot.start_at)
-          const canBook = slot.status === 'available' && !within24h
           const partyLabel = slot.party_min === slot.party_max
             ? `${slot.party_min} guests`
             : `${slot.party_min}–${slot.party_max} guests`
@@ -205,7 +202,7 @@ export default function SlotPicker({
             )
           }
 
-          if (canBook) {
+          if (slot.status === 'available') {
             return (
               <button
                 key={slot.id}
@@ -218,7 +215,7 @@ export default function SlotPicker({
             )
           }
 
-          // Within 24h — compact alert tile
+          // Booked by someone else — alert tile
           return (
             <button
               key={slot.id}
