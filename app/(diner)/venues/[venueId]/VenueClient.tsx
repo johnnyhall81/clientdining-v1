@@ -259,7 +259,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             galleryImages={galleryImages}
             venueName={venue.name}
             logoUrl={(venue as any).logo_url || undefined}
-            venueName={venue.name}
           />
 
           {/* Content padding */}
