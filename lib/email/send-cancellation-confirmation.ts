@@ -87,7 +87,7 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                         <table cellpadding="0" cellspacing="0" style="margin-top:32px;">
                           <tr>
                             <td>
-                              <a href="https://clientdining.com/search" style="display:inline-block;padding:11px 24px;background-color:#18181B;color:#FFFFFF;text-decoration:none;font-size:13px;font-weight:300;border-radius:8px;">Find another table</a>
+                              <a href="https://clientdining.com/search" style="display:inline-block;padding:11px 24px;background-color:#F4F4F5;color:#3F3F46;text-decoration:none;font-size:13px;font-weight:300;border-radius:8px;">Find another table</a>
                             </td>
                           </tr>
                         </table>

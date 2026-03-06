@@ -48,14 +48,15 @@ function toUTC(date: string, time: string): string {
 // ─── Scrapers ─────────────────────────────────────────────────────────────────
 
 async function fetchSevenRoomsSlots(
-  venueId: string, // e.g. "restauranthomehouse"
-  dates: string[]
+  venueId: string,
+  dates: string[],
+  baseEndpoint = 'https://www.sevenrooms.com/api-yoa/availability/widget/range'
 ): Promise<{ start_at: string; party_min: number; party_max: number }[]> {
   const slots: Map<string, { party_min: number; party_max: number }> = new Map()
 
   for (const date of dates) {
     for (const partySize of PARTY_SIZES) {
-      const url = `https://www.sevenrooms.com/api-yoa/availability/widget/range` +
+      const url = `${baseEndpoint}` +
         `?venue=${venueId}` +
         `&time_slot=19:00` +
         `&party_size=${partySize}` +
@@ -158,18 +159,17 @@ async function main() {
   for (const venue of venues) {
     console.log(`\n📍 ${venue.name} (${venue.booking_system})`)
 
-    // 2. Extract venue ID from widget URL
-    const venueSlug = venue.booking_widget_url
-      .replace(/^https?:\/\/www\.sevenrooms\.com\/reservations\//, '')
-      .replace(/\/$/, '')
-      .split('?')[0]
+    // 2. Extract venue ID from widget URL query param
+    const widgetUrl = new URL(venue.booking_widget_url)
+    const venueId = widgetUrl.searchParams.get('venue') || ''
+    const baseEndpoint = widgetUrl.origin + widgetUrl.pathname
 
     // 3. Fetch live availability
     console.log(`   Fetching availability...`)
     let liveSlots: { start_at: string; party_min: number; party_max: number }[] = []
 
     if (venue.booking_system === 'sevenrooms') {
-      liveSlots = await fetchSevenRoomsSlots(venueSlug, dates)
+      liveSlots = await fetchSevenRoomsSlots(venueId, dates, baseEndpoint)
     } else {
       console.log(`   ⚠ Booking system '${venue.booking_system}' not yet supported, skipping`)
       continue
