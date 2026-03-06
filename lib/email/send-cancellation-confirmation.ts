@@ -8,6 +8,7 @@ interface CancellationEmailData {
   venueName: string
   venueArea?: string
   venueAddress: string
+  venuePostcode?: string
   venueImageUrl?: string
   slotTime: string
   partySize: number
@@ -17,6 +18,9 @@ interface CancellationEmailData {
 export async function sendCancellationConfirmation(data: CancellationEmailData) {
   try {
     const ref = data.bookingId.slice(0, 8).toUpperCase()
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      `${data.venueName}, ${data.venueAddress}, ${data.venuePostcode || ''}`
+    )}`
 
     await resend.emails.send({
       from: 'ClientDining <notifications@clientdining.com>',
@@ -56,12 +60,12 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                     <tr>
                       <td style="padding:36px 40px 40px;">
 
-                        <!-- Venue name -->
-                        <p style="margin:0 0 4px 0;font-size:24px;font-weight:300;color:#18181B;letter-spacing:-0.3px;">${data.venueName}</p>
-                        ${data.venueArea ? `<p style="margin:0 0 28px 0;font-size:13px;font-weight:300;color:#A1A1AA;">${data.venueArea}</p>` : `<div style="margin-bottom:28px;"></div>`}
+                        <!-- Venue name + address -->
+                        <p style="margin:0 0 8px 0;font-size:24px;font-weight:300;color:#18181B;letter-spacing:-0.3px;">${data.venueName}</p>
+                        <a href="${mapsUrl}" target="_blank" style="display:inline-block;margin:0 0 28px 0;font-size:13px;font-weight:300;color:#71717A;text-decoration:none;">&#x1F4CD; ${data.venueAddress}${data.venuePostcode ? `, ${data.venuePostcode}` : ''}</a>
 
                         <!-- Cancelled label -->
-                        <p style="margin:0 0 24px 0;font-size:13px;font-weight:300;color:#71717A;letter-spacing:0.05em;text-transform:uppercase;">Cancelled</p>
+                        <p style="margin:0 0 24px 0;font-size:13px;font-weight:300;color:#71717A;letter-spacing:0.02em;">Your booking has been cancelled</p>
 
                         <!-- Detail rows -->
                         <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #F4F4F5;">
