@@ -495,7 +495,7 @@ const handleCancel = async () => {
                   </Link>
 
                   {/* Content */}
-                  <div className="flex-1 px-8 py-7 flex flex-col justify-between gap-6">
+                  <div className="flex-1 px-9 py-8 flex flex-col justify-between gap-7">
 
                     {/* Venue info */}
                     <div className="space-y-1.5">
@@ -523,27 +523,18 @@ const handleCancel = async () => {
 
                         if (isBookedByMe) {
                           return (
-                            <div key={slot.id} className="relative group/pill">
-                              <span className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#F0FAF6] border border-[#C5E8D8] text-[#2D7A57]" style={{minHeight: '44px'}}>
-                                {profile?.avatar_url ? (
-                                  <img src={profile.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover opacity-90 flex-shrink-0" />
-                                ) : (
-                                  <div className="w-5 h-5 rounded-full bg-[#C5E8D8] flex items-center justify-center text-[9px] font-medium text-[#2D7A57] flex-shrink-0">
-                                    {profile?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || '?'}
-                                  </div>
-                                )}
-                                <span className="flex flex-col">
-                                  <span className="text-sm font-light leading-tight">{formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}</span>
-                                  <span className="text-[11px] font-light text-[#5BA882] leading-tight mt-0.5">Your table</span>
-                                </span>
+                            <div key={slot.id} className="inline-flex items-center gap-3 px-5 py-2.5 rounded-xl border" style={{minHeight: '46px', backgroundColor: '#F7FBF9', borderColor: '#D4EDE2'}}>
+                              {profile?.avatar_url ? (
+                                <img src={profile.avatar_url} alt="" className="w-[22px] h-[22px] rounded-full object-cover opacity-90 flex-shrink-0" />
+                              ) : (
+                                <div className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[9px] font-medium flex-shrink-0" style={{backgroundColor: '#C8E6D4', color: '#2D7A57'}}>
+                                  {profile?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || '?'}
+                                </div>
+                              )}
+                              <span className="flex flex-col">
+                                <span className="text-sm font-light leading-tight" style={{color: '#2A6B4A'}}>{formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}</span>
+                                <span className="text-[11px] font-light leading-tight mt-1" style={{color: '#7BB89A'}}>Your table</span>
                               </span>
-                              <button
-                                onClick={() => openCancelModal(slot.id, venue.name)}
-                                className="absolute -top-1.5 -right-1.5 hidden group-hover/pill:flex w-4 h-4 rounded-full bg-zinc-300 hover:bg-zinc-500 items-center justify-center transition-colors"
-                                aria-label="Cancel"
-                              >
-                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                              </button>
                             </div>
                           )
                         }
@@ -596,7 +587,7 @@ const handleCancel = async () => {
 
 
 {!loading && results.length > 0 && (
-  <div className="pt-2 text-sm text-zinc-400 font-light">
+  <div className="pt-4 pb-2 text-sm font-light text-zinc-400 tracking-wide">
     Not seeing the right table?{" "}
     <a
       onClick={(e) => {
@@ -610,7 +601,7 @@ const handleCancel = async () => {
           '_blank'
         )
       }}
-      className="text-zinc-600 hover:text-zinc-900 underline underline-offset-4 cursor-pointer"
+      className="text-zinc-500 hover:text-zinc-800 underline underline-offset-4 decoration-zinc-300 cursor-pointer transition-colors"
     >
       We can check additional availability.
     </a>
