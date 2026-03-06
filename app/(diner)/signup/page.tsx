@@ -30,21 +30,23 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex items-center justify-center px-4 py-24">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex items-center justify-center px-4 py-20">
+      <div className="w-full max-w-sm">
 
-        <div className="text-center" />
+        {/* Heading */}
+        <div className="mb-10 text-center">
+          <h1 className="text-3xl font-light text-zinc-900 tracking-tight mb-4">Professional membership,<br />verified</h1>
+          <p className="text-sm font-light text-zinc-500 leading-relaxed">
+            ClientDining is a private booking network for professionals who host business dining in London. We use LinkedIn to verify membership and maintain a trusted, relevant network.
+          </p>
+        </div>
 
-        <div className="bg-white rounded-lg border border-zinc-200 p-8">
+        <div className="bg-white rounded-2xl border border-zinc-100 p-8">
           {error && (
             <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm font-light">
               {error}
             </div>
           )}
-
-          <div className="mb-8 space-y-3">
-            <p className="text-base text-zinc-500 font-light">Business dining for City professionals</p>
-          </div>
 
           <button
             onClick={handleLinkedInSignup}
@@ -57,7 +59,11 @@ export default function SignupPage() {
             {loading ? 'Connecting...' : 'Continue with LinkedIn'}
           </button>
 
-          <p className="mt-6 text-center text-sm text-zinc-400 font-light">
+          <p className="mt-5 text-center text-xs text-zinc-400 font-light leading-relaxed">
+            We only use LinkedIn to confirm professional identity.<br />We never post on your behalf.
+          </p>
+
+          <p className="mt-5 text-center text-sm text-zinc-400 font-light">
             Already a member?{' '}
             <Link href="/login" className="font-light text-zinc-900 hover:underline">
               Sign in
@@ -66,7 +72,7 @@ export default function SignupPage() {
 
           <p className="mt-4 text-center text-xs text-zinc-400 font-light">
             By continuing, you agree to our{' '}
-            <Link href="/terms" className="underline hover:text-zinc-500">Terms of Service</Link>
+            <Link href="/terms" className="underline hover:text-zinc-500">Terms</Link>
             {' '}and{' '}
             <Link href="/privacy" className="underline hover:text-zinc-500">Privacy Policy</Link>
           </p>
