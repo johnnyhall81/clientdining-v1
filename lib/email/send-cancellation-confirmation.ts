@@ -65,7 +65,7 @@ export async function sendCancellationConfirmation(data: CancellationEmailData) 
                         <a href="${mapsUrl}" target="_blank" style="display:inline-block;margin:0 0 28px 0;font-size:13px;font-weight:300;color:#71717A;text-decoration:none;">&#x1F4CD; ${data.venueAddress}${data.venuePostcode ? `, ${data.venuePostcode}` : ''}</a>
 
                         <!-- Cancelled label -->
-                        <p style="margin:0 0 24px 0;font-size:13px;font-weight:300;color:#71717A;letter-spacing:0.02em;">Your booking has been cancelled</p>
+                        <p style="margin:0 0 24px 0;font-size:13px;font-weight:300;color:#A1A1AA;">This booking has been cancelled</p>
 
                         <!-- Detail rows -->
                         <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #F4F4F5;">
