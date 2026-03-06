@@ -207,6 +207,16 @@ if (!authChecked) return null
                         className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
                       />
                       <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300" />
+                      {(venue as any).logo_url && (
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+                          <img
+                            src={(venue as any).logo_url}
+                            alt={venue.name}
+                            className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
+                          />
+                        </>
+                      )}
                     </>
                   ) : (
                     <div className="w-full h-full bg-zinc-200" />
