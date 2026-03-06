@@ -8,9 +8,10 @@ interface VenueGalleryProps {
   heroImage?: string
   galleryImages: VenueImage[]
   venueName: string
+  logoUrl?: string
 }
 
-export default function VenueGallery({ heroImage, galleryImages, venueName }: VenueGalleryProps) {
+export default function VenueGallery({ heroImage, galleryImages, venueName, logoUrl }: VenueGalleryProps) {
   // Build the full ordered list: gallery images first, hero last
   const allImages: string[] = [
     ...galleryImages.map((img) => img.url),
@@ -77,6 +78,18 @@ export default function VenueGallery({ heroImage, galleryImages, venueName }: Ve
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
             className="object-cover"
           />
+          {/* Logo overlay — shown only on the hero (last) image */}
+          {logoUrl && i === allImages.length - 1 && (
+            <div className="absolute inset-0 flex items-end justify-start p-8 z-10">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              <img
+                src={logoUrl}
+                alt={venueName}
+                className="relative z-10 h-8 w-auto object-contain"
+                style={{ maxWidth: '200px' }}
+              />
+            </div>
+          )}
         </div>
       ))}
 

@@ -24,6 +24,7 @@ export default function EditVenuePage() {
     phone: '',
     booking_email: '',
     image_hero: '',
+    logo_url: '',
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -65,6 +66,7 @@ export default function EditVenuePage() {
       phone: data.phone || '',
       booking_email: data.booking_email || '',
       image_hero: data.image_hero || '',
+      logo_url: (data as any).logo_url || '',
     })
     setLoading(false)
   }
@@ -266,6 +268,20 @@ export default function EditVenuePage() {
           {formData.image_hero && (
             <div className="mt-2 relative aspect-video w-full rounded-lg overflow-hidden bg-zinc-100">
               <img src={formData.image_hero} alt="Hero preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Venue Logo URL (white SVG)</label>
+          <p className="text-xs text-zinc-400 mb-2">White SVG overlaid on the hero image. Upload to venue-images bucket.</p>
+          <input type="text" placeholder="https://...supabase.co/storage/v1/object/public/venue-images/logo_white.svg"
+            value={(formData as any).logo_url}
+            onChange={(e) => setFormData({ ...formData, logo_url: e.target.value } as any)}
+            className="w-full px-3 py-2 border rounded-md text-sm" />
+          {(formData as any).logo_url && (
+            <div className="mt-2 relative h-16 w-full rounded-lg overflow-hidden bg-zinc-800 flex items-center px-4">
+              <img src={(formData as any).logo_url} alt="Logo preview" className="h-8 w-auto object-contain" />
             </div>
           )}
         </div>
