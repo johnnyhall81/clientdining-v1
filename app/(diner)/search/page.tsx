@@ -539,6 +539,23 @@ const handleCancel = async () => {
                           )
                         }
 
+                        if (slot.status === 'booked') {
+                          const hasAlert = alerts.has(slot.id)
+                          return (
+                            <button
+                              key={slot.id}
+                              onClick={() => handleToggleAlert(slot.id)}
+                              className={[
+                                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-light border transition-colors',
+                                hasAlert ? 'bg-zinc-50 border-zinc-300 text-zinc-500' : 'bg-zinc-50 border-zinc-200 text-zinc-300 hover:border-zinc-300',
+                              ].join(' ')}
+                            >
+                              {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
+                              <span className="text-[10px] ml-1">{hasAlert ? '🔔' : 'Alert me'}</span>
+                            </button>
+                          )
+                        }
+
                         return (
                           <button
                             key={slot.id}
