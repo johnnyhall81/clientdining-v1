@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import { formatFullDateTime } from '@/lib/date-utils'
-import SlotRow from '@/components/slots/SlotRow'
+import SlotPicker from '@/components/slots/SlotPicker'
 import PartySizeModal from '@/components/modals/PartySizeModal'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
@@ -358,26 +358,14 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
             {/* Available Tables */}
             <div className="pt-8 border-t border-zinc-100">
-              <h2 className="text-2xl font-light text-zinc-900 mb-8 tracking-wide">Available Tables</h2>
-
-              {slots.length === 0 ? (
-                <p className="text-zinc-500 font-light">No tables available at this time.</p>
-              ) : (
-                <div className="space-y-3">
-                  {slots.map((slot) => (
-                    <SlotRow
-                      key={slot.id}
-                      slot={slot}
-                      onBook={handleBook}
-                      isAlertActive={alerts.has(slot.id)}
-                      onToggleAlert={handleToggleAlert}
-                      isBookedByMe={bookedSlots.has(slot.id)}
-                      userName={profile?.full_name || null}
-                      avatarUrl={profile?.avatar_url || null}
-                    />
-                  ))}
-                </div>
-              )}
+              <h2 className="text-2xl font-light text-zinc-900 mb-6 tracking-wide">Available Tables</h2>
+              <SlotPicker
+                slots={slots}
+                onBook={handleBook}
+                isAlertActive={(id) => alerts.has(id)}
+                onToggleAlert={handleToggleAlert}
+                bookedSlots={bookedSlots}
+              />
             </div>
           </div>
         </div>
