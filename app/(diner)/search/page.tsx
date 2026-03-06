@@ -466,7 +466,7 @@ const handleCancel = async () => {
           <p className="text-sm text-zinc-500 font-light mt-2">Try adjusting your filters</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-5">
+        <div className="grid grid-cols-1 gap-6">
           {Object.values(
             results.reduce((acc, r) => {
               const vid = r.venue.id
@@ -486,24 +486,24 @@ const handleCancel = async () => {
                 <div className="flex flex-col md:flex-row">
 
                   {/* Image */}
-                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-52 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-60 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
                     {venue.image_hero ? (
-                      <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 208px" quality={70} className="object-cover" />
+                      <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 240px" quality={70} className="object-cover" />
                     ) : (
                       <div className="w-full h-full bg-zinc-100" />
                     )}
                   </Link>
 
                   {/* Content */}
-                  <div className="flex-1 p-6 flex flex-col gap-4">
+                  <div className="flex-1 px-8 py-7 flex flex-col justify-between gap-6">
 
                     {/* Venue info */}
-                    <div>
+                    <div className="space-y-1.5">
                       <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-70 transition-opacity">
-                        <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
+                        <h3 className="text-xl font-light text-zinc-900 tracking-tight">{venue.name}</h3>
                       </Link>
                       {venue.address && (
-                        <div className="flex items-center gap-1.5 mt-1">
+                        <div className="flex items-center gap-1.5">
                           <span className="text-sm font-light text-zinc-400">
                             {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                           </span>
@@ -517,23 +517,25 @@ const handleCancel = async () => {
                     </div>
 
                     {/* Time pills */}
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2.5">
                       {visibleSlots.map(slot => {
                         const isBookedByMe = bookedSlots.has(slot.id)
 
                         if (isBookedByMe) {
                           return (
                             <div key={slot.id} className="relative group/pill">
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-light bg-emerald-50 border border-emerald-200 text-emerald-700">
+                              <span className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#F0FAF6] border border-[#C5E8D8] text-[#2D7A57]" style={{minHeight: '44px'}}>
                                 {profile?.avatar_url ? (
-                                  <img src={profile.avatar_url} alt="" className="w-4 h-4 rounded-full object-cover opacity-80" />
+                                  <img src={profile.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover opacity-90 flex-shrink-0" />
                                 ) : (
-                                  <div className="w-4 h-4 rounded-full bg-emerald-200 flex items-center justify-center text-[8px] font-medium text-emerald-700">
+                                  <div className="w-5 h-5 rounded-full bg-[#C5E8D8] flex items-center justify-center text-[9px] font-medium text-[#2D7A57] flex-shrink-0">
                                     {profile?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || '?'}
                                   </div>
                                 )}
-                                {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
-                                <span className="text-[10px] tracking-wide ml-1">Your table</span>
+                                <span className="flex flex-col">
+                                  <span className="text-sm font-light leading-tight">{formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}</span>
+                                  <span className="text-[11px] font-light text-[#5BA882] leading-tight mt-0.5">Your table</span>
+                                </span>
                               </span>
                               <button
                                 onClick={() => openCancelModal(slot.id, venue.name)}
@@ -553,12 +555,13 @@ const handleCancel = async () => {
                               key={slot.id}
                               onClick={() => handleToggleAlert(slot.id)}
                               className={[
-                                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-light border transition-colors',
+                                'inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-light border transition-colors',
                                 hasAlert ? 'bg-zinc-50 border-zinc-300 text-zinc-500' : 'bg-zinc-50 border-zinc-200 text-zinc-300 hover:border-zinc-300',
                               ].join(' ')}
+                              style={{minHeight: '44px'}}
                             >
                               {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
-                              <span className="text-[10px] ml-1">{hasAlert ? '🔔' : 'Alert me'}</span>
+                              <span className="text-[10px] ml-0.5">{hasAlert ? '🔔' : 'Alert me'}</span>
                             </button>
                           )
                         }
@@ -568,7 +571,8 @@ const handleCancel = async () => {
                             key={slot.id}
                             onClick={() => handleBook(slot.id)}
                             disabled={bookingSlotId === slot.id}
-                            className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-light border border-zinc-200 bg-white text-zinc-800 hover:border-zinc-400 hover:bg-zinc-50 transition-colors disabled:opacity-40"
+                            className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light border border-zinc-200 bg-white text-zinc-800 hover:border-zinc-400 hover:bg-zinc-50 transition-colors disabled:opacity-40"
+                            style={{minHeight: '44px'}}
                           >
                             {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                           </button>
@@ -576,7 +580,7 @@ const handleCancel = async () => {
                       })}
 
                       {slots.length > MAX_VISIBLE && (
-                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-light text-zinc-400 border border-zinc-100 hover:border-zinc-200 hover:text-zinc-600 transition-colors">
+                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light text-zinc-400 border border-zinc-100 hover:border-zinc-200 hover:text-zinc-600 transition-colors" style={{minHeight: '44px'}}>
                           +{slots.length - MAX_VISIBLE} more
                         </Link>
                       )}
@@ -592,7 +596,7 @@ const handleCancel = async () => {
 
 
 {!loading && results.length > 0 && (
-  <div className="pt-2 text-sm text-zinc-500 font-light">
+  <div className="pt-2 text-sm text-zinc-400 font-light">
     Not seeing the right table?{" "}
     <a
       onClick={(e) => {
@@ -606,9 +610,9 @@ const handleCancel = async () => {
           '_blank'
         )
       }}
-      className="text-zinc-700 hover:text-zinc-900 underline underline-offset-4 cursor-pointer"
+      className="text-zinc-600 hover:text-zinc-900 underline underline-offset-4 cursor-pointer"
     >
-      Ask us to check.
+      We can check additional availability.
     </a>
   </div>
 )}
