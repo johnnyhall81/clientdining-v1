@@ -471,7 +471,7 @@ const handleCancel = async () => {
             results.reduce((acc, r) => {
               const vid = r.venue.id
               if (!acc[vid]) acc[vid] = { venue: r.venue, slots: [] }
-              acc[vid].slots.push(r.slot)
+              if (acc[vid].slots.length < 10) acc[vid].slots.push(r.slot)
               return acc
             }, {} as Record<string, { venue: SearchResult['venue'], slots: SearchResult['slot'][] }>)
           ).map(({ venue, slots }) => {
