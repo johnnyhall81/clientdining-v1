@@ -184,7 +184,7 @@ if (!authChecked) return null
       letterSpacing: '-0.01em'
     }}
   >
-    New to the network
+    Latest London venues
   </p>
  
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
