@@ -31,7 +31,9 @@ export default function PartySizeModal({
 }: PartySizeModalProps) {
   const [partySize, setPartySize] = useState(minSize)
   const [notes, setNotes] = useState('')
-  const [hostField, setHostField] = useState(hostName || '')
+  const [hostField, setHostField] = useState(
+    hostName ? hostName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') : ''
+  )
   const [guestNames, setGuestNames] = useState<string[]>([])
   const [showGuestNames, setShowGuestNames] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
@@ -39,7 +41,7 @@ export default function PartySizeModal({
   useEffect(() => {
     setPartySize(minSize)
     setNotes('')
-    setHostField(hostName || '')
+    setHostField(hostName ? hostName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') : '')
     setGuestNames(requiresGuestNames ? Array(Math.max(0, minSize - 1)).fill('') : [])
     setShowGuestNames(false)
     setShowNotes(false)
