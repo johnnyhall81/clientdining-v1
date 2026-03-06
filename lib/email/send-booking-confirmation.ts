@@ -78,13 +78,12 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                     <tr>
                       <td style="padding:36px 40px 40px;">
 
-                        <!-- Venue name + area + address -->
-                        <p style="margin:0 0 4px 0;font-size:24px;font-weight:300;color:#18181B;letter-spacing:-0.3px;">${data.venueName}</p>
-                        ${data.venueArea ? `<p style="margin:0 0 6px 0;font-size:13px;font-weight:300;color:#A1A1AA;">${data.venueArea}</p>` : ''}
-                        <a href="${mapsUrl}" target="_blank" style="display:inline-block;margin:0 0 28px 0;font-size:13px;font-weight:300;color:#71717A;text-decoration:underline;text-underline-offset:2px;">${data.venueAddress}${data.venuePostcode ? `, ${data.venuePostcode}` : ''}</a>
+                        <!-- Venue name + address -->
+                        <p style="margin:0 0 8px 0;font-size:24px;font-weight:300;color:#18181B;letter-spacing:-0.3px;">${data.venueName}</p>
+                        <a href="${mapsUrl}" target="_blank" style="display:inline-block;margin:0 0 28px 0;font-size:13px;font-weight:300;color:#71717A;text-decoration:none;">&#x1F4CD; ${data.venueAddress}${data.venuePostcode ? `, ${data.venuePostcode}` : ''}</a>
 
                         <!-- Confirmed label -->
-                        <p style="margin:0 0 24px 0;font-size:13px;font-weight:300;color:#16A34A;letter-spacing:0.05em;text-transform:uppercase;">Confirmed</p>
+                        <p style="margin:0 0 24px 0;font-size:13px;font-weight:300;color:#16A34A;letter-spacing:0.02em;">Your table is confirmed</p>
 
                         <!-- Detail rows -->
                         <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #F4F4F5;">
@@ -139,9 +138,6 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                         <!-- CTAs -->
                         <table cellpadding="0" cellspacing="0" style="margin-top:32px;">
                           <tr>
-                            <td style="padding-right:12px;">
-                              <a href="${mapsUrl}" style="display:inline-block;padding:11px 24px;background-color:#F4F4F5;color:#3F3F46;text-decoration:none;font-size:13px;font-weight:300;border-radius:8px;" target="_blank">Get directions</a>
-                            </td>
                             <td>
                               <a href="https://clientdining.com/bookings" style="display:inline-block;padding:11px 24px;background-color:#F4F4F5;color:#3F3F46;text-decoration:none;font-size:13px;font-weight:300;border-radius:8px;">View bookings</a>
                             </td>
