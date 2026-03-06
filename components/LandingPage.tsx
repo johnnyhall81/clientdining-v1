@@ -215,7 +215,7 @@ if (!authChecked) return null
                           className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
                         />
                       ) : (
-                        <p className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl font-light tracking-tight text-center px-6">{venue.name}</p>
+                        <p className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>{venue.name}</p>
                       )}
                     </>
                   ) : (
