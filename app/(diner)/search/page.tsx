@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
-import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
+import { formatSlotDate, formatSlotTime, formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import AlertToggle from '@/components/slots/AlertToggle'
 import PartySizeModal from '@/components/modals/PartySizeModal'
@@ -638,6 +638,8 @@ const handleCancel = async () => {
     maxSize={selectedSlot.party_max}
 
     venueName={selectedSlot.venue?.name || 'Venue'}
+    slotTime={formatFullDateTime(selectedSlot.start_at)}
+    hostName={profile?.full_name || undefined}
     requiresGuestNames={selectedSlot.venue?.requires_guest_names}
     error={bookingError}
     isSubmitting={isConfirming}
