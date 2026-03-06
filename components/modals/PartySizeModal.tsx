@@ -84,9 +84,9 @@ export default function PartySizeModal({
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
-            <h2 className="text-[22px] font-semibold text-zinc-900 tracking-tight pr-8">{venueName}</h2>
-            {slotTime && <p className="text-sm font-medium text-zinc-500 mt-1.5">{slotTime}</p>}
-            <p className="text-sm font-medium text-zinc-400 mt-0.5">Table for {partySize}</p>
+            <h2 className="text-3xl font-light text-zinc-900 tracking-tight pr-8">{venueName}</h2>
+            {slotTime && <p className="text-sm font-light text-zinc-500 mt-2">{slotTime}</p>}
+            <p className="text-sm font-light text-zinc-400 mt-0.5">Table for {partySize}</p>
           </div>
 
           <div className="px-7 py-7 space-y-7">
