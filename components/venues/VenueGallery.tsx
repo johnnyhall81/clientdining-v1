@@ -62,7 +62,7 @@ export default function VenueGallery({ heroImage, galleryImages, venueName, logo
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Images */}
+          {/* Images */}
       {allImages.map((src, i) => (
         <div
           key={src}
@@ -78,18 +78,6 @@ export default function VenueGallery({ heroImage, galleryImages, venueName, logo
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
             className="object-cover"
           />
-          {/* Logo overlay — shown only on the hero (last) image */}
-          {logoUrl && i === allImages.length - 1 && (
-            <div className="absolute inset-0 flex items-end justify-start p-8 z-10">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-              <img
-                src={logoUrl}
-                alt={venueName}
-                className="relative z-10 h-8 w-auto object-contain"
-                style={{ maxWidth: '200px' }}
-              />
-            </div>
-          )}
         </div>
       ))}
 
