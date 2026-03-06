@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { Slot } from '@/lib/supabase'
-import AlertToggle from './AlertToggle'
 import { isWithin24Hours } from '@/lib/date-utils'
 
 interface SlotPickerProps {
@@ -219,17 +218,26 @@ export default function SlotPicker({
             )
           }
 
-          // Within 24h — show alert toggle
+          // Within 24h — compact alert tile
           return (
-            <div
+            <button
               key={slot.id}
-              className="flex flex-col items-center justify-center h-16 rounded-xl border border-zinc-100 bg-zinc-50 text-center px-2"
+              onClick={() => onToggleAlert(slot.id)}
+              className={[
+                'flex flex-col items-center justify-center h-16 rounded-xl border transition-all text-center px-2',
+                isAlertActive(slot.id)
+                  ? 'border-zinc-300 bg-zinc-50'
+                  : 'border-zinc-100 bg-zinc-50 hover:border-zinc-300',
+              ].join(' ')}
             >
-              <span className="text-base font-light text-zinc-400">{formatTime(slot.start_at)}</span>
-              <div className="mt-1">
-                <AlertToggle isActive={isAlertActive(slot.id)} onToggle={() => onToggleAlert(slot.id)} />
-              </div>
-            </div>
+              <span className="text-base font-light text-zinc-300">{formatTime(slot.start_at)}</span>
+              <span className={[
+                'text-[11px] font-light mt-0.5',
+                isAlertActive(slot.id) ? 'text-zinc-500' : 'text-zinc-300',
+              ].join(' ')}>
+                {isAlertActive(slot.id) ? '🔔 Alert on' : 'Alert me'}
+              </span>
+            </button>
           )
         })}
       </div>
