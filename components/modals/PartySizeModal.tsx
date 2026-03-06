@@ -196,6 +196,7 @@ export default function PartySizeModal({
                 </div>
               )}
             </div>
+            )}
 
             {/* Special requests — progressive */}
             <div>
