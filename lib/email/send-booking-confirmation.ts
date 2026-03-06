@@ -78,9 +78,10 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                     <tr>
                       <td style="padding:36px 40px 40px;">
 
-                        <!-- Venue name + area -->
+                        <!-- Venue name + area + address -->
                         <p style="margin:0 0 4px 0;font-size:24px;font-weight:300;color:#18181B;letter-spacing:-0.3px;">${data.venueName}</p>
-                        ${data.venueArea ? `<p style="margin:0 0 28px 0;font-size:13px;font-weight:300;color:#A1A1AA;">${data.venueArea}</p>` : `<div style="margin-bottom:28px;"></div>`}
+                        ${data.venueArea ? `<p style="margin:0 0 6px 0;font-size:13px;font-weight:300;color:#A1A1AA;">${data.venueArea}</p>` : ''}
+                        <a href="${mapsUrl}" target="_blank" style="display:inline-block;margin:0 0 28px 0;font-size:13px;font-weight:300;color:#71717A;text-decoration:underline;text-underline-offset:2px;">${data.venueAddress}${data.venuePostcode ? `, ${data.venuePostcode}` : ''}</a>
 
                         <!-- Confirmed label -->
                         <p style="margin:0 0 24px 0;font-size:13px;font-weight:300;color:#16A34A;letter-spacing:0.05em;text-transform:uppercase;">Confirmed</p>
@@ -96,11 +97,6 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                           <tr>
                             <td style="padding:14px 0;border-bottom:1px solid #F4F4F5;font-size:13px;font-weight:300;color:#A1A1AA;vertical-align:top;">Party Size</td>
                             <td style="padding:14px 0;border-bottom:1px solid #F4F4F5;font-size:14px;font-weight:300;color:#18181B;text-align:right;">${data.partySize} ${data.partySize === 1 ? 'guest' : 'guests'}</td>
-                          </tr>
-
-                          <tr>
-                            <td style="padding:14px 0;border-bottom:1px solid #F4F4F5;font-size:13px;font-weight:300;color:#A1A1AA;vertical-align:top;">Address</td>
-                            <td style="padding:14px 0;border-bottom:1px solid #F4F4F5;font-size:14px;font-weight:300;color:#18181B;text-align:right;">${data.venueAddress}${data.venuePostcode ? `, ${data.venuePostcode}` : ''}</td>
                           </tr>
 
                           ${data.venuePhone ? `
@@ -144,7 +140,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
                         <table cellpadding="0" cellspacing="0" style="margin-top:32px;">
                           <tr>
                             <td style="padding-right:12px;">
-                              <a href="${mapsUrl}" style="display:inline-block;padding:11px 24px;background-color:#18181B;color:#FFFFFF;text-decoration:none;font-size:13px;font-weight:300;border-radius:8px;" target="_blank">Get directions</a>
+                              <a href="${mapsUrl}" style="display:inline-block;padding:11px 24px;background-color:#F4F4F5;color:#3F3F46;text-decoration:none;font-size:13px;font-weight:300;border-radius:8px;" target="_blank">Get directions</a>
                             </td>
                             <td>
                               <a href="https://clientdining.com/bookings" style="display:inline-block;padding:11px 24px;background-color:#F4F4F5;color:#3F3F46;text-decoration:none;font-size:13px;font-weight:300;border-radius:8px;">View bookings</a>
