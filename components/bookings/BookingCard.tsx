@@ -129,7 +129,7 @@ useEffect(() => {
             {/* Address + map icon */}
             {venue.address && (
               <div className="flex items-center gap-1.5 mb-0.5">
-                <span className="text-sm font-light text-zinc-500">
+                <span className="text-sm font-light text-zinc-400">
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </span>
                 {mapsUrl && (

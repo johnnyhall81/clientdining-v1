@@ -287,7 +287,7 @@ export default function AlertsPage() {
                         </Link>
                         {alert.venue.address && (
                           <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-light text-zinc-500">
+                            <span className="text-sm font-light text-zinc-400">
                               {alert.venue.address}{alert.venue.postcode ? `, ${alert.venue.postcode}` : ''}
                             </span>
                             <a
