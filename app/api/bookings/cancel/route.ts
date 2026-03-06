@@ -111,7 +111,7 @@ export async function POST(request: Request) {
     if (bookingOwner?.user?.email) {
       const { data: venue } = await supabaseAdmin
         .from('venues')
-        .select('id, name, area, image_hero')
+        .select('id, name, area, address, postcode, image_hero')
         .eq('id', (booking.slots as any).venue_id)
         .single()
       
@@ -124,8 +124,8 @@ export async function POST(request: Request) {
                    'Guest',
           venueName: venue.name,
           venueArea: venue.area,
-          venuePostcode: (venue as any).postcode || undefined,
-          venueAddress: (venue as any).address || venue.area || 'London',
+          venuePostcode: venue.postcode || undefined,
+          venueAddress: venue.address || venue.area || 'London',
           venueImageUrl: (venue as any).image_hero,
           slotTime: formatFullDateTime((booking.slots as any).start_at),
           partySize: booking.party_size || 2,
@@ -217,7 +217,7 @@ async function processBlastNotification(slotId: string, slot: any) {
     // Get venue details
     const { data: venue } = await supabaseAdmin
       .from('venues')
-      .select('id, name, area, venue_type, description, image_hero')
+      .select('id, name, area, address, postcode, venue_type, description, image_hero')
       .eq('id', slot.venue_id)
       .single()
 
@@ -261,7 +261,7 @@ async function processBlastNotification(slotId: string, slot: any) {
           userName: fullName,
           venueName: venue.name,
           venueArea: venue.area,
-          venueAddress: (venue as any).address || venue.area || 'London',
+          venueAddress: venue.address || venue.area || 'London',
           venueImageUrl: (venue as any).image_hero,
           slotTime: formatFullDateTime(slot.start_at),
           partySize: `${slot.party_min}-${slot.party_max} guests`,
@@ -345,7 +345,7 @@ async function processFIFONotification(slotId: string, slot: any) {
     // Get venue details
     const { data: venue } = await supabaseAdmin
       .from('venues')
-      .select('id, name, area, image_hero')
+      .select('id, name, area, address, postcode, image_hero')
       .eq('id', slot.venue_id)
       .single()
 
@@ -375,7 +375,7 @@ async function processFIFONotification(slotId: string, slot: any) {
       userName: fullName,
       venueName: venue.name,
       venueArea: venue.area,
-      venueAddress: (venue as any).address || venue.area || 'London',
+      venueAddress: venue.address || venue.area || 'London',
       venueImageUrl: (venue as any).image_hero,
       slotTime: formatFullDateTime(slot.start_at),
       partySize: `${slot.party_min}-${slot.party_max} guests`,
