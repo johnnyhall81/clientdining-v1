@@ -261,7 +261,6 @@ async function processBlastNotification(slotId: string, slot: any) {
           userName: fullName,
           venueName: venue.name,
           venueArea: venue.area,
-          venuePostcode: (venue as any).postcode || undefined,
           venueAddress: (venue as any).address || venue.area || 'London',
           venueImageUrl: (venue as any).image_hero,
           slotTime: formatFullDateTime(slot.start_at),
