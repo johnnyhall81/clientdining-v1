@@ -16,10 +16,10 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
     <Link
       href={`/venues/${venue.id}`}
       prefetch={true}
-      className="group block cursor-pointer focus:outline-none focus-visible:shadow-sm"
+      className="group block cursor-pointer focus:outline-none rounded-2xl border border-zinc-200 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-300 hover:shadow-md"
     >
-      {/* Tall portrait image — no rounded corners, no text overlay */}
-      <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden mb-4 rounded-xl">
+      {/* Image */}
+      <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden">
         {imageSrc ? (
           <>
             <Image
@@ -29,7 +29,6 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
               sizes="(max-width: 768px) 100vw, 33vw"
               className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
             />
-            <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
             {(venue as any).logo_url ? (
               <img
@@ -38,11 +37,16 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
                 className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
               />
             ) : (
-              <p className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>{venue.name}</p>
+              <p
+                className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic"
+                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+              >
+                {venue.name}
+              </p>
             )}
           </>
         ) : (
-          <div className="w-full h-full bg-zinc-200 flex items-center justify-center text-zinc-400">
+          <div className="w-full h-full bg-zinc-100 flex items-center justify-center text-zinc-300">
             <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth={1} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
             </svg>
@@ -51,28 +55,23 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
 
         {/* Available badge */}
         {availableSlots > 0 && (
-          <div className="absolute top-3 right-3">
-            <span className="text-xs font-light text-green-700 bg-green-50 px-3 py-1">
+          <div className="absolute top-3 right-3 z-10">
+            <span className="text-xs font-light text-green-700 bg-green-50 px-3 py-1 rounded-full">
               Available
             </span>
           </div>
         )}
       </div>
 
-      {/* Text below image */}
-      <h3 className="text-base font-light text-zinc-900 tracking-wide leading-snug">
-        {venue.name}
-      </h3>
-      <div className="flex items-center gap-2 mt-1">
-        {venue.area && (
-          <p className="text-sm font-light text-zinc-400">{venue.area}</p>
-        )}
-        {venue.area && venue.venue_type && (
-          <span className="text-zinc-300 text-xs">·</span>
-        )}
-        {venue.venue_type && (
-          <p className="text-sm font-light text-zinc-400 capitalize">
-            {venue.venue_type === 'club' ? 'Members club' : 'Restaurant'}
+      {/* Text */}
+      <div className="px-5 py-5 text-center">
+        <h3 className="text-base font-light text-zinc-900 tracking-wide leading-snug">
+          {venue.name}
+        </h3>
+        {(venue.area || venue.venue_type) && (
+          <p className="text-sm font-light text-zinc-400 mt-1.5">
+            {[venue.area, venue.venue_type ? (venue.venue_type === 'club' ? 'Members club' : 'Restaurant') : null]
+              .filter(Boolean).join(' · ')}
           </p>
         )}
       </div>

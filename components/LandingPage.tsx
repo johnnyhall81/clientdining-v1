@@ -187,16 +187,16 @@ if (!authChecked) return null
     The Circle
   </p>
  
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
           {venues.slice(0, 3).map((venue) => {
             const imageSrc = venue.image_hero || venue.image
             return (
               <Link
                 key={venue.id}
                 href={`/venues/${venue.id}`}
-                className="group block"
+                className="group block rounded-2xl border border-zinc-200 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-300 hover:shadow-md"
               >
-                <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden mb-4 rounded-xl">
+                <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden">
                   {imageSrc ? (
                     <>
                       <Image
@@ -206,7 +206,6 @@ if (!authChecked) return null
                         sizes="(max-width: 640px) 100vw, 33vw"
                         className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
                       />
-                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
                       {(venue as any).logo_url ? (
                         <img
@@ -219,17 +218,19 @@ if (!authChecked) return null
                       )}
                     </>
                   ) : (
-                    <div className="w-full h-full bg-zinc-200" />
+                    <div className="w-full h-full bg-zinc-100" />
                   )}
                 </div>
-                <p className="text-base font-light text-zinc-900 mt-4">
-                  {venue.name}
-                </p>
-                {venue.area && (
-                  <p className="text-sm font-light text-zinc-500 mt-1">
-                    {venue.area}
+                <div className="px-5 py-5 text-center">
+                  <p className="text-base font-light text-zinc-900">
+                    {venue.name}
                   </p>
-                )}
+                  {venue.area && (
+                    <p className="text-sm font-light text-zinc-400 mt-1.5">
+                      {venue.area}
+                    </p>
+                  )}
+                </div>
               </Link>
             )
           })}
