@@ -242,7 +242,7 @@ if (!authChecked) return null
             href="/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-colors duration-300"
           >
-            Explore all venues
+            Explore
           </Link>
         </div>
       </section>
