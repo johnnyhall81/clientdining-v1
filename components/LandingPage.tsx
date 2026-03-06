@@ -174,7 +174,7 @@ if (!authChecked) return null
 </section>
 
 
-{/* The Circle */}
+{/* Recent additions */}
 <section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pt-28">
   <p
     className="font-serif text-zinc-900 mb-14 tracking-tight"
@@ -184,7 +184,7 @@ if (!authChecked) return null
       letterSpacing: '-0.01em'
     }}
   >
-    The Circle
+    New to the network
   </p>
  
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
@@ -194,7 +194,7 @@ if (!authChecked) return null
               <Link
                 key={venue.id}
                 href={`/venues/${venue.id}`}
-                className="group block rounded-2xl border border-zinc-200 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-300 hover:shadow-md"
+                className="group block rounded-2xl border border-zinc-100 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-200 hover:shadow-sm"
               >
                 <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden">
                   {imageSrc ? (
@@ -221,12 +221,12 @@ if (!authChecked) return null
                     <div className="w-full h-full bg-zinc-100" />
                   )}
                 </div>
-                <div className="px-5 py-5 text-center">
+                <div className="px-5 py-4 text-center">
                   <p className="text-base font-light text-zinc-900">
                     {venue.name}
                   </p>
                   {venue.area && (
-                    <p className="text-sm font-light text-zinc-400 mt-1.5">
+                    <p className="text-sm font-light text-zinc-400 mt-1">
                       {venue.area}
                     </p>
                   )}
@@ -242,7 +242,7 @@ if (!authChecked) return null
             href="/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-colors duration-300"
           >
-            View full list
+            Explore all venues
           </Link>
         </div>
       </section>

@@ -16,7 +16,7 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
     <Link
       href={`/venues/${venue.id}`}
       prefetch={true}
-      className="group block cursor-pointer focus:outline-none rounded-2xl border border-zinc-200 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-300 hover:shadow-md"
+      className="group block cursor-pointer focus:outline-none rounded-2xl border border-zinc-100 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-200 hover:shadow-sm"
     >
       {/* Image */}
       <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden">
@@ -64,15 +64,12 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
       </div>
 
       {/* Text */}
-      <div className="px-5 py-5 text-center">
+      <div className="px-5 py-4 text-center">
         <h3 className="text-base font-light text-zinc-900 tracking-wide leading-snug">
           {venue.name}
         </h3>
-        {(venue.area || venue.venue_type) && (
-          <p className="text-sm font-light text-zinc-400 mt-1.5">
-            {[venue.area, venue.venue_type ? (venue.venue_type === 'club' ? 'Members club' : 'Restaurant') : null]
-              .filter(Boolean).join(' · ')}
-          </p>
+        {venue.area && (
+          <p className="text-sm font-light text-zinc-400 mt-1">{venue.area}</p>
         )}
       </div>
     </Link>
