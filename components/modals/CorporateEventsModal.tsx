@@ -111,8 +111,8 @@ export default function CorporateEventsModal({
       <div className="bg-white rounded-lg max-w-xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-zinc-200 px-8 py-5 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-light text-zinc-900">Private Rooms & Events</h2>
-            <p className="text-sm text-zinc-500 font-light mt-1">{venueName}</p>
+            <h2 className="text-3xl font-light text-zinc-900">{venueName}</h2>
+            <p className="text-sm font-light text-zinc-400 mt-1">Private Rooms & Events</p>
           </div>
           <button
             onClick={onClose}
