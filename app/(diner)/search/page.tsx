@@ -253,7 +253,7 @@ const handleCancel = async () => {
       )
       .gte('start_at', new Date().toISOString())
       .order('start_at', { ascending: true })
-      .limit(50)
+      .limit(200)
 
     if (filters.dateFrom) {
       const startOfDay = new Date(filters.dateFrom)
