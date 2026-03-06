@@ -9,7 +9,6 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import { formatSlotDate, formatSlotTime, formatFullDateTime } from '@/lib/date-utils'
 import Link from 'next/link'
-import AlertToggle from '@/components/slots/AlertToggle'
 import PartySizeModal from '@/components/modals/PartySizeModal'
 import SearchBar, { SearchFilters } from '@/components/search/SearchBar'
 
@@ -467,129 +466,118 @@ const handleCancel = async () => {
           <p className="text-sm text-zinc-500 font-light mt-2">Try adjusting your filters</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {results.map(({ slot, venue }) => {
-            const hasAlert = alerts.has(slot.id)
-            const isBookedByMe = bookedSlots.has(slot.id)
+        <div className="grid grid-cols-1 gap-5">
+          {Object.values(
+            results.reduce((acc, r) => {
+              const vid = r.venue.id
+              if (!acc[vid]) acc[vid] = { venue: r.venue, slots: [] }
+              acc[vid].slots.push(r.slot)
+              return acc
+            }, {} as Record<string, { venue: SearchResult['venue'], slots: SearchResult['slot'][] }>)
+          ).map(({ venue, slots }) => {
+            const MAX_VISIBLE = 6
+            const visibleSlots = slots.slice(0, MAX_VISIBLE)
+            const mapsUrl = venue.address
+              ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, London`)}`
+              : null
 
             return (
-              <div
-                key={slot.id}
-                className="bg-white border border-zinc-200 rounded-lg overflow-hidden relative"
-              >
-                {/* Cancel X for booked slots */}
-                {isBookedByMe && (
-                  <button
-                    type="button"
-                    onClick={() => openCancelModal(slot.id, venue.name)}
-                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
-                    aria-label="Cancel booking"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
-
+              <div key={venue.id} className="bg-white border border-zinc-100 rounded-2xl overflow-hidden hover:border-zinc-200 hover:shadow-sm transition-all duration-300">
                 <div className="flex flex-col md:flex-row">
-                  {/* Large image — left */}
-                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-lg">
+
+                  {/* Image */}
+                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-52 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
                     {venue.image_hero ? (
-                      <Image
-                        src={venue.image_hero}
-                        alt={venue.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                        quality={60}
-                        className="object-cover"
-                      />
+                      <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 208px" quality={70} className="object-cover" />
                     ) : (
                       <div className="w-full h-full bg-zinc-100" />
                     )}
                   </Link>
 
-                  {/* Details — right */}
-                  <div className="flex-1 p-6 flex flex-col justify-between">
-                    <div className="space-y-1 pr-6">
-                      <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-80 transition-opacity">
+                  {/* Content */}
+                  <div className="flex-1 p-6 flex flex-col gap-4">
+
+                    {/* Venue info */}
+                    <div>
+                      <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-70 transition-opacity">
                         <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
                       </Link>
                       {venue.address && (
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-light text-zinc-500">
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className="text-sm font-light text-zinc-400">
                             {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                           </span>
-                          <a
-                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            title="Open in Maps"
-                            onClick={e => e.stopPropagation()}
-                            className="text-zinc-300 hover:text-zinc-600 transition-colors flex-shrink-0"
-                          >
-                            <MapIcon />
-                          </a>
+                          {mapsUrl && (
+                            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
+                              <MapIcon />
+                            </a>
+                          )}
                         </div>
                       )}
-                      
-                      <p className="text-sm font-light text-zinc-500 pt-1">
-                        {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)} · {slot.party_min === slot.party_max ? `${slot.party_min} guests` : `${slot.party_min}–${slot.party_max} guests`}
-                      </p>
-
-
-
-
-
-
-
-
-
                     </div>
 
-                    <div className="pt-6 flex items-center justify-end">
-                      <div>
-                        {slot.status === 'available' && !isBookedByMe ? (
+                    {/* Time pills */}
+                    <div className="flex flex-wrap gap-2">
+                      {visibleSlots.map(slot => {
+                        const isBookedByMe = bookedSlots.has(slot.id)
+                        const hasAlert = alerts.has(slot.id)
+                        const lastMinute = isLastMinute(slot.start_at)
+
+                        if (isBookedByMe) {
+                          return (
+                            <div key={slot.id} className="relative group/pill">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-light bg-emerald-50 border border-emerald-200 text-emerald-700">
+                                {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
+                                <span className="text-[10px] uppercase tracking-wide ml-1">Confirmed</span>
+                              </span>
+                              <button
+                                onClick={() => openCancelModal(slot.id, venue.name)}
+                                className="absolute -top-1.5 -right-1.5 hidden group-hover/pill:flex w-4 h-4 rounded-full bg-zinc-300 hover:bg-zinc-500 items-center justify-center transition-colors"
+                                aria-label="Cancel"
+                              >
+                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                              </button>
+                            </div>
+                          )
+                        }
+
+                        if (lastMinute) {
+                          return (
+                            <button
+                              key={slot.id}
+                              onClick={() => handleToggleAlert(slot.id)}
+                              className={[
+                                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-light border transition-colors',
+                                hasAlert
+                                  ? 'bg-zinc-50 border-zinc-300 text-zinc-500'
+                                  : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:border-zinc-300',
+                              ].join(' ')}
+                            >
+                              {formatSlotTime(slot.start_at)}
+                              <span className="text-[10px] ml-1">{hasAlert ? '🔔' : 'Alert me'}</span>
+                            </button>
+                          )
+                        }
+
+                        return (
                           <button
+                            key={slot.id}
                             onClick={() => handleBook(slot.id)}
                             disabled={bookingSlotId === slot.id}
-                            className={[
-                              'h-9 px-5 text-sm font-light border border-zinc-300 rounded-lg whitespace-nowrap transition-colors',
-                              bookingSlotId === slot.id
-                                ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
-                                : 'bg-white text-zinc-900 hover:bg-zinc-50',
-                            ].join(' ')}
+                            className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-light border border-zinc-200 bg-white text-zinc-800 hover:border-zinc-400 hover:bg-zinc-50 transition-colors disabled:opacity-40"
                           >
-                            {bookingSlotId === slot.id ? 'Booking...' : 'Book'}
+                            {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                           </button>
-                        ) : isBookedByMe ? (
-                          <div className="flex flex-col items-end gap-1">
-                            <span className="text-xs font-light tracking-wide text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">
-                              Confirmed
-                            </span>
-                            <div className="flex items-center gap-1.5">
-                              {profile?.avatar_url ? (
-                                <img
-                                  src={profile.avatar_url}
-                                  alt={profile.full_name || ''}
-                                  className="w-4 h-4 rounded-full object-cover opacity-70"
-                                />
-                              ) : (
-                                <div className="w-4 h-4 rounded-full bg-zinc-300 flex items-center justify-center">
-                                  <span className="text-[8px] font-medium text-zinc-600">
-                                    {profile?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || '?'}
-                                  </span>
-                                </div>
-                              )}
-                              <span className="text-xs font-light text-zinc-400">
-                                Reserved for {profile?.full_name?.split(' ')[0] || 'You'}
-                              </span>
-                            </div>
-                          </div>
-                        ) : (
-                          <AlertToggle isActive={hasAlert} onToggle={() => handleToggleAlert(slot.id)} />
-                        )}
-                      </div>
+                        )
+                      })}
+
+                      {slots.length > MAX_VISIBLE && (
+                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-light text-zinc-400 border border-zinc-100 hover:border-zinc-200 hover:text-zinc-600 transition-colors">
+                          +{slots.length - MAX_VISIBLE} more
+                        </Link>
+                      )}
                     </div>
+
                   </div>
                 </div>
               </div>
