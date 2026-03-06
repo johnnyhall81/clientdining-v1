@@ -88,25 +88,76 @@ export default function SlotPicker({
     }
   }, [selectedDate])
 
+  // Group dates by month
+  const months = useMemo(() => {
+    const map = new Map<string, string[]>() // monthKey → dates[]
+    for (const date of dates) {
+      const monthKey = date.slice(0, 7) // YYYY-MM
+      if (!map.has(monthKey)) map.set(monthKey, [])
+      map.get(monthKey)!.push(date)
+    }
+    return map
+  }, [dates])
+
+  const monthKeys = useMemo(() => Array.from(months.keys()).sort(), [months])
+
+  const [selectedMonth, setSelectedMonth] = useState<string>(() => 
+    dates[0]?.slice(0, 7) || ''
+  )
+
+  // When month changes, jump to first available date in that month
+  const handleSelectMonth = (monthKey: string) => {
+    setSelectedMonth(monthKey)
+    const first = months.get(monthKey)?.[0]
+    if (first) setSelectedDate(first)
+  }
+
+  // Keep selectedMonth in sync if selectedDate changes
+  useEffect(() => {
+    if (selectedDate) setSelectedMonth(selectedDate.slice(0, 7))
+  }, [selectedDate])
+
+  const datesInMonth = months.get(selectedMonth) || []
+
   if (slots.length === 0) {
     return <p className="text-zinc-400 font-light text-sm">No tables available at this time.</p>
   }
 
   const daySlots = slotsByDate.get(selectedDate) || []
-  const currentMonth = selectedDate ? formatMonthLabel(selectedDate) : ''
 
   return (
     <div>
-      {/* Month label */}
-      <p className="text-xs font-light text-zinc-400 mb-3">{currentMonth}</p>
+      {/* Month pills */}
+      <div className="flex gap-2 flex-wrap mb-4">
+        {monthKeys.map(monthKey => {
+          const label = new Date(monthKey + '-15T12:00:00Z').toLocaleDateString('en-GB', {
+            month: 'long', year: 'numeric', timeZone: 'UTC'
+          })
+          const isActive = monthKey === selectedMonth
+          return (
+            <button
+              key={monthKey}
+              onClick={() => handleSelectMonth(monthKey)}
+              className={[
+                'px-4 py-1.5 rounded-full text-sm font-light transition-all border',
+                isActive
+                  ? 'bg-zinc-900 border-zinc-900 text-white'
+                  : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-400',
+              ].join(' ')}
+            >
+              {label}
+            </button>
+          )
+        })}
+      </div>
 
-      {/* Date strip */}
+      {/* Date strip — filtered to selected month */}
       <div
         ref={stripRef}
         className="flex gap-2 overflow-x-auto pb-1 mb-6 scrollbar-hide"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {dates.map(date => {
+        {datesInMonth.map(date => {
           const { short, day } = formatDayLabel(date)
           const isActive = date === selectedDate
           const hasBooking = (slotsByDate.get(date) || []).some(s => bookedSlots.has(s.id))
