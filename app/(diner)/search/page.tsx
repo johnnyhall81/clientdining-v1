@@ -525,8 +525,15 @@ const handleCancel = async () => {
                           return (
                             <div key={slot.id} className="relative group/pill">
                               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-light bg-emerald-50 border border-emerald-200 text-emerald-700">
+                                {profile?.avatar_url ? (
+                                  <img src={profile.avatar_url} alt="" className="w-4 h-4 rounded-full object-cover opacity-80" />
+                                ) : (
+                                  <div className="w-4 h-4 rounded-full bg-emerald-200 flex items-center justify-center text-[8px] font-medium text-emerald-700">
+                                    {profile?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || '?'}
+                                  </div>
+                                )}
                                 {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
-                                <span className="text-[10px] uppercase tracking-wide ml-1">Confirmed</span>
+                                <span className="text-[10px] tracking-wide ml-1">Your table</span>
                               </span>
                               <button
                                 onClick={() => openCancelModal(slot.id, venue.name)}
