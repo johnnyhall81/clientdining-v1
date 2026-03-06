@@ -11,10 +11,10 @@ interface VenueGalleryProps {
 }
 
 export default function VenueGallery({ heroImage, galleryImages, venueName }: VenueGalleryProps) {
-  // Build the full ordered list: hero first, then gallery images
+  // Build the full ordered list: gallery images first, hero last
   const allImages: string[] = [
-    ...(heroImage ? [heroImage] : []),
     ...galleryImages.map((img) => img.url),
+    ...(heroImage ? [heroImage] : []),
   ]
 
   const [activeIndex, setActiveIndex] = useState(0)
