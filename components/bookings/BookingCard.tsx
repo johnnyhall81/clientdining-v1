@@ -97,10 +97,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
         {/* Image */}
         <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 md:rounded-l-lg hover:opacity-90 transition-opacity">
           {venue.image_hero ? (
-            <>
-              <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 40vw" quality={60} className="object-cover" />
-              <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 40vw" quality={60} className="object-cover" />
-            </>
+            <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 40vw" quality={60} className="object-cover" />
           ) : (
             <div className="w-full h-full bg-zinc-100" />
           )}
@@ -221,7 +218,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                       onChange={e => setNotesEditValue(e.target.value)}
                       placeholder="Add a private note…"
                       autoFocus
-                      className="flex-1 w-full text-sm font-light text-zinc-500 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2.5 focus:outline-none focus:border-zinc-300 resize-none overflow-y-auto"
+                      className="flex-1 w-full text-sm font-light text-zinc-500 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2.5 focus:outline-none focus:border-zinc-300 resize-none overflow-y-auto max-h-48 md:max-h-none"
                     />
                     <div className="flex justify-end gap-3 pt-2 flex-shrink-0">
                       <button
@@ -243,7 +240,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                   </>
                 ) : (
                   <>
-                    <div className="flex-1 overflow-y-auto">
+                    <div className="overflow-y-auto max-h-48 md:max-h-none md:flex-1">
                       <p className="text-sm font-light text-zinc-500 whitespace-pre-wrap break-all">
                         {notesEditValue || <span className="text-zinc-400">No note added</span>}
                       </p>
