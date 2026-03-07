@@ -216,7 +216,7 @@ export default function SlotPicker({
                 )}
                 <span className="flex flex-col">
                   <span className="text-sm font-light leading-tight" style={{ color: '#2A6B4A' }}>{formatTime(slot.start_at)}</span>
-                  <span className="text-[11px] font-light leading-tight mt-1" style={{ color: '#7BB89A' }}>Your table{guestLabel ? ` · ${partySize} guests` : ''}</span>
+                  <span className="text-[11px] font-light leading-tight mt-1" style={{ color: '#7BB89A' }}>{partySize ? `Your party of ${partySize}` : 'Your table'}</span>
                 </span>
               </Link>
             )
