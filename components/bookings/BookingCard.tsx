@@ -218,7 +218,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                       onChange={e => setNotesEditValue(e.target.value)}
                       placeholder="Add a private note…"
                       autoFocus
-                      className="flex-1 w-full text-sm font-light text-zinc-500 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2.5 focus:outline-none focus:border-zinc-300 resize-none overflow-y-auto max-h-48 md:max-h-none"
+                      className="w-full text-sm font-light text-zinc-500 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2.5 focus:outline-none focus:border-zinc-300 resize-none overflow-y-auto min-h-[192px] max-h-48 md:min-h-0 md:max-h-none md:flex-1"
                     />
                     <div className="flex justify-end gap-3 pt-2 flex-shrink-0">
                       <button
