@@ -279,9 +279,9 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                     <span className="text-zinc-200">·</span>
                     <button
                       onClick={() => setShowCorporateEventsModal(true)}
-                      className="text-zinc-500 font-light hover:text-zinc-900 transition-colors group"
+                      className="text-zinc-400 font-light hover:text-zinc-600 transition-colors group"
                     >
-                      Private hire <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
+                      Private hire & events
                     </button>
                   </>
                 )}
