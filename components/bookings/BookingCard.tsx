@@ -129,7 +129,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
             )}
             <div className="flex items-center gap-1.5 pt-1">
               <span className="text-sm font-light text-zinc-500">
-                {dateStr} · {timeStr} · {partySize} {partySize === 1 ? 'guest' : 'guests'}
+                {dateStr} · {timeStr} · Party of {partySize}
               </span>
               {!isPast && !isCancelled && (
                 <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
