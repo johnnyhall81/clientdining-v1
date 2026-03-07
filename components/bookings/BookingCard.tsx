@@ -11,12 +11,13 @@ interface BookingCardProps {
   booking: Booking
   venue: Venue
   slot: Slot
+  bookerName?: string
   onCancel: (bookingId: string) => void
 }
 
 type Tab = 'guests' | 'contact'
 
-export default function BookingCard({ booking, venue, slot, onCancel }: BookingCardProps) {
+export default function BookingCard({ booking, venue, slot, bookerName, onCancel }: BookingCardProps) {
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
@@ -37,6 +38,10 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const timeStr = formatSlotTime(slot.start_at)
   const guestNames = booking.guest_names || []
   const partySize = booking.party_size || 1
+  // Host is first named guest, falling back to booker profile name
+  const hostDisplayName = guestNames[0] || bookerName || 'Host'
+  const namedGuests = guestNames.length > 0 ? guestNames : null
+  const unnamedRemainder = guestNames.length > 0 ? 0 : partySize - 1
 
   return (
     <div className="bg-white border border-zinc-200 rounded-lg overflow-hidden relative">
@@ -126,20 +131,28 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             {/* Guests — pills */}
             {activeTab === 'guests' && (
               <div className="flex flex-wrap gap-2 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-                {guestNames.length > 0 ? (
-                  guestNames.map((name, i) => (
+                {namedGuests ? (
+                  namedGuests.map((name, i) => (
                     <span
                       key={i}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200 text-sm font-light text-zinc-500"
                     >
                       {name}
-                      {i === 0 && (
-                        <span className="text-xs text-zinc-400">Host</span>
-                      )}
+                      {i === 0 && <span className="text-xs text-zinc-400">Host</span>}
                     </span>
                   ))
                 ) : (
-                  <span className="text-sm font-light text-zinc-400">No guest names provided</span>
+                  <>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200 text-sm font-light text-zinc-500">
+                      {hostDisplayName}
+                      <span className="text-xs text-zinc-400">Host</span>
+                    </span>
+                    {unnamedRemainder > 0 && (
+                      <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-zinc-200 text-sm font-light text-zinc-400">
+                        +{unnamedRemainder}
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             )}
