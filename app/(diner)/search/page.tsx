@@ -509,7 +509,7 @@ const handleCancel = async () => {
                             {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                           </span>
                           {mapsUrl && (
-                            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
+                            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
                               <MapIcon />
                             </a>
                           )}
@@ -550,7 +550,7 @@ const handleCancel = async () => {
                               onClick={() => handleToggleAlert(slot.id)}
                               className={[
                                 'inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-light border transition-colors',
-                                hasAlert ? 'bg-zinc-50 border-zinc-200 text-zinc-500' : 'bg-zinc-50 border-zinc-200 text-zinc-300 hover:border-zinc-200',
+                                hasAlert ? 'bg-zinc-50 border-zinc-200 text-zinc-500' : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:border-zinc-200',
                               ].join(' ')}
                               style={{minHeight: '44px'}}
                             >
@@ -574,7 +574,7 @@ const handleCancel = async () => {
                       })}
 
                       {slots.length > MAX_VISIBLE && (
-                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light text-zinc-400 border border-zinc-100 hover:border-zinc-200 hover:text-zinc-500 transition-colors" style={{minHeight: '44px'}}>
+                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light text-zinc-500 border border-zinc-100 hover:border-zinc-200 hover:text-zinc-500 transition-colors" style={{minHeight: '44px'}}>
                           +{slots.length - MAX_VISIBLE} more
                         </Link>
                       )}
@@ -590,7 +590,7 @@ const handleCancel = async () => {
 
 
 {!loading && results.length > 0 && (
-  <div className="pt-4 pb-2 text-sm font-light text-zinc-400 tracking-wide">
+  <div className="pt-4 pb-2 text-sm font-light text-zinc-500 tracking-wide">
     Not seeing the right table?{" "}
     <a
       onClick={(e) => {
