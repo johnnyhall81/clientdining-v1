@@ -145,7 +145,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
           <div className="flex flex-col gap-3 flex-1 min-h-0 md:overflow-hidden mt-1">
 
             <div className="flex items-center border-b border-zinc-100 flex-shrink-0 overflow-x-auto" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
-              {(['guests', 'contact', 'venuenote', 'mynotes'] as Tab[]).map(tab => (
+              {(['guests', 'venuenote', 'contact', 'mynotes'] as Tab[]).map(tab => (
                 <button
                   key={tab}
                   type="button"
