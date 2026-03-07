@@ -93,7 +93,7 @@ export default function PartySizeModal({
 
             {/* Guest stepper */}
             <div>
-              <p className="text-[13px] font-medium text-zinc-500 mb-3">Guests</p>
+              <p className="text-[13px] font-medium text-zinc-500 mb-3">Party</p>
               <div className="flex items-center gap-6">
                 <button
                   type="button"
@@ -181,7 +181,7 @@ export default function PartySizeModal({
                   disabled={isSubmitting}
                   className={[
                     'w-full h-12 text-sm font-medium rounded-xl transition-colors',
-                    isSubmitting ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed' : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200',
+                    isSubmitting ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed' : 'bg-zinc-900 text-white hover:bg-zinc-700',
                   ].join(' ')}
                 >
                   {isSubmitting ? 'Confirming…' : 'Confirm table'}
