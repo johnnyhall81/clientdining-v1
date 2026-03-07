@@ -4,11 +4,8 @@ import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
-import { useEffect } from 'react'
-
-
 
 interface BookingCardProps {
   booking: Booking
@@ -23,17 +20,31 @@ const PencilIcon = () => (
   </svg>
 )
 
-const MapIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-  </svg>
-)
-
 const CalendarIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
   </svg>
 )
+
+// Two-line clamp with fade — no visible scrollbar
+function ClampedNote({ label, text, placeholder }: { label: string; text: string; placeholder?: string }) {
+  return (
+    <p className="text-sm font-light leading-snug">
+      <span className="text-zinc-400">{label} · </span>
+      <span
+        className="text-zinc-500 break-all"
+        style={{
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+        }}
+      >
+        {text || <span className="text-zinc-400">{placeholder}</span>}
+      </span>
+    </p>
+  )
+}
 
 export default function BookingCard({ booking, venue, slot, onCancel }: BookingCardProps) {
   const isPast = new Date(slot.start_at) < new Date()
@@ -44,16 +55,10 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
   const [notesSaving, setNotesSaving] = useState(false)
 
-
-useEffect(() => {
-  setSavedNotes(booking.private_notes || '')
-  setNotesEditValue(booking.private_notes || '')
-}, [booking.private_notes])
-
-
-  const mapsUrl = venue.address
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, ${venue.postcode || ''} London`)}`
-    : null
+  useEffect(() => {
+    setSavedNotes(booking.private_notes || '')
+    setNotesEditValue(booking.private_notes || '')
+  }, [booking.private_notes])
 
   const calendarUrl = (() => {
     const start = new Date(slot.start_at)
@@ -90,15 +95,18 @@ useEffect(() => {
 
   const dateStr = formatSlotDate(slot.start_at)
   const timeStr = formatSlotTime(slot.start_at)
-  const guestStr = `${booking.party_size} ${booking.party_size === 1 ? 'guest' : 'guests'}`
+  const hostName = booking.guest_names?.[0] || null
+  const partySize = booking.party_size || 1
 
   return (
     <div className="bg-white border border-zinc-200 rounded-lg overflow-hidden relative">
+
+      {/* Cancel × */}
       {!isCancelled && !isPast && (
         <button
           type="button"
           onClick={() => setShowCancelModal(true)}
-          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-zinc-500 transition-colors"
+          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-zinc-600 transition-colors"
           aria-label="Cancel booking"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -108,10 +116,11 @@ useEffect(() => {
       )}
 
       <div className="flex flex-col md:flex-row md:items-stretch">
+
         {/* Image */}
         <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 md:rounded-l-lg hover:opacity-90 transition-opacity">
           {venue.image_hero ? (
-            <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" quality={60} className="object-cover" />
+            <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 40vw" quality={60} className="object-cover" />
           ) : (
             <div className="w-full h-full bg-zinc-100" />
           )}
@@ -120,76 +129,58 @@ useEffect(() => {
         {/* Details */}
         <div className="flex-1 px-7 py-5 pr-12 flex flex-col gap-3">
 
-          {/* Venue name */}
-          <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity">
-            <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
-          </Link>
-
-          {/* Address + date row */}
+          {/* Venue block */}
           <div className="flex flex-col gap-0.5">
+            <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity inline-block">
+              <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
+            </Link>
             {venue.address && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-light text-zinc-400">
-                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                </span>
-                {mapsUrl && (
-                  <a href={mapsUrl} target="_blank" rel="noopener noreferrer" title="Open in Maps" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
-                    <MapIcon />
-                  </a>
-                )}
-              </div>
-            )}
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-light text-zinc-500">
-                {dateStr} · {timeStr}{booking.guest_names?.[0] ? ` · ${booking.guest_names[0]}` : ''}
-              </span>
-              {!isPast && !isCancelled && (
-                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
-                  <CalendarIcon />
-                </a>
-              )}
-            </div>
-          </div>
-
-          {/* Inline metadata row — guests, restaurant note, amend */}
-          <div className="flex flex-col gap-1">
-            {booking.guest_names && booking.guest_names.length > 1 && (
-              <p className="text-sm font-light">
-                <span className="text-zinc-400">Guests</span>
-                <span className="text-zinc-400 mx-1.5">·</span>
-                <span className="text-zinc-500">{(() => {
-                  const guests = booking.guest_names.slice(1)
-                  return guests.length <= 2
-                    ? guests.join(', ')
-                    : `${guests[0]} +${guests.length - 1}`
-                })()}</span>
-              </p>
-            )}
-            {booking.notes && (
-              <p className="text-sm font-light">
-                <span className="text-zinc-400">Note</span>
-                <span className="text-zinc-400 mx-1.5">·</span>
-                <span className="text-zinc-500 break-words">{booking.notes}</span>
-              </p>
-            )}
-            {!isCancelled && (venue.phone || venue.booking_email) && (
               <p className="text-sm font-light text-zinc-400">
-                For changes, contact the venue
-                {venue.phone && <><span className="text-zinc-300 mx-1.5">·</span><a href={`tel:${venue.phone}`} className="text-zinc-500 hover:text-zinc-900 transition-colors">{venue.phone}</a></>}
-                {venue.booking_email && <><span className="text-zinc-300 mx-1.5">·</span><a href={`mailto:${venue.booking_email}`} className="text-zinc-500 hover:text-zinc-900 transition-colors">{venue.booking_email}</a></>}
+                {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
               </p>
+            )}
+            {venue.phone && (
+              <a href={`tel:${venue.phone}`} className="text-sm font-light text-zinc-400 hover:text-zinc-900 transition-colors w-fit">
+                {venue.phone}
+              </a>
+            )}
+            {venue.booking_email && (
+              <a href={`mailto:${venue.booking_email}`} className="text-sm font-light text-zinc-400 hover:text-zinc-900 transition-colors w-fit">
+                {venue.booking_email}
+              </a>
             )}
           </div>
 
-          {/* Private notes — fixed height */}
-          <div className="mt-1">
-            <p className="text-xs font-light text-zinc-400 mb-1">Private note</p>
+          {/* Booking line */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-light text-zinc-500">
+              {`Party of ${partySize}`}
+              {hostName ? ` · ${hostName}` : ''}
+              {` · ${dateStr} · ${timeStr}`}
+            </span>
+            {!isPast && !isCancelled && (
+              <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
+                <CalendarIcon />
+              </a>
+            )}
+          </div>
+
+          {/* Note to venue — 2-line clamp, fade */}
+          {booking.notes && (
+            <div className="relative">
+              <ClampedNote label="Note to venue" text={booking.notes} />
+              <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+            </div>
+          )}
+
+          {/* Note to self — 2-line clamp, fade, edit icon */}
+          <div className="relative">
             {notesEditing ? (
               <div>
                 <textarea
                   value={notesEditValue}
                   onChange={e => setNotesEditValue(e.target.value)}
-                  placeholder="Add a private note..."
+                  placeholder="Add a note…"
                   rows={3}
                   autoFocus
                   className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
@@ -204,21 +195,31 @@ useEffect(() => {
                     disabled={notesSaving}
                     className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-50"
                   >
-                    {notesSaving ? 'Saving...' : 'Save'}
+                    {notesSaving ? 'Saving…' : 'Save'}
                   </button>
                 </div>
               </div>
             ) : (
               <div
-                className="relative group cursor-pointer"
+                className="relative group cursor-pointer pr-6"
                 onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
               >
-                <div className="border border-zinc-100 rounded bg-zinc-50/40 pr-7 h-[72px] overflow-y-auto">
-                  <p className="text-sm whitespace-pre-line font-light text-zinc-500 px-3 py-2">
+                <p className="text-sm font-light leading-snug">
+                  <span className="text-zinc-400">Note to self · </span>
+                  <span
+                    className="text-zinc-500 break-all"
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
                     {savedNotes || <span className="text-zinc-400">Add a note…</span>}
-                  </p>
-                </div>
-                <span className="absolute top-2.5 right-2.5 text-zinc-400 group-hover:text-zinc-500 transition-colors">
+                  </span>
+                </p>
+                <div className="absolute bottom-0 left-0 right-6 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                <span className="absolute top-0 right-0 text-zinc-300 group-hover:text-zinc-500 transition-colors">
                   <PencilIcon />
                 </span>
               </div>
