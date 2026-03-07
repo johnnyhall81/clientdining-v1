@@ -249,12 +249,12 @@ export default function AlertsPage() {
               const isBookingThis = bookingSlotId === alert.slot_id
 
               return (
-                <div key={alert.id} className="bg-white border border-zinc-200 rounded-lg overflow-hidden relative">
+                <div key={alert.id} className="bg-white border border-zinc-100 rounded-2xl overflow-hidden relative hover:border-zinc-200 hover:shadow-sm transition-all duration-300">
                   {/* Remove button */}
                   <button
                     type="button"
                     onClick={() => handleRemoveAlert(alert)}
-                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
+                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-zinc-500 transition-colors"
                     aria-label="Remove alert"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -264,14 +264,14 @@ export default function AlertsPage() {
 
                   <div className="flex flex-col md:flex-row">
                     {/* Wide landscape image */}
-                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity rounded-l-lg">
+                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-60 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
                       {alert.venue.image_hero ? (
                         <Image
                           src={alert.venue.image_hero}
                           alt={alert.venue.name}
                           fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                          quality={60}
+                          sizes="(max-width: 768px) 100vw, 240px"
+                          quality={70}
                           className="object-cover"
                         />
                       ) : (
@@ -280,14 +280,14 @@ export default function AlertsPage() {
                     </Link>
 
                     {/* Details */}
-                    <div className="flex-1 p-6 flex flex-col justify-between pr-10">
-                      <div className="space-y-0.5">
+                    <div className="flex-1 px-9 py-8 flex flex-col justify-between gap-7 pr-10">
+                      <div className="space-y-1.5">
                         <Link href={`/venues/${alert.venue.id}`} prefetch={true}>
-                          <h3 className="text-lg font-light text-zinc-900 hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
+                          <h3 className="text-xl font-light text-zinc-900 tracking-tight hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
                         </Link>
                         {alert.venue.address && (
                           <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-light text-zinc-400">
+                            <span className="text-sm font-light text-zinc-500">
                               {alert.venue.address}{alert.venue.postcode ? `, ${alert.venue.postcode}` : ''}
                             </span>
                             <a
@@ -296,7 +296,7 @@ export default function AlertsPage() {
                               rel="noopener noreferrer"
                               title="Open in Maps"
                               onClick={e => e.stopPropagation()}
-                              className="text-zinc-300 hover:text-zinc-600 transition-colors flex-shrink-0"
+                              className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0"
                             >
                               <MapIcon />
                             </a>
@@ -305,7 +305,7 @@ export default function AlertsPage() {
                         
 
 
-                        <p className="text-sm font-light text-zinc-500 pt-1">
+                        <p className="text-sm font-light text-zinc-500">
                           {formatSlotDate(alert.slot.start_at)} · {formatSlotTime(alert.slot.start_at)} · {alert.slot.party_min === alert.slot.party_max ? `${alert.slot.party_min} guests` : `${alert.slot.party_min}–${alert.slot.party_max} guests`}
                         </p>
 
@@ -317,14 +317,14 @@ export default function AlertsPage() {
                       </div>
 
                       {alert.status === 'notified' && (
-                        <div className="flex items-center justify-between pt-4">
-                          <p className="text-xs font-light text-zinc-400">Table available</p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-light text-zinc-500">Table available</p>
                           <button
                             type="button"
                             onClick={() => handleBook(alert)}
                             disabled={isBookingThis}
                             className={[
-                              'h-9 px-5 text-sm font-light whitespace-nowrap transition-colors border border-zinc-300 rounded-lg',
+                              'h-9 px-5 text-sm font-light whitespace-nowrap transition-colors border border-zinc-200 rounded-lg',
                               isBookingThis
                                 ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
                                 : 'bg-white text-zinc-900 hover:bg-zinc-50',
