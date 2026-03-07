@@ -67,54 +67,54 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
   return (
     <div ref={ref} className="relative">
       {/* Bar */}
-      <div className="flex items-stretch bg-white border border-zinc-200 rounded-xl overflow-visible shadow-sm">
+      <div className="flex items-stretch bg-white border border-zinc-100 rounded-2xl overflow-visible">
 
         {/* Date */}
         <button
           type="button"
           onClick={() => toggle('date')}
-          className={`flex-1 px-5 py-4 text-left transition-colors rounded-l-xl hover:bg-zinc-50 ${open === 'date' ? 'bg-zinc-50' : ''}`}
+          className={`flex-1 px-6 py-5 text-left transition-colors rounded-l-2xl ${open === 'date' ? 'bg-zinc-50/80' : 'hover:bg-zinc-50/60'}`}
         >
-          <span className="block text-xs text-zinc-400 font-light mb-0.5">Dates</span>
+          <span className="block text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-1">Dates</span>
           <span className={`text-sm font-light ${dateLabel ? 'text-zinc-900' : 'text-zinc-400'}`}>
             {dateLabel || 'Any date'}
           </span>
         </button>
 
-        <div className="w-px bg-zinc-200 my-3" />
+        <div className="w-px bg-zinc-100 my-4" />
 
         {/* Area */}
         <button
           type="button"
           onClick={() => toggle('area')}
-          className={`flex-1 px-5 py-4 text-left transition-colors hover:bg-zinc-50 ${open === 'area' ? 'bg-zinc-50' : ''}`}
+          className={`flex-1 px-6 py-5 text-left transition-colors ${open === 'area' ? 'bg-zinc-50/80' : 'hover:bg-zinc-50/60'}`}
         >
-          <span className="block text-xs text-zinc-400 font-light mb-0.5">Area</span>
+          <span className="block text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-1">Area</span>
           <span className={`text-sm font-light ${areaLabel ? 'text-zinc-900' : 'text-zinc-400'}`}>
             {areaLabel || 'All areas'}
           </span>
         </button>
 
-        <div className="w-px bg-zinc-200 my-3" />
+        <div className="w-px bg-zinc-100 my-4" />
 
         {/* Guests */}
         <button
           type="button"
           onClick={() => toggle('guests')}
-          className={`flex-1 px-5 py-4 text-left transition-colors hover:bg-zinc-50 ${open === 'guests' ? 'bg-zinc-50' : ''}`}
+          className={`flex-1 px-6 py-5 text-left transition-colors ${open === 'guests' ? 'bg-zinc-50/80' : 'hover:bg-zinc-50/60'}`}
         >
-          <span className="block text-xs text-zinc-400 font-light mb-0.5">Guests</span>
+          <span className="block text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-1">Guests</span>
           <span className="text-sm font-light text-zinc-900">{guestsLabel}</span>
         </button>
 
         {/* Clear button */}
         {(filters.dateFrom || filters.area) && (
           <>
-            <div className="w-px bg-zinc-200 my-3" />
+            <div className="w-px bg-zinc-100 my-4" />
             <button
               type="button"
               onClick={() => onChange({ ...filters, dateFrom: '', dateTo: '', area: '', partySize: 2, venueId: '' })}
-              className="px-4 text-xs text-zinc-400 hover:text-zinc-500 font-light transition-colors rounded-r-xl"
+              className="px-5 text-xs text-zinc-300 hover:text-zinc-500 font-light transition-colors rounded-r-2xl"
             >
               Clear
             </button>
@@ -124,7 +124,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
 
       {/* Date panel */}
       {open === 'date' && (
-        <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-200 rounded-xl shadow-lg p-4">
+        <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-100 rounded-2xl shadow-lg p-4">
           <style>{`
             .rdp { --rdp-accent-color: #3f3f46; --rdp-background-color: #f4f4f5; }
             .rdp-day_range_start .rdp-day_button,
@@ -229,11 +229,11 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
 
       {/* Area panel */}
       {open === 'area' && (
-        <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-200 rounded-xl shadow-lg p-2 min-w-[200px]">
+        <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-100 rounded-2xl shadow-lg p-2 min-w-[200px]">
           <button
             type="button"
             onClick={() => { onChange({ ...filters, area: '' }); setOpen(null) }}
-            className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-lg transition-colors ${!filters.area ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:bg-zinc-50'}`}
+            className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-xl transition-colors ${!filters.area ? 'bg-zinc-50 text-zinc-900' : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900'}`}
           >
             All areas
           </button>
@@ -242,7 +242,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               key={area}
               type="button"
               onClick={() => { onChange({ ...filters, area }); setOpen(null) }}
-              className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-lg transition-colors ${filters.area === area ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:bg-zinc-50'}`}
+              className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-xl transition-colors ${filters.area === area ? 'bg-zinc-50 text-zinc-900' : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900'}`}
             >
               {area}
             </button>
@@ -252,14 +252,14 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
 
       {/* Guests panel */}
       {open === 'guests' && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 bg-white border border-zinc-200 rounded-xl shadow-lg p-6 min-w-[200px]">
-          <p className="text-sm text-zinc-500 font-light mb-4">Party size</p>
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 bg-white border border-zinc-100 rounded-2xl shadow-lg p-6 min-w-[200px]">
+          <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-5">Party size</p>
           <div className="flex items-center justify-between gap-6">
             <button
               type="button"
               onClick={() => onChange({ ...filters, partySize: Math.max(2, filters.partySize - 1) })}
               disabled={filters.partySize <= 2}
-              className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-900 hover:border-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="w-9 h-9 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-500 hover:border-zinc-200 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               −
             </button>
@@ -268,7 +268,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               type="button"
               onClick={() => onChange({ ...filters, partySize: Math.min(10, filters.partySize + 1) })}
               disabled={filters.partySize >= 10}
-              className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-900 hover:border-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="w-9 h-9 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-500 hover:border-zinc-200 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               +
             </button>
