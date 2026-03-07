@@ -22,7 +22,7 @@ const MapIcon = () => (
 )
 
 
-type Tab = 'guests' | 'notes' | 'contact'
+type Tab = 'guests' | 'contact' | 'venuenote' | 'mynotes'
 
 export default function BookingCard({ booking, venue, slot, bookerName, onCancel }: BookingCardProps) {
   const isPast = new Date(slot.start_at) < new Date()
@@ -148,7 +148,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
           <div className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden mt-1">
 
             <div className="flex items-center border-b border-zinc-100 flex-shrink-0">
-              {(['guests', 'contact', 'notes'] as Tab[]).map(tab => (
+              {(['guests', 'contact', 'venuenote', 'mynotes'] as Tab[]).map(tab => (
                 <button
                   key={tab}
                   type="button"
@@ -157,7 +157,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                     activeTab === tab ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-600'
                   }`}
                 >
-                  {tab === 'guests' ? 'Guests' : tab === 'contact' ? 'Contact' : 'Notes'}
+                  {tab === 'guests' ? 'Guests' : tab === 'contact' ? 'Contact' : tab === 'venuenote' ? 'Sent to venue' : 'My notes'}
                   {activeTab === tab && (
                     <span className="absolute bottom-0 left-0 right-0 h-px bg-zinc-900" />
                   )}
@@ -202,7 +202,17 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
             )}
 
             {/* Notes — private/internal only */}
-            {activeTab === 'notes' && (
+            {/* Sent to venue — read only */}
+            {activeTab === 'venuenote' && (
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <p className="text-sm font-light text-zinc-500 whitespace-pre-wrap break-all">
+                  {booking.notes || <span className="text-zinc-400">No note was sent with this booking</span>}
+                </p>
+              </div>
+            )}
+
+            {/* My notes — editable */}
+            {activeTab === 'mynotes' && (
               <div className="flex flex-col flex-1 min-h-0">
                 {notesEditing ? (
                   <>
