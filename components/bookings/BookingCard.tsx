@@ -4,7 +4,7 @@ import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 
 interface BookingCardProps {
@@ -21,11 +21,6 @@ const MapIcon = () => (
   </svg>
 )
 
-const PencilIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
-  </svg>
-)
 
 type Tab = 'guests' | 'notes' | 'contact'
 
@@ -34,31 +29,12 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('guests')
-  const [notesEditing, setNotesEditing] = useState(false)
-  const [savedNotes, setSavedNotes] = useState(booking.private_notes || '')
   const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
   const [notesSaving, setNotesSaving] = useState(false)
-  const [venueNoteOverflows, setVenueNoteOverflows] = useState(false)
-  const [selfNoteOverflows, setSelfNoteOverflows] = useState(false)
-  const venueNoteRef = useRef<HTMLDivElement>(null)
-  const selfNoteRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setSavedNotes(booking.private_notes || '')
     setNotesEditValue(booking.private_notes || '')
   }, [booking.private_notes])
-
-  useEffect(() => {
-    if (venueNoteRef.current) {
-      setVenueNoteOverflows(venueNoteRef.current.scrollHeight > venueNoteRef.current.clientHeight)
-    }
-  }, [booking.notes, activeTab])
-
-  useEffect(() => {
-    if (selfNoteRef.current) {
-      setSelfNoteOverflows(selfNoteRef.current.scrollHeight > selfNoteRef.current.clientHeight)
-    }
-  }, [savedNotes, activeTab])
 
   const handleSaveNotes = async () => {
     setNotesSaving(true)
@@ -68,18 +44,11 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ private_notes: notesEditValue }),
       })
-      setSavedNotes(notesEditValue)
-      setNotesEditing(false)
     } catch {
       // fail silently
     } finally {
       setNotesSaving(false)
     }
-  }
-
-  const handleCancelEdit = () => {
-    setNotesEditValue(savedNotes)
-    setNotesEditing(false)
   }
 
   const calendarUrl = (() => {
@@ -188,7 +157,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
           </div>
 
           {/* Tabs */}
-          <div className="flex flex-col gap-3 flex-1 min-h-0">
+          <div className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden">
 
             <div className="flex items-center border-b border-zinc-100 flex-shrink-0">
               {(['guests', 'contact', 'notes'] as Tab[]).map(tab => (
@@ -210,7 +179,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
 
             {/* Guests — pills */}
             {activeTab === 'guests' && (
-              <div className="flex flex-wrap gap-2 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+              <div className="flex flex-wrap gap-2 flex-1 min-h-0 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                 {namedGuests ? (
                   <>
                     {namedGuests.map((name, i) => (
@@ -246,59 +215,19 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
 
             {/* Notes — private/internal only */}
             {activeTab === 'notes' && (
-              <div className="flex flex-col gap-2 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-                <div className="flex items-center gap-1.5">
-                  <p className="text-xs font-light text-zinc-400">Private note</p>
-                  {!notesEditing && (
-                    <button type="button" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }} className="text-zinc-300 hover:text-zinc-500 transition-colors">
-                      <PencilIcon />
-                    </button>
-                  )}
-                </div>
-                {notesEditing ? (
-                  <div>
-                    <textarea
-                      value={notesEditValue}
-                      onChange={e => setNotesEditValue(e.target.value)}
-                      placeholder="Add a note…"
-                      rows={4}
-                      autoFocus
-                      className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
-                    />
-                    <div className="flex items-center justify-end gap-3 mt-1.5">
-                      <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors">
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleSaveNotes}
-                        disabled={notesSaving}
-                        className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-50"
-                      >
-                        {notesSaving ? 'Saving…' : 'Save'}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="relative cursor-pointer" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}>
-                    <div
-                      ref={selfNoteRef}
-                      className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
-                      style={{ maxHeight: '5.6em', lineHeight: '1.4em', scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-                    >
-                      {savedNotes || <span className="text-zinc-400">Add a note…</span>}
-                    </div>
-                    {selfNoteOverflows && (
-                      <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-                    )}
-                  </div>
-                )}
-              </div>
+              <textarea
+                value={notesEditValue}
+                onChange={e => setNotesEditValue(e.target.value)}
+                onBlur={handleSaveNotes}
+                placeholder="Add a private note…"
+                className="flex-1 w-full text-sm font-light text-zinc-500 placeholder:text-zinc-400 bg-transparent focus:outline-none resize-none overflow-y-auto"
+                style={{ scrollbarWidth: 'none' } as React.CSSProperties}
+              />
             )}
 
             {/* Contact */}
             {activeTab === 'contact' && (
-              <div className="flex flex-col gap-4 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+              <div className="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
 
                 {/* Phone / email */}
                 {(venue.phone || venue.booking_email) ? (
