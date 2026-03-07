@@ -88,6 +88,12 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
   // Host is guest_names[0]
   const hostName = booking.guest_names?.[0] || null
+  const additionalGuests = booking.guest_names?.slice(1) || []
+  const guestSummary = additionalGuests.length > 0
+    ? additionalGuests.length === 1
+      ? additionalGuests[0]
+      : `${additionalGuests[0]} +${additionalGuests.length - 1}`
+    : null
 
   return (
     <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative">
