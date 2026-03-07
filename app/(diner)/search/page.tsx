@@ -526,7 +526,7 @@ const handleCancel = async () => {
                           const partySize = bookedPartySizes.get(slot.id)
                           const guestLabel = partySize ? ` · +${partySize - 1}` : ''
                           return (
-                            <div key={slot.id} className="inline-flex items-center gap-3 px-5 py-2.5 rounded-xl border" style={{minHeight: '46px', backgroundColor: '#F7FBF9', borderColor: '#D4EDE2'}}>
+                            <Link href="/bookings" key={slot.id} className="inline-flex items-center gap-3 px-5 py-2.5 rounded-xl border hover:opacity-80 transition-opacity" style={{minHeight: '46px', backgroundColor: '#F7FBF9', borderColor: '#D4EDE2'}}>
                               {profile?.avatar_url ? (
                                 <img src={profile.avatar_url} alt="" className="w-[22px] h-[22px] rounded-full object-cover opacity-90 flex-shrink-0" />
                               ) : (
@@ -538,7 +538,7 @@ const handleCancel = async () => {
                                 <span className="text-sm font-light leading-tight" style={{color: '#2A6B4A'}}>{formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}</span>
                                 <span className="text-[11px] font-light leading-tight mt-1" style={{color: '#7BB89A'}}>Your table{partySize ? ` · ${partySize} guests` : ''}</span>
                               </span>
-                            </div>
+                            </Link>
                           )
                         }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import { Slot } from '@/lib/supabase'
 
 interface SlotPickerProps {
@@ -200,9 +201,10 @@ export default function SlotPicker({
             const partySize = bookedPartySizes?.get(slot.id)
             const guestLabel = partySize ? ` · +${partySize - 1}` : ''
             return (
-              <div
+              <Link
+                href="/bookings"
                 key={slot.id}
-                className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border h-16 w-fit"
+                className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border h-16 w-fit hover:opacity-80 transition-opacity"
                 style={{ backgroundColor: '#F7FBF9', borderColor: '#D4EDE2' }}
               >
                 {userAvatarUrl ? (
@@ -216,7 +218,7 @@ export default function SlotPicker({
                   <span className="text-sm font-light leading-tight" style={{ color: '#2A6B4A' }}>{formatTime(slot.start_at)}</span>
                   <span className="text-[11px] font-light leading-tight mt-1" style={{ color: '#7BB89A' }}>Your table{guestLabel ? ` · ${partySize} guests` : ''}</span>
                 </span>
-              </div>
+              </Link>
             )
           }
 
