@@ -123,53 +123,34 @@ export default function BookingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-light text-zinc-900 mb-2">Bookings</h1>
-        
-      </div>
+    <div className="space-y-8">
+      <h1 className="text-4xl font-light text-zinc-900">Bookings</h1>
 
       {/* Tabs */}
-      <div className="border-b border-zinc-200">
-        <nav className="-mb-px flex space-x-8">
+      <div className="flex items-center gap-1 border-b border-zinc-100 pb-0">
+        {(['upcoming', 'past', 'cancelled'] as const).map((tab) => (
           <button
-            onClick={() => setActiveTab('upcoming')}
-            className={`py-4 px-1 border-b-2 font-light text-sm ${
-              activeTab === 'upcoming'
-                ? 'border-zinc-900 text-zinc-900'
-                : 'border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-200'
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`relative px-4 py-3 text-sm font-light transition-colors capitalize ${
+              activeTab === tab
+                ? 'text-zinc-900'
+                : 'text-zinc-400 hover:text-zinc-500'
             }`}
           >
-            Upcoming
+            {tab}
+            {activeTab === tab && (
+              <span className="absolute bottom-0 left-0 right-0 h-px bg-zinc-900" />
+            )}
           </button>
-          <button
-            onClick={() => setActiveTab('past')}
-            className={`py-4 px-1 border-b-2 font-light text-sm ${
-              activeTab === 'past'
-                ? 'border-zinc-900 text-zinc-900'
-                : 'border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-200'
-            }`}
-          >
-            Past
-          </button>
-          <button
-            onClick={() => setActiveTab('cancelled')}
-            className={`py-4 px-1 border-b-2 font-light text-sm ${
-              activeTab === 'cancelled'
-                ? 'border-zinc-900 text-zinc-900'
-                : 'border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-200'
-            }`}
-          >
-            Cancelled
-          </button>
-        </nav>
+        ))}
       </div>
 
       {/* Bookings List */}
       <div className="space-y-4">
         {filteredBookings.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-zinc-200">
-            <p className="text-zinc-500 font-light">
+          <div className="text-center py-12 bg-white rounded-2xl border border-zinc-100">
+            <p className="text-zinc-400 font-light">
               {activeTab === 'upcoming' && 'No upcoming bookings'}
               {activeTab === 'past' && 'No past bookings'}
               {activeTab === 'cancelled' && 'No cancelled bookings'}
