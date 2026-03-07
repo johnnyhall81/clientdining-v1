@@ -147,13 +147,13 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
           {/* Tabs */}
           <div className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden mt-1">
 
-            <div className="flex items-center border-b border-zinc-100 flex-shrink-0">
+            <div className="flex items-center border-b border-zinc-100 flex-shrink-0 overflow-x-auto" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
               {(['guests', 'contact', 'venuenote', 'mynotes'] as Tab[]).map(tab => (
                 <button
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(tab)}
-                  className={`relative mr-5 pb-2.5 text-sm font-light transition-colors ${
+                  className={`relative mr-5 pb-2.5 text-sm font-light whitespace-nowrap transition-colors ${
                     activeTab === tab ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-600'
                   }`}
                 >
