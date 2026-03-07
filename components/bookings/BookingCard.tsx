@@ -4,7 +4,7 @@ import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 
 interface BookingCardProps {
@@ -27,13 +27,60 @@ const PencilIcon = () => (
   </svg>
 )
 
-type Tab = 'guests' | 'contact'
+type Tab = 'guests' | 'notes' | 'contact'
 
 export default function BookingCard({ booking, venue, slot, bookerName, onCancel }: BookingCardProps) {
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('guests')
+  const [notesEditing, setNotesEditing] = useState(false)
+  const [savedNotes, setSavedNotes] = useState(booking.private_notes || '')
+  const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
+  const [notesSaving, setNotesSaving] = useState(false)
+  const [venueNoteOverflows, setVenueNoteOverflows] = useState(false)
+  const [selfNoteOverflows, setSelfNoteOverflows] = useState(false)
+  const venueNoteRef = useRef<HTMLDivElement>(null)
+  const selfNoteRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setSavedNotes(booking.private_notes || '')
+    setNotesEditValue(booking.private_notes || '')
+  }, [booking.private_notes])
+
+  useEffect(() => {
+    if (venueNoteRef.current) {
+      setVenueNoteOverflows(venueNoteRef.current.scrollHeight > venueNoteRef.current.clientHeight)
+    }
+  }, [booking.notes, activeTab])
+
+  useEffect(() => {
+    if (selfNoteRef.current) {
+      setSelfNoteOverflows(selfNoteRef.current.scrollHeight > selfNoteRef.current.clientHeight)
+    }
+  }, [savedNotes, activeTab])
+
+  const handleSaveNotes = async () => {
+    setNotesSaving(true)
+    try {
+      await fetch(`/api/bookings/${booking.id}/notes`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ private_notes: notesEditValue }),
+      })
+      setSavedNotes(notesEditValue)
+      setNotesEditing(false)
+    } catch {
+      // fail silently
+    } finally {
+      setNotesSaving(false)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setNotesEditValue(savedNotes)
+    setNotesEditing(false)
+  }
 
   const calendarUrl = (() => {
     const start = new Date(slot.start_at)
@@ -132,7 +179,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
           <div className="flex flex-col gap-3 flex-1 min-h-0">
 
             <div className="flex items-center border-b border-zinc-100 flex-shrink-0">
-              {(['guests', 'contact'] as Tab[]).map(tab => (
+              {(['guests', 'notes', 'contact'] as Tab[]).map(tab => (
                 <button
                   key={tab}
                   type="button"
@@ -185,42 +232,104 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
               </div>
             )}
 
-            {/* Contact — icon rows */}
+            {/* Notes */}
+            {activeTab === 'notes' && (
+              <div className="flex flex-col gap-4 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+
+                {/* Sent to venue */}
+                <div>
+                  <p className="text-xs font-light text-zinc-400 mb-1.5">Sent to venue</p>
+                  <div className="relative">
+                    <div
+                      ref={venueNoteRef}
+                      className="text-sm font-light text-zinc-500 break-words overflow-y-scroll"
+                      style={{ maxHeight: '5.6em', lineHeight: '1.4em', scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+                    >
+                      {booking.notes || <span className="text-zinc-400">No note sent with this booking</span>}
+                    </div>
+                    {venueNoteOverflows && (
+                      <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Internal note */}
+                <div>
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <p className="text-xs font-light text-zinc-400">Internal note</p>
+                    {!notesEditing && (
+                      <button type="button" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }} className="text-zinc-300 hover:text-zinc-500 transition-colors">
+                        <PencilIcon />
+                      </button>
+                    )}
+                  </div>
+                  {notesEditing ? (
+                    <div>
+                      <textarea
+                        value={notesEditValue}
+                        onChange={e => setNotesEditValue(e.target.value)}
+                        placeholder="Add a note…"
+                        rows={3}
+                        autoFocus
+                        className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
+                      />
+                      <div className="flex items-center justify-end gap-3 mt-1.5">
+                        <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors">
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleSaveNotes}
+                          disabled={notesSaving}
+                          className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                        >
+                          {notesSaving ? 'Saving…' : 'Save'}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative cursor-pointer" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}>
+                      <div
+                        ref={selfNoteRef}
+                        className="text-sm font-light text-zinc-500 break-words overflow-y-scroll"
+                        style={{ maxHeight: '5.6em', lineHeight: '1.4em', scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+                      >
+                        {savedNotes || <span className="text-zinc-400">Add a note…</span>}
+                      </div>
+                      {selfNoteOverflows && (
+                        <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                      )}
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            )}
+
+            {/* Contact */}
             {activeTab === 'contact' && (
               <div className="flex flex-col gap-3 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-                {venue.address && (
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, ${venue.postcode || ''} London`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start gap-2.5 group w-fit"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0 mt-0.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                    </svg>
-                    <span className="text-sm font-light text-zinc-500 group-hover:text-zinc-900 transition-colors">
-                      {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                    </span>
-                  </a>
-                )}
-                {venue.phone && (
-                  <a href={`tel:${venue.phone}`} className="flex items-center gap-2.5 group w-fit">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                    </svg>
-                    <span className="text-sm font-light text-zinc-500 group-hover:text-zinc-900 transition-colors">{venue.phone}</span>
-                  </a>
-                )}
-                {venue.booking_email && (
-                  <a href={`mailto:${venue.booking_email}`} className="flex items-center gap-2.5 group w-fit">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                    </svg>
-                    <span className="text-sm font-light text-zinc-500 group-hover:text-zinc-900 transition-colors">{venue.booking_email}</span>
-                  </a>
-                )}
-                {!venue.address && !venue.phone && !venue.booking_email && (
+                {(venue.phone || venue.booking_email) ? (
+                  <>
+                    <p className="text-sm font-light text-zinc-400">For changes to your booking please contact the venue on</p>
+                    {venue.phone && (
+                      <a href={`tel:${venue.phone}`} className="flex items-center gap-2.5 group w-fit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                        </svg>
+                        <span className="text-sm font-light text-zinc-500 group-hover:text-zinc-900 transition-colors">{venue.phone}</span>
+                      </a>
+                    )}
+                    {venue.booking_email && (
+                      <a href={`mailto:${venue.booking_email}`} className="flex items-center gap-2.5 group w-fit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                        <span className="text-sm font-light text-zinc-500 group-hover:text-zinc-900 transition-colors">{venue.booking_email}</span>
+                      </a>
+                    )}
+                  </>
+                ) : (
                   <span className="text-sm font-light text-zinc-400">No contact details on file</span>
                 )}
               </div>
