@@ -98,7 +98,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   const guestNames = booking.guest_names || []
   const partySize = booking.party_size || 1
   // Host is first named guest, falling back to booker profile name
-  const hostDisplayName = guestNames[0] || bookerName || 'Host'
+  const hostDisplayName = guestNames[0] || bookerName
   const namedGuests = guestNames.length > 0 ? guestNames : null
   const remainder = partySize - guestNames.length
 
@@ -271,7 +271,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                   <div className="relative cursor-pointer" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}>
                     <div
                       ref={selfNoteRef}
-                      className="text-sm font-light text-zinc-500 break-words overflow-y-scroll"
+                      className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                       style={{ maxHeight: '5.6em', lineHeight: '1.4em', scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
                     >
                       {savedNotes || <span className="text-zinc-400">Add a note…</span>}
@@ -287,23 +287,6 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
             {/* Contact */}
             {activeTab === 'contact' && (
               <div className="flex flex-col gap-4 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-
-                {/* Note sent to venue */}
-                <div>
-                  <p className="text-xs font-light text-zinc-400 mb-1.5">Note sent with booking</p>
-                  <div className="relative">
-                    <div
-                      ref={venueNoteRef}
-                      className="text-sm font-light text-zinc-500 break-words overflow-y-scroll"
-                      style={{ maxHeight: '5.6em', lineHeight: '1.4em', scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-                    >
-                      {booking.notes || <span className="text-zinc-400">No note sent with this booking</span>}
-                    </div>
-                    {venueNoteOverflows && (
-                      <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-                    )}
-                  </div>
-                </div>
 
                 {/* Phone / email */}
                 {(venue.phone || venue.booking_email) ? (

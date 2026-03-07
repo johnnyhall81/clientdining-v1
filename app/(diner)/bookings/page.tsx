@@ -19,6 +19,7 @@ export default function BookingsPage() {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'cancelled'>('upcoming')
   const [bookings, setBookings] = useState<BookingWithDetails[]>([])
   const [loading, setLoading] = useState(true)
+  const [bookerName, setBookerName] = useState<string>('')
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -27,7 +28,19 @@ export default function BookingsPage() {
     }
 
     if (user) {
+      // Seed immediately from auth metadata so the card never shows 'Host'
+      const metaName = user.user_metadata?.full_name || user.user_metadata?.name || user.email || ''
+      setBookerName(metaName)
+
       fetchBookings()
+      supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('user_id', user.id)
+        .single()
+        .then(({ data }) => {
+          if (data?.full_name) setBookerName(data.full_name)
+        })
     }
   }, [user, authLoading, router])
 
@@ -135,7 +148,7 @@ export default function BookingsPage() {
             className={`relative px-4 py-3 text-sm font-light transition-colors capitalize ${
               activeTab === tab
                 ? 'text-zinc-900'
-                : 'text-zinc-400 hover:text-zinc-500'
+                : 'text-zinc-500 hover:text-zinc-500'
             }`}
           >
             {tab}
@@ -150,7 +163,7 @@ export default function BookingsPage() {
       <div className="space-y-4">
         {filteredBookings.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-2xl border border-zinc-100">
-            <p className="text-zinc-400 font-light">
+            <p className="text-zinc-500 font-light">
               {activeTab === 'upcoming' && 'No upcoming bookings'}
               {activeTab === 'past' && 'No past bookings'}
               {activeTab === 'cancelled' && 'No cancelled bookings'}
@@ -163,6 +176,7 @@ export default function BookingsPage() {
               booking={booking}
               venue={venue}
               slot={slot}
+              bookerName={bookerName}
               onCancel={handleCancel}
             />
           ))
