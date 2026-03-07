@@ -179,16 +179,16 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
           <div className="flex flex-col gap-3 flex-1 min-h-0">
 
             <div className="flex items-center border-b border-zinc-100 flex-shrink-0">
-              {(['guests', 'notes', 'contact'] as Tab[]).map(tab => (
+              {(['guests', 'contact', 'notes'] as Tab[]).map(tab => (
                 <button
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(tab)}
-                  className={`relative mr-5 pb-2.5 text-sm font-light capitalize transition-colors ${
+                  className={`relative mr-5 pb-2.5 text-sm font-light transition-colors ${
                     activeTab === tab ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-600'
                   }`}
                 >
-                  {tab === 'guests' ? 'Guests' : 'Contact'}
+                  {tab === 'guests' ? 'Guests' : tab === 'contact' ? 'Contact' : 'Notes'}
                   {activeTab === tab && (
                     <span className="absolute bottom-0 left-0 right-0 h-px bg-zinc-900" />
                   )}
@@ -232,13 +232,65 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
               </div>
             )}
 
-            {/* Notes */}
+            {/* Notes — private/internal only */}
             {activeTab === 'notes' && (
+              <div className="flex flex-col gap-2 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-xs font-light text-zinc-400">Private note</p>
+                  {!notesEditing && (
+                    <button type="button" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }} className="text-zinc-300 hover:text-zinc-500 transition-colors">
+                      <PencilIcon />
+                    </button>
+                  )}
+                </div>
+                {notesEditing ? (
+                  <div>
+                    <textarea
+                      value={notesEditValue}
+                      onChange={e => setNotesEditValue(e.target.value)}
+                      placeholder="Add a note…"
+                      rows={4}
+                      autoFocus
+                      className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
+                    />
+                    <div className="flex items-center justify-end gap-3 mt-1.5">
+                      <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors">
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSaveNotes}
+                        disabled={notesSaving}
+                        className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                      >
+                        {notesSaving ? 'Saving…' : 'Save'}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="relative cursor-pointer" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}>
+                    <div
+                      ref={selfNoteRef}
+                      className="text-sm font-light text-zinc-500 break-words overflow-y-scroll"
+                      style={{ maxHeight: '5.6em', lineHeight: '1.4em', scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+                    >
+                      {savedNotes || <span className="text-zinc-400">Add a note…</span>}
+                    </div>
+                    {selfNoteOverflows && (
+                      <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Contact */}
+            {activeTab === 'contact' && (
               <div className="flex flex-col gap-4 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
 
-                {/* Sent to venue */}
+                {/* Note sent to venue */}
                 <div>
-                  <p className="text-xs font-light text-zinc-400 mb-1.5">Sent to venue</p>
+                  <p className="text-xs font-light text-zinc-400 mb-1.5">Note sent with booking</p>
                   <div className="relative">
                     <div
                       ref={venueNoteRef}
@@ -253,65 +305,10 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                   </div>
                 </div>
 
-                {/* Internal note */}
-                <div>
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <p className="text-xs font-light text-zinc-400">Internal note</p>
-                    {!notesEditing && (
-                      <button type="button" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }} className="text-zinc-300 hover:text-zinc-500 transition-colors">
-                        <PencilIcon />
-                      </button>
-                    )}
-                  </div>
-                  {notesEditing ? (
-                    <div>
-                      <textarea
-                        value={notesEditValue}
-                        onChange={e => setNotesEditValue(e.target.value)}
-                        placeholder="Add a note…"
-                        rows={3}
-                        autoFocus
-                        className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
-                      />
-                      <div className="flex items-center justify-end gap-3 mt-1.5">
-                        <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors">
-                          Cancel
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleSaveNotes}
-                          disabled={notesSaving}
-                          className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-50"
-                        >
-                          {notesSaving ? 'Saving…' : 'Save'}
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="relative cursor-pointer" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}>
-                      <div
-                        ref={selfNoteRef}
-                        className="text-sm font-light text-zinc-500 break-words overflow-y-scroll"
-                        style={{ maxHeight: '5.6em', lineHeight: '1.4em', scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-                      >
-                        {savedNotes || <span className="text-zinc-400">Add a note…</span>}
-                      </div>
-                      {selfNoteOverflows && (
-                        <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-                      )}
-                    </div>
-                  )}
-                </div>
-
-              </div>
-            )}
-
-            {/* Contact */}
-            {activeTab === 'contact' && (
-              <div className="flex flex-col gap-3 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                {/* Phone / email */}
                 {(venue.phone || venue.booking_email) ? (
-                  <>
-                    <p className="text-sm font-light text-zinc-400">For changes to your booking please contact the venue on</p>
+                  <div className="flex flex-col gap-2.5">
+                    <p className="text-xs font-light text-zinc-400">For changes to your booking please contact the venue on</p>
                     {venue.phone && (
                       <a href={`tel:${venue.phone}`} className="flex items-center gap-2.5 group w-fit">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0">
@@ -328,10 +325,9 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                         <span className="text-sm font-light text-zinc-500 group-hover:text-zinc-900 transition-colors">{venue.booking_email}</span>
                       </a>
                     )}
-                  </>
-                ) : (
-                  <span className="text-sm font-light text-zinc-400">No contact details on file</span>
-                )}
+                  </div>
+                ) : null}
+
               </div>
             )}
 
