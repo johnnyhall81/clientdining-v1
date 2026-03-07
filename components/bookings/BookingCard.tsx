@@ -216,29 +216,42 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
             {/* Notes — private/internal only */}
             {activeTab === 'notes' && (
               <div className="flex flex-col flex-1 min-h-0 relative">
-                <textarea
-                  value={notesEditValue}
-                  onChange={e => { setNotesEditValue(e.target.value); setNotesEditing(true) }}
-                  placeholder="Add a private note…"
-                  className="flex-1 w-full text-sm font-light text-zinc-500 placeholder:text-zinc-400 bg-transparent border border-zinc-200 rounded px-3 py-2.5 pr-8 focus:outline-none focus:border-zinc-300 resize-none overflow-y-auto"
-                />
-                <div className="absolute top-2 right-2">
-                  {notesEditing ? (
+                {notesEditing ? (
+                  <>
+                    <textarea
+                      value={notesEditValue}
+                      onChange={e => setNotesEditValue(e.target.value)}
+                      placeholder="Add a private note…"
+                      autoFocus
+                      className="flex-1 w-full text-sm font-light text-zinc-500 placeholder:text-zinc-400 bg-transparent border border-zinc-300 rounded px-3 py-2.5 pr-8 focus:outline-none focus:border-zinc-400 resize-none overflow-y-auto"
+                    />
                     <button
                       type="button"
                       onClick={handleSaveNotes}
                       disabled={notesSaving}
-                      className="text-zinc-400 hover:text-zinc-700 transition-colors disabled:opacity-40"
+                      className="absolute top-2 right-2 text-zinc-400 hover:text-zinc-700 transition-colors disabled:opacity-40"
                       title="Save"
                     >
                       <SaveIcon />
                     </button>
-                  ) : (
-                    <span className="text-zinc-300 pointer-events-none">
+                  </>
+                ) : (
+                  <div
+                    className="flex-1 relative border border-zinc-200 rounded px-3 py-2.5 pr-8 overflow-y-auto cursor-default"
+                  >
+                    <p className="text-sm font-light text-zinc-500 whitespace-pre-wrap break-all">
+                      {notesEditValue || <span className="text-zinc-400">No note added</span>}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setNotesEditing(true)}
+                      className="absolute top-2 right-2 text-zinc-300 hover:text-zinc-500 transition-colors"
+                      title="Edit"
+                    >
                       <PencilIcon />
-                    </span>
-                  )}
-                </div>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
