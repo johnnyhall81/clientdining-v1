@@ -193,7 +193,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 <div
                   className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                   style={{
-                    maxHeight: '4.2em',
+                    maxHeight: '7em',
                     lineHeight: '1.4em',
                     scrollbarWidth: 'none',
                     msOverflowStyle: 'none',
@@ -239,7 +239,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                   <div
                     className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                     style={{
-                      maxHeight: '4.2em',
+                      maxHeight: '7em',
                       lineHeight: '1.4em',
                       scrollbarWidth: 'none',
                       msOverflowStyle: 'none',
