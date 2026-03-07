@@ -86,31 +86,11 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const dateStr = formatSlotDate(slot.start_at)
   const timeStr = formatSlotTime(slot.start_at)
 
-  // Host is guest_names[0], additional guests are the rest
+  // Host is guest_names[0]
   const hostName = booking.guest_names?.[0] || null
-  const additionalGuests = booking.guest_names?.slice(1) || []
-  const guestSummary = additionalGuests.length > 0
-    ? additionalGuests.length === 1
-      ? additionalGuests[0]
-      : `${additionalGuests[0]} +${additionalGuests.length - 1}`
-    : null
 
   return (
-    <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative">
-
-      {/* Cancel button */}
-      {!isCancelled && !isPast && (
-        <button
-          type="button"
-          onClick={() => setShowCancelModal(true)}
-          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
-          aria-label="Cancel booking"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      )}
+    <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden">
 
       <div className="flex flex-col md:flex-row md:items-stretch">
 
@@ -166,9 +146,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
             {/* Secondary metadata */}
             <div className="flex flex-col gap-1 mt-0.5">
-              {guestSummary && (
-                <p className="text-sm font-light text-zinc-400">{guestSummary}</p>
-              )}
               {booking.notes && (
                 <p className="text-sm font-light text-zinc-400">Note sent to venue</p>
               )}
@@ -191,6 +168,17 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                       </a>
                     </>
                   )}
+                </p>
+              )}
+              {!isCancelled && !isPast && (
+                <p className="text-sm font-light text-zinc-400 mt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setShowCancelModal(true)}
+                    className="hover:text-zinc-900 transition-colors"
+                  >
+                    Cancel booking
+                  </button>
                 </p>
               )}
             </div>
