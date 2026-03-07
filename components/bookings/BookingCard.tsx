@@ -242,7 +242,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                   <>
                     <div className="overflow-y-auto max-h-48 md:max-h-none md:flex-1">
                       <p className="text-sm font-light text-zinc-500 whitespace-pre-wrap break-all">
-                        {notesEditValue || <span className="text-zinc-400">No note added</span>}
+                        {notesEditValue || <span className="text-zinc-400">Add a private note — only visible to you</span>}
                       </p>
                     </div>
                     <div className="flex justify-end pt-2 flex-shrink-0">
