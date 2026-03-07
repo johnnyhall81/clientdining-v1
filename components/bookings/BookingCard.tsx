@@ -108,7 +108,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         </Link>
 
         {/* Details */}
-        <div className="flex-1 px-7 py-7 pr-12 flex flex-col gap-4">
+        <div className="flex-1 px-7 py-7 pr-12 flex flex-col gap-4 min-h-[340px]">
 
           {/* Venue block */}
           <div className="flex flex-col gap-0.5">
