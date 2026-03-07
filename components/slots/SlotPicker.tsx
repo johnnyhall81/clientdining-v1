@@ -9,6 +9,7 @@ interface SlotPickerProps {
   isAlertActive: (slotId: string) => boolean
   onToggleAlert: (slotId: string) => void
   bookedSlots: Set<string>
+  bookedPartySizes?: Map<string, number>
   userAvatarUrl?: string | null
   userInitials?: string
 }
@@ -52,6 +53,7 @@ export default function SlotPicker({
   isAlertActive,
   onToggleAlert,
   bookedSlots,
+  bookedPartySizes,
   userAvatarUrl,
   userInitials,
 }: SlotPickerProps) {
@@ -195,6 +197,8 @@ export default function SlotPicker({
             : `${slot.party_min}–${slot.party_max} guests`
 
           if (isBookedByMe) {
+            const partySize = bookedPartySizes?.get(slot.id)
+            const guestLabel = partySize ? ` · +${partySize - 1}` : ''
             return (
               <div
                 key={slot.id}
@@ -210,7 +214,7 @@ export default function SlotPicker({
                 )}
                 <span className="flex flex-col">
                   <span className="text-sm font-light leading-tight" style={{ color: '#2A6B4A' }}>{formatTime(slot.start_at)}</span>
-                  <span className="text-[11px] font-light leading-tight mt-1" style={{ color: '#7BB89A' }}>Your table</span>
+                  <span className="text-[11px] font-light leading-tight mt-1" style={{ color: '#7BB89A' }}>Your table{guestLabel ? ` · ${partySize} guests` : ''}</span>
                 </span>
               </div>
             )

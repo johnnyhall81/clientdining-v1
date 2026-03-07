@@ -35,6 +35,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlot, setBookingSlot] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
+  const [bookedPartySizes, setBookedPartySizes] = useState<Map<string, number>>(new Map())
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
@@ -92,13 +93,14 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
         const { data, error } = await supabase
           .from('bookings')
-          .select('slot_id')
+          .select('slot_id, party_size')
           .eq('user_id', user.id)
           .eq('status', 'active')
           .in('slot_id', slotIds)
 
         if (error) throw error
         setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
+        setBookedPartySizes(new Map((data || []).map((b: any) => [b.slot_id, b.party_size])))
       } catch (e) {
         console.error('Error loading bookings:', e)
       }
@@ -368,6 +370,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 isAlertActive={(id) => alerts.has(id)}
                 onToggleAlert={handleToggleAlert}
                 bookedSlots={bookedSlots}
+                bookedPartySizes={bookedPartySizes}
                 userAvatarUrl={profile?.avatar_url}
                 userInitials={profile?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
               />

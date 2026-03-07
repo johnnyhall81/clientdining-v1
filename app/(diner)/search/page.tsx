@@ -57,6 +57,7 @@ export default function SearchPage() {
   const [isConfirming, setIsConfirming] = useState(false)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
   const [bookingIdsBySlot, setBookingIdsBySlot] = useState<Map<string, string>>(new Map())
+  const [bookedPartySizes, setBookedPartySizes] = useState<Map<string, number>>(new Map())
   const [venues, setVenues] = useState<Venue[]>([])
 
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
@@ -125,7 +126,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
 
         const { data, error } = await supabase
           .from('bookings')
-          .select('id, slot_id')
+          .select('id, slot_id, party_size')
           .eq('user_id', user.id)
           .eq('status', 'active')
           .in('slot_id', slotIds)
@@ -134,6 +135,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
 
         setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
         setBookingIdsBySlot(new Map((data || []).map((b: any) => [b.slot_id, b.id])))
+        setBookedPartySizes(new Map((data || []).map((b: any) => [b.slot_id, b.party_size])))
       } catch (e) {
         console.error('Error loading bookings:', e)
       }
@@ -521,6 +523,8 @@ const handleCancel = async () => {
                         const isBookedByMe = bookedSlots.has(slot.id)
 
                         if (isBookedByMe) {
+                          const partySize = bookedPartySizes.get(slot.id)
+                          const guestLabel = partySize ? ` · +${partySize - 1}` : ''
                           return (
                             <div key={slot.id} className="inline-flex items-center gap-3 px-5 py-2.5 rounded-xl border" style={{minHeight: '46px', backgroundColor: '#F7FBF9', borderColor: '#D4EDE2'}}>
                               {profile?.avatar_url ? (
@@ -532,7 +536,7 @@ const handleCancel = async () => {
                               )}
                               <span className="flex flex-col">
                                 <span className="text-sm font-light leading-tight" style={{color: '#2A6B4A'}}>{formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}</span>
-                                <span className="text-[11px] font-light leading-tight mt-1" style={{color: '#7BB89A'}}>Your table</span>
+                                <span className="text-[11px] font-light leading-tight mt-1" style={{color: '#7BB89A'}}>Your table{partySize ? ` · ${partySize} guests` : ''}</span>
                               </span>
                             </div>
                           )
