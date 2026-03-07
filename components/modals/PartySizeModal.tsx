@@ -78,7 +78,7 @@ export default function PartySizeModal({
             <button
               type="button"
               onClick={onClose}
-              className="absolute top-5 right-5 text-zinc-300 hover:text-zinc-500 transition-colors"
+              className="absolute top-5 right-5 text-zinc-400 hover:text-zinc-500 transition-colors"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -86,14 +86,14 @@ export default function PartySizeModal({
             </button>
             <h2 className="text-3xl font-light text-zinc-900 tracking-tight pr-8">{venueName}</h2>
             {slotTime && <p className="text-sm font-light text-zinc-500 mt-2">{slotTime}</p>}
-            <p className="text-sm font-light text-zinc-400 mt-0.5">Table for {partySize}</p>
+            <p className="text-sm font-light text-zinc-500 mt-0.5">Table for {partySize}</p>
           </div>
 
           <div className="px-7 py-7 space-y-7">
 
             {/* Guest stepper */}
             <div>
-              <p className="text-[13px] font-medium text-zinc-400 mb-3">Guests</p>
+              <p className="text-[13px] font-medium text-zinc-500 mb-3">Guests</p>
               <div className="flex items-center gap-6">
                 <button
                   type="button"
@@ -113,16 +113,16 @@ export default function PartySizeModal({
 
             {/* Names — always visible */}
             <div className="space-y-2">
-              <p className="text-[13px] font-medium text-zinc-400 mb-3">Names</p>
+              <p className="text-[13px] font-medium text-zinc-500 mb-3">Names</p>
               <div className="relative">
                 <input
                   type="text"
                   value={hostField}
                   onChange={e => setHostField(e.target.value)}
                   placeholder="Host name"
-                  className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-300 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
+                  className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-400 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-zinc-300 uppercase tracking-wide">Host</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-zinc-400 uppercase tracking-wide">Host</span>
               </div>
               {guestNames.map((name, i) => (
                 <input
@@ -137,7 +137,7 @@ export default function PartySizeModal({
                   }}
                   placeholder={requiresGuestNames ? `Guest ${i + 1} (required)` : `Guest ${i + 1} (optional)`}
                   className={[
-                    'w-full px-4 py-2.5 bg-zinc-50 border rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-300 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all',
+                    'w-full px-4 py-2.5 bg-zinc-50 border rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-400 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all',
                     nameError && !name.trim() ? 'border-red-200 bg-red-50' : 'border-zinc-100',
                   ].join(' ')}
                 />
@@ -149,12 +149,12 @@ export default function PartySizeModal({
 
             {/* Requests — always visible */}
             <div>
-              <p className="text-[13px] font-medium text-zinc-400 mb-3">Requests</p>
+              <p className="text-[13px] font-medium text-zinc-500 mb-3">Requests</p>
               <textarea
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 placeholder="Dietary requirements, allergies, celebrations…"
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-300 font-light resize-none focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
+                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-400 font-light resize-none focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
                 rows={2}
                 maxLength={500}
               />
@@ -181,12 +181,12 @@ export default function PartySizeModal({
                   disabled={isSubmitting}
                   className={[
                     'w-full h-12 text-sm font-medium rounded-xl transition-colors',
-                    isSubmitting ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed' : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200',
+                    isSubmitting ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed' : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200',
                   ].join(' ')}
                 >
                   {isSubmitting ? 'Confirming…' : 'Confirm table'}
                 </button>
-                <p className="text-[12px] text-zinc-300 text-center mt-3">Instant confirmation</p>
+                <p className="text-[12px] text-zinc-400 text-center mt-3">Instant confirmation</p>
               </>
             )}
           </div>

@@ -125,7 +125,7 @@ export default function SlotPicker({
   const datesInMonth = months.get(selectedMonth) || []
 
   if (slots.length === 0) {
-    return <p className="text-zinc-400 font-light text-sm">No tables available at this time.</p>
+    return <p className="text-zinc-500 font-light text-sm">No tables available at this time.</p>
   }
 
   const daySlots = slotsByDate.get(selectedDate) || []
@@ -230,7 +230,7 @@ export default function SlotPicker({
                 className="flex flex-col items-center justify-center h-16 rounded-xl border border-zinc-200 bg-white hover:border-zinc-200 hover:bg-zinc-50 transition-all text-center px-2"
               >
                 <span className="text-base font-light text-zinc-900">{formatTime(slot.start_at)}</span>
-                <span className="text-[11px] font-light text-zinc-400 mt-0.5">{partyLabel}</span>
+                <span className="text-[11px] font-light text-zinc-500 mt-0.5">{partyLabel}</span>
               </button>
             )
           }
@@ -247,10 +247,10 @@ export default function SlotPicker({
                   : 'border-zinc-100 bg-zinc-50 hover:border-zinc-200',
               ].join(' ')}
             >
-              <span className="text-base font-light text-zinc-300">{formatTime(slot.start_at)}</span>
+              <span className="text-base font-light text-zinc-400">{formatTime(slot.start_at)}</span>
               <span className={[
                 'text-[11px] font-light mt-0.5',
-                isAlertActive(slot.id) ? 'text-zinc-500' : 'text-zinc-300',
+                isAlertActive(slot.id) ? 'text-zinc-500' : 'text-zinc-400',
               ].join(' ')}>
                 {isAlertActive(slot.id) ? '🔔 Alert on' : 'Alert me'}
               </span>

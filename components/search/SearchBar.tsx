@@ -75,8 +75,8 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
           onClick={() => toggle('date')}
           className={`flex-1 px-6 py-5 text-left transition-colors rounded-l-2xl ${open === 'date' ? 'bg-zinc-50/80' : 'hover:bg-zinc-50/60'}`}
         >
-          <span className="block text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-1">Dates</span>
-          <span className={`text-sm font-light ${dateLabel ? 'text-zinc-900' : 'text-zinc-400'}`}>
+          <span className="block text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-1">Dates</span>
+          <span className={`text-sm font-light ${dateLabel ? 'text-zinc-900' : 'text-zinc-500'}`}>
             {dateLabel || 'Any date'}
           </span>
         </button>
@@ -89,8 +89,8 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
           onClick={() => toggle('area')}
           className={`flex-1 px-6 py-5 text-left transition-colors ${open === 'area' ? 'bg-zinc-50/80' : 'hover:bg-zinc-50/60'}`}
         >
-          <span className="block text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-1">Area</span>
-          <span className={`text-sm font-light ${areaLabel ? 'text-zinc-900' : 'text-zinc-400'}`}>
+          <span className="block text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-1">Area</span>
+          <span className={`text-sm font-light ${areaLabel ? 'text-zinc-900' : 'text-zinc-500'}`}>
             {areaLabel || 'All areas'}
           </span>
         </button>
@@ -103,7 +103,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
           onClick={() => toggle('guests')}
           className={`flex-1 px-6 py-5 text-left transition-colors ${open === 'guests' ? 'bg-zinc-50/80' : 'hover:bg-zinc-50/60'}`}
         >
-          <span className="block text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-1">Guests</span>
+          <span className="block text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-1">Guests</span>
           <span className="text-sm font-light text-zinc-900">{guestsLabel}</span>
         </button>
 
@@ -114,7 +114,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
             <button
               type="button"
               onClick={() => onChange({ ...filters, dateFrom: '', dateTo: '', area: '', partySize: 2, venueId: '' })}
-              className="px-5 text-xs text-zinc-300 hover:text-zinc-500 font-light transition-colors rounded-r-2xl"
+              className="px-5 text-xs text-zinc-400 hover:text-zinc-500 font-light transition-colors rounded-r-2xl"
             >
               Clear
             </button>
@@ -202,22 +202,22 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
             classNames={{
               months: 'flex gap-8',
               caption_label: 'text-sm font-light text-zinc-900',
-              nav_button: 'text-zinc-400 hover:text-zinc-900',
+              nav_button: 'text-zinc-500 hover:text-zinc-900',
               day_today: 'font-medium',
-              day_outside: 'text-zinc-300',
-              day_disabled: 'text-zinc-300',
+              day_outside: 'text-zinc-400',
+              day_disabled: 'text-zinc-400',
             }}
           />
           <div className="mt-3 pt-3 border-t border-zinc-100 text-center min-h-[24px]">
             {filters.dateFrom && !filters.dateTo ? (
-              <p className="text-sm font-light text-zinc-400">Select an end date</p>
+              <p className="text-sm font-light text-zinc-500">Select an end date</p>
             ) : filters.dateFrom && filters.dateTo ? (
-              <p className="text-sm font-light text-zinc-400">
+              <p className="text-sm font-light text-zinc-500">
                 {format(new Date(filters.dateFrom), 'd MMM')} – {format(new Date(filters.dateTo), 'd MMM')}
                 <button
                   type="button"
                   onClick={() => onChange({ ...filters, dateFrom: '', dateTo: '' })}
-                  className="ml-3 text-zinc-400 hover:text-zinc-900 transition-colors"
+                  className="ml-3 text-zinc-500 hover:text-zinc-900 transition-colors"
                 >
                   ×
                 </button>
@@ -233,7 +233,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
           <button
             type="button"
             onClick={() => { onChange({ ...filters, area: '' }); setOpen(null) }}
-            className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-xl transition-colors ${!filters.area ? 'bg-zinc-50 text-zinc-900' : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900'}`}
+            className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-xl transition-colors ${!filters.area ? 'bg-zinc-50 text-zinc-900' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'}`}
           >
             All areas
           </button>
@@ -242,7 +242,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               key={area}
               type="button"
               onClick={() => { onChange({ ...filters, area }); setOpen(null) }}
-              className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-xl transition-colors ${filters.area === area ? 'bg-zinc-50 text-zinc-900' : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900'}`}
+              className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-xl transition-colors ${filters.area === area ? 'bg-zinc-50 text-zinc-900' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'}`}
             >
               {area}
             </button>
@@ -253,7 +253,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
       {/* Guests panel */}
       {open === 'guests' && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 bg-white border border-zinc-100 rounded-2xl shadow-lg p-6 min-w-[200px]">
-          <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-5">Party size</p>
+          <p className="text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-5">Party size</p>
           <div className="flex items-center justify-between gap-6">
             <button
               type="button"

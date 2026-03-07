@@ -98,7 +98,7 @@ useEffect(() => {
         <button
           type="button"
           onClick={() => setShowCancelModal(true)}
-          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-500 transition-colors"
+          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-zinc-500 transition-colors"
           aria-label="Cancel booking"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -129,11 +129,11 @@ useEffect(() => {
             {/* Address + map icon */}
             {venue.address && (
               <div className="flex items-center gap-1.5 mb-0.5">
-                <span className="text-sm font-light text-zinc-400">
+                <span className="text-sm font-light text-zinc-500">
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </span>
                 {mapsUrl && (
-                  <a href={mapsUrl} target="_blank" rel="noopener noreferrer" title="Open in Maps" className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
+                  <a href={mapsUrl} target="_blank" rel="noopener noreferrer" title="Open in Maps" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
                     <MapIcon />
                   </a>
                 )}
@@ -146,7 +146,7 @@ useEffect(() => {
                 {dateStr} · {timeStr} · {guestStr}
               </span>
               {!isPast && !isCancelled && (
-                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
+                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
                   <CalendarIcon />
                 </a>
               )}
@@ -156,8 +156,8 @@ useEffect(() => {
           {/* Restaurant note */}
           {booking.notes && (
             <div>
-              <p className="text-xs font-light text-zinc-400 mb-1">
-                Restaurant note <span className="text-zinc-300">· Sent with booking</span>
+              <p className="text-xs font-light text-zinc-500 mb-1">
+                Restaurant note <span className="text-zinc-400">· Sent with booking</span>
               </p>
               <p className="text-sm font-light text-zinc-500 border border-zinc-100 rounded px-3 py-2 bg-zinc-50/40">
                 {booking.notes}
@@ -168,8 +168,8 @@ useEffect(() => {
           {/* Guest names */}
           {booking.guest_names && booking.guest_names.length > 0 && (
             <div>
-              <p className="text-xs font-light text-zinc-400 mb-2">
-                Guests <span className="text-zinc-300">· Sent with booking</span>
+              <p className="text-xs font-light text-zinc-500 mb-2">
+                Guests <span className="text-zinc-400">· Sent with booking</span>
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {booking.guest_names.map((name, i) => (
@@ -186,8 +186,8 @@ useEffect(() => {
 
           {/* Private notes */}
           <div>
-            <p className="text-xs font-light text-zinc-400 mb-1">
-              Private notes <span className="text-zinc-300">· Visible only to you</span>
+            <p className="text-xs font-light text-zinc-500 mb-1">
+              Private notes <span className="text-zinc-400">· Visible only to you</span>
             </p>
             {notesEditing ? (
               <div>
@@ -197,10 +197,10 @@ useEffect(() => {
                   placeholder="Add private notes..."
                   rows={3}
                   autoFocus
-                  className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-300 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
+                  className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
                 />
                 <div className="flex items-center justify-end gap-3 mt-1.5">
-                  <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
+                  <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors">
                     Cancel
                   </button>
                   <button
@@ -220,10 +220,10 @@ useEffect(() => {
               >
                 <div className="border border-zinc-100 rounded bg-zinc-50/40 pr-7 min-h-[36px] max-h-40 overflow-y-auto">
                   <p className="text-sm whitespace-pre-line font-light text-zinc-500 px-3 py-2">
-                    {savedNotes || <span className="text-zinc-300">No notes added</span>}
+                    {savedNotes || <span className="text-zinc-400">No notes added</span>}
                   </p>
                 </div>
-                <span className="absolute top-2.5 right-2.5 text-zinc-300 group-hover:text-zinc-500 transition-colors">
+                <span className="absolute top-2.5 right-2.5 text-zinc-400 group-hover:text-zinc-500 transition-colors">
                   <PencilIcon />
                 </span>
               </div>

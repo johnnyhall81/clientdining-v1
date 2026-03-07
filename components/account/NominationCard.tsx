@@ -65,8 +65,8 @@ export default function NominationCard({ userId, canNominate }: Props) {
 
   return (
     <div>
-      <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-4">Introduce a colleague</p>
-      <p className="text-sm font-light text-zinc-400 mb-6 leading-relaxed">
+      <p className="text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-4">Introduce a colleague</p>
+      <p className="text-sm font-light text-zinc-500 mb-6 leading-relaxed">
         Invite a professional colleague to apply for membership.
       </p>
 
@@ -87,19 +87,19 @@ export default function NominationCard({ userId, canNominate }: Props) {
           <button
             type="submit"
             disabled={loading}
-            className="px-5 text-xs text-zinc-400 hover:text-zinc-900 font-light transition-colors disabled:opacity-40 whitespace-nowrap"
+            className="px-5 text-xs text-zinc-500 hover:text-zinc-900 font-light transition-colors disabled:opacity-40 whitespace-nowrap"
           >
             {loading ? 'Sending…' : 'Send invite'}
           </button>
         </div>
         {error && <p className="text-sm text-red-500 font-light mt-3">{error}</p>}
-        {success && <p className="text-sm text-zinc-400 font-light mt-3">{success}</p>}
+        {success && <p className="text-sm text-zinc-500 font-light mt-3">{success}</p>}
       </form>
 
       {/* Sent list */}
       {nominations.length > 0 && (
         <div className="mt-10">
-          <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-4">Sent</p>
+          <p className="text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-4">Sent</p>
           <div>
             {nominations.map((nom) => (
               <div key={nom.id} className="flex items-center justify-between py-3.5 border-b border-zinc-100 last:border-b-0">
@@ -107,11 +107,11 @@ export default function NominationCard({ userId, canNominate }: Props) {
                   <p className="text-sm font-light text-zinc-900">
                     {nom.nominee_name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
                   </p>
-                  <p className="text-xs font-light text-zinc-400 mt-0.5">
+                  <p className="text-xs font-light text-zinc-500 mt-0.5">
                     {nom.nominee_email}{nom.nominee_company ? ` · ${nom.nominee_company}` : ''}
                   </p>
                 </div>
-                <span className="text-xs text-zinc-300 font-light">
+                <span className="text-xs text-zinc-400 font-light">
                   {new Date(nom.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                 </span>
               </div>

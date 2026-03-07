@@ -296,7 +296,7 @@ export default function AlertsPage() {
                               rel="noopener noreferrer"
                               title="Open in Maps"
                               onClick={e => e.stopPropagation()}
-                              className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0"
+                              className="text-zinc-300 hover:text-zinc-600 transition-colors flex-shrink-0"
                             >
                               <MapIcon />
                             </a>
@@ -324,7 +324,7 @@ export default function AlertsPage() {
                             onClick={() => handleBook(alert)}
                             disabled={isBookingThis}
                             className={[
-                              'h-9 px-5 text-sm font-light whitespace-nowrap transition-colors border border-zinc-200 rounded-lg',
+                              'h-9 px-5 text-sm font-light whitespace-nowrap transition-colors border border-zinc-300 rounded-lg',
                               isBookingThis
                                 ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
                                 : 'bg-white text-zinc-900 hover:bg-zinc-50',

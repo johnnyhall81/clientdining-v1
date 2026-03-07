@@ -269,7 +269,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             <div className="mb-12">
               <h1 className="text-4xl sm:text-5xl font-light text-zinc-900 mb-5 tracking-tight">{venue.name}</h1>
 
-              <div className="flex items-center gap-2.5 text-sm font-light text-zinc-400 mb-3">
+              <div className="flex items-center gap-2.5 text-sm font-light text-zinc-500 mb-3">
                 <span>{venue.area}</span>
                 <span className="text-zinc-200">·</span>
                 <span className="capitalize">{venue.venue_type}</span>
@@ -277,7 +277,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
               {venue.address && (
                 <div className="flex items-center gap-1.5">
-                  <p className="text-xs text-zinc-400 font-light">
+                  <p className="text-xs text-zinc-500 font-light">
                     {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                   </p>
                   <a
@@ -285,7 +285,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={e => e.stopPropagation()}
-                    className="text-zinc-300 hover:text-zinc-500 transition-colors"
+                    className="text-zinc-400 hover:text-zinc-500 transition-colors"
                   >
                     <MapIcon />
                   </a>
@@ -322,7 +322,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
                         return (
                           <div className="grid grid-cols-[140px_1fr] gap-4 text-sm leading-relaxed mb-2">
-                            <div className="text-zinc-400 font-light">{label}</div>
+                            <div className="text-zinc-500 font-light">{label}</div>
                             <div className="text-zinc-500 font-light">{value}</div>
                           </div>
                         )
@@ -346,7 +346,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 {/* Private hire link */}
                 {venue.private_hire_available && (
                   <div className="grid grid-cols-[140px_1fr] gap-4 text-sm leading-relaxed mt-3 pt-3 border-t border-zinc-100">
-                    <div className="text-zinc-400 font-light">Private rooms and events</div>
+                    <div className="text-zinc-500 font-light">Private rooms and events</div>
                     <button
                       onClick={() => setShowCorporateEventsModal(true)}
                       className="text-zinc-500 font-light text-left hover:text-zinc-900 transition-colors group"
@@ -361,7 +361,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             {/* Available Tables */}
             <div className="mt-16 pt-12 border-t border-zinc-100">
               <div className="mb-8">
-                <p className="text-xs font-light text-zinc-300 uppercase tracking-widest mb-3">Availability</p>
+                <p className="text-xs font-light text-zinc-400 uppercase tracking-widest mb-3">Availability</p>
                 <h2 className="text-2xl font-light text-zinc-900 tracking-tight">Book a table</h2>
               </div>
               <SlotPicker

@@ -184,7 +184,7 @@ if (!authChecked) return null
       letterSpacing: '-0.01em'
     }}
   >
-    New to the network
+    Latest London venues
   </p>
  
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
@@ -226,7 +226,7 @@ if (!authChecked) return null
                     {venue.name}
                   </p>
                   {venue.area && (
-                    <p className="text-sm font-light text-zinc-400 mt-1">
+                    <p className="text-sm font-light text-zinc-500 mt-1">
                       {venue.area}
                     </p>
                   )}
@@ -242,7 +242,7 @@ if (!authChecked) return null
             href="/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-200 hover:bg-zinc-50 transition-colors duration-300"
           >
-            Explore all venues
+            Explore
           </Link>
         </div>
       </section>

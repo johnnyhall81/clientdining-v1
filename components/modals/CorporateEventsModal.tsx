@@ -106,9 +106,9 @@ export default function CorporateEventsModal({
 
   if (!isOpen) return null
 
-  const inputClass = "w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm font-light text-zinc-900 placeholder:text-zinc-300 bg-white focus:outline-none focus:border-zinc-200 focus:ring-1 focus:ring-zinc-200 transition-colors"
-  const labelClass = "block text-xs font-light text-zinc-400 mb-2"
-  const labelOptionalClass = "block text-xs font-light text-zinc-300 mb-2"
+  const inputClass = "w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm font-light text-zinc-900 placeholder:text-zinc-400 bg-white focus:outline-none focus:border-zinc-200 focus:ring-1 focus:ring-zinc-200 transition-colors"
+  const labelClass = "block text-xs font-light text-zinc-500 mb-2"
+  const labelOptionalClass = "block text-xs font-light text-zinc-400 mb-2"
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
@@ -118,11 +118,11 @@ export default function CorporateEventsModal({
         <div className="sticky top-0 bg-white border-b border-zinc-200 px-8 py-6 flex items-center justify-between rounded-t-2xl">
           <div>
             <h2 className="text-3xl font-light text-zinc-900">{venueName}</h2>
-            <p className="text-sm font-light text-zinc-400 mt-1">Private rooms & events</p>
+            <p className="text-sm font-light text-zinc-500 mt-1">Private rooms & events</p>
           </div>
           <button
             onClick={onClose}
-            className="text-zinc-300 hover:text-zinc-500 transition-colors"
+            className="text-zinc-400 hover:text-zinc-500 transition-colors"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -134,7 +134,7 @@ export default function CorporateEventsModal({
 
           {/* Section 1 — Contact */}
           <div className="space-y-4">
-            <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest">Contact</p>
+            <p className="text-[10px] font-light text-zinc-400 uppercase tracking-widest">Contact</p>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className={labelClass}>First name</label>
@@ -173,7 +173,7 @@ export default function CorporateEventsModal({
 
           {/* Section 2 — Event */}
           <div className="space-y-4">
-            <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest">Event</p>
+            <p className="text-[10px] font-light text-zinc-400 uppercase tracking-widest">Event</p>
 
             <div>
               <label className={labelClass}>Type</label>
@@ -219,7 +219,7 @@ export default function CorporateEventsModal({
             <div className="relative">
               <label className={labelClass}>Preferred date</label>
               <button type="button" onClick={() => setShowCalendar(!showCalendar)}
-                className={`${inputClass} text-left ${formData.eventDate ? 'text-zinc-900' : 'text-zinc-300'}`}>
+                className={`${inputClass} text-left ${formData.eventDate ? 'text-zinc-900' : 'text-zinc-400'}`}>
                 {formData.eventDate ? format(new Date(formData.eventDate), 'd MMMM yyyy') : 'Select date'}
               </button>
               {showCalendar && (
@@ -234,7 +234,7 @@ export default function CorporateEventsModal({
                     onSelect={(date) => { if (date) { setFormData({ ...formData, eventDate: format(date, 'yyyy-MM-dd') }); setShowCalendar(false) } }}
                     fromDate={new Date()}
                     styles={{ caption: { fontWeight: 300 }, day: { fontWeight: 300 } }}
-                    classNames={{ caption_label: 'text-sm font-light text-zinc-900', nav_button: 'text-zinc-400 hover:text-zinc-900', day_today: 'font-medium', day_outside: 'text-zinc-300', day_disabled: 'text-zinc-300' }}
+                    classNames={{ caption_label: 'text-sm font-light text-zinc-900', nav_button: 'text-zinc-500 hover:text-zinc-900', day_today: 'font-medium', day_outside: 'text-zinc-400', day_disabled: 'text-zinc-400' }}
                   />
                 </div>
               )}
@@ -242,14 +242,14 @@ export default function CorporateEventsModal({
                 <input type="checkbox" checked={formData.flexibleOnDate}
                   onChange={(e) => setFormData({ ...formData, flexibleOnDate: e.target.checked })}
                   className="rounded h-3.5 w-3.5 border-zinc-200" />
-                <span className="text-xs font-light text-zinc-400">Flexible on date</span>
+                <span className="text-xs font-light text-zinc-500">Flexible on date</span>
               </label>
             </div>
           </div>
 
           {/* Section 3 — Notes */}
           <div className="space-y-4">
-            <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest">Additional details</p>
+            <p className="text-[10px] font-light text-zinc-400 uppercase tracking-widest">Additional details</p>
             <textarea rows={3} value={formData.additionalInfo}
               onChange={(e) => setFormData({ ...formData, additionalInfo: e.target.value })}
               placeholder="Budget guidance, dietary requirements, or anything else we should know."
@@ -261,7 +261,7 @@ export default function CorporateEventsModal({
           )}
 
           {success && (
-            <p className="text-sm text-zinc-400 font-light">Enquiry sent. The venue will be in touch shortly.</p>
+            <p className="text-sm text-zinc-500 font-light">Enquiry sent. The venue will be in touch shortly.</p>
           )}
 
           <div className="flex justify-end">
