@@ -124,16 +124,26 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
         {/* Image */}
         <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 md:rounded-l-lg hover:opacity-90 transition-opacity">
           {venue.image_hero ? (
-            <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 40vw" quality={60} className="object-cover" />
+            <>
+              <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 40vw" quality={60} className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+              {(venue as any).logo_url ? (
+                <img
+                  src={(venue as any).logo_url}
+                  alt={venue.name}
+                  className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
+                />
+              ) : (
+                <p
+                  className="absolute inset-0 flex items-center justify-center z-10 text-white text-2xl tracking-tight text-center px-6 italic"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                >
+                  {venue.name}
+                </p>
+              )}
+            </>
           ) : (
             <div className="w-full h-full bg-zinc-100" />
-          )}
-          {(venue as any).logo_url && (
-            <div className="absolute bottom-3 left-3 z-10">
-              <div className="bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5">
-                <img src={(venue as any).logo_url} alt={`${venue.name} logo`} className="h-6 w-auto object-contain" />
-              </div>
-            </div>
           )}
         </Link>
 
