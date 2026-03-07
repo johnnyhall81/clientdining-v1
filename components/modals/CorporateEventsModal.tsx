@@ -106,7 +106,7 @@ export default function CorporateEventsModal({
 
   if (!isOpen) return null
 
-  const inputClass = "w-full px-4 py-3 border border-zinc-100 rounded-xl text-sm font-light text-zinc-900 placeholder:text-zinc-300 bg-white focus:outline-none focus:border-zinc-200 focus:ring-1 focus:ring-zinc-200 transition-colors"
+  const inputClass = "w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm font-light text-zinc-900 placeholder:text-zinc-300 bg-white focus:outline-none focus:border-zinc-200 focus:ring-1 focus:ring-zinc-200 transition-colors"
   const labelClass = "block text-xs font-light text-zinc-400 mb-2"
   const labelOptionalClass = "block text-xs font-light text-zinc-300 mb-2"
 
@@ -115,7 +115,7 @@ export default function CorporateEventsModal({
       <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
 
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-zinc-100 px-8 py-6 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-white border-b border-zinc-200 px-8 py-6 flex items-center justify-between rounded-t-2xl">
           <div>
             <h2 className="text-3xl font-light text-zinc-900">{venueName}</h2>
             <p className="text-sm font-light text-zinc-400 mt-1">Private rooms & events</p>
@@ -223,7 +223,7 @@ export default function CorporateEventsModal({
                 {formData.eventDate ? format(new Date(formData.eventDate), 'd MMMM yyyy') : 'Select date'}
               </button>
               {showCalendar && (
-                <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-100 rounded-2xl shadow-lg p-4">
+                <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-200 rounded-2xl shadow-lg p-4">
                   <style>{`
                     .rdp { --rdp-accent-color: #3f3f46; --rdp-background-color: #f4f4f5; }
                     .rdp-day_selected .rdp-day_button { background-color: #3f3f46 !important; color: white !important; border-radius: 50% !important; }

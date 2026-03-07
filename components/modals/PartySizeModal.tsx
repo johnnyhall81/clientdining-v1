@@ -120,7 +120,7 @@ export default function PartySizeModal({
                   value={hostField}
                   onChange={e => setHostField(e.target.value)}
                   placeholder="Host name"
-                  className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-100 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-300 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
+                  className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-300 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-zinc-300 uppercase tracking-wide">Host</span>
               </div>

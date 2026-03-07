@@ -72,7 +72,7 @@ export default function NominationCard({ userId, canNominate }: Props) {
 
       {/* Invite bar */}
       <form onSubmit={handleSubmit}>
-        <div className="flex items-stretch bg-white border border-zinc-100 rounded-2xl overflow-hidden">
+        <div className="flex items-stretch bg-white border border-zinc-200 rounded-2xl overflow-hidden">
           <div className="flex-1 px-6 py-4">
             <input
               type="email"

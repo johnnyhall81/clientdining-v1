@@ -197,7 +197,7 @@ useEffect(() => {
                   placeholder="Add private notes..."
                   rows={3}
                   autoFocus
-                  className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-300 border border-zinc-100 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
+                  className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-300 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
                 />
                 <div className="flex items-center justify-end gap-3 mt-1.5">
                   <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">

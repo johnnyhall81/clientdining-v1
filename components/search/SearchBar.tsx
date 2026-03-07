@@ -259,7 +259,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               type="button"
               onClick={() => onChange({ ...filters, partySize: Math.max(2, filters.partySize - 1) })}
               disabled={filters.partySize <= 2}
-              className="w-9 h-9 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-500 hover:border-zinc-200 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-300 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               −
             </button>
@@ -268,7 +268,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               type="button"
               onClick={() => onChange({ ...filters, partySize: Math.min(10, filters.partySize + 1) })}
               disabled={filters.partySize >= 10}
-              className="w-9 h-9 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-500 hover:border-zinc-200 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-300 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               +
             </button>
