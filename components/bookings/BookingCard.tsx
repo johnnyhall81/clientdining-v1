@@ -90,9 +90,23 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const hostName = booking.guest_names?.[0] || null
 
   return (
-    <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden">
+    <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden relative">
 
       <div className="flex flex-col md:flex-row md:items-stretch">
+
+        {/* Cancel × button */}
+        {!isCancelled && !isPast && (
+          <button
+            type="button"
+            onClick={() => setShowCancelModal(true)}
+            className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-zinc-600 transition-colors"
+            aria-label="Cancel booking"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
 
         {/* Image */}
         <Link
@@ -146,41 +160,14 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
             {/* Secondary metadata */}
             <div className="flex flex-col gap-1 mt-0.5">
+              {guestSummary && (
+                <p className="text-sm font-light text-zinc-400">{guestSummary}</p>
+              )}
               {booking.notes && (
-                <p className="text-sm font-light text-zinc-400">
-                  Note <span className="text-zinc-300 mx-0.5">·</span> <span className="text-zinc-500 break-words">{booking.notes}</span>
-                </p>
-              )}
-              {!isCancelled && (venue.phone || venue.booking_email) && (
-                <p className="text-sm font-light text-zinc-400 flex flex-wrap items-baseline">
-                  <span>For changes</span>
-                  {venue.phone && (
-                    <>
-                      <span className="mx-1.5 text-zinc-300">·</span>
-                      <a href={`tel:${venue.phone}`} className="text-zinc-500 hover:text-zinc-900 transition-colors">
-                        {venue.phone}
-                      </a>
-                    </>
-                  )}
-                  {venue.booking_email && (
-                    <>
-                      <span className="mx-1.5 text-zinc-300">·</span>
-                      <a href={`mailto:${venue.booking_email}`} className="text-zinc-500 hover:text-zinc-900 transition-colors">
-                        {venue.booking_email}
-                      </a>
-                    </>
-                  )}
-                </p>
-              )}
-              {!isCancelled && !isPast && (
-                <p className="text-sm font-light text-zinc-400 mt-0.5">
-                  <button
-                    type="button"
-                    onClick={() => setShowCancelModal(true)}
-                    className="hover:text-zinc-900 transition-colors"
-                  >
-                    Cancel booking
-                  </button>
+                <p className="text-sm font-light">
+                  <span className="text-zinc-400">Restaurant note</span>
+                  <span className="text-zinc-300 mx-1.5">·</span>
+                  <span className="text-zinc-500 break-words">{booking.notes}</span>
                 </p>
               )}
             </div>
@@ -189,6 +176,9 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
           {/* Zone 2 — Private note (CRM field) */}
           <div>
+            <p className="text-xs font-light text-zinc-400 mb-1.5">
+              Private note <span className="text-zinc-300">· Visible only to you</span>
+            </p>
             {notesEditing ? (
               <div>
                 <textarea
