@@ -170,7 +170,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 <p className="text-sm font-light">
                   <span className="text-zinc-400">Restaurant note</span>
                   <span className="text-zinc-300 mx-1.5">·</span>
-                  <span className="text-zinc-500 break-words">{booking.notes}</span>
+                  <span className="text-zinc-500 break-all">{booking.notes}</span>
                 </p>
               )}
             </div>
