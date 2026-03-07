@@ -8,7 +8,7 @@ export function formatSlotDate(dateString: string): string {
 
 export function formatSlotTime(dateString: string): string {
   const date = new Date(dateString)
-  return format(date, 'h:mm a')
+  return format(date, 'HH:mm')
 }
 
 
@@ -16,7 +16,7 @@ export function formatSlotTime(dateString: string): string {
 export function formatFullDateTime(dateString: string): string {
   const date = new Date(dateString)
   const datePart = format(date, 'EEE d MMM')
-  const timePart = format(date, 'h:mm a')
+  const timePart = format(date, 'HH:mm')
   return `${datePart} · ${timePart}`
 }
 
