@@ -204,7 +204,7 @@ export default function SlotPicker({
               <Link
                 href="/bookings"
                 key={slot.id}
-                className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border h-16 w-fit hover:opacity-80 transition-opacity"
+                className="inline-flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl border h-16 hover:opacity-80 transition-opacity"
                 style={{ backgroundColor: '#F7FBF9', borderColor: '#D4EDE2' }}
               >
                 {userAvatarUrl ? (
