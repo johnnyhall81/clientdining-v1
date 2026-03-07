@@ -141,7 +141,7 @@ useEffect(() => {
             )}
             <div className="flex items-center gap-1.5">
               <span className="text-sm font-light text-zinc-500">
-                {dateStr} · {timeStr} · {guestStr}
+                {dateStr} · {timeStr}{booking.guest_names?.[0] ? ` · ${booking.guest_names[0]}` : ''}
               </span>
               {!isPast && !isCancelled && (
                 <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
@@ -153,13 +153,16 @@ useEffect(() => {
 
           {/* Inline metadata row — guests, restaurant note, amend */}
           <div className="flex flex-col gap-1">
-            {booking.guest_names && booking.guest_names.length > 0 && (
+            {booking.guest_names && booking.guest_names.length > 1 && (
               <p className="text-sm font-light">
                 <span className="text-zinc-400">Guests</span>
                 <span className="text-zinc-400 mx-1.5">·</span>
-                <span className="text-zinc-500">{booking.guest_names.length <= 2
-                  ? booking.guest_names.join(', ')
-                  : `${booking.guest_names[0]} +${booking.guest_names.length - 1}`}</span>
+                <span className="text-zinc-500">{(() => {
+                  const guests = booking.guest_names.slice(1)
+                  return guests.length <= 2
+                    ? guests.join(', ')
+                    : `${guests[0]} +${guests.length - 1}`
+                })()}</span>
               </p>
             )}
             {booking.notes && (
