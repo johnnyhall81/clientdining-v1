@@ -145,7 +145,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
           </div>
 
           {/* Tabs */}
-          <div className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden">
+          <div className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden mt-1">
 
             <div className="flex items-center border-b border-zinc-100 flex-shrink-0">
               {(['guests', 'contact', 'notes'] as Tab[]).map(tab => (
