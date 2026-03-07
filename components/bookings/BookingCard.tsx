@@ -128,17 +128,13 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         </Link>
 
         {/* Content */}
-        <div className="flex-1 px-7 py-6 pr-10 flex flex-col justify-between gap-5">
+        <div className="flex-1 px-7 py-6 pr-10 flex flex-col gap-4">
 
-          {/* Zone 1 — Booking summary */}
-          <div className="flex flex-col gap-1.5">
-
-            {/* Venue name */}
+          {/* Venue name + metadata */}
+          <div className="flex flex-col gap-1">
             <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity inline-block">
               <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
             </Link>
-
-            {/* Address */}
             {venue.address && (
               <div className="flex items-center gap-1.5">
                 <span className="text-sm font-light text-zinc-400 truncate">
@@ -151,8 +147,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 )}
               </div>
             )}
-
-            {/* Contact */}
             {(venue.phone || venue.booking_email) && (
               <p className="text-sm font-light text-zinc-400 flex flex-wrap items-baseline">
                 <span>Contact</span>
@@ -170,36 +164,31 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 )}
               </p>
             )}
-
-            {/* Date · time · host · guests */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-light text-zinc-500">
-                {dateStr} · {timeStr}{hostName ? ` · ${hostName}` : ''}{additionalGuests.length > 0 ? ` +${additionalGuests.length}` : ''}
-              </span>
-              {!isPast && !isCancelled && (
-                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
-                  <CalendarIcon />
-                </a>
-              )}
-            </div>
-
-            {/* Note to venue */}
-            {booking.notes && (
-              <div>
-                <p className="text-sm font-light text-zinc-400 mb-1.5">
-                  Note to venue
-                </p>
-                <p className="text-sm font-light text-zinc-500 break-all">{booking.notes}</p>
-              </div>
-            )}
-
           </div>
 
-          {/* Zone 2 — Private note (CRM field) */}
-          <div>
-            <p className="text-sm font-light text-zinc-400 mb-1.5">
-              Note to self
-            </p>
+          {/* Booking date · time · host · guests */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-light text-zinc-500">
+              {dateStr} · {timeStr}{hostName ? ` · ${hostName}` : ''}{additionalGuests.length > 0 ? ` +${additionalGuests.length}` : ''}
+            </span>
+            {!isPast && !isCancelled && (
+              <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
+                <CalendarIcon />
+              </a>
+            )}
+          </div>
+
+          {/* Note to venue */}
+          {booking.notes && (
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-light text-zinc-400">Note to venue</p>
+              <p className="text-sm font-light text-zinc-500 break-all">{booking.notes}</p>
+            </div>
+          )}
+
+          {/* Note to self */}
+          <div className="flex flex-col gap-1">
+            <p className="text-sm font-light text-zinc-400">Note to self</p>
             {notesEditing ? (
               <div>
                 <textarea
