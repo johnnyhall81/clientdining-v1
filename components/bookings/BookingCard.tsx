@@ -282,7 +282,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                         <span className="text-sm font-light text-zinc-500 group-hover:text-zinc-900 transition-colors">{venue.booking_email}</span>
                       </a>
                     )}
-                    <p className="text-xs font-light text-zinc-400 pt-1">For changes to your booking please contact the venue directly.</p>
+                    <p className="text-sm font-light text-zinc-400 pt-1">For changes to your booking please contact the venue directly.</p>
                   </div>
                 ) : null}
 
