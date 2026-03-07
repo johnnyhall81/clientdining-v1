@@ -9,6 +9,8 @@ interface SlotPickerProps {
   isAlertActive: (slotId: string) => boolean
   onToggleAlert: (slotId: string) => void
   bookedSlots: Set<string>
+  userAvatarUrl?: string | null
+  userInitials?: string
 }
 
 function toLocalDateKey(isoString: string): string {
@@ -50,6 +52,8 @@ export default function SlotPicker({
   isAlertActive,
   onToggleAlert,
   bookedSlots,
+  userAvatarUrl,
+  userInitials,
 }: SlotPickerProps) {
   const stripRef = useRef<HTMLDivElement>(null)
 
@@ -194,10 +198,20 @@ export default function SlotPicker({
             return (
               <div
                 key={slot.id}
-                className="flex flex-col items-center justify-center h-16 rounded-xl border border-emerald-200 bg-emerald-50 text-center px-2"
+                className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border h-16"
+                style={{ backgroundColor: '#F7FBF9', borderColor: '#D4EDE2' }}
               >
-                <span className="text-base font-light text-emerald-700">{formatTime(slot.start_at)}</span>
-                <span className="text-[11px] font-light text-emerald-600 mt-0.5">Confirmed</span>
+                {userAvatarUrl ? (
+                  <img src={userAvatarUrl} alt="" className="w-[22px] h-[22px] rounded-full object-cover opacity-90 flex-shrink-0" />
+                ) : (
+                  <div className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[9px] font-medium flex-shrink-0" style={{ backgroundColor: '#C8E6D4', color: '#2D7A57' }}>
+                    {userInitials || '?'}
+                  </div>
+                )}
+                <span className="flex flex-col">
+                  <span className="text-sm font-light leading-tight" style={{ color: '#2A6B4A' }}>{formatTime(slot.start_at)}</span>
+                  <span className="text-[11px] font-light leading-tight mt-1" style={{ color: '#7BB89A' }}>Your table</span>
+                </span>
               </div>
             )
           }

@@ -368,6 +368,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 isAlertActive={(id) => alerts.has(id)}
                 onToggleAlert={handleToggleAlert}
                 bookedSlots={bookedSlots}
+                userAvatarUrl={profile?.avatar_url}
+                userInitials={profile?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
               />
             </div>
           </div>
