@@ -116,7 +116,7 @@ export default function CorporateEventsModal({
           </div>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-zinc-600 text-2xl font-light"
+            className="text-zinc-400 hover:text-zinc-500 text-2xl font-light"
           >
             ×
           </button>
@@ -127,7 +127,7 @@ export default function CorporateEventsModal({
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-light text-zinc-700 mb-2">
+                <label className="block text-sm font-light text-zinc-900 mb-2">
                   First name
                 </label>
                 <input
@@ -135,12 +135,12 @@ export default function CorporateEventsModal({
                   required
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                  className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-light text-zinc-700 mb-2">
+                <label className="block text-sm font-light text-zinc-900 mb-2">
                   Last name
                 </label>
                 <input
@@ -148,13 +148,13 @@ export default function CorporateEventsModal({
                   required
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                  className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-light text-zinc-700 mb-2">
+              <label className="block text-sm font-light text-zinc-900 mb-2">
                 Email
               </label>
               <input
@@ -162,7 +162,7 @@ export default function CorporateEventsModal({
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300"
               />
             </div>
 
@@ -174,7 +174,7 @@ export default function CorporateEventsModal({
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300"
               />
             </div>
 
@@ -186,7 +186,7 @@ export default function CorporateEventsModal({
                 type="text"
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300"
               />
             </div>
           </div>
@@ -194,13 +194,13 @@ export default function CorporateEventsModal({
           {/* Event Details */}
           <div className="space-y-4 pt-4 border-t border-zinc-100">
             <div>
-              <label className="block text-sm font-light text-zinc-700 mb-2">
+              <label className="block text-sm font-light text-zinc-900 mb-2">
                 Event type
               </label>
               <select
                 value={formData.eventType}
                 onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
-                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300"
               >
                 <option value="">Select type</option>
                 <option value="business_dinner">Business dinner</option>
@@ -212,15 +212,15 @@ export default function CorporateEventsModal({
             </div>
 
             <div className="relative">
-              <label className="block text-sm font-light text-zinc-700 mb-2">
+              <label className="block text-sm font-light text-zinc-900 mb-2">
                 Preferred date
               </label>
               <button
                 type="button"
                 onClick={() => setShowCalendar(!showCalendar)}
-                className={`w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-left text-sm font-light transition-colors ${
+                className={`w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-left text-sm font-light transition-colors ${
                   formData.eventDate ? 'text-zinc-900' : 'text-zinc-400'
-                } hover:border-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400`}
+                } hover:border-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300`}
               >
                 {formData.eventDate ? format(new Date(formData.eventDate), 'd MMMM yyyy') : 'Select date'}
               </button>
@@ -258,7 +258,7 @@ export default function CorporateEventsModal({
                       nav_button: 'text-zinc-400 hover:text-zinc-900',
                       day_today: 'font-medium',
                       day_outside: 'text-zinc-300',
-                      day_disabled: 'text-zinc-200',
+                      day_disabled: 'text-zinc-300',
                     }}
                   />
                 </div>
@@ -271,18 +271,18 @@ export default function CorporateEventsModal({
                   onChange={(e) => setFormData({ ...formData, flexibleOnDate: e.target.checked })}
                   className="rounded h-4 w-4"
                 />
-                <span className="text-sm font-light text-zinc-600">Flexible on date</span>
+                <span className="text-sm font-light text-zinc-500">Flexible on date</span>
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-light text-zinc-700 mb-2">
+              <label className="block text-sm font-light text-zinc-900 mb-2">
                 Preferred timing
               </label>
               <select
                 value={formData.timing}
                 onChange={(e) => setFormData({ ...formData, timing: e.target.value })}
-                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300"
               >
                 <option value="">Select timing</option>
                 <option value="lunch">Lunch</option>
@@ -293,13 +293,13 @@ export default function CorporateEventsModal({
             </div>
 
             <div>
-              <label className="block text-sm font-light text-zinc-700 mb-2">
+              <label className="block text-sm font-light text-zinc-900 mb-2">
                 Estimated guests
               </label>
               <select
                 value={formData.guestRange}
                 onChange={(e) => setFormData({ ...formData, guestRange: e.target.value })}
-                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+                className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm font-light focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300"
               >
                 <option value="">Select range</option>
                 <option value="8-12">8–12</option>
@@ -310,7 +310,7 @@ export default function CorporateEventsModal({
             </div>
 
             <div>
-              <label className="block text-sm font-light text-zinc-700 mb-2">
+              <label className="block text-sm font-light text-zinc-900 mb-2">
                 Additional details
               </label>
               <textarea
@@ -318,7 +318,7 @@ export default function CorporateEventsModal({
                 value={formData.additionalInfo}
                 onChange={(e) => setFormData({ ...formData, additionalInfo: e.target.value })}
                 placeholder="Any budget guidance, dietary needs, or context we should know?"
-                className="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm font-light resize-none focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400 placeholder:text-zinc-400"
+                className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm font-light resize-none focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-300 placeholder:text-zinc-400"
               />
             </div>
           </div>
@@ -339,7 +339,7 @@ export default function CorporateEventsModal({
             <button
               type="submit"
               disabled={loading || success}
-              className="px-6 py-2.5 text-sm font-light text-zinc-600 hover:text-zinc-900 bg-zinc-50 hover:bg-zinc-100 rounded-lg transition-colors disabled:opacity-50"
+              className="px-6 py-2.5 text-sm font-light text-zinc-500 hover:text-zinc-900 bg-zinc-50 hover:bg-zinc-100 rounded-lg transition-colors disabled:opacity-50"
             >
               {loading ? 'Sending...' : success ? 'Sent' : 'Send enquiry'}
             </button>

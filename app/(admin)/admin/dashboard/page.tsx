@@ -138,7 +138,7 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 text-sm text-zinc-700">
+            <label className="flex items-center gap-2 text-sm text-zinc-900">
               <input
                 type="checkbox"
                 checked={autoRefresh}
@@ -225,12 +225,12 @@ export default function AdminDashboard() {
                         <td className="px-4 py-3 text-sm text-zinc-900">{booking.party_size}</td>
                         <td className="px-4 py-3 text-sm">
                           {booking.slot?.venue?.booking_email && (
-                            <div className="text-zinc-600 text-xs">{booking.slot.venue.booking_email}</div>
+                            <div className="text-zinc-500 text-xs">{booking.slot.venue.booking_email}</div>
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm">
                           {booking.notes ? (
-                            <div className="text-zinc-700 text-xs max-w-xs truncate" title={booking.notes}>
+                            <div className="text-zinc-900 text-xs max-w-xs truncate" title={booking.notes}>
                               {booking.notes}
                             </div>
                           ) : (
@@ -375,12 +375,12 @@ export default function AdminDashboard() {
                     newUsers.map((user) => (
                       <tr key={user.user_id} className="hover:bg-zinc-50">
                         <td className="px-4 py-3 text-sm text-zinc-900">{user.full_name || 'N/A'}</td>
-                        <td className="px-4 py-3 text-sm text-zinc-600">{user.email}</td>
+                        <td className="px-4 py-3 text-sm text-zinc-500">{user.email}</td>
                         <td className="px-4 py-3 text-sm">
                           <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
                             user.diner_tier === 'premium' 
                               ? 'bg-amber-100 text-amber-800' 
-                              : 'bg-zinc-100 text-zinc-800'
+                              : 'bg-zinc-100 text-zinc-900'
                           }`}>
                             {user.diner_tier}
                           </span>
@@ -431,14 +431,14 @@ export default function AdminDashboard() {
                     referrals.map((referral) => (
                       <tr key={referral.user_id} className="hover:bg-zinc-50">
                         <td className="px-4 py-3 text-sm text-zinc-900">{referral.full_name || 'N/A'}</td>
-                        <td className="px-4 py-3 text-sm text-zinc-600">{referral.email}</td>
+                        <td className="px-4 py-3 text-sm text-zinc-500">{referral.email}</td>
                         <td className="px-4 py-3 text-sm text-zinc-900">{referral.referrer?.full_name || 'N/A'}</td>
-                        <td className="px-4 py-3 text-sm text-zinc-600">{referral.referrer?.email}</td>
+                        <td className="px-4 py-3 text-sm text-zinc-500">{referral.referrer?.email}</td>
                         <td className="px-4 py-3 text-sm">
                           <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
                             referral.diner_tier === 'premium' 
                               ? 'bg-amber-100 text-amber-800' 
-                              : 'bg-zinc-100 text-zinc-800'
+                              : 'bg-zinc-100 text-zinc-900'
                           }`}>
                             {referral.diner_tier}
                           </span>

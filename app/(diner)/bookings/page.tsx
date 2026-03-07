@@ -137,7 +137,7 @@ export default function BookingsPage() {
             className={`py-4 px-1 border-b-2 font-light text-sm ${
               activeTab === 'upcoming'
                 ? 'border-zinc-900 text-zinc-900'
-                : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
+                : 'border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-200'
             }`}
           >
             Upcoming
@@ -147,7 +147,7 @@ export default function BookingsPage() {
             className={`py-4 px-1 border-b-2 font-light text-sm ${
               activeTab === 'past'
                 ? 'border-zinc-900 text-zinc-900'
-                : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
+                : 'border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-200'
             }`}
           >
             Past
@@ -157,7 +157,7 @@ export default function BookingsPage() {
             className={`py-4 px-1 border-b-2 font-light text-sm ${
               activeTab === 'cancelled'
                 ? 'border-zinc-900 text-zinc-900'
-                : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
+                : 'border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-200'
             }`}
           >
             Cancelled

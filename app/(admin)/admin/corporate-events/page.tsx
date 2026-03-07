@@ -110,7 +110,7 @@ export default function CorporateEventsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-light text-zinc-900 mb-2">Corporate Event Requests</h1>
-        <p className="text-zinc-600 font-light">Manage corporate event inquiries from members</p>
+        <p className="text-zinc-500 font-light">Manage corporate event inquiries from members</p>
       </div>
 
       <div className="border-b border-zinc-200">
@@ -122,7 +122,7 @@ export default function CorporateEventsPage() {
               className={`py-4 px-1 border-b-2 font-light text-sm capitalize ${
                 filter === status
                   ? 'border-zinc-900 text-zinc-900'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-700'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-900'
               }`}
             >
               {status} ({requests.filter(r => status === 'all' || r.status === status).length})
@@ -142,7 +142,7 @@ export default function CorporateEventsPage() {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-light text-zinc-900">{request.venues.name}</h3>
-                  <p className="text-sm text-zinc-600 font-light">
+                  <p className="text-sm text-zinc-500 font-light">
                     {request.event_nature} • {request.number_of_people} guests
                   </p>
                 </div>
@@ -155,19 +155,19 @@ export default function CorporateEventsPage() {
                 <div>
                   <p className="text-xs text-zinc-500 font-light mb-1">Contact</p>
                   <p className="text-sm text-zinc-900 font-light">{request.first_name} {request.last_name}</p>
-                  <p className="text-sm text-zinc-600 font-light">{request.email}</p>
+                  <p className="text-sm text-zinc-500 font-light">{request.email}</p>
                   {request.phone && (
-                    <p className="text-sm text-zinc-600 font-light">
+                    <p className="text-sm text-zinc-500 font-light">
                       {request.phone}{request.phone_ext ? ` ext. ${request.phone_ext}` : ''}
                     </p>
                   )}
-                  <p className="text-sm text-zinc-600 font-light">{request.company}</p>
+                  <p className="text-sm text-zinc-500 font-light">{request.company}</p>
                 </div>
 
                 <div>
                   <p className="text-xs text-zinc-500 font-light mb-1">Event Details</p>
                   <p className="text-sm text-zinc-900 font-light capitalize">{request.event_type.replace('_', ' ')}</p>
-                  <p className="text-sm text-zinc-600 font-light">
+                  <p className="text-sm text-zinc-500 font-light">
                     {new Date(request.event_date).toLocaleDateString('en-GB', { 
                       weekday: 'short', 
                       day: 'numeric', 
@@ -175,14 +175,14 @@ export default function CorporateEventsPage() {
                       year: 'numeric' 
                     })}
                   </p>
-                  <p className="text-sm text-zinc-600 font-light">{request.start_time} - {request.end_time}</p>
+                  <p className="text-sm text-zinc-500 font-light">{request.start_time} - {request.end_time}</p>
                 </div>
               </div>
 
               {request.additional_info && (
                 <div className="mb-4">
                   <p className="text-xs text-zinc-500 font-light mb-1">Additional Information</p>
-                  <p className="text-sm text-zinc-700 font-light">{request.additional_info}</p>
+                  <p className="text-sm text-zinc-900 font-light">{request.additional_info}</p>
                 </div>
               )}
 
@@ -197,7 +197,7 @@ export default function CorporateEventsPage() {
                     </button>
                     <button
                       onClick={() => updateStatus(request.id, 'declined')}
-                      className="px-4 py-2 bg-white border border-zinc-300 text-zinc-700 rounded-lg hover:bg-zinc-50 text-sm font-light"
+                      className="px-4 py-2 bg-white border border-zinc-200 text-zinc-900 rounded-lg hover:bg-zinc-50 text-sm font-light"
                     >
                       Decline
                     </button>
@@ -213,7 +213,7 @@ export default function CorporateEventsPage() {
                     </button>
                     <button
                       onClick={() => updateStatus(request.id, 'pending')}
-                      className="px-4 py-2 bg-white border border-zinc-300 text-zinc-700 rounded-lg hover:bg-zinc-50 text-sm font-light"
+                      className="px-4 py-2 bg-white border border-zinc-200 text-zinc-900 rounded-lg hover:bg-zinc-50 text-sm font-light"
                     >
                       Back to Pending
                     </button>
@@ -222,7 +222,7 @@ export default function CorporateEventsPage() {
                 {(request.status === 'confirmed' || request.status === 'declined') && (
                   <button
                     onClick={() => updateStatus(request.id, 'pending')}
-                    className="px-4 py-2 bg-white border border-zinc-300 text-zinc-700 rounded-lg hover:bg-zinc-50 text-sm font-light"
+                    className="px-4 py-2 bg-white border border-zinc-200 text-zinc-900 rounded-lg hover:bg-zinc-50 text-sm font-light"
                   >
                     Reopen
                   </button>

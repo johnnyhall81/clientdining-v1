@@ -94,8 +94,8 @@ export default function AlertToggle(props: AlertToggleProps) {
           'h-9 px-5 text-sm rounded-lg whitespace-nowrap transition-colors font-light',
           'focus:outline-none focus-visible:outline-none',
           isLoading ? 'cursor-not-allowed opacity-60' : '',
-          !isActive && 'border border-zinc-300 text-zinc-900 bg-white hover:bg-zinc-50',
-          isActive && 'border border-zinc-300 text-zinc-900 bg-zinc-50 hover:bg-zinc-100',
+          !isActive && 'border border-zinc-200 text-zinc-900 bg-white hover:bg-zinc-50',
+          isActive && 'border border-zinc-200 text-zinc-900 bg-zinc-50 hover:bg-zinc-100',
         ]
           .filter(Boolean)
           .join(' ')}

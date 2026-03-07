@@ -133,7 +133,7 @@ useEffect(() => {
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </span>
                 {mapsUrl && (
-                  <a href={mapsUrl} target="_blank" rel="noopener noreferrer" title="Open in Maps" className="text-zinc-300 hover:text-zinc-600 transition-colors flex-shrink-0">
+                  <a href={mapsUrl} target="_blank" rel="noopener noreferrer" title="Open in Maps" className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
                     <MapIcon />
                   </a>
                 )}
@@ -146,7 +146,7 @@ useEffect(() => {
                 {dateStr} · {timeStr} · {guestStr}
               </span>
               {!isPast && !isCancelled && (
-                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-300 hover:text-zinc-600 transition-colors flex-shrink-0">
+                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
                   <CalendarIcon />
                 </a>
               )}
@@ -200,7 +200,7 @@ useEffect(() => {
                   className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-300 border border-zinc-100 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
                 />
                 <div className="flex items-center justify-end gap-3 mt-1.5">
-                  <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                  <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors">
                     Cancel
                   </button>
                   <button

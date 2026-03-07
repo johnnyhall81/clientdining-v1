@@ -139,8 +139,8 @@ export default function SyncPage() {
 
       {/* How to run */}
       <div className="bg-zinc-50 rounded-lg border p-4">
-        <p className="text-sm font-medium text-zinc-700 mb-2">Run a sync</p>
-        <code className="text-xs text-zinc-600 block">
+        <p className="text-sm font-medium text-zinc-900 mb-2">Run a sync</p>
+        <code className="text-xs text-zinc-500 block">
           npx ts-node scripts/sync-slots.ts
         </code>
         <code className="text-xs text-zinc-500 block mt-1">
@@ -198,7 +198,7 @@ export default function SyncPage() {
                       <span className={`w-12 text-xs font-medium ${p.action === 'add' ? 'text-green-600' : 'text-red-500'}`}>
                         {p.action === 'add' ? '+ add' : '− remove'}
                       </span>
-                      <span className="text-sm text-zinc-700 font-light flex-1">
+                      <span className="text-sm text-zinc-900 font-light flex-1">
                         {formatFullDateTime(p.start_at)}
                       </span>
                       <span className="text-xs text-zinc-400">

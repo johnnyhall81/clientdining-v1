@@ -114,7 +114,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
             <button
               type="button"
               onClick={() => onChange({ ...filters, dateFrom: '', dateTo: '', area: '', partySize: 2, venueId: '' })}
-              className="px-4 text-xs text-zinc-400 hover:text-zinc-600 font-light transition-colors rounded-r-xl"
+              className="px-4 text-xs text-zinc-400 hover:text-zinc-500 font-light transition-colors rounded-r-xl"
             >
               Clear
             </button>
@@ -205,7 +205,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               nav_button: 'text-zinc-400 hover:text-zinc-900',
               day_today: 'font-medium',
               day_outside: 'text-zinc-300',
-              day_disabled: 'text-zinc-200',
+              day_disabled: 'text-zinc-300',
             }}
           />
           <div className="mt-3 pt-3 border-t border-zinc-100 text-center min-h-[24px]">
@@ -233,7 +233,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
           <button
             type="button"
             onClick={() => { onChange({ ...filters, area: '' }); setOpen(null) }}
-            className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-lg transition-colors ${!filters.area ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-600 hover:bg-zinc-50'}`}
+            className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-lg transition-colors ${!filters.area ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:bg-zinc-50'}`}
           >
             All areas
           </button>
@@ -242,7 +242,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               key={area}
               type="button"
               onClick={() => { onChange({ ...filters, area }); setOpen(null) }}
-              className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-lg transition-colors ${filters.area === area ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-600 hover:bg-zinc-50'}`}
+              className={`w-full text-left px-4 py-2.5 text-sm font-light rounded-lg transition-colors ${filters.area === area ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:bg-zinc-50'}`}
             >
               {area}
             </button>
@@ -259,7 +259,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               type="button"
               onClick={() => onChange({ ...filters, partySize: Math.max(2, filters.partySize - 1) })}
               disabled={filters.partySize <= 2}
-              className="w-9 h-9 rounded-full border border-zinc-300 flex items-center justify-center text-zinc-700 hover:border-zinc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-900 hover:border-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               −
             </button>
@@ -268,7 +268,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               type="button"
               onClick={() => onChange({ ...filters, partySize: Math.min(10, filters.partySize + 1) })}
               disabled={filters.partySize >= 10}
-              className="w-9 h-9 rounded-full border border-zinc-300 flex items-center justify-center text-zinc-700 hover:border-zinc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-900 hover:border-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               +
             </button>

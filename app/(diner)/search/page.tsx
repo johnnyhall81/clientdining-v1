@@ -547,7 +547,7 @@ const handleCancel = async () => {
                               onClick={() => handleToggleAlert(slot.id)}
                               className={[
                                 'inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-light border transition-colors',
-                                hasAlert ? 'bg-zinc-50 border-zinc-300 text-zinc-500' : 'bg-zinc-50 border-zinc-200 text-zinc-300 hover:border-zinc-300',
+                                hasAlert ? 'bg-zinc-50 border-zinc-200 text-zinc-500' : 'bg-zinc-50 border-zinc-200 text-zinc-300 hover:border-zinc-200',
                               ].join(' ')}
                               style={{minHeight: '44px'}}
                             >
@@ -562,7 +562,7 @@ const handleCancel = async () => {
                             key={slot.id}
                             onClick={() => handleBook(slot.id)}
                             disabled={bookingSlotId === slot.id}
-                            className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light border border-zinc-200 bg-white text-zinc-800 hover:border-zinc-400 hover:bg-zinc-50 transition-colors disabled:opacity-40"
+                            className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light border border-zinc-200 bg-white text-zinc-900 hover:border-zinc-200 hover:bg-zinc-50 transition-colors disabled:opacity-40"
                             style={{minHeight: '44px'}}
                           >
                             {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
@@ -571,7 +571,7 @@ const handleCancel = async () => {
                       })}
 
                       {slots.length > MAX_VISIBLE && (
-                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light text-zinc-400 border border-zinc-100 hover:border-zinc-200 hover:text-zinc-600 transition-colors" style={{minHeight: '44px'}}>
+                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light text-zinc-400 border border-zinc-100 hover:border-zinc-200 hover:text-zinc-500 transition-colors" style={{minHeight: '44px'}}>
                           +{slots.length - MAX_VISIBLE} more
                         </Link>
                       )}
@@ -601,7 +601,7 @@ const handleCancel = async () => {
           '_blank'
         )
       }}
-      className="text-zinc-500 hover:text-zinc-800 underline underline-offset-4 decoration-zinc-300 cursor-pointer transition-colors"
+      className="text-zinc-500 hover:text-zinc-900 underline underline-offset-4 decoration-zinc-300 cursor-pointer transition-colors"
     >
       We can check additional availability.
     </a>

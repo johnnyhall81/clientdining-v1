@@ -86,7 +86,7 @@ export default function NominationCard({ userId, canNominate }: Props) {
           <button
             type="submit"
             disabled={loading}
-            className="px-4 text-xs text-zinc-400 hover:text-zinc-600 font-light transition-colors disabled:opacity-40 whitespace-nowrap"
+            className="px-4 text-xs text-zinc-400 hover:text-zinc-500 font-light transition-colors disabled:opacity-40 whitespace-nowrap"
           >
             {loading ? 'Sending...' : 'Invite'}
           </button>

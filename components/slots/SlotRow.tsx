@@ -72,7 +72,7 @@ export default function SlotRow({
                   />
                 ) : (
                   <div className="w-4 h-4 rounded-full bg-zinc-300 flex items-center justify-center">
-                    <span className="text-[8px] font-medium text-zinc-600">{initials}</span>
+                    <span className="text-[8px] font-medium text-zinc-500">{initials}</span>
                   </div>
                 )}
                 <span className="text-xs font-light text-zinc-400">
@@ -84,7 +84,7 @@ export default function SlotRow({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onBook(slot.id) }}
-              className="h-9 px-5 text-sm font-light rounded-lg whitespace-nowrap bg-white text-zinc-900 border border-zinc-300 hover:bg-zinc-50 transition-colors"
+              className="h-9 px-5 text-sm font-light rounded-lg whitespace-nowrap bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50 transition-colors"
             >
               Book
             </button>

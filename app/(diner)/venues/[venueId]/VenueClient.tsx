@@ -284,7 +284,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={e => e.stopPropagation()}
-                      className="text-zinc-300 hover:text-zinc-600 transition-colors"
+                      className="text-zinc-300 hover:text-zinc-500 transition-colors"
                     >
                       <MapIcon />
                     </a>
@@ -322,20 +322,20 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                         return (
                           <div className="grid grid-cols-[140px_1fr] gap-4 text-sm leading-relaxed mb-2">
                             <div className="text-zinc-400 font-light">{label}</div>
-                            <div className="text-zinc-600 font-light">{value}</div>
+                            <div className="text-zinc-500 font-light">{value}</div>
                           </div>
                         )
                       }
 
                       // Summary paragraph
                       return (
-                        <p className="text-sm text-zinc-600 font-light leading-relaxed mb-4">
+                        <p className="text-sm text-zinc-500 font-light leading-relaxed mb-4">
                           {children}
                         </p>
                       )
                     },
                     strong: ({ children }) => (
-                      <strong className="font-light text-zinc-600">{children}</strong>
+                      <strong className="font-light text-zinc-500">{children}</strong>
                     ),
                   }}
                 >
@@ -348,7 +348,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                     <div className="text-zinc-400 font-light">Private rooms and events</div>
                     <button
                       onClick={() => setShowCorporateEventsModal(true)}
-                      className="text-zinc-600 font-light text-left hover:text-zinc-900 transition-colors group"
+                      className="text-zinc-500 font-light text-left hover:text-zinc-900 transition-colors group"
                     >
                       Enquire <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
                     </button>

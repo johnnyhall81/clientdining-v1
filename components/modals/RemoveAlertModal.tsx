@@ -47,7 +47,7 @@ export default function RemoveAlertModal({
           <button
             type="button"
             onClick={onConfirm}
-            className="flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-300 text-zinc-500 hover:bg-zinc-50 transition-colors"
+            className="flex-1 h-10 px-6 text-sm font-light rounded-lg whitespace-nowrap bg-white border border-zinc-200 text-zinc-500 hover:bg-zinc-50 transition-colors"
           >
             Remove alert
           </button>

@@ -92,12 +92,16 @@ export default function TopNav() {
     // Get active and notified alerts count — future slots only
     const { data: alerts } = await supabase
       .from('slot_alerts')
-      .select('id, slots!inner(start_at)')
+      .select('id, status, slots(start_at)')
       .eq('diner_user_id', user.id)
       .in('status', ['active', 'notified'])
-      .gt('slots.start_at', new Date().toISOString())
 
-    setAlertCount(alerts?.length || 0)
+    const futureAlerts = (alerts || []).filter(a => {
+      const slot = Array.isArray(a.slots) ? a.slots[0] : a.slots
+      return slot?.start_at && new Date(slot.start_at) > new Date()
+    })
+
+    setAlertCount(futureAlerts.length)
   }
 
   const handleSignOut = async () => {
@@ -207,7 +211,7 @@ export default function TopNav() {
                   {!isAdmin && (
                     <Link
                       href="/account"
-                      className="block px-4 py-2 text-sm font-light text-zinc-700 hover:bg-zinc-50 rounded-t-lg"
+                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
                     >
                       Account
                     </Link>
@@ -215,14 +219,14 @@ export default function TopNav() {
                   {isAdmin && (
                     <Link
                       href="/admin"
-                      className="block px-4 py-2 text-sm font-light text-zinc-700 hover:bg-zinc-50 rounded-t-lg"
+                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
                     >
                       Admin Dashboard
                     </Link>
                   )}
                   <button
                     onClick={handleSignOut}
-                    className="w-full text-left px-4 py-2 text-sm font-light text-zinc-700 hover:bg-zinc-50 rounded-b-lg"
+                    className="w-full text-left px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-b-lg"
                   >
                     Sign Out
                   </button>
@@ -236,7 +240,7 @@ export default function TopNav() {
                 className="text-zinc-500 hover:text-zinc-900 transition-colors"
                 aria-label="Sign in"
               >
-                <div className="w-8 h-8 rounded-full border border-zinc-300 flex items-center justify-center hover:border-zinc-500 transition-colors">
+                <div className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center hover:border-zinc-200 transition-colors">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                   </svg>

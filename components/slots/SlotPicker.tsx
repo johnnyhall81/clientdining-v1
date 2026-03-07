@@ -139,8 +139,8 @@ export default function SlotPicker({
               className={[
                 'px-4 py-1.5 rounded-full text-sm font-light transition-all border',
                 isActive
-                  ? 'bg-zinc-100 border-zinc-300 text-zinc-800'
-                  : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-400',
+                  ? 'bg-zinc-100 border-zinc-200 text-zinc-900'
+                  : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-200',
               ].join(' ')}
             >
               {label}
@@ -168,8 +168,8 @@ export default function SlotPicker({
               className={[
                 'flex-shrink-0 flex flex-col items-center justify-center w-14 h-16 rounded-xl transition-all text-center border',
                 isActive
-                  ? 'bg-zinc-100 border-zinc-300 text-zinc-900'
-                  : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-400',
+                  ? 'bg-zinc-100 border-zinc-200 text-zinc-900'
+                  : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-200',
               ].join(' ')}
             >
               <span className="text-[11px] font-light leading-none mb-1 opacity-70">{short}</span>
@@ -207,7 +207,7 @@ export default function SlotPicker({
               <button
                 key={slot.id}
                 onClick={() => onBook(slot.id)}
-                className="flex flex-col items-center justify-center h-16 rounded-xl border border-zinc-200 bg-white hover:border-zinc-400 hover:bg-zinc-50 transition-all text-center px-2"
+                className="flex flex-col items-center justify-center h-16 rounded-xl border border-zinc-200 bg-white hover:border-zinc-200 hover:bg-zinc-50 transition-all text-center px-2"
               >
                 <span className="text-base font-light text-zinc-900">{formatTime(slot.start_at)}</span>
                 <span className="text-[11px] font-light text-zinc-400 mt-0.5">{partyLabel}</span>
@@ -223,8 +223,8 @@ export default function SlotPicker({
               className={[
                 'flex flex-col items-center justify-center h-16 rounded-xl border transition-all text-center px-2',
                 isAlertActive(slot.id)
-                  ? 'border-zinc-300 bg-zinc-50'
-                  : 'border-zinc-100 bg-zinc-50 hover:border-zinc-300',
+                  ? 'border-zinc-200 bg-zinc-50'
+                  : 'border-zinc-100 bg-zinc-50 hover:border-zinc-200',
               ].join(' ')}
             >
               <span className="text-base font-light text-zinc-300">{formatTime(slot.start_at)}</span>

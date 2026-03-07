@@ -78,7 +78,7 @@ export default function PartySizeModal({
             <button
               type="button"
               onClick={onClose}
-              className="absolute top-5 right-5 text-zinc-300 hover:text-zinc-600 transition-colors"
+              className="absolute top-5 right-5 text-zinc-300 hover:text-zinc-500 transition-colors"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -99,14 +99,14 @@ export default function PartySizeModal({
                   type="button"
                   onClick={() => setPartySize(p => Math.max(minSize, p - 1))}
                   disabled={partySize <= minSize}
-                  className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-400 hover:text-zinc-800 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-lg"
+                  className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-200 hover:text-zinc-900 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-lg"
                 >−</button>
                 <span className="text-2xl font-light text-zinc-900 tabular-nums w-6 text-center">{partySize}</span>
                 <button
                   type="button"
                   onClick={() => setPartySize(p => Math.min(maxSize, p + 1))}
                   disabled={partySize >= maxSize}
-                  className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-400 hover:text-zinc-800 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-lg"
+                  className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-200 hover:text-zinc-900 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-lg"
                 >+</button>
               </div>
             </div>
@@ -171,7 +171,7 @@ export default function PartySizeModal({
           {/* CTA */}
           <div className="px-7 pb-7">
             {error ? (
-              <button type="button" onClick={onClose} className="w-full h-12 text-sm font-light rounded-xl bg-zinc-100 text-zinc-600 hover:bg-zinc-200 transition-colors">
+              <button type="button" onClick={onClose} className="w-full h-12 text-sm font-light rounded-xl bg-zinc-100 text-zinc-500 hover:bg-zinc-200 transition-colors">
                 Close
               </button>
             ) : (
@@ -181,7 +181,7 @@ export default function PartySizeModal({
                   disabled={isSubmitting}
                   className={[
                     'w-full h-12 text-sm font-medium rounded-xl transition-colors',
-                    isSubmitting ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed' : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200',
+                    isSubmitting ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed' : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200',
                   ].join(' ')}
                 >
                   {isSubmitting ? 'Confirming…' : 'Confirm table'}
