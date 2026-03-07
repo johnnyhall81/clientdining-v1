@@ -264,7 +264,7 @@ export default function AlertsPage() {
 
                   <div className="flex flex-col md:flex-row">
                     {/* Wide landscape image */}
-                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-60 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-60 md:min-h-[220px] aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
                       {alert.venue.image_hero ? (
                         <Image
                           src={alert.venue.image_hero}
