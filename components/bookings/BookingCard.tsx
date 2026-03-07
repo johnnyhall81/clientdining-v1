@@ -187,7 +187,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             {booking.notes && (
               <div>
                 <p className="text-sm font-light text-zinc-400 mb-1.5">
-                  Restaurant note <span className="text-zinc-300">· Sent at time of booking</span>
+                  Note to venue <span className="text-zinc-300">· Sent at time of booking</span>
                 </p>
                 <p className="text-sm font-light text-zinc-500 break-all">{booking.notes}</p>
               </div>
@@ -198,7 +198,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           {/* Zone 2 — Private note (CRM field) */}
           <div>
             <p className="text-sm font-light text-zinc-400 mb-1.5">
-              Private note <span className="text-zinc-300">· Visible only to you</span>
+              Note to self <span className="text-zinc-300">· Visible only to you</span>
             </p>
             {notesEditing ? (
               <div>
