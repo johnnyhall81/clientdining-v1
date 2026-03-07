@@ -100,7 +100,9 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   // Host is first named guest, falling back to booker profile name
   const hostDisplayName = guestNames[0] || bookerName
   const namedGuests = guestNames.length > 0 ? guestNames : null
-  const remainder = partySize - guestNames.length
+  // When names given: remainder = party - named count
+  // When no names: host pill accounts for 1, so remainder = party - 1
+  const remainder = namedGuests ? partySize - guestNames.length : partySize - 1
 
   return (
     <div className="bg-white border border-zinc-200 rounded-lg overflow-hidden relative">
@@ -157,7 +159,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
             </Link>
             {venue.address && (
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-light text-zinc-500">
+                <span className="text-sm font-light text-zinc-400">
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </span>
                 <a
