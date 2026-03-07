@@ -107,7 +107,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
         <div className="flex-1 p-6 pr-10 flex flex-col gap-4 md:h-[340px]">
 
           {/* Venue name + address — matches alerts card */}
-          <div className="space-y-0.5">
+          <div className="space-y-1.5">
             <Link href={`/venues/${venue.id}`} prefetch={true}>
               <h3 className="text-lg font-light text-zinc-900 hover:opacity-70 transition-opacity">{venue.name}</h3>
             </Link>
