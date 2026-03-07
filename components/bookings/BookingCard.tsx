@@ -21,18 +21,6 @@ const MapIcon = () => (
   </svg>
 )
 
-const PencilIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
-  </svg>
-)
-
-const SaveIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-  </svg>
-)
-
 
 type Tab = 'guests' | 'notes' | 'contact'
 
@@ -215,7 +203,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
 
             {/* Notes — private/internal only */}
             {activeTab === 'notes' && (
-              <div className="flex flex-col flex-1 min-h-0 relative">
+              <div className="flex flex-col flex-1 min-h-0">
                 {notesEditing ? (
                   <>
                     <textarea
@@ -223,34 +211,43 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                       onChange={e => setNotesEditValue(e.target.value)}
                       placeholder="Add a private note…"
                       autoFocus
-                      className="flex-1 w-full text-sm font-light text-zinc-500 placeholder:text-zinc-400 bg-transparent border border-zinc-300 rounded px-3 py-2.5 pr-8 focus:outline-none focus:border-zinc-400 resize-none overflow-y-auto"
+                      className="flex-1 w-full text-sm font-light text-zinc-500 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2.5 focus:outline-none focus:border-zinc-300 resize-none overflow-y-auto"
                     />
-                    <button
-                      type="button"
-                      onClick={handleSaveNotes}
-                      disabled={notesSaving}
-                      className="absolute top-2 right-2 text-zinc-400 hover:text-zinc-700 transition-colors disabled:opacity-40"
-                      title="Save"
-                    >
-                      <SaveIcon />
-                    </button>
+                    <div className="flex justify-end gap-3 pt-2 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => { setNotesEditValue(booking.private_notes || ''); setNotesEditing(false) }}
+                        className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSaveNotes}
+                        disabled={notesSaving}
+                        className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                      >
+                        {notesSaving ? 'Saving…' : 'Save'}
+                      </button>
+                    </div>
                   </>
                 ) : (
-                  <div
-                    className="flex-1 relative border border-zinc-200 rounded px-3 py-2.5 pr-8 overflow-y-auto cursor-default"
-                  >
-                    <p className="text-sm font-light text-zinc-500 whitespace-pre-wrap break-all">
-                      {notesEditValue || <span className="text-zinc-400">No note added</span>}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setNotesEditing(true)}
-                      className="absolute top-2 right-2 text-zinc-300 hover:text-zinc-500 transition-colors"
-                      title="Edit"
-                    >
-                      <PencilIcon />
-                    </button>
-                  </div>
+                  <>
+                    <div className="flex-1 overflow-y-auto">
+                      <p className="text-sm font-light text-zinc-500 whitespace-pre-wrap break-all">
+                        {notesEditValue || <span className="text-zinc-400">No note added</span>}
+                      </p>
+                    </div>
+                    <div className="flex justify-end pt-2 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setNotesEditing(true)}
+                        className="text-xs font-light border border-zinc-200 text-zinc-500 px-3 py-1.5 rounded hover:border-zinc-300 hover:text-zinc-900 transition-colors"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
             )}
