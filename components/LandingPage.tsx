@@ -149,7 +149,7 @@ if (!authChecked) return null
 
     {/* Body */}
     <p
-      className="text-base font-light text-zinc-600 mx-auto"
+      className="text-base font-light text-zinc-500 mx-auto"
       style={{
         maxWidth: '560px',
         lineHeight: 1.85
@@ -184,7 +184,7 @@ if (!authChecked) return null
       letterSpacing: '-0.01em'
     }}
   >
-    Latest London venues
+    New to the network
   </p>
  
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
@@ -240,9 +240,9 @@ if (!authChecked) return null
         <div className="mt-10 pb-16 flex justify-center">
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-colors duration-300"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-200 hover:bg-zinc-50 transition-colors duration-300"
           >
-            Explore
+            Explore all venues
           </Link>
         </div>
       </section>
