@@ -35,6 +35,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const [alerts, setAlerts] = useState<Set<string>>(new Set())
   const [bookingSlot, setBookingSlot] = useState<string | null>(null)
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set())
+  const [showMap, setShowMap] = useState(false)
   const [bookedPartySizes, setBookedPartySizes] = useState<Map<string, number>>(new Map())
   const [showPartySizeModal, setShowPartySizeModal] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
@@ -276,19 +277,41 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               </div>
 
               {venue.address && (
-                <div className="flex items-center gap-1.5">
-                  <p className="text-xs text-zinc-500 font-light">
-                    {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                  </p>
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={e => e.stopPropagation()}
-                    className="text-zinc-400 hover:text-zinc-500 transition-colors"
-                  >
-                    <MapIcon />
-                  </a>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs text-zinc-500 font-light">
+                      {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                    </p>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      className="text-zinc-400 hover:text-zinc-500 transition-colors"
+                    >
+                      <MapIcon />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setShowMap(v => !v)}
+                      className="text-xs font-light text-zinc-400 hover:text-zinc-600 transition-colors"
+                    >
+                      {showMap ? 'Hide map' : 'Show map'}
+                    </button>
+                  </div>
+                  {showMap && (
+                    <div className="rounded-lg overflow-hidden border border-zinc-100 w-full" style={{ height: 260 }}>
+                      <iframe
+                        title="Venue map"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        loading="lazy"
+                        allowFullScreen
+                        src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
