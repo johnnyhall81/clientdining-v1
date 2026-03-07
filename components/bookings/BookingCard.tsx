@@ -97,21 +97,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
           {venue.image_hero ? (
             <>
               <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 40vw" quality={60} className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
-              {(venue as any).logo_url ? (
-                <img
-                  src={(venue as any).logo_url}
-                  alt={venue.name}
-                  className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
-                />
-              ) : (
-                <p
-                  className="absolute inset-0 flex items-center justify-center z-10 text-white text-2xl tracking-tight text-center px-6 italic"
-                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                >
-                  {venue.name}
-                </p>
-              )}
+              <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 40vw" quality={60} className="object-cover" />
             </>
           ) : (
             <div className="w-full h-full bg-zinc-100" />
@@ -185,26 +171,26 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                     {namedGuests.map((name, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200 text-sm font-light text-zinc-500"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-zinc-200 text-sm font-light text-zinc-500"
                       >
                         {name}
                         {i === 0 && <span className="text-xs text-zinc-400">Host</span>}
                       </span>
                     ))}
                     {remainder > 0 && (
-                      <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-zinc-200 text-sm font-light text-zinc-400">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-zinc-200 text-sm font-light text-zinc-400">
                         +{remainder}
                       </span>
                     )}
                   </>
                 ) : (
                   <>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200 text-sm font-light text-zinc-500">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-zinc-200 text-sm font-light text-zinc-500">
                       {hostDisplayName}
                       <span className="text-xs text-zinc-400">Host</span>
                     </span>
                     {remainder > 0 && (
-                      <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-zinc-200 text-sm font-light text-zinc-400">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-zinc-200 text-sm font-light text-zinc-400">
                         +{remainder}
                       </span>
                     )}
