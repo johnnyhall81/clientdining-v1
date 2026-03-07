@@ -203,7 +203,9 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
             {activeTab === 'venuenote' && (
               <div className="flex-1 min-h-0 overflow-y-auto">
                 <p className="text-sm font-light text-zinc-500 whitespace-pre-wrap break-all">
-                  {booking.notes || <span className="text-zinc-400">No note was sent with this booking</span>}
+                  {booking.notes || (
+                    <span className="text-zinc-400">No note was sent with this booking. If you have dietary requirements, allergies or special requests, please contact the venue directly via the Contact tab.</span>
+                  )}
                 </p>
               </div>
             )}
