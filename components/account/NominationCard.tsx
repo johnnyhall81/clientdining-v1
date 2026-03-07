@@ -65,52 +65,53 @@ export default function NominationCard({ userId, canNominate }: Props) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-light text-zinc-900">Introduce</h1>
-      </div>
+      <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-4">Introduce a colleague</p>
+      <p className="text-sm font-light text-zinc-400 mb-6 leading-relaxed">
+        Invite a professional colleague to apply for membership.
+      </p>
 
       {/* Invite bar */}
       <form onSubmit={handleSubmit}>
-        <div className="flex items-stretch bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="flex-1 px-5 py-4">
+        <div className="flex items-stretch bg-white border border-zinc-100 rounded-2xl overflow-hidden">
+          <div className="flex-1 px-6 py-4">
             <input
               type="email"
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full text-sm font-light text-zinc-900 placeholder-zinc-400 bg-transparent outline-none"
+              className="w-full text-sm font-light text-zinc-900 placeholder-zinc-300 bg-transparent outline-none"
               placeholder="colleague@company.com"
             />
           </div>
-          <div className="w-px bg-zinc-200 my-3" />
+          <div className="w-px bg-zinc-100 my-3" />
           <button
             type="submit"
             disabled={loading}
-            className="px-4 text-xs text-zinc-400 hover:text-zinc-500 font-light transition-colors disabled:opacity-40 whitespace-nowrap"
+            className="px-5 text-xs text-zinc-400 hover:text-zinc-900 font-light transition-colors disabled:opacity-40 whitespace-nowrap"
           >
-            {loading ? 'Sending...' : 'Invite'}
+            {loading ? 'Sending…' : 'Send invite'}
           </button>
         </div>
-        {error && <p className="text-sm text-red-600 font-light mt-2">{error}</p>}
-        {success && <p className="text-sm text-zinc-500 font-light mt-2">{success}</p>}
+        {error && <p className="text-sm text-red-500 font-light mt-3">{error}</p>}
+        {success && <p className="text-sm text-zinc-400 font-light mt-3">{success}</p>}
       </form>
 
-      {/* Sent list — plain, no card wrapper */}
+      {/* Sent list */}
       {nominations.length > 0 && (
-        <div className="mt-8">
-          <p className="text-xs font-light text-zinc-400 mb-3">Sent</p>
+        <div className="mt-10">
+          <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-4">Sent</p>
           <div>
             {nominations.map((nom) => (
-              <div key={nom.id} className="flex items-center justify-between py-3 border-b border-zinc-200 last:border-b-0">
+              <div key={nom.id} className="flex items-center justify-between py-3.5 border-b border-zinc-100 last:border-b-0">
                 <div>
                   <p className="text-sm font-light text-zinc-900">
                     {nom.nominee_name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
                   </p>
-                  <p className="text-xs font-light text-zinc-400">
+                  <p className="text-xs font-light text-zinc-400 mt-0.5">
                     {nom.nominee_email}{nom.nominee_company ? ` · ${nom.nominee_company}` : ''}
                   </p>
                 </div>
-                <span className="text-xs text-zinc-400 font-light">
+                <span className="text-xs text-zinc-300 font-light">
                   {new Date(nom.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                 </span>
               </div>

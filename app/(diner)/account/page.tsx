@@ -52,45 +52,42 @@ export default function AccountPage() {
     : null
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-light text-zinc-900">Account</h1>
-      </div>
+    <div className="max-w-2xl space-y-12">
+      <h1 className="text-4xl font-light text-zinc-900">Account</h1>
 
-      {/* Profile card — no heading, more breathing room */}
-      <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-8">
-        <div className="flex items-center gap-8">
-          {/* Avatar */}
+      {/* Membership card */}
+      <div className="bg-white rounded-2xl border border-zinc-100 p-8">
+        <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-6">Membership</p>
+        <div className="flex items-center gap-6">
           {profile.avatar_url ? (
-            <div className="relative w-16 h-16 flex-shrink-0">
+            <div className="relative w-14 h-14 flex-shrink-0">
               <Image
                 src={profile.avatar_url}
                 alt={displayName || 'Profile'}
                 fill
-                sizes="64px"
+                sizes="56px"
                 quality={70}
                 className="rounded-full object-cover"
               />
             </div>
           ) : (
-            <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center text-xl font-light text-zinc-500 flex-shrink-0">
+            <div className="w-14 h-14 rounded-full bg-zinc-100 flex items-center justify-center text-lg font-light text-zinc-400 flex-shrink-0">
               {(displayName || profile.email)?.charAt(0).toUpperCase()}
             </div>
           )}
 
-          {/* Details */}
-          <div className="flex-1 space-y-2">
+          <div className="flex-1">
             {displayName && (
-              <p className="text-zinc-900 font-light">{displayName}</p>
+              <p className="text-zinc-900 font-light mb-1">{displayName}</p>
             )}
-            <p className="text-sm font-light text-zinc-500">{profile.email}</p>
-            <p className="text-sm font-light text-zinc-400">Member since {memberSince}</p>
+            <p className="text-sm font-light text-zinc-400">{profile.email}</p>
+            <p className="text-xs font-light text-zinc-300 mt-1">Member since {memberSince}</p>
           </div>
         </div>
       </div>
 
       {/* Introduce */}
-      <div className="pt-8">
+      <div>
         <NominationCard userId={user!.id} canNominate={profile.can_nominate || false} />
       </div>
     </div>
