@@ -152,6 +152,25 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
               </div>
             )}
 
+            {/* Contact */}
+            {(venue.phone || venue.booking_email) && (
+              <p className="text-sm font-light text-zinc-400 flex flex-wrap items-baseline">
+                <span>Contact</span>
+                {venue.phone && (
+                  <>
+                    <span className="mx-1.5 text-zinc-300">·</span>
+                    <a href={`tel:${venue.phone}`} className="text-zinc-500 hover:text-zinc-900 transition-colors">{venue.phone}</a>
+                  </>
+                )}
+                {venue.booking_email && (
+                  <>
+                    <span className="mx-1.5 text-zinc-300">·</span>
+                    <a href={`mailto:${venue.booking_email}`} className="text-zinc-500 hover:text-zinc-900 transition-colors">{venue.booking_email}</a>
+                  </>
+                )}
+              </p>
+            )}
+
             {/* Date · time · host · guests */}
             <div className="flex items-center gap-1.5">
               <span className="text-sm font-light text-zinc-500">
@@ -169,6 +188,8 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
               {booking.notes && (
                 <p className="text-sm font-light">
                   <span className="text-zinc-400">Restaurant note</span>
+                  <span className="text-zinc-300 mx-1.5">·</span>
+                  <span className="text-zinc-400">Sent at time of booking</span>
                   <span className="text-zinc-300 mx-1.5">·</span>
                   <span className="text-zinc-500 break-all">{booking.notes}</span>
                 </p>
