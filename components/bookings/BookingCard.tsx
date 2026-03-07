@@ -20,20 +20,13 @@ const PencilIcon = () => (
   </svg>
 )
 
-type Tab = 'booking' | 'guests' | 'notes' | 'contact'
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'booking', label: 'Booking' },
-  { id: 'guests', label: 'Guests' },
-  { id: 'notes', label: 'Notes' },
-  { id: 'contact', label: 'Contact' },
-]
+type Tab = 'guests' | 'notes'
 
 export default function BookingCard({ booking, venue, slot, onCancel }: BookingCardProps) {
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
-  const [activeTab, setActiveTab] = useState<Tab>('booking')
+  const [activeTab, setActiveTab] = useState<Tab>('guests')
   const [notesEditing, setNotesEditing] = useState(false)
   const [savedNotes, setSavedNotes] = useState(booking.private_notes || '')
   const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
@@ -96,12 +89,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const dateStr = formatSlotDate(slot.start_at)
   const timeStr = formatSlotTime(slot.start_at)
   const hostName = booking.guest_names?.[0] || null
-  const additionalGuests = booking.guest_names?.slice(1) || []
   const partySize = booking.party_size || 1
-
-  const rowCls = 'flex flex-col gap-0.5'
-  const labelCls = 'text-xs font-light text-zinc-400'
-  const valueCls = 'text-sm font-light text-zinc-500'
 
   return (
     <div className="bg-white border border-zinc-200 rounded-lg overflow-hidden relative">
@@ -134,72 +122,84 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         {/* Details */}
         <div className="flex-1 px-7 py-6 pr-10 flex flex-col gap-4 min-h-[340px]">
 
-          {/* Venue name — always visible */}
-          <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity inline-block">
-            <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
-          </Link>
+          {/* ── Persistent header ── */}
+          <div className="flex flex-col gap-1">
 
-          {/* Tab bar */}
-          <div className="flex items-center border-b border-zinc-100">
-            {TABS.map(tab => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative mr-5 pb-2.5 text-sm font-light transition-colors ${
-                  activeTab === tab.id ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-600'
-                }`}
-              >
-                {tab.label}
-                {activeTab === tab.id && (
-                  <span className="absolute bottom-0 left-0 right-0 h-px bg-zinc-900" />
+            {/* Venue name */}
+            <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity inline-block">
+              <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
+            </Link>
+
+            {/* Date · time · party size */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-light text-zinc-500">
+                {dateStr} · {timeStr} · {partySize} {partySize === 1 ? 'guest' : 'guests'}
+                {hostName ? ` · ${hostName}` : ''}
+              </span>
+              {!isPast && !isCancelled && (
+                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                  </svg>
+                </a>
+              )}
+            </div>
+
+            {/* Contact — always visible utility row */}
+            {(venue.address || venue.phone || venue.booking_email) && (
+              <p className="text-sm font-light text-zinc-400 flex flex-wrap items-baseline gap-x-0">
+                {venue.address && (
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, ${venue.postcode || ''} London`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-zinc-600 transition-colors"
+                  >
+                    {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                  </a>
                 )}
-              </button>
-            ))}
+                {venue.address && venue.phone && <span className="mx-1.5 text-zinc-300">·</span>}
+                {venue.phone && (
+                  <a href={`tel:${venue.phone}`} className="hover:text-zinc-600 transition-colors">{venue.phone}</a>
+                )}
+                {venue.phone && venue.booking_email && <span className="mx-1.5 text-zinc-300">·</span>}
+                {venue.booking_email && (
+                  <a href={`mailto:${venue.booking_email}`} className="hover:text-zinc-600 transition-colors">{venue.booking_email}</a>
+                )}
+              </p>
+            )}
           </div>
 
-          {/* Tab content */}
-          <div className="flex-1">
+          {/* ── Tabbed secondary detail ── */}
+          <div className="flex flex-col gap-3 flex-1">
 
-            {/* Booking */}
-            {activeTab === 'booking' && (
-              <div className="flex flex-col gap-3">
-                <div className={rowCls}>
-                  <span className={labelCls}>Venue</span>
-                  <span className={valueCls}>{venue.name}</span>
-                </div>
-                <div className={rowCls}>
-                  <span className={labelCls}>Date</span>
-                  <span className={valueCls}>{dateStr}</span>
-                </div>
-                <div className={rowCls}>
-                  <span className={labelCls}>Time</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className={valueCls}>{timeStr}</span>
-                    {!isPast && !isCancelled && (
-                      <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <div className={rowCls}>
-                  <span className={labelCls}>Guests</span>
-                  <span className={valueCls}>{partySize} {partySize === 1 ? 'guest' : 'guests'}</span>
-                </div>
-              </div>
-            )}
+            {/* Tab bar */}
+            <div className="flex items-center border-b border-zinc-100">
+              {(['guests', 'notes'] as Tab[]).map(tab => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveTab(tab)}
+                  className={`relative mr-5 pb-2.5 text-sm font-light capitalize transition-colors ${
+                    activeTab === tab ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-600'
+                  }`}
+                >
+                  {tab}
+                  {activeTab === tab && (
+                    <span className="absolute bottom-0 left-0 right-0 h-px bg-zinc-900" />
+                  )}
+                </button>
+              ))}
+            </div>
 
             {/* Guests */}
             {activeTab === 'guests' && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5">
                 {booking.guest_names && booking.guest_names.length > 0 ? (
                   booking.guest_names.map((name, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <span className={`${valueCls} flex-1`}>{name}</span>
-                      {i === 0 && <span className="text-xs font-light text-zinc-400">Host</span>}
+                    <div key={i} className="flex items-baseline justify-between">
+                      <span className="text-sm font-light text-zinc-500">{name}</span>
+                      {i === 0 && <span className="text-xs font-light text-zinc-400 ml-3">Host</span>}
                     </div>
                   ))
                 ) : (
@@ -214,11 +214,11 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
                 {/* Note to venue */}
                 <div>
-                  <p className={`${labelCls} mb-1.5`}>Note to venue</p>
+                  <p className="text-xs font-light text-zinc-400 mb-1.5">Sent to venue</p>
                   <div className="relative">
                     <div
                       ref={venueNoteRef}
-                      className={`${valueCls} break-all overflow-y-scroll`}
+                      className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                       style={{ maxHeight: '7em', lineHeight: '1.4em', scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
                     >
                       {booking.notes || <span className="text-zinc-400">No note sent with this booking</span>}
@@ -229,10 +229,10 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                   </div>
                 </div>
 
-                {/* Note to self */}
+                {/* Internal note */}
                 <div>
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <p className={labelCls}>Note to self</p>
+                    <p className="text-xs font-light text-zinc-400">Internal note</p>
                     {!notesEditing && (
                       <button type="button" onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }} className="text-zinc-300 hover:text-zinc-500 transition-colors">
                         <PencilIcon />
@@ -270,7 +270,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                     >
                       <div
                         ref={selfNoteRef}
-                        className={`${valueCls} break-all overflow-y-scroll`}
+                        className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                         style={{ maxHeight: '7em', lineHeight: '1.4em', scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
                       >
                         {savedNotes || <span className="text-zinc-400">Add a note…</span>}
@@ -282,40 +282,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                   )}
                 </div>
 
-              </div>
-            )}
-
-            {/* Contact */}
-            {activeTab === 'contact' && (
-              <div className="flex flex-col gap-3">
-                {venue.address && (
-                  <div className={rowCls}>
-                    <span className={labelCls}>Address</span>
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, ${venue.postcode || ''} London`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`${valueCls} hover:text-zinc-900 transition-colors w-fit`}
-                    >
-                      {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                    </a>
-                  </div>
-                )}
-                {venue.phone && (
-                  <div className={rowCls}>
-                    <span className={labelCls}>Telephone</span>
-                    <a href={`tel:${venue.phone}`} className={`${valueCls} hover:text-zinc-900 transition-colors w-fit`}>{venue.phone}</a>
-                  </div>
-                )}
-                {venue.booking_email && (
-                  <div className={rowCls}>
-                    <span className={labelCls}>Email</span>
-                    <a href={`mailto:${venue.booking_email}`} className={`${valueCls} hover:text-zinc-900 transition-colors w-fit`}>{venue.booking_email}</a>
-                  </div>
-                )}
-                {!venue.phone && !venue.booking_email && !venue.address && (
-                  <span className="text-sm font-light text-zinc-400">No contact details on file</span>
-                )}
               </div>
             )}
 
