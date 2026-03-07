@@ -152,10 +152,10 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
               </div>
             )}
 
-            {/* Date · time · host */}
+            {/* Date · time · host · guests */}
             <div className="flex items-center gap-1.5">
               <span className="text-sm font-light text-zinc-500">
-                {dateStr} · {timeStr}{hostName ? ` · ${hostName}` : ''}
+                {dateStr} · {timeStr}{hostName ? ` · ${hostName}` : ''}{additionalGuests.length > 0 ? ` +${additionalGuests.length}` : ''}
               </span>
               {!isPast && !isCancelled && (
                 <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
@@ -166,9 +166,6 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
             {/* Secondary metadata */}
             <div className="flex flex-col gap-1 mt-0.5">
-              {guestSummary && (
-                <p className="text-sm font-light text-zinc-400">{guestSummary}</p>
-              )}
               {booking.notes && (
                 <p className="text-sm font-light">
                   <span className="text-zinc-400">Restaurant note</span>
@@ -182,7 +179,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
           {/* Zone 2 — Private note (CRM field) */}
           <div>
-            <p className="text-xs font-light text-zinc-400 mb-1.5">
+            <p className="text-sm font-light text-zinc-400 mb-1.5">
               Private note <span className="text-zinc-300">· Visible only to you</span>
             </p>
             {notesEditing ? (
