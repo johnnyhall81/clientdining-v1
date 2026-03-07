@@ -9,6 +9,7 @@ interface PartySizeModalProps {
   minSize: number
   maxSize: number
   venueName: string
+  venueLocation?: string
   slotTime?: string
   hostName?: string
   requiresGuestNames?: boolean
@@ -23,6 +24,7 @@ export default function PartySizeModal({
   minSize,
   maxSize,
   venueName,
+  venueLocation,
   slotTime,
   hostName,
   requiresGuestNames = false,
@@ -85,8 +87,11 @@ export default function PartySizeModal({
               </svg>
             </button>
             <h2 className="text-3xl font-light text-zinc-900 tracking-tight pr-8">{venueName}</h2>
+            {venueLocation && (
+              <p className="text-sm font-light text-zinc-400 mt-1">{venueLocation}</p>
+            )}
             {slotTime && <p className="text-sm font-light text-zinc-500 mt-2">{slotTime}</p>}
-            <p className="text-sm font-light text-zinc-500 mt-0.5">Table for {partySize}</p>
+            <p className="text-sm font-light text-zinc-500 mt-0.5">Party of {partySize}</p>
           </div>
 
           <div className="px-7 py-7 space-y-7">
