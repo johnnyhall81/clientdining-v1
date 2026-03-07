@@ -267,7 +267,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
           {/* Content padding */}
           <div className="p-8 sm:p-10 lg:p-12">
             {/* Header */}
-            <div className="mb-12">
+            <div className="mb-6">
               <h1 className="text-4xl sm:text-5xl font-light text-zinc-900 mb-5 tracking-tight">{venue.name}</h1>
 
               <div className="flex items-center gap-2.5 text-sm font-light text-zinc-500 mb-3">
@@ -381,7 +381,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             )}
 
             {/* Available Tables */}
-            <div className="mt-16 pt-12 border-t border-zinc-100">
+            <div className="mt-16 pt-12">
               <div className="mb-8">
                 <h2 className="text-2xl font-light text-zinc-900 tracking-tight">Book a table</h2>
               </div>
