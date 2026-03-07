@@ -505,9 +505,6 @@ const handleCancel = async () => {
                       <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-70 transition-opacity">
                         <h3 className="text-xl font-light text-zinc-900 tracking-tight">{venue.name}</h3>
                       </Link>
-                      {venue.area && (
-                        <p className="text-sm font-light text-zinc-400">{venue.area}</p>
-                      )}
                       {venue.address && (
                         <div className="flex items-center gap-1.5">
                           <span className="text-sm font-light text-zinc-400">
