@@ -107,9 +107,9 @@ useEffect(() => {
         </button>
       )}
 
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col md:flex-row md:items-stretch">
         {/* Image */}
-        <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] bg-zinc-100 overflow-hidden flex-shrink-0 md:rounded-l-lg hover:opacity-90 transition-opacity">
+        <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-2/5 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 md:rounded-l-lg hover:opacity-90 transition-opacity">
           {venue.image_hero ? (
             <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" quality={60} className="object-cover" />
           ) : (
@@ -118,7 +118,7 @@ useEffect(() => {
         </Link>
 
         {/* Details */}
-        <div className="flex-1 px-7 py-5 pr-12 flex flex-col gap-4">
+        <div className="flex-1 px-7 py-5 pr-12 flex flex-col gap-4 md:overflow-y-auto md:max-h-[400px]">
 
           {/* Core info */}
           <div>
@@ -218,7 +218,7 @@ useEffect(() => {
                 className="relative group cursor-pointer"
                 onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
               >
-                <div className="border border-zinc-100 rounded bg-zinc-50/40 pr-7 min-h-[36px] max-h-40 overflow-y-auto">
+                <div className="border border-zinc-100 rounded bg-zinc-50/40 pr-7 min-h-[36px] overflow-y-auto">
                   <p className="text-sm whitespace-pre-line font-light text-zinc-500 px-3 py-2">
                     {savedNotes || <span className="text-zinc-400">No notes added</span>}
                   </p>
