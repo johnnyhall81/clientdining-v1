@@ -108,7 +108,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
         </Link>
 
         {/* Details */}
-        <div className="flex-1 px-7 py-5 pr-12 flex flex-col gap-3">
+        <div className="flex-1 px-7 py-7 pr-12 flex flex-col gap-4">
 
           {/* Venue block */}
           <div className="flex flex-col gap-0.5">
@@ -193,7 +193,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 <div
                   className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                   style={{
-                    maxHeight: '2.8em',
+                    maxHeight: '4.2em',
                     lineHeight: '1.4em',
                     scrollbarWidth: 'none',
                     msOverflowStyle: 'none',
@@ -239,7 +239,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                   <div
                     className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                     style={{
-                      maxHeight: '2.8em',
+                      maxHeight: '4.2em',
                       lineHeight: '1.4em',
                       scrollbarWidth: 'none',
                       msOverflowStyle: 'none',
