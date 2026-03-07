@@ -234,7 +234,7 @@ useEffect(() => {
           {!isCancelled && (venue.phone || venue.booking_email) && (
             <div className="pt-4 border-t border-zinc-100">
               <p className="text-xs font-light text-zinc-500 mb-2">
-                To amend this booking, contact the venue directly and quote your reference <span className="text-zinc-900 font-normal">{booking.id.slice(0, 8).toUpperCase()}</span>
+                To amend this booking, contact the venue directly.
               </p>
               <div className="flex flex-wrap gap-3">
                 {venue.phone && (
