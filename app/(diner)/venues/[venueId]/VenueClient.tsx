@@ -279,7 +279,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               {venue.address && (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-1.5">
-                    <p className="text-xs text-zinc-500 font-light">
+                    <p className="text-sm text-zinc-400 font-light">
                       {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                     </p>
                     <a
