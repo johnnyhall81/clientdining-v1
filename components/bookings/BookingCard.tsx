@@ -4,7 +4,7 @@ import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 
 interface BookingCardProps {
@@ -35,11 +35,27 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
   const [notesSaving, setNotesSaving] = useState(false)
   const [noteTab, setNoteTab] = useState<'venue' | 'self'>('venue')
+  const [venueNoteOverflows, setVenueNoteOverflows] = useState(false)
+  const [selfNoteOverflows, setSelfNoteOverflows] = useState(false)
+  const venueNoteRef = useRef<HTMLDivElement>(null)
+  const selfNoteRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setSavedNotes(booking.private_notes || '')
     setNotesEditValue(booking.private_notes || '')
   }, [booking.private_notes])
+
+  useEffect(() => {
+    if (venueNoteRef.current) {
+      setVenueNoteOverflows(venueNoteRef.current.scrollHeight > venueNoteRef.current.clientHeight)
+    }
+  }, [booking.notes, noteTab])
+
+  useEffect(() => {
+    if (selfNoteRef.current) {
+      setSelfNoteOverflows(selfNoteRef.current.scrollHeight > selfNoteRef.current.clientHeight)
+    }
+  }, [savedNotes, noteTab])
 
   const calendarUrl = (() => {
     const start = new Date(slot.start_at)
@@ -191,6 +207,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             {noteTab === 'venue' && (
               <div className="relative">
                 <div
+                  ref={venueNoteRef}
                   className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                   style={{
                     maxHeight: '7em',
@@ -201,7 +218,9 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 >
                   {booking.notes || <span className="text-zinc-400">No note sent with this booking</span>}
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                {venueNoteOverflows && (
+                  <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                )}
               </div>
             )}
 
@@ -237,6 +256,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                   onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
                 >
                   <div
+                    ref={selfNoteRef}
                     className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                     style={{
                       maxHeight: '7em',
@@ -247,7 +267,9 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                   >
                     {savedNotes || <span className="text-zinc-400">Add a note…</span>}
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                  {selfNoteOverflows && (
+                    <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                  )}
                   <span className="absolute top-0 right-0 text-zinc-300 group-hover:text-zinc-500 transition-colors">
                     <PencilIcon />
                   </span>
