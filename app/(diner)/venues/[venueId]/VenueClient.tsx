@@ -381,7 +381,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             )}
 
             {/* Available Tables */}
-            <div className="mt-16 pt-12">
+            <div className="mt-8 pt-4">
               <div className="mb-8">
                 <h2 className="text-2xl font-light text-zinc-900 tracking-tight">Book a table</h2>
               </div>
