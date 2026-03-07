@@ -129,7 +129,7 @@ useEffect(() => {
           <div className="flex flex-col gap-0.5">
             {venue.address && (
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-light text-zinc-500">
+                <span className="text-sm font-light text-zinc-400">
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </span>
                 {mapsUrl && (
@@ -154,32 +154,26 @@ useEffect(() => {
           {/* Inline metadata row — guests, restaurant note, amend */}
           <div className="flex flex-col gap-1">
             {booking.guest_names && booking.guest_names.length > 0 && (
-              <p className="text-sm font-light text-zinc-500">
-                <span className="text-zinc-400">Guests</span>{' '}
-                {booking.guest_names.length <= 2
+              <p className="text-sm font-light">
+                <span className="text-zinc-400">Guests</span>
+                <span className="text-zinc-400 mx-1.5">·</span>
+                <span className="text-zinc-500">{booking.guest_names.length <= 2
                   ? booking.guest_names.join(', ')
-                  : `${booking.guest_names[0]} +${booking.guest_names.length - 1}`}
+                  : `${booking.guest_names[0]} +${booking.guest_names.length - 1}`}</span>
               </p>
             )}
             {booking.notes && (
-              <p className="text-sm font-light text-zinc-500">
-                <span className="text-zinc-400">Note</span>{' '}{booking.notes}
+              <p className="text-sm font-light">
+                <span className="text-zinc-400">Note</span>
+                <span className="text-zinc-400 mx-1.5">·</span>
+                <span className="text-zinc-500">{booking.notes}</span>
               </p>
             )}
             {!isCancelled && (venue.phone || venue.booking_email) && (
-              <p className="text-sm font-light text-zinc-500">
-                <span className="text-zinc-400">Changes</span>{' '}
-                {venue.phone && (
-                  <a href={`tel:${venue.phone}`} className="hover:text-zinc-900 transition-colors">
-                    Call venue
-                  </a>
-                )}
-                {venue.phone && venue.booking_email && <span className="text-zinc-300 mx-1.5">·</span>}
-                {venue.booking_email && (
-                  <a href={`mailto:${venue.booking_email}`} className="hover:text-zinc-900 transition-colors">
-                    Email venue
-                  </a>
-                )}
+              <p className="text-sm font-light text-zinc-400">
+                For changes, contact the venue
+                {venue.phone && <><span className="text-zinc-300 mx-1.5">·</span><a href={`tel:${venue.phone}`} className="text-zinc-500 hover:text-zinc-900 transition-colors">{venue.phone}</a></>}
+                {venue.booking_email && <><span className="text-zinc-300 mx-1.5">·</span><a href={`mailto:${venue.booking_email}`} className="text-zinc-500 hover:text-zinc-900 transition-colors">{venue.booking_email}</a></>}
               </p>
             )}
           </div>
