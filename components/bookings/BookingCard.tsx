@@ -230,6 +230,27 @@ useEffect(() => {
             )}
           </div>
 
+          {/* Venue contact for changes */}
+          {!isCancelled && (venue.phone || venue.booking_email) && (
+            <div className="pt-4 border-t border-zinc-100">
+              <p className="text-xs font-light text-zinc-500 mb-2">
+                To amend this booking, contact the venue directly and quote your reference <span className="text-zinc-900 font-normal">{booking.id.slice(0, 8).toUpperCase()}</span>
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {venue.phone && (
+                  <a href={`tel:${venue.phone}`} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors underline underline-offset-2">
+                    {venue.phone}
+                  </a>
+                )}
+                {venue.booking_email && (
+                  <a href={`mailto:${venue.booking_email}`} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors underline underline-offset-2">
+                    {venue.booking_email}
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
 
