@@ -166,7 +166,7 @@ useEffect(() => {
               <p className="text-sm font-light">
                 <span className="text-zinc-400">Note</span>
                 <span className="text-zinc-400 mx-1.5">·</span>
-                <span className="text-zinc-500">{booking.notes}</span>
+                <span className="text-zinc-500 break-words">{booking.notes}</span>
               </p>
             )}
             {!isCancelled && (venue.phone || venue.booking_email) && (
