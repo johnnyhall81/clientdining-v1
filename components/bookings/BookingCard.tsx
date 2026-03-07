@@ -118,7 +118,7 @@ useEffect(() => {
         </Link>
 
         {/* Details */}
-        <div className="flex-1 px-7 py-5 pr-12 flex flex-col gap-4 md:overflow-y-auto md:max-h-[400px]">
+        <div className="flex-1 px-7 py-5 pr-12 flex flex-col gap-4">
 
           {/* Core info */}
           <div>
@@ -184,6 +184,27 @@ useEffect(() => {
             </div>
           )}
 
+          {/* Venue contact for changes */}
+          {!isCancelled && (venue.phone || venue.booking_email) && (
+            <div className="pt-3 border-t border-zinc-100">
+              <p className="text-xs font-light text-zinc-500 mb-1.5">
+                To amend this booking, contact the venue directly.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {venue.phone && (
+                  <a href={`tel:${venue.phone}`} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors underline underline-offset-2">
+                    {venue.phone}
+                  </a>
+                )}
+                {venue.booking_email && (
+                  <a href={`mailto:${venue.booking_email}`} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors underline underline-offset-2">
+                    {venue.booking_email}
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Private notes */}
           <div>
             <p className="text-xs font-light text-zinc-500 mb-1">
@@ -218,7 +239,7 @@ useEffect(() => {
                 className="relative group cursor-pointer"
                 onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
               >
-                <div className="border border-zinc-100 rounded bg-zinc-50/40 pr-7 min-h-[36px] overflow-y-auto">
+                <div className="border border-zinc-100 rounded bg-zinc-50/40 pr-7 min-h-[36px] max-h-32 overflow-y-auto">
                   <p className="text-sm whitespace-pre-line font-light text-zinc-500 px-3 py-2">
                     {savedNotes || <span className="text-zinc-400">No notes added</span>}
                   </p>
@@ -229,27 +250,6 @@ useEffect(() => {
               </div>
             )}
           </div>
-
-          {/* Venue contact for changes */}
-          {!isCancelled && (venue.phone || venue.booking_email) && (
-            <div className="pt-4 border-t border-zinc-100">
-              <p className="text-xs font-light text-zinc-500 mb-2">
-                To amend this booking, contact the venue directly.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {venue.phone && (
-                  <a href={`tel:${venue.phone}`} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors underline underline-offset-2">
-                    {venue.phone}
-                  </a>
-                )}
-                {venue.booking_email && (
-                  <a href={`mailto:${venue.booking_email}`} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors underline underline-offset-2">
-                    {venue.booking_email}
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
 
         </div>
       </div>
