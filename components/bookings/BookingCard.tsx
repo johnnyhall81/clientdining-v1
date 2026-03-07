@@ -26,26 +26,6 @@ const CalendarIcon = () => (
   </svg>
 )
 
-function ClampedNote({ label, text, placeholder }: { label: string; text: string; placeholder?: string }) {
-  return (
-    <div className="relative">
-      <p className="text-sm font-light text-zinc-400 mb-0.5">{label}</p>
-      <div
-        className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
-        style={{
-          maxHeight: '2.8em',
-          lineHeight: '1.4em',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-        } as React.CSSProperties}
-      >
-        {text || <span className="text-zinc-400">{placeholder}</span>}
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-    </div>
-  )
-}
-
 export default function BookingCard({ booking, venue, slot, onCancel }: BookingCardProps) {
   const isPast = new Date(slot.start_at) < new Date()
   const isCancelled = booking.status === 'cancelled'
@@ -54,6 +34,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
   const [savedNotes, setSavedNotes] = useState(booking.private_notes || '')
   const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
   const [notesSaving, setNotesSaving] = useState(false)
+  const [noteTab, setNoteTab] = useState<'venue' | 'self'>('venue')
 
   useEffect(() => {
     setSavedNotes(booking.private_notes || '')
@@ -150,20 +131,23 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 </span>
               </a>
             )}
-            {venue.phone && (
+            {(venue.phone || venue.booking_email) && (
               <div className="flex items-center gap-1.5">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 text-zinc-400 flex-shrink-0">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                 </svg>
-                <a href={`tel:${venue.phone}`} className="text-sm font-light text-zinc-400 hover:text-zinc-900 transition-colors">{venue.phone}</a>
-              </div>
-            )}
-            {venue.booking_email && (
-              <div className="flex items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 text-zinc-400 flex-shrink-0">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                </svg>
-                <a href={`mailto:${venue.booking_email}`} className="text-sm font-light text-zinc-400 hover:text-zinc-900 transition-colors">{venue.booking_email}</a>
+                {venue.phone && (
+                  <a href={`tel:${venue.phone}`} className="text-sm font-light text-zinc-400 hover:text-zinc-900 transition-colors">{venue.phone}</a>
+                )}
+                {venue.phone && venue.booking_email && <span className="text-zinc-300">·</span>}
+                {venue.booking_email && (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 text-zinc-400 flex-shrink-0">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                    <a href={`mailto:${venue.booking_email}`} className="text-sm font-light text-zinc-400 hover:text-zinc-900 transition-colors">{venue.booking_email}</a>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -182,51 +166,30 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             )}
           </div>
 
-          {/* Note to venue — 2-line clamp, fade */}
-          {booking.notes && (
-            <div className="relative">
-              <ClampedNote label="Note to venue" text={booking.notes} />
-              <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+          {/* Tabbed notes */}
+          <div>
+            {/* Tab bar */}
+            <div className="flex items-center gap-1 border-b border-zinc-100 mb-3">
+              {(['venue', 'self'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setNoteTab(tab)}
+                  className={`relative px-0 mr-4 py-2 text-sm font-light transition-colors ${
+                    noteTab === tab ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-600'
+                  }`}
+                >
+                  {tab === 'venue' ? 'Note to venue' : 'Note to self'}
+                  {noteTab === tab && (
+                    <span className="absolute bottom-0 left-0 right-0 h-px bg-zinc-900" />
+                  )}
+                </button>
+              ))}
             </div>
-          )}
 
-          {/* Note to self — 2-line clamp, fade, edit icon */}
-          <div className="relative">
-            {notesEditing ? (
-              <div>
-                <textarea
-                  value={notesEditValue}
-                  onChange={e => setNotesEditValue(e.target.value)}
-                  placeholder="Add a note…"
-                  rows={3}
-                  autoFocus
-                  className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
-                />
-                <div className="flex items-center justify-end gap-3 mt-1.5">
-                  <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors">
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSaveNotes}
-                    disabled={notesSaving}
-                    className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-50"
-                  >
-                    {notesSaving ? 'Saving…' : 'Save'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div
-                className="relative group cursor-pointer"
-                onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
-              >
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <p className="text-sm font-light text-zinc-400">Note to self</p>
-                  <span className="text-zinc-300 group-hover:text-zinc-500 transition-colors">
-                    <PencilIcon />
-                  </span>
-                </div>
+            {/* Venue note */}
+            {noteTab === 'venue' && (
+              <div className="relative">
                 <div
                   className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
                   style={{
@@ -236,10 +199,60 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                     msOverflowStyle: 'none',
                   } as React.CSSProperties}
                 >
-                  {savedNotes || <span className="text-zinc-400">Add a note…</span>}
+                  {booking.notes || <span className="text-zinc-400">No note sent with this booking</span>}
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
               </div>
+            )}
+
+            {/* Self note */}
+            {noteTab === 'self' && (
+              notesEditing ? (
+                <div>
+                  <textarea
+                    value={notesEditValue}
+                    onChange={e => setNotesEditValue(e.target.value)}
+                    placeholder="Add a note…"
+                    rows={3}
+                    autoFocus
+                    className="w-full text-sm font-light text-zinc-900 placeholder:text-zinc-400 border border-zinc-200 rounded px-3 py-2 bg-zinc-50/40 focus:outline-none focus:ring-1 focus:ring-zinc-200 resize-none"
+                  />
+                  <div className="flex items-center justify-end gap-3 mt-1.5">
+                    <button type="button" onClick={handleCancelEdit} className="text-xs font-light text-zinc-500 hover:text-zinc-900 transition-colors">
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveNotes}
+                      disabled={notesSaving}
+                      className="text-xs font-light bg-zinc-900 text-white px-3 py-1.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                    >
+                      {notesSaving ? 'Saving…' : 'Save'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="relative group cursor-pointer"
+                  onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
+                >
+                  <div
+                    className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
+                    style={{
+                      maxHeight: '2.8em',
+                      lineHeight: '1.4em',
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none',
+                    } as React.CSSProperties}
+                  >
+                    {savedNotes || <span className="text-zinc-400">Add a note…</span>}
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                  <span className="absolute top-0 right-0 text-zinc-300 group-hover:text-zinc-500 transition-colors">
+                    <PencilIcon />
+                  </span>
+                </div>
+              )
             )}
           </div>
 
