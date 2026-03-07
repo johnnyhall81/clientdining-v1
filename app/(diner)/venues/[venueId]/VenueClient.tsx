@@ -264,32 +264,31 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
           {/* Content padding */}
           <div className="p-8 sm:p-10 lg:p-12">
             {/* Header */}
-            <div className="mb-10">
-              <h1 className="text-4xl sm:text-5xl font-light text-zinc-900 mb-4 tracking-tight">{venue.name}</h1>
+            <div className="mb-12">
+              <h1 className="text-4xl sm:text-5xl font-light text-zinc-900 mb-5 tracking-tight">{venue.name}</h1>
 
-              <div className="flex items-center gap-3 text-zinc-400 font-light text-sm mb-2">
+              <div className="flex items-center gap-2.5 text-sm font-light text-zinc-400 mb-3">
                 <span>{venue.area}</span>
-                <span>•</span>
+                <span className="text-zinc-200">·</span>
                 <span className="capitalize">{venue.venue_type}</span>
               </div>
 
-
               {venue.address && (
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs text-zinc-400 font-light">
-                      {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                    </p>
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={e => e.stopPropagation()}
-                      className="text-zinc-300 hover:text-zinc-500 transition-colors"
-                    >
-                      <MapIcon />
-                    </a>
-                  </div>
-                )}
+                <div className="flex items-center gap-1.5">
+                  <p className="text-xs text-zinc-400 font-light">
+                    {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                  </p>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    className="text-zinc-300 hover:text-zinc-500 transition-colors"
+                  >
+                    <MapIcon />
+                  </a>
+                </div>
+              )}
 
 
 
@@ -358,8 +357,11 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             )}
 
             {/* Available Tables */}
-            <div className="pt-8 border-t border-zinc-100">
-              <h2 className="text-2xl font-light text-zinc-900 mb-6 tracking-wide">Available Tables</h2>
+            <div className="mt-16 pt-12 border-t border-zinc-100">
+              <div className="mb-8">
+                <p className="text-xs font-light text-zinc-300 uppercase tracking-widest mb-3">Availability</p>
+                <h2 className="text-2xl font-light text-zinc-900 tracking-tight">Book a table</h2>
+              </div>
               <SlotPicker
                 slots={slots}
                 onBook={handleBook}
