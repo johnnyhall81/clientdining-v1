@@ -302,18 +302,9 @@ export default function AlertsPage() {
                             </a>
                           </div>
                         )}
-                        
-
-
-                        <p className="text-sm font-light text-zinc-500">
-                          {formatSlotDate(alert.slot.start_at)} · {formatSlotTime(alert.slot.start_at)} · {alert.slot.party_min === alert.slot.party_max ? `${alert.slot.party_min} guests` : `${alert.slot.party_min}–${alert.slot.party_max} guests`}
+                        <p className="text-sm font-light text-zinc-500 pt-1">
+                          {formatSlotDate(alert.slot.start_at)} · {formatSlotTime(alert.slot.start_at)} · {alert.slot.party_min === alert.slot.party_max ? `Party of ${alert.slot.party_min}` : `${alert.slot.party_min}–${alert.slot.party_max} guests`}
                         </p>
-
-
-
-
-
-
                       </div>
 
                       {alert.status === 'notified' && (
