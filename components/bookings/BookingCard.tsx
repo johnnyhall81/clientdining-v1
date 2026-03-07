@@ -179,7 +179,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
 
             {/* Guests — pills */}
             {activeTab === 'guests' && (
-              <div className="flex flex-wrap gap-2 flex-1 min-h-0 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+              <div className="flex flex-wrap gap-2 flex-1 min-h-0 overflow-y-auto content-start" style={{ scrollbarWidth: 'none' }}>
                 {namedGuests ? (
                   <>
                     {namedGuests.map((name, i) => (
@@ -248,8 +248,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
 
                 {/* Phone / email */}
                 {(venue.phone || venue.booking_email) ? (
-                  <div className="flex flex-col gap-2.5">
-                    <p className="text-xs font-light text-zinc-400">For changes to your booking please contact the venue on</p>
+                  <div className="flex flex-col gap-3">
                     {venue.phone && (
                       <a href={`tel:${venue.phone}`} className="flex items-center gap-2.5 group w-fit">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0">
@@ -266,6 +265,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                         <span className="text-sm font-light text-zinc-500 group-hover:text-zinc-900 transition-colors">{venue.booking_email}</span>
                       </a>
                     )}
+                    <p className="text-xs font-light text-zinc-400 pt-1">For changes to your booking please contact the venue directly.</p>
                   </div>
                 ) : null}
 
