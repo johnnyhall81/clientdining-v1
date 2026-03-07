@@ -274,6 +274,17 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 <span>{venue.area}</span>
                 <span className="text-zinc-200">·</span>
                 <span className="capitalize">{venue.venue_type}</span>
+                {venue.private_hire_available && (
+                  <>
+                    <span className="text-zinc-200">·</span>
+                    <button
+                      onClick={() => setShowCorporateEventsModal(true)}
+                      className="text-zinc-500 font-light hover:text-zinc-900 transition-colors group"
+                    >
+                      Private hire <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
+                    </button>
+                  </>
+                )}
               </div>
 
               {venue.address && (
@@ -366,25 +377,12 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   {venue.description}
                 </ReactMarkdown>
 
-                {/* Private hire link */}
-                {venue.private_hire_available && (
-                  <div className="grid grid-cols-[140px_1fr] gap-4 text-sm leading-relaxed mt-3 pt-3 border-t border-zinc-100">
-                    <div className="text-zinc-500 font-light">Private rooms and events</div>
-                    <button
-                      onClick={() => setShowCorporateEventsModal(true)}
-                      className="text-zinc-500 font-light text-left hover:text-zinc-900 transition-colors group"
-                    >
-                      Enquire <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
-                    </button>
-                  </div>
-                )}
               </div>
             )}
 
             {/* Available Tables */}
             <div className="mt-16 pt-12 border-t border-zinc-100">
               <div className="mb-8">
-                <p className="text-xs font-light text-zinc-400 uppercase tracking-widest mb-3">Availability</p>
                 <h2 className="text-2xl font-light text-zinc-900 tracking-tight">Book a table</h2>
               </div>
               <SlotPicker
