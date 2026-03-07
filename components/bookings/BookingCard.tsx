@@ -147,7 +147,9 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
             {/* Secondary metadata */}
             <div className="flex flex-col gap-1 mt-0.5">
               {booking.notes && (
-                <p className="text-sm font-light text-zinc-400">Note sent to venue</p>
+                <p className="text-sm font-light text-zinc-400">
+                  Note <span className="text-zinc-300 mx-0.5">·</span> <span className="text-zinc-500 break-words">{booking.notes}</span>
+                </p>
               )}
               {!isCancelled && (venue.phone || venue.booking_email) && (
                 <p className="text-sm font-light text-zinc-400 flex flex-wrap items-baseline">
