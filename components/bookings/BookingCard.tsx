@@ -64,10 +64,17 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           ) : (
             <div className="w-full h-full bg-zinc-100" />
           )}
+          {(venue as any).logo_url && (
+            <div className="absolute bottom-3 left-3 z-10">
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5">
+                <img src={(venue as any).logo_url} alt={`${venue.name} logo`} className="h-6 w-auto object-contain" />
+              </div>
+            </div>
+          )}
         </Link>
 
         {/* Details */}
-        <div className="flex-1 px-7 py-6 pr-10 flex flex-col gap-5 min-h-[340px]">
+        <div className="flex-1 px-7 py-6 pr-10 flex flex-col gap-5 h-[340px]">
 
           {/* Venue name + address */}
           <div className="flex flex-col gap-0.5">
@@ -96,9 +103,9 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           </div>
 
           {/* Tabs */}
-          <div className="flex flex-col gap-3 flex-1">
+          <div className="flex flex-col gap-3 flex-1 min-h-0">
 
-            <div className="flex items-center border-b border-zinc-100">
+            <div className="flex items-center border-b border-zinc-100 flex-shrink-0">
               {(['guests', 'contact'] as Tab[]).map(tab => (
                 <button
                   key={tab}
@@ -118,7 +125,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
             {/* Guests — pills */}
             {activeTab === 'guests' && (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                 {guestNames.length > 0 ? (
                   guestNames.map((name, i) => (
                     <span
@@ -139,7 +146,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
 
             {/* Contact — icon rows */}
             {activeTab === 'contact' && (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                 {venue.address && (
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, ${venue.postcode || ''} London`)}`}
