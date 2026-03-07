@@ -133,10 +133,22 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
           {/* Zone 1 — Booking summary */}
           <div className="flex flex-col gap-1.5">
 
-            {/* Venue name */}
-            <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity inline-block">
-              <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
-            </Link>
+            {/* Venue name · date · time · host */}
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Link href={`/venues/${venue.id}`} className="hover:opacity-70 transition-opacity">
+                  <h3 className="text-lg font-light text-zinc-900">{venue.name}</h3>
+                </Link>
+                <span className="text-sm font-light text-zinc-500">
+                  {dateStr} · {timeStr}{hostName ? ` · ${hostName}` : ''}{additionalGuests.length > 0 ? ` +${additionalGuests.length}` : ''}
+                </span>
+                {!isPast && !isCancelled && (
+                  <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
+                    <CalendarIcon />
+                  </a>
+                )}
+              </div>
+            </div>
 
             {/* Address */}
             {venue.address && (
@@ -171,30 +183,15 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
               </p>
             )}
 
-            {/* Date · time · host · guests */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-light text-zinc-500">
-                {dateStr} · {timeStr}{hostName ? ` · ${hostName}` : ''}{additionalGuests.length > 0 ? ` +${additionalGuests.length}` : ''}
-              </span>
-              {!isPast && !isCancelled && (
-                <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
-                  <CalendarIcon />
-                </a>
-              )}
-            </div>
-
-            {/* Secondary metadata */}
-            <div className="flex flex-col gap-1 mt-0.5">
-              {booking.notes && (
-                <p className="text-sm font-light">
-                  <span className="text-zinc-400">Restaurant note</span>
-                  <span className="text-zinc-300 mx-1.5">·</span>
-                  <span className="text-zinc-400">Sent at time of booking</span>
-                  <span className="text-zinc-300 mx-1.5">·</span>
-                  <span className="text-zinc-500 break-all">{booking.notes}</span>
+            {/* Restaurant note */}
+            {booking.notes && (
+              <div>
+                <p className="text-sm font-light text-zinc-400 mb-1.5">
+                  Restaurant note <span className="text-zinc-300">· Sent at time of booking</span>
                 </p>
-              )}
-            </div>
+                <p className="text-sm font-light text-zinc-500 break-all">{booking.notes}</p>
+              </div>
+            )}
 
           </div>
 
