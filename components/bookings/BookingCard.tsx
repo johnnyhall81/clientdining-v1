@@ -233,7 +233,7 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
               >
                 <div className="border border-zinc-100 rounded-lg bg-zinc-50/50 pr-8 h-[72px] overflow-y-auto">
-                  <p className="text-sm whitespace-pre-line font-light px-3 py-2.5 text-zinc-500">
+                  <p className="text-sm whitespace-pre-line font-light px-3 py-2.5 text-zinc-500 break-all">
                     {savedNotes || <span className="text-zinc-400">Add a note…</span>}
                   </p>
                 </div>
