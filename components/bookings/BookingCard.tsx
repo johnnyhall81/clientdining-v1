@@ -4,7 +4,7 @@ import { Booking, Venue, Slot } from '@/lib/supabase'
 import { formatSlotDate, formatSlotTime } from '@/lib/date-utils'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 
 interface BookingCardProps {
@@ -26,23 +26,23 @@ const CalendarIcon = () => (
   </svg>
 )
 
-// Two-line clamp with fade — no visible scrollbar
 function ClampedNote({ label, text, placeholder }: { label: string; text: string; placeholder?: string }) {
   return (
-    <p className="text-sm font-light leading-snug">
-      <span className="text-zinc-400">{label} · </span>
-      <span
-        className="text-zinc-500 break-all"
+    <div className="relative">
+      <p className="text-sm font-light text-zinc-400 mb-0.5">{label}</p>
+      <div
+        className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
         style={{
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-          overflow: 'hidden',
-        }}
+          maxHeight: '2.8em',
+          lineHeight: '1.4em',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        } as React.CSSProperties}
       >
         {text || <span className="text-zinc-400">{placeholder}</span>}
-      </span>
-    </p>
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+    </div>
   )
 }
 
@@ -204,20 +204,18 @@ export default function BookingCard({ booking, venue, slot, onCancel }: BookingC
                 className="relative group cursor-pointer pr-6"
                 onClick={() => { setNotesEditValue(savedNotes); setNotesEditing(true) }}
               >
-                <p className="text-sm font-light leading-snug">
-                  <span className="text-zinc-400">Note to self · </span>
-                  <span
-                    className="text-zinc-500 break-all"
-                    style={{
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    {savedNotes || <span className="text-zinc-400">Add a note…</span>}
-                  </span>
-                </p>
+                <p className="text-sm font-light text-zinc-400 mb-0.5">Note to self</p>
+                <div
+                  className="text-sm font-light text-zinc-500 break-all overflow-y-scroll"
+                  style={{
+                    maxHeight: '2.8em',
+                    lineHeight: '1.4em',
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                  } as React.CSSProperties}
+                >
+                  {savedNotes || <span className="text-zinc-400">Add a note…</span>}
+                </div>
                 <div className="absolute bottom-0 left-0 right-6 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
                 <span className="absolute top-0 right-0 text-zinc-300 group-hover:text-zinc-500 transition-colors">
                   <PencilIcon />
