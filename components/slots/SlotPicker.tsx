@@ -202,7 +202,7 @@ export default function SlotPicker({
             return (
               <div
                 key={slot.id}
-                className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border h-16"
+                className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border h-16 w-fit"
                 style={{ backgroundColor: '#F7FBF9', borderColor: '#D4EDE2' }}
               >
                 {userAvatarUrl ? (
