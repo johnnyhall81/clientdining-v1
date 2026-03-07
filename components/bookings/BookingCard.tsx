@@ -107,7 +107,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
         </Link>
 
         {/* Details */}
-        <div className="flex-1 p-6 pr-10 flex flex-col gap-4 h-[340px]">
+        <div className="flex-1 p-6 pr-10 flex flex-col gap-4 md:h-[340px]">
 
           {/* Venue name + address — matches alerts card */}
           <div className="space-y-0.5">
@@ -145,7 +145,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
           </div>
 
           {/* Tabs */}
-          <div className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden mt-1">
+          <div className="flex flex-col gap-3 flex-1 min-h-0 md:overflow-hidden mt-1">
 
             <div className="flex items-center border-b border-zinc-100 flex-shrink-0 overflow-x-auto" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
               {(['guests', 'contact', 'venuenote', 'mynotes'] as Tab[]).map(tab => (
