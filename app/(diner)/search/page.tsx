@@ -29,6 +29,7 @@ interface SearchResult {
     address?: string
     postcode?: string
     image_hero: string | null
+    requires_guest_names?: boolean
   }
 }
 
@@ -249,7 +250,8 @@ const handleCancel = async () => {
           address,
           postcode,
           venue_type,
-          image_hero
+          image_hero,
+          requires_guest_names
         )
       `
       )
@@ -503,6 +505,9 @@ const handleCancel = async () => {
                       <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-70 transition-opacity">
                         <h3 className="text-xl font-light text-zinc-900 tracking-tight">{venue.name}</h3>
                       </Link>
+                      {venue.area && (
+                        <p className="text-sm font-light text-zinc-400">{venue.area}</p>
+                      )}
                       {venue.address && (
                         <div className="flex items-center gap-1.5">
                           <span className="text-sm font-light text-zinc-400">
@@ -628,6 +633,7 @@ const handleCancel = async () => {
     maxSize={selectedSlot.party_max}
 
     venueName={selectedSlot.venue?.name || 'Venue'}
+    venueLocation={selectedSlot.venue?.area}
     slotTime={formatFullDateTime(selectedSlot.start_at)}
     hostName={profile?.full_name || undefined}
     requiresGuestNames={selectedSlot.venue?.requires_guest_names}

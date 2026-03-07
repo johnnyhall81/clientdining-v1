@@ -415,6 +415,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
           minSize={selectedSlot.party_min}
           maxSize={selectedSlot.party_max}
           venueName={venue.name}
+          venueLocation={venue.area}
           slotTime={formatFullDateTime(selectedSlot.start_at)}
           hostName={profile?.full_name || undefined}
           requiresGuestNames={venue.requires_guest_names}
