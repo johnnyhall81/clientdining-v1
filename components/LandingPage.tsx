@@ -89,13 +89,13 @@ export default function LandingPage({ venues }: LandingPageProps) {
           MozOsxFontSmoothing: 'grayscale',
         }}>
           <h1
-            className="font-[family-name:var(--font-cormorant)] text-4xl md:text-5xl lg:text-6xl leading-tight"
+            className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl leading-tight"
             style={{ color: '#F3F1ED', fontWeight: 500, letterSpacing: '0.4px', lineHeight: 1.15 }}
           >
-            Private booking network for professionals who host business dining in London.
+            London's Best Tables
           </h1>
-          <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 400, fontSize: '1rem', letterSpacing: '0.3px' }}>
-            A defined circle of established restaurants and private members' clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. Built for professional hosting.
+          <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '1rem', letterSpacing: '0.3px' }}>
+            Reserved for City professionals
           </p>
           <div className="pt-2 flex flex-col items-center gap-4">
             <button
