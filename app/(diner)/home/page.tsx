@@ -14,7 +14,7 @@ export default async function HomePage() {
     .from('venues')
     .select('*')
     .eq('is_active', true)
-    .order('name')
+    .order('display_order', { ascending: true })
 
   if (error) {
     console.error('Error fetching venues:', error)
