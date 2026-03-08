@@ -19,7 +19,7 @@ export default function AdminVenuesPage() {
     const { data, error } = await supabase
       .from('venues')
       .select('*')
-      .order('name')
+      .order('display_order', { ascending: true })
 
     if (error) {
       console.error('Error loading venues:', error)
@@ -40,6 +40,21 @@ export default function AdminVenuesPage() {
     } else {
       loadVenues()
     }
+  }
+
+  const moveVenue = async (index: number, direction: 'up' | 'down') => {
+    const swapIndex = direction === 'up' ? index - 1 : index + 1
+    if (swapIndex < 0 || swapIndex >= venues.length) return
+
+    const updated = [...venues]
+    const aOrder = (updated[index] as any).display_order ?? index + 1
+    const bOrder = (updated[swapIndex] as any).display_order ?? swapIndex + 1
+
+    await supabase.from('venues').update({ display_order: bOrder }).eq('id', updated[index].id)
+    await supabase.from('venues').update({ display_order: aOrder }).eq('id', updated[swapIndex].id)
+
+    ;[updated[index], updated[swapIndex]] = [updated[swapIndex], updated[index]]
+    setVenues(updated)
   }
 
   if (loading) {
@@ -66,6 +81,9 @@ export default function AdminVenuesPage() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">
+                Order
+              </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Name
               </th>
@@ -84,8 +102,31 @@ export default function AdminVenuesPage() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {venues.map((venue) => (
+            {venues.map((venue, index) => (
               <tr key={venue.id} className="hover:bg-gray-50">
+                <td className="px-4 py-4 whitespace-nowrap">
+                  <div className="flex flex-col items-center gap-0.5">
+                    <button
+                      onClick={() => moveVenue(index, 'up')}
+                      disabled={index === 0}
+                      className="text-gray-400 hover:text-gray-700 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="18 15 12 9 6 15" />
+                      </svg>
+                    </button>
+                    <span className="text-[10px] text-gray-300">{index + 1}</span>
+                    <button
+                      onClick={() => moveVenue(index, 'down')}
+                      disabled={index === venues.length - 1}
+                      className="text-gray-400 hover:text-gray-700 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="font-medium text-gray-900">{venue.name}</div>
                 </td>
