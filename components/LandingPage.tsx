@@ -256,7 +256,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
             href="/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-200 hover:bg-zinc-50 transition-colors duration-300"
           >
-            Explore
+            Join
           </Link>
         </div>
       </section>
