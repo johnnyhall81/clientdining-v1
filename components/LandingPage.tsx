@@ -77,11 +77,11 @@ export default function LandingPage({ venues }: LandingPageProps) {
         />
         {/* Gradient overlay - tight to top only, preserves image below */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.30) 65%, rgba(0,0,0,0.15) 80%)'
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.42) 40%, rgba(0,0,0,0.17) 65%, rgba(0,0,0,0.07) 80%)'
         }} />
         {/* Radial vignette behind text only */}
         <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse 80% 60% at 50% 42%, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 70%)'
+          background: 'radial-gradient(ellipse 70% 50% at 50% 42%, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0) 70%)'
         }} />
         {/* Text — shifted slightly above centre into darker sky area */}
         <div className="relative z-10 max-w-2xl mx-auto px-8 space-y-5 -mt-24" style={{
@@ -94,7 +94,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
           >
             Private booking network for professionals who host business dining in London.
           </h1>
-          <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.92)', fontWeight: 400, fontSize: '1rem', letterSpacing: '0.3px' }}>
+          <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 400, fontSize: '1rem', letterSpacing: '0.3px' }}>
             A defined circle of established restaurants and private members' clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. Built for professional hosting.
           </p>
           <div className="pt-2 flex flex-col items-center gap-4">
