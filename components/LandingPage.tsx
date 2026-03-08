@@ -13,20 +13,15 @@ interface LandingPageProps {
 
 export default function LandingPage({ venues }: LandingPageProps) {
   const router = useRouter()
-  const [authChecked, setAuthChecked] = useState(false)
   const [enterHovered, setEnterHovered] = useState(false)
   const [loginHovered, setLoginHovered] = useState(false)
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         router.replace('/home')
-      } else {
-        setAuthChecked(true)
       }
     })
   }, [])
-
-if (!authChecked) return null
 
   return (
     <div className="min-h-screen bg-white">
@@ -155,7 +150,8 @@ if (!authChecked) return null
         lineHeight: 1.85
       }}
     >
-      A defined circle of established restaurants and private members&apos; clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. Built for professional hosting.
+      A defined circle of established restaurants and private members’ clubs.
+      Trusted venues. Clear standards. Built for professional hosting.
     </p>
 
     {/* Statement */}
