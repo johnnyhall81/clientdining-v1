@@ -213,6 +213,10 @@ export default function LandingPage({ venues }: LandingPageProps) {
                       ) : (
                         <p className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>{venue.name}</p>
                       )}
+                      <div className="absolute bottom-4 left-5 z-10">
+                        <p className="text-white text-sm font-light tracking-wide">{venue.name}</p>
+                        {venue.area && <p className="text-white/60 text-xs font-light mt-0.5">{venue.area}</p>}
+                      </div>
                     </>
                   ) : (
                     <div className="w-full h-full bg-zinc-100" />
