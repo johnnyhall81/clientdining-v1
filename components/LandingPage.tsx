@@ -204,7 +204,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
       letterSpacing: '-0.01em'
     }}
   >
-    Latest London venues
+    Featured venues
   </p>
  
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
