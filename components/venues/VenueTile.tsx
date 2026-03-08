@@ -30,24 +30,12 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
               className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-            {/* Large centred logo */}
-            {(venue as any).logo_url && (
-              <img
-                src={(venue as any).logo_url}
-                alt={venue.name}
-                className="absolute inset-0 m-auto h-auto w-2/3 object-contain z-10"
-                style={{ filter: 'brightness(0) invert(1)' }}
-              />
-            )}
-            {/* Venue name + area bottom left */}
-            <div className="absolute bottom-3 left-4 z-10">
-              <p className="text-white text-xs font-light tracking-wide">{venue.name}</p>
-            </div>
             {(venue as any).logo_url ? (
               <img
                 src={(venue as any).logo_url}
                 alt={venue.name}
-                className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
+                className="absolute inset-0 m-auto object-contain z-10"
+                style={{ filter: 'brightness(0) invert(1)', maxHeight: '40%', maxWidth: '75%', width: 'auto', height: 'auto' }}
               />
             ) : (
               <p
@@ -57,6 +45,10 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
                 {venue.name}
               </p>
             )}
+            <div className="absolute bottom-4 left-5 z-10">
+              <p className="text-white text-sm font-light tracking-wide">{venue.name}</p>
+              {venue.area && <p className="text-white/60 text-xs font-light mt-0.5">{venue.area}</p>}
+            </div>
           </>
         ) : (
           <div className="w-full h-full bg-zinc-100 flex items-center justify-center text-zinc-300">
@@ -73,16 +65,6 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
               Available
             </span>
           </div>
-        )}
-      </div>
-
-      {/* Text */}
-      <div className="px-5 py-4 text-center">
-        <h3 className="text-base font-light text-zinc-900 tracking-wide leading-snug">
-          {venue.name}
-        </h3>
-        {venue.area && (
-          <p className="text-sm font-light text-zinc-400 mt-1">{venue.area}</p>
         )}
       </div>
     </Link>
