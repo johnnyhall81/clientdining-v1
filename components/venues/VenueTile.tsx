@@ -29,7 +29,34 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
               sizes="(max-width: 768px) 100vw, 33vw"
               className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+            {/* Large centred logo */}
+            {(venue as any).logo_url && (
+              <img
+                src={(venue as any).logo_url}
+                alt={venue.name}
+                className="absolute inset-0 m-auto h-auto w-2/3 object-contain z-10"
+                style={{ filter: 'brightness(0) invert(1)' }}
+              />
+            )}
+            {/* Venue name + area bottom left */}
+            <div className="absolute bottom-3 left-4 z-10">
+              <p className="text-white text-xs font-light tracking-wide">{venue.name}</p>
+            </div>
+            {(venue as any).logo_url ? (
+              <img
+                src={(venue as any).logo_url}
+                alt={venue.name}
+                className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
+              />
+            ) : (
+              <p
+                className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic"
+                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+              >
+                {venue.name}
+              </p>
+            )}
           </>
         ) : (
           <div className="w-full h-full bg-zinc-100 flex items-center justify-center text-zinc-300">
