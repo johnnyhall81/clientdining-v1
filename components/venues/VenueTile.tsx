@@ -30,20 +30,6 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
               className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
-            {(venue as any).logo_url ? (
-              <img
-                src={(venue as any).logo_url}
-                alt={venue.name}
-                className="absolute bottom-6 left-1/2 -translate-x-1/2 h-auto w-1/2 object-contain z-10"
-              />
-            ) : (
-              <p
-                className="absolute bottom-6 left-0 right-0 z-10 text-white text-2xl tracking-tight text-center px-6 italic"
-                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              >
-                {venue.name}
-              </p>
-            )}
           </>
         ) : (
           <div className="w-full h-full bg-zinc-100 flex items-center justify-center text-zinc-300">
