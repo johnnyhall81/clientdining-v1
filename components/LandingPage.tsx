@@ -182,16 +182,16 @@ export default function LandingPage({ venues }: LandingPageProps) {
     Latest London venues
   </p>
  
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-4">
-          {[...venues].sort((a: any, b: any) => (a.display_order ?? 999) - (b.display_order ?? 999)).slice(0, 3).map((venue) => {
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
+          {venues.slice(0, 3).map((venue) => {
             const imageSrc = venue.image_hero || venue.image
             return (
               <Link
                 key={venue.id}
                 href={`/venues/${venue.id}`}
-                className="group block rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg"
+                className="group block rounded-2xl border border-zinc-100 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-200 hover:shadow-sm"
               >
-                <div className="relative aspect-[3/4] bg-zinc-100 overflow-hidden rounded-2xl">
+                <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden">
                   {imageSrc ? (
                     <>
                       <Image
@@ -201,29 +201,30 @@ export default function LandingPage({ venues }: LandingPageProps) {
                         sizes="(max-width: 640px) 100vw, 33vw"
                         className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
                       {(venue as any).logo_url ? (
                         <img
                           src={(venue as any).logo_url}
                           alt={venue.name}
-                          className="absolute inset-0 m-auto h-auto w-2/3 object-contain z-10"
-                          style={{ filter: 'brightness(0) invert(1)' }}
+                          className="absolute inset-0 m-auto object-contain z-10"
+                          style={{ filter: 'brightness(0) invert(1)', maxHeight: '40%', maxWidth: '75%', width: 'auto', height: 'auto' }}
                         />
                       ) : (
-                        <p
-                          className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic"
-                          style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                        >
-                          {venue.name}
-                        </p>
+                        <p className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>{venue.name}</p>
                       )}
-                      <div className="absolute bottom-4 left-5 z-10">
-                        <p className="text-white text-sm font-light tracking-wide">{venue.name}</p>
-                        {venue.area && <p className="text-white/60 text-xs font-light mt-0.5">{venue.area}</p>}
-                      </div>
                     </>
                   ) : (
                     <div className="w-full h-full bg-zinc-100" />
+                  )}
+                </div>
+                <div className="px-5 py-4 text-center">
+                  <p className="text-base font-light text-zinc-900">
+                    {venue.name}
+                  </p>
+                  {venue.area && (
+                    <p className="text-sm font-light text-zinc-500 mt-1">
+                      {venue.area}
+                    </p>
                   )}
                 </div>
               </Link>
