@@ -206,7 +206,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
                         <img
                           src={(venue as any).logo_url}
                           alt={venue.name}
-                          className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
+                          className="absolute bottom-6 left-1/2 -translate-x-1/2 h-auto w-1/2 object-contain z-10"
                         />
                       ) : (
                         <p className="absolute bottom-6 left-0 right-0 z-10 text-white text-2xl tracking-tight text-center px-6 italic" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>{venue.name}</p>
