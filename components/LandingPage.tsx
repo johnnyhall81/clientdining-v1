@@ -82,9 +82,9 @@ export default function LandingPage({ venues }: LandingPageProps) {
           <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '1rem', letterSpacing: '0.3px' }}>
             Reserved for City professionals
           </p>
-          <div className="pt-2">
+          <div className="pt-2 flex flex-col items-center gap-4">
             <Link
-              href="/signup"
+              href="/login"
               className="inline-block px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300"
               style={{
                 color: '#F3F1ED',
@@ -95,8 +95,15 @@ export default function LandingPage({ venues }: LandingPageProps) {
               onMouseEnter={() => setEnterHovered(true)}
               onMouseLeave={() => setEnterHovered(false)}
             >
-              Enter
+              <span className="block text-xs font-light opacity-70 mb-0.5">Welcome back</span>
+              Sign in to your account
             </Link>
+            <p className="text-sm font-light" style={{ color: 'rgba(243,241,237,0.6)' }}>
+              Don&apos;t have an account?{' '}
+              <Link href="/signup" className="underline underline-offset-4 decoration-white/30 hover:opacity-100 transition-opacity" style={{ color: 'rgba(243,241,237,0.85)' }}>
+                Join
+              </Link>
+            </p>
           </div>
         </div>
 
@@ -150,9 +157,8 @@ export default function LandingPage({ venues }: LandingPageProps) {
         lineHeight: 1.85
       }}
     >
-      A defined circle of established restaurants and private members&apos; clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. Built for professional hosting.
-
-
+      A defined circle of established restaurants and private members’ clubs.
+      Trusted venues. Clear standards. Built for professional hosting.
     </p>
 
     {/* Statement */}
@@ -184,7 +190,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
   </p>
  
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
-          {venues.slice(0, 3).map((venue) => {
+          {[...venues].sort((a: any, b: any) => (a.display_order ?? 999) - (b.display_order ?? 999)).slice(0, 3).map((venue) => {
             const imageSrc = venue.image_hero || venue.image
             return (
               <Link
@@ -207,19 +213,24 @@ export default function LandingPage({ venues }: LandingPageProps) {
                         <img
                           src={(venue as any).logo_url}
                           alt={venue.name}
-                          className="absolute inset-0 m-auto object-contain z-10"
-                          style={{ filter: 'brightness(0) invert(1)', maxHeight: '40%', maxWidth: '75%', width: 'auto', height: 'auto' }}
+                          className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
                         />
                       ) : (
                         <p className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>{venue.name}</p>
                       )}
-                      <div className="absolute bottom-4 left-5 z-10">
-                        <p className="text-white text-sm font-light tracking-wide">{venue.name}</p>
-                        {venue.area && <p className="text-white/60 text-xs font-light mt-0.5">{venue.area}</p>}
-                      </div>
                     </>
                   ) : (
                     <div className="w-full h-full bg-zinc-100" />
+                  )}
+                </div>
+                <div className="px-5 py-4 text-center">
+                  <p className="text-base font-light text-zinc-900">
+                    {venue.name}
+                  </p>
+                  {venue.area && (
+                    <p className="text-sm font-light text-zinc-500 mt-1">
+                      {venue.area}
+                    </p>
                   )}
                 </div>
               </Link>
