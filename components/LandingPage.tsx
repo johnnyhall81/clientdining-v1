@@ -150,8 +150,9 @@ export default function LandingPage({ venues }: LandingPageProps) {
         lineHeight: 1.85
       }}
     >
-      A defined circle of established restaurants and private members’ clubs.
-      Trusted venues. Clear standards. Built for professional hosting.
+      A defined circle of established restaurants and private members&apos; clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. Built for professional hosting.
+
+
     </p>
 
     {/* Statement */}
