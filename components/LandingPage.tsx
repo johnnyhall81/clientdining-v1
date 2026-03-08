@@ -15,6 +15,20 @@ export default function LandingPage({ venues }: LandingPageProps) {
   const router = useRouter()
   const [enterHovered, setEnterHovered] = useState(false)
   const [loginHovered, setLoginHovered] = useState(false)
+  const [authLoading, setAuthLoading] = useState(false)
+
+  const handleLinkedInLogin = async () => {
+    setAuthLoading(true)
+    const redirectUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+      ? 'http://localhost:3000/home'
+      : 'https://clientdining.com/home'
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'linkedin_oidc',
+      options: { redirectTo: redirectUrl },
+    })
+    if (error) setAuthLoading(false)
+  }
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -31,8 +45,9 @@ export default function LandingPage({ venues }: LandingPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex justify-between items-center h-16">
             <span className="text-xl font-normal" style={{ color: '#F3F1ED', WebkitFontSmoothing: 'antialiased' }}>ClientDining</span>
-            <Link
-              href="/login"
+            <button
+              onClick={handleLinkedInLogin}
+              disabled={authLoading}
               className="transition-all duration-300"
               style={{ color: loginHovered ? 'rgba(242,241,237,1)' : 'rgba(242,241,238,0.7)' }}
               aria-label="Sign in"
@@ -44,7 +59,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
               </div>
-            </Link>
+            </button>
           </div>
         </div>
       </header>
@@ -83,21 +98,24 @@ export default function LandingPage({ venues }: LandingPageProps) {
             Reserved for City professionals
           </p>
           <div className="pt-2 flex flex-col items-center gap-4">
-            <Link
-              href="/login"
-              className="inline-block px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300"
+            <button
+              onClick={handleLinkedInLogin}
+              disabled={authLoading}
+              onMouseEnter={() => setEnterHovered(true)}
+              onMouseLeave={() => setEnterHovered(false)}
+              className="inline-flex items-center gap-3 px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300 disabled:opacity-50"
               style={{
                 color: '#F3F1ED',
                 background: enterHovered ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)',
                 backdropFilter: 'blur(4px)',
                 border: enterHovered ? '1px solid rgba(255,255,255,0.55)' : '1px solid rgba(255,255,255,0.35)',
               }}
-              onMouseEnter={() => setEnterHovered(true)}
-              onMouseLeave={() => setEnterHovered(false)}
             >
-              <span className="block text-xs font-light opacity-70 mb-0.5">Welcome back</span>
-              Sign in to your account
-            </Link>
+              <svg className="w-4 h-4 flex-shrink-0 opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
+            </button>
             <p className="text-sm font-light" style={{ color: 'rgba(243,241,237,0.6)' }}>
               Don&apos;t have an account?{' '}
               <Link href="/signup" className="underline underline-offset-4 decoration-white/30 hover:opacity-100 transition-opacity" style={{ color: 'rgba(243,241,237,0.85)' }}>
