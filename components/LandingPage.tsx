@@ -183,7 +183,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
   </p>
  
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
-          {[...venues].sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999)).slice(0, 3).map((venue) => {
+          {venues.slice(0, 3).map((venue) => {
             const imageSrc = venue.image_hero || venue.image
             return (
               <Link
@@ -206,7 +206,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
                         <img
                           src={(venue as any).logo_url}
                           alt={venue.name}
-                          className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
+                          className="absolute bottom-6 left-1/2 -translate-x-1/2 h-auto w-1/2 object-contain z-10"
                         />
                       ) : (
                         <p className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>{venue.name}</p>
