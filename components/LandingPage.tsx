@@ -189,9 +189,9 @@ export default function LandingPage({ venues }: LandingPageProps) {
               <Link
                 key={venue.id}
                 href={`/venues/${venue.id}`}
-                className="group block rounded-2xl border border-zinc-100 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-200 hover:shadow-sm"
+                className="group block rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-md"
               >
-                <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden">
+                <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden rounded-2xl">
                   {imageSrc ? (
                     <>
                       <Image
@@ -202,7 +202,6 @@ export default function LandingPage({ venues }: LandingPageProps) {
                         className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                      {/* Large centred logo */}
                       {(venue as any).logo_url && (
                         <img
                           src={(venue as any).logo_url}
@@ -211,32 +210,13 @@ export default function LandingPage({ venues }: LandingPageProps) {
                           style={{ filter: 'brightness(0) invert(1)' }}
                         />
                       )}
-                      {/* Venue name bottom left */}
                       <div className="absolute bottom-3 left-4 z-10">
                         <p className="text-white text-xs font-light tracking-wide">{venue.name}</p>
+                        {venue.area && <p className="text-white/70 text-xs font-light">{venue.area}</p>}
                       </div>
-                      {(venue as any).logo_url ? (
-                        <img
-                          src={(venue as any).logo_url}
-                          alt={venue.name}
-                          className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
-                        />
-                      ) : (
-                        <p className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>{venue.name}</p>
-                      )}
                     </>
                   ) : (
                     <div className="w-full h-full bg-zinc-100" />
-                  )}
-                </div>
-                <div className="px-5 py-4 text-center">
-                  <p className="text-base font-light text-zinc-900">
-                    {venue.name}
-                  </p>
-                  {venue.area && (
-                    <p className="text-sm font-light text-zinc-500 mt-1">
-                      {venue.area}
-                    </p>
                   )}
                 </div>
               </Link>
