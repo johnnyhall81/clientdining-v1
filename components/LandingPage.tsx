@@ -217,16 +217,6 @@ export default function LandingPage({ venues }: LandingPageProps) {
                     <div className="w-full h-full bg-zinc-100" />
                   )}
                 </div>
-                <div className="px-5 py-4 text-center">
-                  <p className="text-base font-light text-zinc-900">
-                    {venue.name}
-                  </p>
-                  {venue.area && (
-                    <p className="text-sm font-light text-zinc-500 mt-1">
-                      {venue.area}
-                    </p>
-                  )}
-                </div>
               </Link>
             )
           })}
