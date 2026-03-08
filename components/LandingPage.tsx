@@ -183,7 +183,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
   </p>
  
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
-          {venues.slice(0, 3).map((venue) => {
+          {[...venues].sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999)).slice(0, 3).map((venue) => {
             const imageSrc = venue.image_hero || venue.image
             return (
               <Link
