@@ -77,11 +77,11 @@ export default function LandingPage({ venues }: LandingPageProps) {
         />
         {/* Gradient overlay - tight to top only, preserves image below */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.42) 40%, rgba(0,0,0,0.17) 65%, rgba(0,0,0,0.07) 80%)'
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.30) 65%, rgba(0,0,0,0.15) 80%)'
         }} />
         {/* Radial vignette behind text only */}
         <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse 70% 50% at 50% 42%, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0) 70%)'
+          background: 'radial-gradient(ellipse 80% 60% at 50% 42%, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 70%)'
         }} />
         {/* Text — shifted slightly above centre into darker sky area */}
         <div className="relative z-10 max-w-2xl mx-auto px-8 space-y-5 -mt-24" style={{
@@ -89,13 +89,13 @@ export default function LandingPage({ venues }: LandingPageProps) {
           MozOsxFontSmoothing: 'grayscale',
         }}>
           <h1
-            className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl leading-tight"
+            className="font-[family-name:var(--font-cormorant)] text-4xl md:text-5xl lg:text-6xl leading-tight"
             style={{ color: '#F3F1ED', fontWeight: 500, letterSpacing: '0.4px', lineHeight: 1.15 }}
           >
-            London's Best Tables
+            Private booking network for professionals who host business dining in London.
           </h1>
-          <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '1rem', letterSpacing: '0.3px' }}>
-            Reserved for City professionals
+          <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.92)', fontWeight: 400, fontSize: '1rem', letterSpacing: '0.3px' }}>
+            A defined circle of established restaurants and private members' clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. Built for professional hosting.
           </p>
           <div className="pt-2 flex flex-col items-center gap-4">
             <button
@@ -116,7 +116,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
               </svg>
               {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
             </button>
-            <p className="text-sm font-light" style={{ color: 'rgba(243,241,237,0.6)' }}>
+            <p className="text-sm font-light" style={{ color: 'rgba(243,241,237,0.78)' }}>
               Don&apos;t have an account?{' '}
               <Link href="/signup" className="underline underline-offset-4 decoration-white/30 hover:opacity-100 transition-opacity" style={{ color: 'rgba(243,241,237,0.85)' }}>
                 Join
@@ -169,7 +169,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
 
     {/* Body */}
     <p
-      className="text-base font-light text-zinc-500 mx-auto"
+      className="text-base font-light text-zinc-600 mx-auto"
       style={{
         maxWidth: '560px',
         lineHeight: 1.85
@@ -183,7 +183,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
     <p
   className="text-[11px] uppercase mt-8"
   style={{
-    color: '#5A5A5A',
+    color: '#3A3A3A',
     letterSpacing: '0.16em',
     fontWeight: 400
   }}
@@ -226,29 +226,24 @@ export default function LandingPage({ venues }: LandingPageProps) {
                         sizes="(max-width: 640px) 100vw, 33vw"
                         className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
                       {(venue as any).logo_url ? (
                         <img
                           src={(venue as any).logo_url}
                           alt={venue.name}
-                          className="absolute inset-0 m-auto h-auto w-3/4 object-contain z-10"
+                          className="absolute inset-0 m-auto object-contain z-10"
+                          style={{ filter: 'brightness(0) invert(1)', maxHeight: '40%', maxWidth: '75%', width: 'auto', height: 'auto' }}
                         />
                       ) : (
                         <p className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>{venue.name}</p>
                       )}
+                      <div className="absolute bottom-4 left-5 z-10">
+                        <p className="text-white text-sm font-light tracking-wide">{venue.name}</p>
+                        {venue.area && <p className="text-white/60 text-xs font-light mt-0.5">{venue.area}</p>}
+                      </div>
                     </>
                   ) : (
                     <div className="w-full h-full bg-zinc-100" />
-                  )}
-                </div>
-                <div className="px-5 py-4 text-center">
-                  <p className="text-base font-light text-zinc-900">
-                    {venue.name}
-                  </p>
-                  {venue.area && (
-                    <p className="text-sm font-light text-zinc-500 mt-1">
-                      {venue.area}
-                    </p>
                   )}
                 </div>
               </Link>
