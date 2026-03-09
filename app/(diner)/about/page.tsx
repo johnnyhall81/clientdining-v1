@@ -41,13 +41,13 @@ export default function AboutPage() {
             Membership is verified. The venue group expands deliberately and remains peer level, so the network stays credible, useful, and aligned with the standards professional hosts expect.
           </p>
           <p>
-            ClientDining makes business hosting in London more straightforward.
+            When the table matters, the process should too.
           </p>
         </div>
 
         <p className="mt-8 text-zinc-500 font-light leading-relaxed">
           <Link href="/signup" className="text-zinc-900 hover:text-zinc-600 transition-colors duration-200">
-            Request access.
+            Apply to join ClientDining.
           </Link>
         </p>
 
