@@ -256,9 +256,9 @@ export default function LandingPage({ venues }: LandingPageProps) {
         {/* CTA */}
         <div className="mt-10 pb-16 flex justify-center">
           <p className="text-sm font-light text-zinc-500">
-            Don&apos;t have an account?{' '}
+             New to ClientDining? {' '}
             <Link href="/signup" className="text-zinc-900 underline underline-offset-4 decoration-zinc-300 hover:decoration-zinc-600 transition-colors duration-200">
-              Join
+            Apply to join
             </Link>
           </p>
         </div>
