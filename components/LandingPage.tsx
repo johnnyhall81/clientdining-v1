@@ -122,7 +122,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
     className="transition-opacity hover:opacity-100"
     style={{ color: 'rgba(243,241,237,0.82)' }}
   >
-    New to ClientDining? Apply to join
+    Apply to join
   </Link>
 </p>
           </div>
