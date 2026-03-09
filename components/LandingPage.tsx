@@ -254,7 +254,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
         </div>
 
                 {/* CTA */}
-                <div className="mt-10 pb-16 flex flex-col items-center gap-0.5">
+                <div className="mt-10 pb-16 flex flex-col items-center gap-1.5">
           <p className="text-sm font-light text-zinc-500">
             New to ClientDining?
           </p>
