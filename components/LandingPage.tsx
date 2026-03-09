@@ -116,7 +116,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
               </svg>
               {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
             </button>
-            <p className="text-sm font-light">
+            <p className="mt-3 text-sm font-light">
   <Link
     href="/signup"
     className="transition-opacity hover:opacity-100"
