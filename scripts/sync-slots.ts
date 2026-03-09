@@ -74,11 +74,20 @@ async function fetchSevenRoomsSlots(
         })
 
         if (!res.ok) {
+          const rawErr = await res.text()
           console.warn(`  ⚠ SevenRooms returned ${res.status} for ${date} party:${partySize}`)
+          console.warn(`  ⚠ Raw response (first 500 chars):`, rawErr.slice(0, 500))
           continue
         }
 
-        const data: any = await res.json()
+        const rawText = await res.text()
+        if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
+          console.warn(`  ⚠ Non-JSON response for ${date} party:${partySize} — first 500 chars:`)
+          console.warn(rawText.slice(0, 500))
+          continue
+        }
+
+        const data: any = JSON.parse(rawText)
 
         // SevenRooms actual response: { status: 200, data: { availability: { [date]: [ { times: [{time, type}] } ] } } }
         const shifts = data?.data?.availability?.[date] || []
