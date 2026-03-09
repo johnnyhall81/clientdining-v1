@@ -19,14 +19,62 @@ export default function LandingPage({ venues }: LandingPageProps) {
 
   const handleLinkedInLogin = async () => {
     setAuthLoading(true)
-    const redirectUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-      ? 'http://localhost:3000/home'
-      : 'https://clientdining.com/home'
-    const { error } = await supabase.auth.signInWithOAuth({
+
+    const baseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+      ? 'http://localhost:3000'
+      : 'https://clientdining.com'
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',
-      options: { redirectTo: redirectUrl },
+      options: {
+        redirectTo: `${baseUrl}/auth/popup-callback`,
+        skipBrowserRedirect: true,
+      },
     })
-    if (error) setAuthLoading(false)
+
+    if (error || !data?.url) {
+      setAuthLoading(false)
+      return
+    }
+
+    // Open LinkedIn auth in a small popup so the user stays on ClientDining
+    const popup = window.open(
+      data.url,
+      'linkedin-auth',
+      'width=600,height=700,left=300,top=100,resizable=yes,scrollbars=yes'
+    )
+
+    if (!popup) {
+      // Popup blocked — fall back to full redirect
+      window.location.href = data.url
+      return
+    }
+
+    // Listen for the callback page to signal completion
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return
+      if (event.data?.type === 'LINKEDIN_AUTH_COMPLETE') {
+        window.removeEventListener('message', handleMessage)
+        // Refresh session from the cookie Supabase just set
+        const { data: sessionData } = await supabase.auth.getSession()
+        if (sessionData?.session) {
+          router.push('/home')
+        } else {
+          setAuthLoading(false)
+        }
+      }
+    }
+
+    window.addEventListener('message', handleMessage)
+
+    // Safety fallback: if popup is closed without completing auth
+    const pollClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(pollClosed)
+        window.removeEventListener('message', handleMessage)
+        setAuthLoading(false)
+      }
+    }, 500)
   }
 
   useEffect(() => {
