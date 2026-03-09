@@ -43,13 +43,9 @@ export default function AboutPage() {
           <p>
             ClientDining makes business hosting in London more straightforward.
           </p>
-          <p>
-            When the table matters.
-          </p>
         </div>
 
         <p className="mt-8 text-zinc-500 font-light leading-relaxed">
-          ClientDining is open to City professionals and the EAs who book on their behalf.{' '}
           <Link href="/signup" className="text-zinc-900 hover:text-zinc-600 transition-colors duration-200">
             Request access.
           </Link>
