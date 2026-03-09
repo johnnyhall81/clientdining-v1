@@ -51,9 +51,9 @@ export default function AboutPage() {
         <div className="mt-16">
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-zinc-900 text-sm font-light rounded-lg border border-zinc-200 hover:bg-zinc-50 transition-colors duration-300"
+            className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors duration-200 underline underline-offset-4 decoration-zinc-300 hover:decoration-zinc-600"
           >
-            Apply for membership
+            Get started →
           </Link>
         </div>
 
