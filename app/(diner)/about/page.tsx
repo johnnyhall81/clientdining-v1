@@ -47,7 +47,7 @@ export default function AboutPage() {
 
         <p className="mt-8 text-zinc-500 font-light leading-relaxed">
           <Link href="/signup" className="text-zinc-900 hover:text-zinc-600 transition-colors duration-200">
-            Apply to join ClientDining.
+            Apply to join.
           </Link>
         </p>
 
