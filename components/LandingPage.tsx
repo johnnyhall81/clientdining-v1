@@ -17,16 +17,8 @@ export default function LandingPage({ venues }: LandingPageProps) {
   const [loginHovered, setLoginHovered] = useState(false)
   const [authLoading, setAuthLoading] = useState(false)
 
-  const handleLinkedInLogin = async () => {
-    setAuthLoading(true)
-    const redirectUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-      ? 'http://localhost:3000/home'
-      : 'https://clientdining.com/home'
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'linkedin_oidc',
-      options: { redirectTo: redirectUrl },
-    })
-    if (error) setAuthLoading(false)
+  const handleLinkedInLogin = () => {
+    router.push('/login')
   }
 
   useEffect(() => {
