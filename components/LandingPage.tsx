@@ -116,12 +116,15 @@ export default function LandingPage({ venues }: LandingPageProps) {
               </svg>
               {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
             </button>
-            <p className="text-sm font-light" style={{ color: 'rgba(243,241,237,0.78)' }}>
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="underline underline-offset-4 decoration-white/30 hover:opacity-100 transition-opacity" style={{ color: 'rgba(243,241,237,0.85)' }}>
-                Join
-              </Link>
-            </p>
+            <p className="text-sm font-light">
+  <Link
+    href="/signup"
+    className="transition-opacity hover:opacity-100"
+    style={{ color: 'rgba(243,241,237,0.82)' }}
+  >
+    Apply to join
+  </Link>
+</p>
           </div>
         </div>
 
