@@ -197,7 +197,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
 
 
 {/* Recent additions */}
-<section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pt-28">
+<section className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pt-12">
   <p
     className="font-serif text-zinc-900 mb-14 tracking-tight"
     style={{
