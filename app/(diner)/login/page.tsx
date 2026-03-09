@@ -56,7 +56,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-light text-zinc-900">Welcome back</h1>
-          <p className="mt-2 text-zinc-500 font-light">Sign in to your account</p>
+          <p className="mt-2 text-zinc-500 font-light">Sign in to your ClientDining account</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-8">
