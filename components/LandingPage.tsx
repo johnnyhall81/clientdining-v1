@@ -253,16 +253,14 @@ export default function LandingPage({ venues }: LandingPageProps) {
           })}
         </div>
 
-        {/* CTA */}
-        <div className="mt-10 pb-16 flex justify-center">
+                {/* CTA */}
+                <div className="mt-10 pb-16 flex flex-col items-center gap-0.5">
           <p className="text-sm font-light text-zinc-500">
-             New to ClientDining? {' '}
+            New to ClientDining?
           </p>
-          <p className="text-sm font-light text-zinc-500">
-            <Link href="/signup" >
+          <Link href="/signup" className="text-sm font-medium text-zinc-500">
             Apply to join
-            </Link>
-          </p>
+          </Link>
         </div>
       </section>
 
