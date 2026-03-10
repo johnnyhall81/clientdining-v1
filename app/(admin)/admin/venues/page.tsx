@@ -46,15 +46,23 @@ export default function AdminVenuesPage() {
     const swapIndex = direction === 'up' ? index - 1 : index + 1
     if (swapIndex < 0 || swapIndex >= venues.length) return
 
+    // Swap positions in array
     const updated = [...venues]
-    const aOrder = (updated[index] as any).display_order ?? index + 1
-    const bOrder = (updated[swapIndex] as any).display_order ?? swapIndex + 1
-
-    await supabase.from('venues').update({ display_order: bOrder }).eq('id', updated[index].id)
-    await supabase.from('venues').update({ display_order: aOrder }).eq('id', updated[swapIndex].id)
-
     ;[updated[index], updated[swapIndex]] = [updated[swapIndex], updated[index]]
-    setVenues(updated)
+
+    // Assign clean sequential display_order values (1, 2, 3...)
+    // This prevents stale values and duplicate order numbers accumulating over time
+    const normalized = updated.map((v, i) => ({ ...v, display_order: i + 1 } as any))
+
+    // Optimistic update immediately so UI feels instant
+    setVenues(normalized)
+
+    // Persist all display_order values in parallel — avoids partial writes
+    await Promise.all(
+      normalized.map((v) =>
+        supabase.from('venues').update({ display_order: (v as any).display_order }).eq('id', v.id)
+      )
+    )
   }
 
   if (loading) {
