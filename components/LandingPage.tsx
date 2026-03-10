@@ -178,20 +178,9 @@ export default function LandingPage({ venues }: LandingPageProps) {
         lineHeight: 1.85
       }}
     >
-      A defined circle of established restaurants and private members' clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. Built for professional hosting.
+      A defined circle of established restaurants and private members' clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. When the table matters.
     </p>
 
-    {/* Statement */}
-    <p
-  className="text-[11px] uppercase mt-8"
-  style={{
-    color: '#3A3A3A',
-    letterSpacing: '0.16em',
-    fontWeight: 400
-  }}
->
-  When the table matters
-</p>
   </div>
 </section>
 
