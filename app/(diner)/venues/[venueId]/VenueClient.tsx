@@ -380,20 +380,59 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               </div>
             )}
 
-            {/* Available Tables */}
-            <div className="mt-8 pt-4">
-              <div className="mb-8">
-                <h2 className="text-2xl font-light text-zinc-900 tracking-tight">Book a table</h2>
-              </div>
-              <SlotPicker
-                slots={slots}
-                onBook={handleBook}
-                isAlertActive={(id) => alerts.has(id)}
-                onToggleAlert={handleToggleAlert}
-                bookedSlots={bookedSlots}
-                bookedPartySizes={bookedPartySizes}
-              />
-            </div>
+            {/* Availability section */}
+            {(() => {
+              const hasSlots = slots && slots.length > 0
+              const hasPrivateDining = venue.private_hire_available
+
+              // Nothing available
+              if (!hasSlots && !hasPrivateDining) {
+                return (
+                  <div className="mt-8 pt-4">
+                    <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
+                  </div>
+                )
+              }
+
+              return (
+                <div className="mt-8 pt-4 space-y-10">
+                  {/* Tables section — only shown when slots exist */}
+                  {hasSlots && (
+                    <div>
+                      <div className="mb-8">
+                        <h2 className="text-2xl font-light text-zinc-900 tracking-tight">Book a table</h2>
+                      </div>
+                      <SlotPicker
+                        slots={slots}
+                        onBook={handleBook}
+                        isAlertActive={(id) => alerts.has(id)}
+                        onToggleAlert={handleToggleAlert}
+                        bookedSlots={bookedSlots}
+                        bookedPartySizes={bookedPartySizes}
+                      />
+                    </div>
+                  )}
+
+                  {/* Private dining section */}
+                  {hasPrivateDining && (
+                    <div className="border-t border-zinc-100 pt-8">
+                      <h2 className="text-2xl font-light text-zinc-900 tracking-tight mb-2">Private dining</h2>
+                      <p className="text-sm font-light text-zinc-400 mb-5">
+                        {hasSlots
+                          ? 'For hosted dinners and private rooms. Available on request.'
+                          : 'This venue is available for private dining and hosted occasions.'}
+                      </p>
+                      <button
+                        onClick={() => setShowCorporateEventsModal(true)}
+                        className="inline-flex items-center px-5 py-2.5 bg-zinc-900 text-white text-sm font-light rounded-lg hover:bg-zinc-800 transition-colors"
+                      >
+                        Enquire
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
           </div>
         </div>
       </div>
