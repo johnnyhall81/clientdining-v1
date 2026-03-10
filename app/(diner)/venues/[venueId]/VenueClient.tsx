@@ -422,12 +422,15 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                           ? 'For hosted dinners and private rooms. Available on request.'
                           : 'This venue is available for private dining and hosted occasions.'}
                       </p>
-                      <button
-                        onClick={() => setShowCorporateEventsModal(true)}
-                        className="inline-flex items-center px-5 py-2.5 bg-zinc-900 text-white text-sm font-light rounded-lg hover:bg-zinc-800 transition-colors"
-                      >
-                        Enquire
-                      </button>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <button
+                          onClick={() => setShowCorporateEventsModal(true)}
+                          className="flex flex-col items-center justify-center h-16 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 transition-all text-center px-2"
+                        >
+                          <span className="text-base font-light text-zinc-900">Private dining</span>
+                          <span className="text-[11px] font-light text-zinc-500 mt-0.5">Enquire</span>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
