@@ -95,7 +95,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
             London's Best Tables
           </h1>
           <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '1rem', letterSpacing: '0.3px' }}>
-            Reserved for corporate and creative professionals
+            For professionals across corporate and creative London
           </p>
           <div className="pt-2 flex flex-col items-center gap-4">
             <button
@@ -164,7 +164,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
         letterSpacing: '0.005em'
       }}
     >
-      Private booking network for professionals who host in London.
+      Private booking network for business dining in London.
     </p>
 
     {/* Divider */}
@@ -178,7 +178,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
         lineHeight: 1.85
       }}
     >
-      A defined circle of established restaurants and private members' clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. When the table matters.
+      A defined circle of established restaurants and private members’ clubs for client dinners, team occasions, and other professional bookings where the setting matters. Trusted venues. Clear standards. A better way to book when the table matters.
     </p>
 
   </div>
