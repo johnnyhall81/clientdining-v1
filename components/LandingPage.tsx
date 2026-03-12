@@ -95,7 +95,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
             London's Best Tables
           </h1>
           <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '1rem', letterSpacing: '0.3px' }}>
-            Reserved for professionals across corporate and creative London
+            Reserved for corporate and creative professionals
           </p>
           <div className="pt-2 flex flex-col items-center gap-4">
             <button
