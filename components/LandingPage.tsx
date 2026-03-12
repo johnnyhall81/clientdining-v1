@@ -95,7 +95,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
             London's Best Tables
           </h1>
           <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '1rem', letterSpacing: '0.3px' }}>
-            For professional hosts across corporate and creative London
+            Reserved for professionals across corporate and creative London
           </p>
           <div className="pt-2 flex flex-col items-center gap-4">
             <button
@@ -245,11 +245,11 @@ export default function LandingPage({ venues }: LandingPageProps) {
                 {/* CTA */}
                 <div className="mt-10 pb-16 flex flex-col items-center gap-1.5">
           <p className="text-sm font-light text-zinc-500">
-            New to ClientDining?
+            Not yet a member?{' '}
+            <Link href="/signup" className="font-medium text-zinc-900 hover:text-zinc-600 transition-colors duration-200">
+              Apply to join.
+            </Link>
           </p>
-          <Link href="/signup" className="text-sm font-medium text-zinc-500">
-            Apply to join
-          </Link>
         </div>
       </section>
 
