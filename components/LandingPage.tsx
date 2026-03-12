@@ -95,7 +95,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
             London's Best Tables
           </h1>
           <p className="leading-relaxed" style={{ color: 'rgba(243,241,237,0.78)', fontWeight: 500, fontSize: '1rem', letterSpacing: '0.3px' }}>
-            Reserved for City professionals
+            For professional hosts across corporate and creative London
           </p>
           <div className="pt-2 flex flex-col items-center gap-4">
             <button
@@ -164,7 +164,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
         letterSpacing: '0.005em'
       }}
     >
-      Private booking network for professionals who host business dining in London.
+      Private booking network for professionals who host in London.
     </p>
 
     {/* Divider */}

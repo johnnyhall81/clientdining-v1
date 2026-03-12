@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'About — ClientDining',
-  description: 'ClientDining is a private booking platform for professionals who host business dining in London. Membership is verified for City professionals.',
+  description: 'ClientDining is a private booking network for professionals who host across corporate and creative London. Membership is verified.',
 }
 
 export default function AboutPage() {
@@ -20,7 +20,7 @@ export default function AboutPage() {
             Business in London still happens around a table.
           </p>
           <p>
-            A client dinner. A relationship that matters. A team evening to mark the right moment. A table for colleagues, investors, or industry peers. For many people working across the City, some of the most important professional conversations still happen in person, over lunch or dinner, in the right setting.
+            A client dinner. A relationship that matters. A team evening to mark the right moment. A table for colleagues, investors, collaborators or industry peers. Across corporate and creative London, some of the most important professional conversations still happen in person, over lunch or dinner, in the right setting.
           </p>
           <p>
             And yet, for something so central to working life, the process of arranging it has never felt particularly well built for the purpose. It is often pieced together through email chains, personal contacts, and consumer reservation platforms designed for something quite different.
