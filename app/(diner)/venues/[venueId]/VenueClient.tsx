@@ -258,14 +258,11 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           {/* Gallery — swipeable, hero first then venue_images */}
           <VenueGallery
-              heroImage={venue.image_hero ? `${venue.image_hero}?v=2` : venue.image_hero}
-              galleryImages={galleryImages.map(img => ({
-                ...img,
-                image_url: img.image_url ? `${img.image_url}?v=2` : img.image_url
-              }))}
-              venueName={venue.name}
-              logoUrl={(venue as any).logo_url || undefined}
-            />
+            heroImage={venue.image_hero}
+            galleryImages={galleryImages}
+            venueName={venue.name}
+            logoUrl={(venue as any).logo_url || undefined}
+          />
 
           {/* Content padding */}
           <div className="p-8 sm:p-10 lg:p-12">
