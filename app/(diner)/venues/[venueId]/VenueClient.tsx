@@ -372,6 +372,12 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                     strong: ({ children }) => (
                       <strong className="font-light text-zinc-500">{children}</strong>
                     ),
+                    a: ({ href, children }) => (
+                      <a href={href} target="_blank" rel="noopener noreferrer" className="text-zinc-700 underline underline-offset-2">
+                        {children}
+                      </a>
+                    ),
+
                   }}
                 >
                   {venue.description}
