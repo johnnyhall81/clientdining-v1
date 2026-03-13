@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { sendBookingConfirmation } from '@/lib/email/send-booking-confirmation'
 import { formatFullDateTime } from '@/lib/date-utils'
+import { sendAdminBookingAlert } from '@/lib/email/send-admin-booking-alert'
 
 export async function POST(request: Request) {
   try {
@@ -109,6 +110,18 @@ export async function POST(request: Request) {
       guestNames: guestNames || undefined,
     }).catch((err) => console.error('Email send failed:', err))
 
+    sendAdminBookingAlert({
+      userName: profile.full_name || 'Guest',
+      userEmail: profile.email,
+      venueName: venue?.name || 'Venue',
+      venueArea: venue?.area,
+      slotTime: formatFullDateTime(slot.start_at),
+      partySize,
+      bookingId: booking.id || slotId,
+      notes: notes || undefined,
+      guestNames: guestNames || undefined,
+    }).catch((err) => console.error('Admin alert failed:', err))
+    
     return NextResponse.json({ booking })
   } catch (error: any) {
     console.error('Booking error:', error)
