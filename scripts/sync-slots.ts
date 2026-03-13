@@ -27,6 +27,9 @@ const VENUE_FILTER = process.argv.find(a => a.startsWith('--venue='))?.split('='
 // Party sizes to query — we check each to get full availability picture
 const PARTY_SIZES = [2, 4, 6]
 
+// Filter slots at or after this UTC hour. Use 14 during BST (Apr–Oct), 15 in GMT winter.
+const MAX_HOUR_UTC = parseInt(process.argv.find(a => a.startsWith('--max-hour='))?.split('=')[1] || '99')
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function dateRange(days: number): string[] {
@@ -58,7 +61,7 @@ async function fetchSevenRoomsSlots(
     for (const partySize of PARTY_SIZES) {
       const url = `${baseEndpoint}` +
         `?venue=${venueId}` +
-        `&time_slot=19:00` +
+        `&time_slot=12:00` +
         `&party_size=${partySize}` +
         `&halo_size_interval=16` +
         `&start_date=${date}` +
@@ -168,10 +171,12 @@ async function main() {
   for (const venue of venues) {
     console.log(`\n📍 ${venue.name} (${venue.booking_system})`)
 
-    // 2. Extract venue ID from widget URL query param
+    // 2. Extract venue ID from widget URL — handles both query-param (?venue=boha)
+    //    and path-based (/explore/aragawa/) SevenRooms URLs
     const widgetUrl = new URL(venue.booking_widget_url)
-    const venueId = widgetUrl.searchParams.get('venue') || ''
-    const baseEndpoint = widgetUrl.origin + widgetUrl.pathname
+    const venueId = widgetUrl.searchParams.get('venue') ||
+      widgetUrl.pathname.match(/\/explore\/([^/]+)/)?.[1] || ''
+    const baseEndpoint = 'https://www.sevenrooms.com/api-yoa/availability/widget/range'
 
     // 3. Fetch live availability
     console.log(`   Fetching availability...`)
@@ -185,6 +190,12 @@ async function main() {
     }
 
     console.log(`   Found ${liveSlots.length} live available slots`)
+
+    // Filter out slots at or after MAX_HOUR_UTC (e.g. 3pm for lunch-only venues)
+    if (MAX_HOUR_UTC < 99) {
+      liveSlots = liveSlots.filter(s => new Date(s.start_at).getUTCHours() < MAX_HOUR_UTC)
+      console.log(`   After <${MAX_HOUR_UTC}:00 UTC filter: ${liveSlots.length} slots`)
+    }
 
     // 4. Load existing slots from Supabase
     const { data: existingSlots } = await supabase
