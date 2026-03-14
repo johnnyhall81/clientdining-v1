@@ -110,13 +110,16 @@ async function fetchSevenRoomsSlots(
               const key = start_at
               const existing = slots.get(key)
 
+              // Prefer slot-level seating area label, fall back to shift name
+              const sessionName = slot.public_time_slot_description || shift.name || null
+
               if (!existing) {
-                slots.set(key, { party_min: partySize, party_max: partySize, session_name: shift.name || null })
+                slots.set(key, { party_min: partySize, party_max: partySize, session_name: sessionName })
               } else {
                 slots.set(key, {
                   party_min: Math.min(existing.party_min, partySize),
                   party_max: Math.max(existing.party_max, partySize),
-                  session_name: existing.session_name || shift.name || null,
+                  session_name: existing.session_name || sessionName,
                 })
               }
             }
