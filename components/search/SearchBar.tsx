@@ -4,8 +4,9 @@ import { useState, useRef, useEffect } from 'react'
 import { DayPicker, DateRange } from 'react-day-picker'
 import { format, addMonths } from 'date-fns'
 import 'react-day-picker/dist/style.css'
+import { supabase } from '@/lib/supabase-client'
 
-const AREAS = [
+const ALL_AREAS = [
   'Mayfair', 'Soho', 'Covent Garden', 'Fitzrovia', 'Marylebone',
   'Knightsbridge', 'Chelsea', 'Notting Hill', 'Shoreditch',
   'City of London', 'Canary Wharf',
@@ -30,7 +31,35 @@ type Panel = 'date' | 'area' | 'guests' | null
 export default function SearchBar({ filters, venues, onChange }: SearchBarProps) {
   const [open, setOpen] = useState<Panel>(null)
   const [hoverDate, setHoverDate] = useState<Date | undefined>(undefined)
+  const [availableAreas, setAvailableAreas] = useState<string[]>(ALL_AREAS)
   const ref = useRef<HTMLDivElement>(null)
+
+  // Fetch areas with available slots when date changes
+  useEffect(() => {
+    if (!filters.dateFrom) {
+      setAvailableAreas(ALL_AREAS)
+      return
+    }
+    const from = new Date(filters.dateFrom + 'T00:00:00')
+    const to = filters.dateTo
+      ? new Date(filters.dateTo + 'T23:59:59')
+      : new Date(filters.dateFrom + 'T23:59:59')
+
+    supabase
+      .from('slots')
+      .select('venues(area)')
+      .eq('status', 'available')
+      .gte('start_at', from.toISOString())
+      .lte('start_at', to.toISOString())
+      .then(({ data }) => {
+        if (data) {
+          const areas = [
+            ...new Set(data.map((r: any) => r.venues?.area).filter(Boolean))
+          ] as string[]
+          setAvailableAreas(areas.length ? areas : ALL_AREAS)
+        }
+      })
+  }, [filters.dateFrom, filters.dateTo])
 
   // Close on outside click
   useEffect(() => {
@@ -227,7 +256,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
         </div>
       )}
 
-      {/* Area panel */}
+      {/* Area panel — filtered to areas with slots on selected date */}
       {open === 'area' && (
         <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-zinc-100 rounded-2xl shadow-lg p-2 min-w-[200px]">
           <button
@@ -237,7 +266,7 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
           >
             All areas
           </button>
-          {AREAS.map((area) => (
+          {ALL_AREAS.filter(area => availableAreas.includes(area)).map((area) => (
             <button
               key={area}
               type="button"
@@ -247,6 +276,11 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
               {area}
             </button>
           ))}
+          {filters.dateFrom && availableAreas.length < ALL_AREAS.length && (
+            <p className="px-4 pt-2 pb-1 text-[10px] font-light text-zinc-300">
+              Showing areas with availability on selected date
+            </p>
+          )}
         </div>
       )}
 
