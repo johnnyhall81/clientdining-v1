@@ -53,9 +53,9 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
       .lte('start_at', to.toISOString())
       .then(({ data }) => {
         if (data) {
-          const areas = [
-            ...new Set(data.map((r: any) => r.venues?.area).filter(Boolean))
-          ] as string[]
+          const areas = Array.from(
+            new Set(data.map((r: any) => r.venues?.area).filter(Boolean))
+          ) as string[]
           setAvailableAreas(areas.length ? areas : ALL_AREAS)
         }
       })
