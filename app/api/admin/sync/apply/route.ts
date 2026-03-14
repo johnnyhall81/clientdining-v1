@@ -9,15 +9,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+const BATCH_SIZE = 100
+
 export async function POST(request: Request) {
   const auth = await requireAdmin()
   if (!auth.ok) return auth.response
 
   try {
     const { proposalIds, action } = await request.json()
-
-    // action = 'approve_all' | 'reject_all' | 'approve' | 'reject'
-    // proposalIds = array of IDs, or omit for all pending
 
     let query = supabase
       .from('slot_proposals')
@@ -38,47 +37,54 @@ export async function POST(request: Request) {
     let applied = 0
     let failed = 0
 
-    for (const proposal of proposals) {
-      try {
-        if (isApproving) {
-          if (proposal.action === 'add') {
-            // Create the slot
-            const { error: insertError } = await supabase
-              .from('slots')
-              .insert({
-                venue_id: proposal.venue_id,
-                start_at: proposal.start_at,
-                party_min: proposal.party_min,
-                party_max: proposal.party_max,
-                slot_tier: proposal.slot_tier,
-                status: 'available',
-              })
-            if (insertError) {
-              // Ignore duplicate slots
-              if (!insertError.message.includes('duplicate')) throw insertError
-            }
-          } else if (proposal.action === 'remove') {
-            // Only remove if still available (not booked)
-            await supabase
-              .from('slots')
-              .delete()
-              .eq('venue_id', proposal.venue_id)
-              .eq('start_at', proposal.start_at)
-              .eq('status', 'available')
-          }
-        }
+    if (isApproving) {
+      const toAdd = proposals.filter((p: any) => p.action === 'add')
+      const toRemove = proposals.filter((p: any) => p.action === 'remove')
 
-        // Mark proposal as approved or rejected
+      // Process removes individually (need conditional .eq('status', 'available'))
+      for (const proposal of toRemove) {
         await supabase
-          .from('slot_proposals')
-          .update({ status: isApproving ? 'approved' : 'rejected' })
-          .eq('id', proposal.id)
-
-        applied++
-      } catch (err: any) {
-        console.error(`Error applying proposal ${proposal.id}:`, err.message)
-        failed++
+          .from('slots')
+          .delete()
+          .eq('venue_id', proposal.venue_id)
+          .eq('start_at', proposal.start_at)
+          .eq('status', 'available')
       }
+
+      // Batch inserts
+      for (let i = 0; i < toAdd.length; i += BATCH_SIZE) {
+        const batch = toAdd.slice(i, i + BATCH_SIZE)
+        const { error: insertError } = await supabase
+          .from('slots')
+          .upsert(
+            batch.map((p: any) => ({
+              venue_id: p.venue_id,
+              start_at: p.start_at,
+              party_min: p.party_min,
+              party_max: p.party_max,
+              slot_tier: p.slot_tier,
+              session_name: p.session_name,
+              status: 'available',
+            })),
+            { onConflict: 'venue_id,start_at', ignoreDuplicates: false }
+          )
+        if (insertError) {
+          console.error(`Batch insert error (batch ${i / BATCH_SIZE + 1}):`, insertError.message)
+          failed += batch.length
+        } else {
+          applied += batch.length
+        }
+      }
+      applied += toRemove.length
+    }
+
+    // Mark all proposals as approved/rejected in batches
+    const allIds = proposals.map((p: any) => p.id)
+    for (let i = 0; i < allIds.length; i += BATCH_SIZE) {
+      await supabase
+        .from('slot_proposals')
+        .update({ status: isApproving ? 'approved' : 'rejected' })
+        .in('id', allIds.slice(i, i + BATCH_SIZE))
     }
 
     return NextResponse.json({
