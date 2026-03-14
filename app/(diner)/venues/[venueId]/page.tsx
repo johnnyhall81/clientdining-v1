@@ -32,7 +32,7 @@ export default async function VenuePage({ params }: { params: { venueId: string 
     .gte('start_at', now.toISOString())
     .lte('start_at', thirtyDaysFromNow.toISOString())
     .order('start_at', { ascending: true })
-    .limit(50)
+    .limit(500)
 
   const { data: galleryImages } = await supabase
     .from('venue_images')
