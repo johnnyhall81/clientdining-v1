@@ -216,6 +216,7 @@ export default function SlotPicker({
           }
 
           if (slot.status === 'available') {
+            const sessionName = (slot as any).session_name
             return (
               <button
                 key={slot.id}
@@ -224,6 +225,9 @@ export default function SlotPicker({
               >
                 <span className="text-base font-light text-zinc-900">{formatTime(slot.start_at)}</span>
                 <span className="text-[11px] font-light text-zinc-500 mt-0.5">{partyLabel}</span>
+                {sessionName && (
+                  <span className="text-[10px] font-light text-zinc-400 mt-0.5 truncate max-w-full px-1">{sessionName}</span>
+                )}
               </button>
             )
           }

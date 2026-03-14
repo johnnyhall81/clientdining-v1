@@ -54,8 +54,8 @@ async function fetchSevenRoomsSlots(
   venueId: string,
   dates: string[],
   baseEndpoint = 'https://www.sevenrooms.com/api-yoa/availability/widget/range'
-): Promise<{ start_at: string; party_min: number; party_max: number }[]> {
-  const slots: Map<string, { party_min: number; party_max: number }> = new Map()
+): Promise<{ start_at: string; party_min: number; party_max: number; session_name: string | null }[]> {
+  const slots: Map<string, { party_min: number; party_max: number; session_name: string | null }> = new Map()
 
   for (const date of dates) {
     for (const partySize of PARTY_SIZES) {
@@ -105,11 +105,12 @@ async function fetchSevenRoomsSlots(
             const existing = slots.get(key)
 
             if (!existing) {
-              slots.set(key, { party_min: partySize, party_max: partySize })
+              slots.set(key, { party_min: partySize, party_max: partySize, session_name: shift.name || null })
             } else {
               slots.set(key, {
                 party_min: Math.min(existing.party_min, partySize),
                 party_max: Math.max(existing.party_max, partySize),
+                session_name: existing.session_name || shift.name || null,
               })
             }
           }
@@ -180,7 +181,7 @@ async function main() {
 
     // 3. Fetch live availability
     console.log(`   Fetching availability...`)
-    let liveSlots: { start_at: string; party_min: number; party_max: number }[] = []
+    let liveSlots: { start_at: string; party_min: number; party_max: number; session_name: string | null }[] = []
 
     if (venue.booking_system === 'sevenrooms') {
       liveSlots = await fetchSevenRoomsSlots(venueId, dates, baseEndpoint)
@@ -235,6 +236,7 @@ async function main() {
           party_max: s.party_max,
           slot_tier: 'free',
           source: venue.booking_system,
+          session_name: s.session_name,
         }))
       )
       if (error) console.error(`   ❌ Error writing add proposals:`, error.message)
