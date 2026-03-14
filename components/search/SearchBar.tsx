@@ -9,7 +9,8 @@ import { supabase } from '@/lib/supabase-client'
 const ALL_AREAS = [
   'Mayfair', 'Soho', 'Covent Garden', 'Fitzrovia', 'Marylebone',
   'Knightsbridge', 'Chelsea', 'Notting Hill', 'Shoreditch',
-  'City of London', 'Canary Wharf',
+  'City of London', 'Canary Wharf', 'Portman Square', 'St. James\'s',
+  'London Bridge',
 ]
 
 export interface SearchFilters {
@@ -36,27 +37,28 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
 
   // Fetch areas with available slots when date changes
   useEffect(() => {
-    if (!filters.dateFrom) {
-      setAvailableAreas(ALL_AREAS)
-      return
-    }
-    const from = new Date(filters.dateFrom + 'T00:00:00')
+    const from = filters.dateFrom
+      ? new Date(filters.dateFrom + 'T00:00:00')
+      : new Date()
     const to = filters.dateTo
       ? new Date(filters.dateTo + 'T23:59:59')
-      : new Date(filters.dateFrom + 'T23:59:59')
+      : new Date(from.getTime() + 30 * 24 * 60 * 60 * 1000)
 
     supabase
-      .from('slots')
-      .select('venues(area)')
-      .eq('status', 'available')
-      .gte('start_at', from.toISOString())
-      .lte('start_at', to.toISOString())
-      .then(({ data }) => {
-        if (data) {
-          const areas = Array.from(
-            new Set(data.map((r: any) => r.venues?.area).filter(Boolean))
-          ) as string[]
-          setAvailableAreas(areas.length ? areas : ALL_AREAS)
+      .rpc('get_available_areas', {
+        from_date: from.toISOString(),
+        to_date: to.toISOString(),
+      })
+      .then(({ data, error }) => {
+        if (error || !data) {
+          setAvailableAreas(ALL_AREAS)
+          return
+        }
+        const areas = data.map((r: any) => r.area).filter(Boolean) as string[]
+        setAvailableAreas(areas.length ? areas : ALL_AREAS)
+        // Clear selected area if it no longer has availability
+        if (filters.area && areas.length && !areas.includes(filters.area)) {
+          onChange({ ...filters, area: '' })
         }
       })
   }, [filters.dateFrom, filters.dateTo])
