@@ -224,10 +224,6 @@ export default function AlertsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-light text-zinc-900 mb-2">Alerts</h1>
-        
-      </div>
 
       {filteredAlerts.length === 0 ? (
         <div className="text-center py-12 bg-white border border-zinc-200 rounded-xl">

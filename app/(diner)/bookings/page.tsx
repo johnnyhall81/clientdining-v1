@@ -137,7 +137,6 @@ export default function BookingsPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-4xl font-light text-zinc-900">Bookings</h1>
 
       {/* Tabs */}
       <div className="flex items-center gap-1 border-b border-zinc-100 pb-0">
