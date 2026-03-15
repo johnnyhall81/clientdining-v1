@@ -19,8 +19,8 @@ export default function Footer() {
           <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <Link href="/about" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">About</Link>
             <Link href="/faq" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">FAQ</Link>
-            <Link href="/privacy" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">Terms & Conditions</Link>
+            <Link href="/privacy" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">Privacy</Link>
+            <Link href="/terms" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">Terms</Link>
             <a href="mailto:support@clientdining.com" className="text-sm font-light text-zinc-500 hover:text-zinc-900 transition-colors">Contact</a>
           </nav>
 
