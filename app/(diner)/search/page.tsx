@@ -581,30 +581,6 @@ const handleCancel = async () => {
       )}
 
 
-{!loading && results.length > 0 && (
-  <div className="pt-4 pb-2 text-sm font-light text-zinc-500 tracking-wide">
-    Not seeing the right table?{" "}
-    <a
-      onClick={(e) => {
-        e.preventDefault()
-        const subject = encodeURIComponent('Table enquiry via ClientDining')
-        const body = encodeURIComponent(
-          `Venue:\nPreferred date:\nTime window:\nParty size:\nOccasion (optional):\nNotes (optional):\n`
-        )
-        window.open(
-          `mailto:support@clientdining.com?subject=${subject}&body=${body}`,
-          '_blank'
-        )
-      }}
-      className="text-zinc-500 hover:text-zinc-900 underline underline-offset-4 decoration-zinc-300 cursor-pointer transition-colors"
-    >
-      We can check additional availability.
-    </a>
-  </div>
-)}
-
-
-
 {selectedSlot && (
   <PartySizeModal
     isOpen={showPartySizeModal}
