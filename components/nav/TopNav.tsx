@@ -117,9 +117,9 @@ export default function TopNav() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <span className="text-xl font-light text-zinc-900 flex-shrink-0">
+          <Link href={user ? "/home" : "/"} className="text-xl font-light text-zinc-900 flex-shrink-0">
             ClientDining
-          </span>
+          </Link>
 
           {/* Navigation */}
           {user ? (
