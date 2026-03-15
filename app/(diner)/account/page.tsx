@@ -53,11 +53,9 @@ export default function AccountPage() {
 
   return (
     <div className="max-w-2xl space-y-12">
-      <h1 className="text-4xl font-light text-zinc-900">Account</h1>
-
       {/* Membership card */}
       <div className="bg-white rounded-2xl border border-zinc-100 p-8">
-        <p className="text-[10px] font-light text-zinc-300 uppercase tracking-widest mb-6">Membership</p>
+        <p className="text-[10px] font-light text-zinc-500 uppercase tracking-widest mb-6">Membership</p>
         <div className="flex items-center gap-6">
           {profile.avatar_url ? (
             <div className="relative w-14 h-14 flex-shrink-0">
