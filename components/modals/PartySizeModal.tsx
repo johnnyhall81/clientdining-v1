@@ -70,64 +70,67 @@ export default function PartySizeModal({
     onConfirm(partySize, notes.trim() || undefined, allNames)
   }
 
+  const inputClass = "w-full pb-2 bg-transparent border-b border-zinc-200 text-sm text-zinc-900 placeholder:text-zinc-300 font-light focus:outline-none focus:border-zinc-500 transition-colors"
+  const labelClass = "text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light"
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="bg-white rounded-2xl max-w-sm w-full shadow-xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+      <div className="bg-white w-full max-w-sm shadow-xl overflow-hidden" style={{ borderRadius: '6px' }}>
         <form onSubmit={handleSubmit}>
 
           {/* Header */}
-          <div className="relative px-7 pt-7 pb-7 border-b border-zinc-100">
+          <div className="relative px-7 pt-7 pb-6" style={{ borderBottom: '1px solid #F0EDE9' }}>
             <button
               type="button"
               onClick={onClose}
-              className="absolute top-5 right-5 text-zinc-400 hover:text-zinc-500 transition-colors"
+              className="absolute top-5 right-5 text-zinc-300 hover:text-zinc-600 transition-colors"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
-            <h2 className="text-3xl font-light text-zinc-900 tracking-tight pr-8">{venueName}</h2>
+            <h2 className="text-2xl font-light text-zinc-900 tracking-tight pr-8 leading-tight">{venueName}</h2>
             {venueLocation && (
-              <p className="text-sm font-light text-zinc-400 mt-1">{venueLocation}</p>
+              <p className="text-[11px] tracking-[0.15em] text-zinc-400 uppercase mt-2 font-light">{venueLocation}</p>
             )}
             {slotTime && <p className="text-sm font-light text-zinc-500 mt-2">{slotTime}</p>}
-            <p className="text-sm font-light text-zinc-500 mt-0.5">Party of {partySize}</p>
+            <p className="text-sm font-light text-zinc-400 mt-0.5">Party of {partySize}</p>
           </div>
 
-          <div className="px-7 py-7 space-y-7">
+          <div className="px-7 py-7 space-y-8">
 
-            {/* Guest stepper */}
+            {/* Party stepper */}
             <div>
-              <p className="text-[13px] font-medium text-zinc-500 mb-3">Party</p>
+              <p className={`${labelClass} mb-4`}>Party</p>
               <div className="flex items-center gap-6">
                 <button
                   type="button"
                   onClick={() => setPartySize(p => Math.max(minSize, p - 1))}
                   disabled={partySize <= minSize}
-                  className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-200 hover:text-zinc-900 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-lg"
+                  className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-25 disabled:cursor-not-allowed transition-all"
                 >−</button>
                 <span className="text-2xl font-light text-zinc-900 tabular-nums w-6 text-center">{partySize}</span>
                 <button
                   type="button"
                   onClick={() => setPartySize(p => Math.min(maxSize, p + 1))}
                   disabled={partySize >= maxSize}
-                  className="w-9 h-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-200 hover:text-zinc-900 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-lg"
+                  className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-25 disabled:cursor-not-allowed transition-all"
                 >+</button>
               </div>
             </div>
 
-            {/* Names — always visible */}
-            <div className="space-y-2">
-              <p className="text-[13px] font-medium text-zinc-500 mb-3">Names</p>
+            {/* Names */}
+            <div className="space-y-4">
+              <p className={labelClass}>Names</p>
               <div className="relative">
                 <input
                   type="text"
                   value={hostField}
                   onChange={e => setHostField(e.target.value)}
-                  placeholder="Host name"
-                  className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-400 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
+                  placeholder="Your name"
+                  className={inputClass}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-zinc-400 uppercase tracking-wide">Host</span>
+                <span className="absolute right-0 top-0 text-[9px] tracking-[0.15em] text-zinc-300 uppercase font-light">Host</span>
               </div>
               {guestNames.map((name, i) => (
                 <input
@@ -140,11 +143,8 @@ export default function PartySizeModal({
                     setGuestNames(updated)
                     if (nameError) setNameError(false)
                   }}
-                  placeholder={requiresGuestNames ? `Guest ${i + 1} (required)` : `Guest ${i + 1} (optional)`}
-                  className={[
-                    'w-full px-4 py-2.5 bg-zinc-50 border rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-400 font-light focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all',
-                    nameError && !name.trim() ? 'border-red-200 bg-red-50' : 'border-zinc-100',
-                  ].join(' ')}
+                  placeholder={requiresGuestNames ? `Guest ${i + 1}` : `Guest ${i + 1} (optional)`}
+                  className={`${inputClass} ${nameError && !name.trim() ? 'border-red-300' : ''}`}
                 />
               ))}
               {nameError && (
@@ -152,23 +152,21 @@ export default function PartySizeModal({
               )}
             </div>
 
-            {/* Requests — always visible */}
+            {/* Requests */}
             <div>
-              <p className="text-[13px] font-medium text-zinc-500 mb-3">Requests</p>
+              <p className={`${labelClass} mb-4`}>Requests</p>
               <textarea
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 placeholder="Dietary requirements, allergies, celebrations…"
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-[15px] text-zinc-900 placeholder:text-zinc-400 font-light resize-none focus:outline-none focus:ring-1 focus:ring-zinc-300 transition-all"
+                className="w-full bg-transparent border-b border-zinc-200 text-sm text-zinc-900 placeholder:text-zinc-300 font-light resize-none focus:outline-none focus:border-zinc-500 transition-colors pb-2"
                 rows={2}
                 maxLength={500}
               />
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-100 rounded-xl">
-                <p className="text-sm text-red-600 font-light">{error}</p>
-              </div>
+              <p className="text-xs font-light text-red-400">{error}</p>
             )}
 
           </div>
@@ -176,7 +174,9 @@ export default function PartySizeModal({
           {/* CTA */}
           <div className="px-7 pb-7">
             {error ? (
-              <button type="button" onClick={onClose} className="w-full h-12 text-sm font-light rounded-xl bg-zinc-100 text-zinc-500 hover:bg-zinc-200 transition-colors">
+              <button type="button" onClick={onClose}
+                className="w-full h-11 text-xs font-light tracking-widest uppercase text-zinc-500 hover:text-zinc-900 transition-colors"
+                style={{ border: '1px solid #E4E4E7', borderRadius: '3px' }}>
                 Close
               </button>
             ) : (
@@ -184,14 +184,17 @@ export default function PartySizeModal({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={[
-                    'w-full h-12 text-sm font-medium rounded-xl transition-colors',
-                    isSubmitting ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed' : 'bg-zinc-900 text-white hover:bg-zinc-700',
-                  ].join(' ')}
+                  className="w-full h-11 text-xs font-light tracking-widest uppercase transition-colors"
+                  style={{
+                    backgroundColor: isSubmitting ? '#F4F4F5' : '#18181B',
+                    color: isSubmitting ? '#A1A1AA' : '#FFFFFF',
+                    borderRadius: '3px',
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  }}
                 >
                   {isSubmitting ? 'Confirming…' : 'Confirm table'}
                 </button>
-                <p className="text-[12px] text-zinc-400 text-center mt-3">Instant confirmation</p>
+                <p className="text-[10px] tracking-[0.1em] text-zinc-300 text-center mt-3 uppercase font-light">Instant confirmation</p>
               </>
             )}
           </div>
