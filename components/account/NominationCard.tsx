@@ -98,7 +98,7 @@ export default function NominationCard({ userId, canNominate }: Props) {
       {/* Sent list */}
       {nominations.length > 0 && (
         <div className="mt-10">
-          <p className="text-[10px] font-light text-zinc-400 tracking-widest mb-4">Sent</p>
+          <p className="text-sm font-light text-zinc-500 mb-6 leading-relaxed">Sent</p>
           <div>
             {nominations.map((nom) => (
               <div key={nom.id} className="flex items-center justify-between py-3.5 border-b border-zinc-100 last:border-b-0">
