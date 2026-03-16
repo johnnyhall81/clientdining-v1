@@ -31,11 +31,11 @@ export async function sendVerificationConfirmation(data: VerificationEmailData) 
         <p style="margin:0 0 28px;font-size:24px;font-weight:300;color:#18181B;letter-spacing:-0.2px;line-height:1.25;">${firstName ? `Welcome, ${firstName}.` : 'Welcome.'}<br/>Your membership is confirmed.</p>
 
         <p style="margin:0 0 18px;font-size:13px;font-weight:300;color:#52525B;line-height:1.75;">
-          You now have full access to book at our curated network of London restaurants and private members' clubs — selected for quality, consistency and discretion.
+          You now have access to a curated network of London restaurants and private members' clubs, chosen for quality, discretion and consistency.
         </p>
 
         <p style="margin:0 0 32px;font-size:13px;font-weight:300;color:#52525B;line-height:1.75;">
-          Browse available tables, reserve for client dinners and team evenings, and enquire about private dining directly through the platform.
+          Browse available tables for client dinners, team occasions and private dining, all in one place.
         </p>
 
         <table cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
@@ -45,7 +45,7 @@ export async function sendVerificationConfirmation(data: VerificationEmailData) 
         </table>
 
         <p style="margin:0;font-size:12px;font-weight:300;color:#A1A1AA;line-height:1.6;font-style:italic;">
-          When the table matters, the process should too.
+          When the table matters.
         </p>
 
       </td></tr>
