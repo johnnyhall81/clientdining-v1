@@ -66,7 +66,7 @@ export default function NominationCard({ userId, canNominate }: Props) {
   return (
     <div>
       <p className="text-sm font-light text-zinc-500 mb-6 leading-relaxed">
-        Invite a professional colleague to apply for membership.
+        Invite a colleague
       </p>
 
       {/* Invite bar */}
@@ -98,7 +98,7 @@ export default function NominationCard({ userId, canNominate }: Props) {
       {/* Sent list */}
       {nominations.length > 0 && (
         <div className="mt-10">
-          <p className="text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-4">Sent</p>
+          <p className="text-[10px] font-light text-zinc-400 tracking-widest mb-4">Sent</p>
           <div>
             {nominations.map((nom) => (
               <div key={nom.id} className="flex items-center justify-between py-3.5 border-b border-zinc-100 last:border-b-0">
