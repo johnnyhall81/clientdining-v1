@@ -276,30 +276,20 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   >
                     Open in Maps ↗
                   </a>
-                  {!showMap && (
-                    <button
-                      type="button"
-                      onClick={() => setShowMap(true)}
-                      className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
-                    >
-                      View map
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setShowMap(v => !v)}
+                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+                  >
+                    {showMap ? 'Hide map' : 'View map'}
+                  </button>
                 </div>
               </div>
               {showMap && (
-                <div className="mt-5 overflow-hidden w-full relative" style={{ height: 220, borderRadius: '4px' }}>
+                <div className="mt-5 overflow-hidden w-full" style={{ height: 220, borderRadius: '4px' }}>
                   <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
                     src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowMap(false)}
-                    className="absolute top-2 right-2 bg-white text-zinc-500 hover:text-zinc-900 transition-colors text-[11px] font-light px-2 py-1"
-                    style={{ borderRadius: '3px', boxShadow: '0 1px 3px rgba(0,0,0,0.15)' }}
-                  >
-                    Close
-                  </button>
                 </div>
               )}
             </div>
