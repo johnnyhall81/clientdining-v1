@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
-import NominationCard from '@/components/account/NominationCard'
 
 export default function AccountPage() {
   const router = useRouter()
@@ -53,9 +52,7 @@ export default function AccountPage() {
 
   return (
     <div className="max-w-2xl space-y-12">
-      {/* Membership card */}
       <div className="bg-white rounded-2xl border border-zinc-100 p-8">
-        <p className="text-[10px] font-light text-zinc-500 uppercase tracking-widest mb-6">Membership</p>
         <div className="flex items-center gap-6">
           {profile.avatar_url ? (
             <div className="relative w-14 h-14 flex-shrink-0">
@@ -73,7 +70,6 @@ export default function AccountPage() {
               {(displayName || profile.email)?.charAt(0).toUpperCase()}
             </div>
           )}
-
           <div className="flex-1">
             {displayName && (
               <p className="text-zinc-900 font-light mb-1">{displayName}</p>
@@ -82,11 +78,6 @@ export default function AccountPage() {
             <p className="text-xs font-light text-zinc-300 mt-1">Member since {memberSince}</p>
           </div>
         </div>
-      </div>
-
-      {/* Introduce */}
-      <div>
-        <NominationCard userId={user!.id} canNominate={profile.can_nominate || false} />
       </div>
     </div>
   )
