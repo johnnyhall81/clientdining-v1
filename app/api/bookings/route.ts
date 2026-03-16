@@ -57,12 +57,20 @@ export async function POST(request: Request) {
     // Get user's profile
     const { data: profile } = await supabase
       .from('profiles')
-      .select('email, full_name')
+      .select('email, full_name, is_professionally_verified, is_disabled')
       .eq('user_id', user.id)
       .single()
 
     if (!profile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+    }
+
+    if (!profile.is_professionally_verified) {
+      return NextResponse.json({ error: 'Your membership is pending verification. You will be able to book once approved.' }, { status: 403 })
+    }
+
+    if (profile.is_disabled) {
+      return NextResponse.json({ error: 'Your account has been suspended.' }, { status: 403 })
     }
 
     // Create booking

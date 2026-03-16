@@ -54,8 +54,15 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null)
   const [showCorporateEventsModal, setShowCorporateEventsModal] = useState(false)
   const [showMap, setShowMap] = useState(false)
+  const [isVerified, setIsVerified] = useState<boolean | null>(null)
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
+
+  useEffect(() => {
+    if (!user) { setIsVerified(null); return }
+    supabase.from('profiles').select('is_professionally_verified').eq('user_id', user.id).single()
+      .then(({ data }) => setIsVerified(data?.is_professionally_verified ?? false))
+  }, [user])
 
   useEffect(() => {
     if (!user) { setAlerts(new Set()); return }
@@ -84,6 +91,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   const handleBook = (slotId: string) => {
     if (!user) { router.push('/login'); return }
+    if (isVerified === false) return
     const slot = slots.find((s) => s.id === slotId)
     if (!slot) return
     setSelectedSlot(slot)
@@ -213,7 +221,14 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
           {/* Booking section */}
           <div className="px-7 sm:px-9 lg:px-11 py-11" style={{ backgroundColor: '#F8F6F3' }}>
-            {!hasSlots && !hasPrivateDining ? (
+            {user && isVerified === false ? (
+              <div>
+                <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Membership pending</p>
+                <p className="text-sm font-light text-zinc-500 leading-relaxed max-w-md">
+                  Your application is being reviewed. You will be able to book once your membership has been verified.
+                </p>
+              </div>
+            ) : !hasSlots && !hasPrivateDining ? (
               <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
             ) : (
               <div className="space-y-12">
