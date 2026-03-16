@@ -9,91 +9,64 @@ interface VerificationEmailData {
 
 export async function sendVerificationConfirmation(data: VerificationEmailData) {
   try {
+    const firstName = data.userName ? data.userName.split(' ')[0] : ''
+
     await resend.emails.send({
       from: 'ClientDining <notifications@clientdining.com>',
       to: data.userEmail,
-      subject: 'Your ClientDining membership is confirmed',
-      html: `
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Your membership is confirmed</title>
-          </head>
-          <body style="margin:0;padding:0;background-color:#F4F4F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:300;color:#18181B;">
+      subject: 'Your membership is confirmed',
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#F5F4F2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:300;color:#18181B;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#F5F4F2;padding:32px 16px;">
+  <tr><td align="center">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background-color:#FFFFFF;border-radius:6px;overflow:hidden;border:1px solid #E8E4DF;">
 
-            <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#F4F4F5;padding:32px 16px;">
-              <tr>
-                <td align="center">
+      <tr><td style="background-color:#18181B;height:3px;line-height:3px;">&nbsp;</td></tr>
 
-                  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background-color:#FFFFFF;border-radius:12px;overflow:hidden;">
+      <tr><td style="padding:40px 40px 36px;">
 
-                    <!-- Top bar -->
-                    <tr>
-                      <td style="padding:0;background-color:#18181B;height:4px;line-height:4px;">&nbsp;</td>
-                    </tr>
+        <p style="margin:0 0 6px;font-size:11px;font-weight:300;color:#A1A1AA;letter-spacing:0.12em;text-transform:uppercase;">ClientDining</p>
+        <p style="margin:0 0 28px;font-size:24px;font-weight:300;color:#18181B;letter-spacing:-0.2px;line-height:1.25;">${firstName ? `Welcome, ${firstName}.` : 'Welcome.'}<br/>Your membership is confirmed.</p>
 
-                    <!-- Content -->
-                    <tr>
-                      <td style="padding:40px 40px 36px;">
+        <p style="margin:0 0 18px;font-size:13px;font-weight:300;color:#52525B;line-height:1.75;">
+          You now have full access to book at our curated network of London restaurants and private members' clubs — selected for quality, consistency and discretion.
+        </p>
 
-                        <p style="margin:0 0 8px 0;font-size:13px;font-weight:300;color:#A1A1AA;letter-spacing:0.08em;text-transform:uppercase;">ClientDining</p>
-                        <p style="margin:0 0 28px 0;font-size:26px;font-weight:300;color:#18181B;letter-spacing:-0.3px;line-height:1.2;">Your membership<br/>is confirmed.</p>
+        <p style="margin:0 0 32px;font-size:13px;font-weight:300;color:#52525B;line-height:1.75;">
+          Browse available tables, reserve for client dinners and team evenings, and enquire about private dining directly through the platform.
+        </p>
 
-                        <p style="margin:0 0 20px 0;font-size:14px;font-weight:300;color:#52525B;line-height:1.75;">
-                          ${data.userName ? `Hi ${data.userName.split(' ')[0]},` : 'Hello,'}<br/><br/>
-                          Your ClientDining membership has been verified. You now have full access to book tables at our curated network of London restaurants and private members' clubs.
-                        </p>
+        <table cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+          <tr><td>
+            <a href="https://clientdining.com/home" style="display:inline-block;padding:10px 28px;background-color:#18181B;color:#FFFFFF;text-decoration:none;font-size:11px;font-weight:300;letter-spacing:0.12em;text-transform:uppercase;border-radius:3px;">Browse venues</a>
+          </td></tr>
+        </table>
 
-                        <p style="margin:0 0 32px 0;font-size:14px;font-weight:300;color:#52525B;line-height:1.75;">
-                          Browse available tables, reserve a table for a client dinner or team evening, and enquire about private dining directly through the platform.
-                        </p>
+        <p style="margin:0;font-size:12px;font-weight:300;color:#A1A1AA;line-height:1.6;font-style:italic;">
+          When the table matters, the process should too.
+        </p>
 
-                        <!-- CTA -->
-                        <table cellpadding="0" cellspacing="0" style="margin-bottom:36px;">
-                          <tr>
-                            <td>
-                              <a href="https://clientdining.com/home" style="display:inline-block;padding:12px 28px;background-color:#18181B;color:#FFFFFF;text-decoration:none;font-size:13px;font-weight:300;letter-spacing:0.08em;text-transform:uppercase;border-radius:3px;">Browse venues</a>
-                            </td>
-                          </tr>
-                        </table>
+      </td></tr>
 
-                        <p style="margin:0;font-size:13px;font-weight:300;color:#A1A1AA;line-height:1.6;">
-                          When the table matters, the process should too.
-                        </p>
+      <tr><td style="padding:18px 40px 24px;border-top:1px solid #F0EDE9;">
+        <p style="margin:0;font-size:11px;font-weight:300;color:#C4C0BB;text-align:center;">
+          <a href="https://clientdining.com" style="color:#C4C0BB;text-decoration:none;">clientdining.com</a>
+          &nbsp;·&nbsp; CLIENTDINING LIMITED &nbsp;·&nbsp; Company No: 17018817
+        </p>
+      </td></tr>
 
-                      </td>
-                    </tr>
-
-                    <!-- Footer -->
-                    <tr>
-                      <td style="padding:20px 40px 28px;border-top:1px solid #F4F4F5;">
-                        <p style="margin:0;font-size:12px;font-weight:300;color:#A1A1AA;text-align:center;">
-                          <a href="https://clientdining.com" style="color:#A1A1AA;text-decoration:none;">clientdining.com</a>
-                          &nbsp;·&nbsp;
-                          CLIENTDINING LIMITED
-                          &nbsp;·&nbsp;
-                          Company No: 17018817
-                        </p>
-                      </td>
-                    </tr>
-
-                  </table>
-
-                </td>
-              </tr>
-            </table>
-
-          </body>
-        </html>
-      `
+    </table>
+  </td></tr>
+</table>
+</body></html>`
     })
 
-    console.log('✅ Verification confirmation email sent to:', data.userEmail)
+    console.log('✅ Verification email sent to:', data.userEmail)
     return { success: true }
   } catch (error) {
-    console.error('❌ Failed to send verification email:', error)
+    console.error('❌ Verification email failed:', error)
     return { success: false, error }
   }
 }
