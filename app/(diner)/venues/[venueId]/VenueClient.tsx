@@ -28,6 +28,11 @@ interface VenueClientProps {
   galleryImages: VenueImage[]
 }
 
+useEffect(() => {
+  window.scrollTo(0, 0)
+}, [])
+
+
 export default function VenueClient({ venue, slots, galleryImages }: VenueClientProps) {
   const router = useRouter()
   const { user } = useAuth()
