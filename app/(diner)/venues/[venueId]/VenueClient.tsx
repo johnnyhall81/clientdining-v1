@@ -200,13 +200,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                       ))}
                       {venue.private_hire_available && (
                         <div>
-                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Private hire</p>
-                          <button
-                            onClick={() => setShowCorporateEventsModal(true)}
-                            className="text-[13px] font-light text-zinc-700 hover:text-zinc-400 transition-colors text-left"
-                          >
-                            Available →
-                          </button>
+                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Private dining</p>
+                          <p className="text-[13px] font-light text-zinc-700">Available</p>
                         </div>
                       )}
                     </div>
@@ -242,13 +237,13 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                       <div>
                         <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Private dining</p>
                         <p className="text-sm font-light text-zinc-500 max-w-xs leading-relaxed">
-                          For hosted dinners, private rooms and more tailored occasions.
+                          Private dining rooms and corporate event hire. Available on request.
                         </p>
                       </div>
                       <button
                         onClick={() => setShowCorporateEventsModal(true)}
                         className="self-start sm:self-center flex-shrink-0 h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-white transition-colors"
-                        style={{ borderColor: '#C8C4BF', border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
+                        style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
                       >
                         Enquire
                       </button>
@@ -262,14 +257,17 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
           {/* Location */}
           {venue.address && (
             <div className="px-7 sm:px-9 lg:px-11 py-7" style={{ borderTop: '1px solid #F0EDE9' }}>
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-2.5 font-light">Location</p>
-                  <p className="text-sm font-light text-zinc-500">
-                    {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                  </p>
-                </div>
-                <div className="flex items-center gap-5 mt-0.5">
+              <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-2.5 font-light">Location</p>
+              <div className="flex items-start justify-between gap-4">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-light text-zinc-500 hover:text-zinc-800 transition-colors leading-relaxed"
+                >
+                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                </a>
+                <div className="flex items-center gap-4 flex-shrink-0 mt-0.5">
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
                     target="_blank"
@@ -278,20 +276,30 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   >
                     Open in Maps ↗
                   </a>
-                  <button
-                    type="button"
-                    onClick={() => setShowMap(v => !v)}
-                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
-                  >
-                    {showMap ? 'Hide' : 'Map'}
-                  </button>
+                  {!showMap && (
+                    <button
+                      type="button"
+                      onClick={() => setShowMap(true)}
+                      className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+                    >
+                      View map
+                    </button>
+                  )}
                 </div>
               </div>
               {showMap && (
-                <div className="mt-5 overflow-hidden w-full" style={{ height: 220, borderRadius: '4px' }}>
+                <div className="mt-5 overflow-hidden w-full relative" style={{ height: 220, borderRadius: '4px' }}>
                   <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
                     src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowMap(false)}
+                    className="absolute top-2 right-2 bg-white text-zinc-500 hover:text-zinc-900 transition-colors text-[11px] font-light px-2 py-1"
+                    style={{ borderRadius: '3px', boxShadow: '0 1px 3px rgba(0,0,0,0.15)' }}
+                  >
+                    Close
+                  </button>
                 </div>
               )}
             </div>
