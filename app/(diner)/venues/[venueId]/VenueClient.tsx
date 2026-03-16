@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Venue, Slot, VenueImage } from '@/lib/supabase'
-import ReactMarkdown from 'react-markdown'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 import { formatFullDateTime } from '@/lib/date-utils'
@@ -14,13 +13,11 @@ import CancelBookingModal from '@/components/modals/CancelBookingModal'
 import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
 import VenueGallery from '@/components/venues/VenueGallery'
 
-
 const MapIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
   </svg>
 )
-
 
 interface VenueClientProps {
   venue: Venue
@@ -28,8 +25,26 @@ interface VenueClientProps {
   galleryImages: VenueImage[]
 }
 
+// Parse description markdown into intro paragraph + stat blocks
+function parseDescription(description: string): {
+  intro: string
+  stats: { label: string; value: string }[]
+} {
+  const lines = description.split('\n').filter(Boolean)
+  const introParts: string[] = []
+  const stats: { label: string; value: string }[] = []
 
+  for (const line of lines) {
+    const statMatch = line.match(/^\*\*([^*]+)\*\*[:\s]+(.+)$/)
+    if (statMatch) {
+      stats.push({ label: statMatch[1].replace(/:$/, '').trim(), value: statMatch[2].trim() })
+    } else if (!line.startsWith('**')) {
+      introParts.push(line)
+    }
+  }
 
+  return { intro: introParts.join(' ').trim(), stats }
+}
 
 export default function VenueClient({ venue, slots, galleryImages }: VenueClientProps) {
   const router = useRouter()
@@ -44,96 +59,45 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
   const [showCancelModal, setShowCancelModal] = useState(false)
-  const [cancellingSlot, setCancellingSlot] = useState<{
-    slotId: string
-    venueName: string
-  } | null>(null)
+  const [cancellingSlot, setCancellingSlot] = useState<{ slotId: string; venueName: string } | null>(null)
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null)
   const [showCorporateEventsModal, setShowCorporateEventsModal] = useState(false)
 
-
   // Scroll to top on mount
+  useEffect(() => { window.scrollTo(0, 0) }, [])
+
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
-
-  
-  // Load existing alerts
-  useEffect(() => {
-    if (!user) {
-      setAlerts(new Set())
-      return
-    }
-
-    const loadAlerts = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('slot_alerts')
-          .select('slot_id')
-          .eq('diner_user_id', user.id)
-          .eq('status', 'active')
-
-        if (error) throw error
-
-        setAlerts(new Set((data || []).map((a: any) => a.slot_id)))
-      } catch (e) {
-        console.error('Error loading alerts:', e)
-      }
-    }
-
-    loadAlerts()
+    if (!user) { setAlerts(new Set()); return }
+    supabase.from('slot_alerts').select('slot_id').eq('diner_user_id', user.id).eq('status', 'active')
+      .then(({ data }) => { if (data) setAlerts(new Set(data.map((a: any) => a.slot_id))) })
   }, [user])
 
-  // Load profile for reserved-by display
   useEffect(() => {
     if (!user) return
-    supabase.from('profiles').select('full_name, avatar_url').eq('user_id', user.id).single().then(({ data }) => { if (data) setProfile(data) })
+    supabase.from('profiles').select('full_name, avatar_url').eq('user_id', user.id).single()
+      .then(({ data }) => { if (data) setProfile(data) })
   }, [user])
 
-  // Load my bookings for the slots on this venue page
   useEffect(() => {
-    if (!user) {
-      setBookedSlots(new Set())
-      return
-    }
+    if (!user) { setBookedSlots(new Set()); return }
     if (!slots?.length) return
-
-    const loadMyBookings = async () => {
-      try {
-        const slotIds = slots.map((s) => s.id)
-
-        const { data, error } = await supabase
-          .from('bookings')
-          .select('slot_id, party_size')
-          .eq('user_id', user.id)
-          .eq('status', 'active')
-          .in('slot_id', slotIds)
-
-        if (error) throw error
-        setBookedSlots(new Set((data || []).map((b: any) => b.slot_id)))
-        setBookedPartySizes(new Map((data || []).map((b: any) => [b.slot_id, b.party_size])))
-      } catch (e) {
-        console.error('Error loading bookings:', e)
-      }
-    }
-
-    loadMyBookings()
+    const slotIds = slots.map((s) => s.id)
+    supabase.from('bookings').select('slot_id, party_size').eq('user_id', user.id).eq('status', 'active').in('slot_id', slotIds)
+      .then(({ data }) => {
+        if (data) {
+          setBookedSlots(new Set(data.map((b: any) => b.slot_id)))
+          setBookedPartySizes(new Map(data.map((b: any) => [b.slot_id, b.party_size])))
+        }
+      })
   }, [user, slots])
 
-  const handleBook = async (slotId: string) => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
+  const handleBook = (slotId: string) => {
+    if (!user) { router.push('/login'); return }
     const slot = slots.find((s) => s.id === slotId)
     if (!slot) return
-
     setSelectedSlot(slot)
     setShowPartySizeModal(true)
   }
-
-  
 
   const confirmBooking = async (partySize: number, notes?: string, guestNames?: string[]) => {
     if (!selectedSlot) return
@@ -143,38 +107,12 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slotId: selectedSlot.id,
-          partySize,
-          notes,
-          guestNames,
-        }),
+        body: JSON.stringify({ slotId: selectedSlot.id, partySize, notes, guestNames }),
       })
-
-
-
-
-
-
-
-
       const data = await response.json().catch(() => ({}))
-
-      if (!response.ok) {
-        const message = data?.error || 'Could not create booking'
-        setBookingError(message)
-        setBookingSlot(null)
-        return
-      }
-
+      if (!response.ok) { setBookingError(data?.error || 'Could not create booking'); setBookingSlot(null); return }
       setBookingError(null)
-
-      setBookedSlots((prev) => {
-        const next = new Set(prev)
-        next.add(selectedSlot.id)
-        return next
-      })
-
+      setBookedSlots((prev) => { const next = new Set(prev); next.add(selectedSlot.id); return next })
       router.push('/bookings')
       router.refresh()
     } catch (error) {
@@ -192,81 +130,40 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   const handleCancel = async () => {
     if (!user || !cancellingSlot) return
-
     try {
-      const { data: booking } = await supabase
-        .from('bookings')
-        .select('id')
-        .eq('slot_id', cancellingSlot.slotId)
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .single()
-
-      if (!booking) {
-        console.error('Booking not found')
-        return
-      }
-
-      const response = await fetch('/api/bookings/cancel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookingId: booking.id }),
-      })
-
+      const { data: booking } = await supabase.from('bookings').select('id').eq('slot_id', cancellingSlot.slotId).eq('user_id', user.id).eq('status', 'active').single()
+      if (!booking) return
+      const response = await fetch('/api/bookings/cancel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bookingId: booking.id }) })
       const data = await response.json().catch(() => ({}))
-
-      if (!response.ok) {
-        console.error('Cancel failed:', data?.error || 'Failed to cancel booking')
-        setShowCancelModal(false)
-        return
-      }
-
+      if (!response.ok) { setShowCancelModal(false); return }
       setShowCancelModal(false)
       setCancellingSlot(null)
-
-      setBookedSlots((prev) => {
-        const next = new Set(prev)
-        next.delete(cancellingSlot.slotId)
-        return next
-      })
-
+      setBookedSlots((prev) => { const next = new Set(prev); next.delete(cancellingSlot.slotId); return next })
       router.refresh()
-    } catch (error) {
-      console.error('Cancel error:', error)
-    }
+    } catch (error) { console.error('Cancel error:', error) }
   }
 
   const handleToggleAlert = async (slotId: string) => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    const response = await fetch('/api/alerts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slotId }),
-    })
-
+    if (!user) { router.push('/login'); return }
+    const response = await fetch('/api/alerts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slotId }) })
     const data = await response.json().catch(() => ({}))
-
-    if (!response.ok) {
-      throw new Error(data?.error || 'Failed to update alert')
-    }
-
+    if (!response.ok) throw new Error(data?.error || 'Failed to update alert')
     const newAlerts = new Set(alerts)
     if (data.active) newAlerts.add(slotId)
     else newAlerts.delete(slotId)
     setAlerts(newAlerts)
   }
 
+  const parsed = venue.description ? parseDescription(venue.description) : null
+  const hasSlots = slots && slots.length > 0
+  const hasPrivateDining = venue.private_hire_available
+
   return (
-    <div className="min-h-screen bg-zinc-50/30">
-      {/* Container with max width */}
+    <div className="min-h-screen">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* White card wrapper */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          {/* Gallery — swipeable, hero first then venue_images */}
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+
+          {/* Gallery */}
           <VenueGallery
             heroImage={venue.image_hero}
             galleryImages={galleryImages}
@@ -274,197 +171,135 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             logoUrl={(venue as any).logo_url || undefined}
           />
 
-          {/* Content padding */}
-          <div className="p-8 sm:p-10 lg:p-12">
-            {/* Header */}
-            <div className="mb-6">
-              <h1 className="text-4xl sm:text-5xl font-light text-zinc-900 mb-5 tracking-tight">{venue.name}</h1>
+          {/* Editorial header */}
+          <div className="px-8 sm:px-10 lg:px-12 pt-10 pb-8 border-b border-zinc-100">
 
-              <div className="flex items-center gap-2.5 text-sm font-light text-zinc-500 mb-3">
-                <span>{venue.area}</span>
-                <span className="text-zinc-200">·</span>
-                <span className="capitalize">{venue.venue_type}</span>
-                {venue.private_hire_available && (
-                  <>
-                    <span className="text-zinc-200">·</span>
-                    <button
-                      onClick={() => setShowCorporateEventsModal(true)}
-                      className="text-zinc-400 font-light hover:text-zinc-600 transition-colors group"
-                    >
-                      Private hire & events
-                    </button>
-                  </>
-                )}
-              </div>
+            {/* Venue name */}
+            <h1 className="text-4xl sm:text-5xl font-light text-zinc-900 tracking-tight mb-3">{venue.name}</h1>
 
-              {venue.address && (
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-sm text-zinc-400 font-light">
-                      {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                    </p>
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={e => e.stopPropagation()}
-                      className="text-zinc-400 hover:text-zinc-500 transition-colors"
-                    >
-                      <MapIcon />
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => setShowMap(v => !v)}
-                      className="text-xs font-light text-zinc-400 hover:text-zinc-600 transition-colors"
-                    >
-                      {showMap ? 'Hide map' : 'Show map'}
-                    </button>
-                  </div>
-                  {showMap && (
-                    <div className="rounded-lg overflow-hidden border border-zinc-100 w-full" style={{ height: 260 }}>
-                      <iframe
-                        title="Venue map"
-                        width="100%"
-                        height="100%"
-                        style={{ border: 0 }}
-                        loading="lazy"
-                        allowFullScreen
-                        src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
-                      />
-                    </div>
-                  )}
-                </div>
+            {/* Tags row */}
+            <div className="flex flex-wrap items-center gap-2 mb-5">
+              {venue.area && (
+                <span className="text-xs font-light text-zinc-500 px-3 py-1 rounded-full border border-zinc-200 bg-zinc-50">
+                  {venue.area}
+                </span>
               )}
-
-
-
-
-
-
+              {venue.venue_type && (
+                <span className="text-xs font-light text-zinc-500 px-3 py-1 rounded-full border border-zinc-200 bg-zinc-50 capitalize">
+                  {venue.venue_type}
+                </span>
+              )}
+              {venue.private_hire_available && (
+                <button
+                  onClick={() => setShowCorporateEventsModal(true)}
+                  className="text-xs font-light text-zinc-500 px-3 py-1 rounded-full border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 transition-colors"
+                >
+                  Private hire & events
+                </button>
+              )}
             </div>
 
-            {/* Description and specs */}
-            {venue.description && (
-              <div className="mb-12 max-w-3xl">
-                <ReactMarkdown
-                  components={{
-                    p: ({ children }) => {
-                      const isArray = Array.isArray(children)
-                      const first = isArray ? children[0] : null
-                      const startsWithStrong =
-                        first &&
-                        typeof first === 'object' &&
-                        // @ts-ignore
-                        first?.type?.name === 'strong'
-
-                      // Spec lines in 2-column layout
-                      if (startsWithStrong) {
-                        const parts = isArray ? children : [children]
-                        const rawLabel = parts[0]?.props?.children
-                        const label = String(rawLabel || '').replace(/:\s*$/, '')
-                        const value = parts.slice(1)
-
-                        return (
-                          <div className="grid grid-cols-[140px_1fr] gap-4 text-sm leading-relaxed mb-2">
-                            <div className="text-zinc-500 font-light">{label}</div>
-                            <div className="text-zinc-500 font-light">{value}</div>
-                          </div>
-                        )
-                      }
-
-                      // Summary paragraph
-                      return (
-                        <p className="text-sm text-zinc-500 font-light leading-relaxed mb-4">
-                          {children}
-                        </p>
-                      )
-                    },
-                    strong: ({ children }) => (
-                      <strong className="font-light text-zinc-500">{children}</strong>
-                    ),
-                    a: ({ href, children }) => (
-                      <a href={href} target="_blank" rel="noopener noreferrer" className="text-zinc-700 underline underline-offset-2">
-                        {children}
-                      </a>
-                    ),
-
-                  }}
+            {/* Address */}
+            {venue.address && (
+              <div className="flex items-center gap-2 mb-6">
+                <p className="text-sm font-light text-zinc-400">
+                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                </p>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  className="text-zinc-400 hover:text-zinc-500 transition-colors"
                 >
-                  {venue.description}
-                </ReactMarkdown>
-
+                  <MapIcon />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setShowMap(v => !v)}
+                  className="text-xs font-light text-zinc-400 hover:text-zinc-600 transition-colors"
+                >
+                  {showMap ? 'Hide map' : 'Show map'}
+                </button>
               </div>
             )}
 
-            {/* Availability section */}
-            {(() => {
-              const hasSlots = slots && slots.length > 0
-              const hasPrivateDining = venue.private_hire_available
+            {showMap && venue.address && (
+              <div className="rounded-xl overflow-hidden border border-zinc-100 w-full mb-6" style={{ height: 240 }}>
+                <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
+                />
+              </div>
+            )}
 
-              // Nothing available
-              if (!hasSlots && !hasPrivateDining) {
-                return (
-                  <div className="mt-8 pt-4">
-                    <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
+            {/* Intro — editorial deck style */}
+            {parsed?.intro && (
+              <p className="text-base font-light text-zinc-700 leading-relaxed max-w-2xl mb-8">
+                {parsed.intro}
+              </p>
+            )}
+
+            {/* Stat row */}
+            {parsed?.stats && parsed.stats.length > 0 && (
+              <div className="flex flex-wrap gap-8">
+                {parsed.stats.map((stat) => (
+                  <div key={stat.label}>
+                    <p className="text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-1">{stat.label}</p>
+                    <p className="text-sm font-light text-zinc-700">{stat.value}</p>
                   </div>
-                )
-              }
-
-              return (
-                <div className="mt-8 pt-4 space-y-10">
-                  {/* Tables section — only shown when slots exist */}
-                  {hasSlots && (
-                    <div>
-                      <div className="mb-8">
-                        <h2 className="text-2xl font-light text-zinc-900 tracking-tight">Book a table</h2>
-                      </div>
-                      <SlotPicker
-                        slots={slots}
-                        onBook={handleBook}
-                        isAlertActive={(id) => alerts.has(id)}
-                        onToggleAlert={handleToggleAlert}
-                        bookedSlots={bookedSlots}
-                        bookedPartySizes={bookedPartySizes}
-                      />
-                    </div>
-                  )}
-
-                  {/* Private dining section */}
-                  {hasPrivateDining && (
-                    <div className="border-t border-zinc-100 pt-8">
-                      <h2 className="text-2xl font-light text-zinc-900 tracking-tight mb-2">Private dining</h2>
-                      <p className="text-sm font-light text-zinc-400 mb-5">
-                        {hasSlots
-                          ? 'For hosted dinners and private rooms. Available on request.'
-                          : 'This venue is available for private dining and hosted occasions.'}
-                      </p>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        <button
-                          onClick={() => setShowCorporateEventsModal(true)}
-                          className="flex flex-col items-center justify-center h-16 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 transition-all text-center px-2"
-                        >
-                          <span className="text-base font-light text-zinc-900">Private dining</span>
-                          <span className="text-[11px] font-light text-zinc-500 mt-0.5">Enquire</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )
-            })()}
+                ))}
+              </div>
+            )}
           </div>
+
+          {/* Booking section — distinct container */}
+          <div className="bg-zinc-50/60 px-8 sm:px-10 lg:px-12 py-10">
+            {!hasSlots && !hasPrivateDining ? (
+              <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
+            ) : (
+              <div className="space-y-10">
+                {hasSlots && (
+                  <div>
+                    <h2 className="text-lg font-light text-zinc-900 tracking-tight mb-6">Book a table</h2>
+                    <SlotPicker
+                      slots={slots}
+                      onBook={handleBook}
+                      isAlertActive={(id) => alerts.has(id)}
+                      onToggleAlert={handleToggleAlert}
+                      bookedSlots={bookedSlots}
+                      bookedPartySizes={bookedPartySizes}
+                    />
+                  </div>
+                )}
+
+                {hasPrivateDining && (
+                  <div className={hasSlots ? 'border-t border-zinc-200 pt-8' : ''}>
+                    <h2 className="text-lg font-light text-zinc-900 tracking-tight mb-1">Private dining</h2>
+                    <p className="text-sm font-light text-zinc-400 mb-5">
+                      {hasSlots ? 'For hosted dinners and private rooms. Available on request.' : 'This venue is available for private dining and hosted occasions.'}
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <button
+                        onClick={() => setShowCorporateEventsModal(true)}
+                        className="flex flex-col items-center justify-center h-16 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 transition-all text-center px-2"
+                      >
+                        <span className="text-base font-light text-zinc-900">Private dining</span>
+                        <span className="text-[11px] font-light text-zinc-500 mt-0.5">Enquire</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
 
       {selectedSlot && (
         <PartySizeModal
           isOpen={showPartySizeModal}
-          onClose={() => {
-            setShowPartySizeModal(false)
-            setSelectedSlot(null)
-            setBookingError(null)
-            setBookingSlot(null)
-          }}
+          onClose={() => { setShowPartySizeModal(false); setSelectedSlot(null); setBookingError(null); setBookingSlot(null) }}
           onConfirm={confirmBooking}
           minSize={selectedSlot.party_min}
           maxSize={selectedSlot.party_max}
@@ -481,10 +316,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
       {showCancelModal && cancellingSlot && (
         <CancelBookingModal
           isOpen={showCancelModal}
-          onClose={() => {
-            setShowCancelModal(false)
-            setCancellingSlot(null)
-          }}
+          onClose={() => { setShowCancelModal(false); setCancellingSlot(null) }}
           onConfirm={handleCancel}
           venueName={cancellingSlot.venueName}
         />
