@@ -106,7 +106,6 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
           onClick={() => toggle('date')}
           className={`flex-1 px-6 py-5 text-left transition-colors rounded-l-2xl ${open === 'date' ? 'bg-zinc-50/80' : 'hover:bg-zinc-50/60'}`}
         >
-          <span className="block text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-1">Dates</span>
           <span className={`text-sm font-light ${dateLabel ? 'text-zinc-900' : 'text-zinc-500'}`}>
             {dateLabel || 'Any date'}
           </span>
@@ -120,7 +119,6 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
           onClick={() => toggle('area')}
           className={`flex-1 px-6 py-5 text-left transition-colors ${open === 'area' ? 'bg-zinc-50/80' : 'hover:bg-zinc-50/60'}`}
         >
-          <span className="block text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-1">Area</span>
           <span className={`text-sm font-light ${areaLabel ? 'text-zinc-900' : 'text-zinc-500'}`}>
             {areaLabel || 'All areas'}
           </span>
@@ -134,7 +132,6 @@ export default function SearchBar({ filters, venues, onChange }: SearchBarProps)
           onClick={() => toggle('guests')}
           className={`flex-1 px-6 py-5 text-left transition-colors ${open === 'guests' ? 'bg-zinc-50/80' : 'hover:bg-zinc-50/60'}`}
         >
-          <span className="block text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-1">Guests</span>
           <span className="text-sm font-light text-zinc-900">{guestsLabel}</span>
         </button>
 
