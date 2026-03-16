@@ -146,7 +146,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const taxonomyParts = [
     venue.area,
     venue.venue_type ? venue.venue_type.charAt(0).toUpperCase() + venue.venue_type.slice(1) : null,
-    venue.private_hire_available ? 'Private hire & events' : null,
   ].filter(Boolean)
 
   return (
@@ -182,12 +181,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                     {venue.name}
                   </h1>
 
-                  {venue.address && (
-                    <p className="text-sm font-light text-zinc-400 mb-6">
-                      {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                    </p>
-                  )}
-
                   {parsed?.intro && (
                     <p className="text-[15px] font-light text-zinc-600 leading-[1.75] max-w-lg">
                       {parsed.intro}
@@ -197,24 +190,26 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
                 {/* Right: stats */}
                 {parsed?.stats && parsed.stats.length > 0 && (
-                  <div className="mt-10 lg:mt-8 lg:w-44 flex-shrink-0 space-y-6">
-                    {parsed.stats.map((stat) => (
-                      <div key={stat.label}>
-                        <p className="text-[9px] tracking-[0.18em] text-zinc-400 uppercase mb-1.5 font-light">{stat.label}</p>
-                        <p className="text-sm font-light text-zinc-800 leading-snug">{stat.value}</p>
-                      </div>
-                    ))}
-                    {venue.private_hire_available && (
-                      <div>
-                        <p className="text-[9px] tracking-[0.18em] text-zinc-400 uppercase mb-1.5 font-light">Private hire</p>
-                        <button
-                          onClick={() => setShowCorporateEventsModal(true)}
-                          className="text-sm font-light text-zinc-800 hover:text-zinc-500 transition-colors text-left"
-                        >
-                          Available
-                        </button>
-                      </div>
-                    )}
+                  <div className="mt-10 lg:mt-8 lg:w-44 flex-shrink-0">
+                    <div className="grid grid-cols-2 lg:grid-cols-1 gap-x-6 gap-y-6">
+                      {parsed.stats.map((stat) => (
+                        <div key={stat.label}>
+                          <p className="text-[9px] tracking-[0.18em] text-zinc-400 uppercase mb-1.5 font-light">{stat.label}</p>
+                          <p className="text-sm font-light text-zinc-800 leading-snug">{stat.value}</p>
+                        </div>
+                      ))}
+                      {venue.private_hire_available && (
+                        <div>
+                          <p className="text-[9px] tracking-[0.18em] text-zinc-400 uppercase mb-1.5 font-light">Private hire</p>
+                          <button
+                            onClick={() => setShowCorporateEventsModal(true)}
+                            className="text-sm font-light text-zinc-800 hover:text-zinc-500 transition-colors text-left"
+                          >
+                            Available
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
