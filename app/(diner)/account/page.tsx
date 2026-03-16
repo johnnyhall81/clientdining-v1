@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
+import NominationCard from '@/components/account/NominationCard'
 
 export default function AccountPage() {
   const router = useRouter()
@@ -78,6 +79,10 @@ export default function AccountPage() {
             <p className="text-xs font-light text-zinc-300 mt-1">Member since {memberSince}</p>
           </div>
         </div>
+      </div>
+
+      <div>
+        <NominationCard userId={user!.id} canNominate={profile.can_nominate || false} />
       </div>
     </div>
   )
