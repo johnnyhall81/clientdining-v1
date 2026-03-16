@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase-client'
 import { formatFullDateTime } from '@/lib/date-utils'
 import { RefreshCw } from 'lucide-react'
+import TestEmailsPanel from '@/components/common/TestEmailsPanel'
 
 interface Booking {
   id: string
@@ -455,6 +456,9 @@ export default function AdminDashboard() {
           </div>
         </section>
 
+        <section>
+          <TestEmailsPanel />
+        </section>
 
       </div>
     </div>
