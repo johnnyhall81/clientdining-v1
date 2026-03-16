@@ -151,7 +151,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   return (
     <div className="min-h-screen">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white overflow-hidden" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
 
           {/* Hero */}
           <VenueGallery
@@ -162,27 +162,27 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
           />
 
           {/* Editorial panel — overlaps hero */}
-          <div className="relative -mt-10 mx-4 sm:mx-8 bg-white rounded-lg shadow-sm z-10">
-            <div className="px-8 sm:px-10 pt-8 pb-10">
+          <div className="relative -mt-10 mx-3 sm:mx-6 bg-white z-10" style={{ borderRadius: '6px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+            <div className="px-7 sm:px-9 pt-7 pb-9">
 
               {/* Category line */}
               {taxonomyParts.length > 0 && (
-                <p className="text-[10px] tracking-[0.2em] text-zinc-400 uppercase mb-5 font-light">
-                  {taxonomyParts.join(' — ')}
+                <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-4 font-light">
+                  {taxonomyParts.join(' · ')}
                 </p>
               )}
 
               {/* Two-column layout */}
-              <div className="flex flex-col lg:flex-row lg:gap-16">
+              <div className="flex flex-col lg:flex-row lg:gap-14">
 
-                {/* Left: name + address + intro */}
+                {/* Left: name + intro */}
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-3xl sm:text-[2.5rem] font-light text-zinc-900 tracking-tight leading-tight mb-4">
+                  <h1 className="text-[2rem] sm:text-[2.4rem] font-light text-zinc-900 tracking-tight leading-[1.1] mb-5">
                     {venue.name}
                   </h1>
 
                   {parsed?.intro && (
-                    <p className="text-[15px] font-light text-zinc-600 leading-[1.75] max-w-lg">
+                    <p className="text-sm font-light text-zinc-500 leading-[1.8] max-w-md">
                       {parsed.intro}
                     </p>
                   )}
@@ -190,22 +190,22 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
                 {/* Right: stats */}
                 {parsed?.stats && parsed.stats.length > 0 && (
-                  <div className="mt-10 lg:mt-8 lg:w-44 flex-shrink-0">
-                    <div className="grid grid-cols-2 lg:grid-cols-1 gap-x-6 gap-y-6">
+                  <div className="mt-8 lg:mt-1 lg:w-40 flex-shrink-0">
+                    <div className="grid grid-cols-2 lg:grid-cols-1 gap-x-8 gap-y-5">
                       {parsed.stats.map((stat) => (
                         <div key={stat.label}>
-                          <p className="text-[9px] tracking-[0.18em] text-zinc-400 uppercase mb-1.5 font-light">{stat.label}</p>
-                          <p className="text-sm font-light text-zinc-800 leading-snug">{stat.value}</p>
+                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">{stat.label}</p>
+                          <p className="text-[13px] font-light text-zinc-700 leading-snug">{stat.value}</p>
                         </div>
                       ))}
                       {venue.private_hire_available && (
                         <div>
-                          <p className="text-[9px] tracking-[0.18em] text-zinc-400 uppercase mb-1.5 font-light">Private hire</p>
+                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Private hire</p>
                           <button
                             onClick={() => setShowCorporateEventsModal(true)}
-                            className="text-sm font-light text-zinc-800 hover:text-zinc-500 transition-colors text-left"
+                            className="text-[13px] font-light text-zinc-700 hover:text-zinc-400 transition-colors text-left"
                           >
-                            Available
+                            Available →
                           </button>
                         </div>
                       )}
@@ -216,15 +216,15 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             </div>
           </div>
 
-          {/* Booking section — warmer, deeper */}
-          <div className="px-8 sm:px-10 lg:px-12 py-12" style={{ backgroundColor: '#F9F7F4' }}>
+          {/* Booking section */}
+          <div className="px-7 sm:px-9 lg:px-11 py-11" style={{ backgroundColor: '#F8F6F3' }}>
             {!hasSlots && !hasPrivateDining ? (
               <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
             ) : (
               <div className="space-y-12">
                 {hasSlots && (
                   <div>
-                    <p className="text-[10px] tracking-[0.2em] text-zinc-400 uppercase mb-8 font-light">Reserve a table</p>
+                    <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-7 font-light">Reserve a table</p>
                     <SlotPicker
                       slots={slots}
                       onBook={handleBook}
@@ -237,51 +237,58 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 )}
 
                 {hasPrivateDining && (
-                  <div className={hasSlots ? 'border-t border-zinc-200 pt-10' : ''}>
-                    <p className="text-[10px] tracking-[0.2em] text-zinc-400 uppercase mb-2 font-light">Private dining</p>
-                    <p className="text-sm font-light text-zinc-500 mb-6 max-w-sm">
-                      {hasSlots ? 'For hosted dinners and private rooms. Available on request.' : 'This venue is available for private dining and hosted occasions.'}
-                    </p>
-                    <button
-                      onClick={() => setShowCorporateEventsModal(true)}
-                      className="h-10 px-6 text-sm font-light border border-zinc-300 rounded bg-white hover:bg-zinc-50 transition-colors text-zinc-900 tracking-wide"
-                    >
-                      Enquire
-                    </button>
+                  <div className={hasSlots ? 'pt-10' : ''} style={hasSlots ? { borderTop: '1px solid #E8E4DF' } : {}}>
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+                      <div>
+                        <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Private dining</p>
+                        <p className="text-sm font-light text-zinc-500 max-w-xs leading-relaxed">
+                          For hosted dinners, private rooms and more tailored occasions.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setShowCorporateEventsModal(true)}
+                        className="self-start sm:self-center flex-shrink-0 h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-white transition-colors"
+                        style={{ borderColor: '#C8C4BF', border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
+                      >
+                        Enquire
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* Location — below booking, accessible but out of story */}
+          {/* Location */}
           {venue.address && (
-            <div className="px-8 sm:px-10 lg:px-12 py-8 border-t border-zinc-100">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] tracking-[0.2em] text-zinc-400 uppercase font-light">Location</p>
-                <div className="flex items-center gap-4">
+            <div className="px-7 sm:px-9 lg:px-11 py-7" style={{ borderTop: '1px solid #F0EDE9' }}>
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-2.5 font-light">Location</p>
+                  <p className="text-sm font-light text-zinc-500">
+                    {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                  </p>
+                </div>
+                <div className="flex items-center gap-5 mt-0.5">
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
                   >
                     Open in Maps ↗
                   </a>
                   <button
                     type="button"
                     onClick={() => setShowMap(v => !v)}
-                    className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
                   >
-                    {showMap ? 'Hide map' : 'Show map'}
+                    {showMap ? 'Hide' : 'Map'}
                   </button>
                 </div>
               </div>
-              <p className="text-sm font-light text-zinc-500 mb-4">
-                {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-              </p>
               {showMap && (
-                <div className="rounded overflow-hidden w-full" style={{ height: 240 }}>
+                <div className="mt-5 overflow-hidden w-full" style={{ height: 220, borderRadius: '4px' }}>
                   <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
                     src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
                   />
