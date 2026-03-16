@@ -268,14 +268,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </a>
                 <div className="flex items-center gap-4 flex-shrink-0 mt-0.5">
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
-                  >
-                    Open in Maps ↗
-                  </a>
                   <button
                     type="button"
                     onClick={() => setShowMap(v => !v)}
