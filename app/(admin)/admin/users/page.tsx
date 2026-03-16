@@ -86,7 +86,12 @@ export default function UsersPage() {
         body: JSON.stringify({ userId, verified: !currentStatus }),
       })
 
+      const data = await response.json()
+
       if (response.ok) {
+        if (data.emailSent) {
+          alert('Member verified and welcome email sent.')
+        }
         await loadUsers()
       } else {
         alert('Failed to update verification')
