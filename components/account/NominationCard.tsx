@@ -65,7 +65,6 @@ export default function NominationCard({ userId, canNominate }: Props) {
 
   return (
     <div>
-      <p className="text-[10px] font-light text-zinc-400 uppercase tracking-widest mb-4">Introduce a colleague</p>
       <p className="text-sm font-light text-zinc-500 mb-6 leading-relaxed">
         Invite a professional colleague to apply for membership.
       </p>
