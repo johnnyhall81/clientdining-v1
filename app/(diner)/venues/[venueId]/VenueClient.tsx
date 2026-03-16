@@ -153,7 +153,12 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   const taxonomyParts = [
     venue.area,
-    venue.venue_type ? venue.venue_type.charAt(0).toUpperCase() + venue.venue_type.slice(1) : null,
+    venue.venue_type
+  ? venue.venue_type === 'club'
+    ? "Private Members' Club"
+    : 'Restaurant'
+  : null,
+
   ].filter(Boolean)
 
   return (
