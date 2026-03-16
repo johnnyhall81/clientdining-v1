@@ -28,9 +28,7 @@ interface VenueClientProps {
   galleryImages: VenueImage[]
 }
 
-useEffect(() => {
-  window.scrollTo(0, 0)
-}, [])
+
 
 
 export default function VenueClient({ venue, slots, galleryImages }: VenueClientProps) {
@@ -53,6 +51,13 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null)
   const [showCorporateEventsModal, setShowCorporateEventsModal] = useState(false)
 
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  
   // Load existing alerts
   useEffect(() => {
     if (!user) {
