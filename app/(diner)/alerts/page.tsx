@@ -226,9 +226,9 @@ export default function AlertsPage() {
     <div className="space-y-6">
 
       {filteredAlerts.length === 0 ? (
-        <div className="text-center py-12 bg-white border border-zinc-200 rounded-xl">
+        <div className="text-center py-12 bg-white" style={{ borderRadius: '6px', border: '1px solid #F0EDE9' }}>
           <p className="text-zinc-500 font-light mb-4">No active alerts</p>
-          <Link href="/search" className="text-zinc-900 font-light hover:underline">
+          <Link href="/search" className="text-sm font-light text-zinc-400 hover:text-zinc-900 transition-colors">
             Search for tables to set alerts
           </Link>
         </div>
@@ -245,12 +245,12 @@ export default function AlertsPage() {
               const isBookingThis = bookingSlotId === alert.slot_id
 
               return (
-                <div key={alert.id} className="bg-white border border-zinc-100 rounded-2xl overflow-hidden relative hover:border-zinc-200 hover:shadow-sm transition-all duration-300">
+                <div key={alert.id} className="bg-white overflow-hidden relative hover:shadow-sm transition-all duration-300" style={{ borderRadius: '6px', border: '1px solid #F0EDE9', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
                   {/* Remove button */}
                   <button
                     type="button"
                     onClick={() => handleRemoveAlert(alert)}
-                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-zinc-500 transition-colors"
+                    className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-zinc-600 transition-colors"
                     aria-label="Remove alert"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -259,46 +259,30 @@ export default function AlertsPage() {
                   </button>
 
                   <div className="flex flex-col md:flex-row">
-                    {/* Wide landscape image */}
-                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-60 md:min-h-[220px] aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+                    <Link href={`/venues/${alert.venue.id}`} prefetch={true} className="relative w-full md:w-56 md:min-h-[200px] aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
                       {alert.venue.image_hero ? (
-                        <Image
-                          src={alert.venue.image_hero}
-                          alt={alert.venue.name}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 240px"
-                          quality={70}
-                          className="object-cover"
-                        />
+                        <Image src={alert.venue.image_hero} alt={alert.venue.name} fill sizes="(max-width: 768px) 100vw, 224px" quality={70} className="object-cover" />
                       ) : (
                         <div className="w-full h-full bg-zinc-100" />
                       )}
                     </Link>
 
-                    {/* Details */}
-                    <div className="flex-1 px-9 py-8 flex flex-col justify-between gap-7 pr-10">
-                      <div className="space-y-1.5">
+                    <div className="flex-1 px-7 py-6 flex flex-col justify-between gap-5 pr-10">
+                      <div className="space-y-1">
                         <Link href={`/venues/${alert.venue.id}`} prefetch={true}>
-                          <h3 className="text-xl font-light text-zinc-900 tracking-tight hover:opacity-70 transition-opacity">{alert.venue.name}</h3>
+                          <h3 className="text-lg font-light text-zinc-900 tracking-tight hover:opacity-60 transition-opacity">{alert.venue.name}</h3>
                         </Link>
                         {alert.venue.address && (
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-light text-zinc-400">
-                              {alert.venue.address}{alert.venue.postcode ? `, ${alert.venue.postcode}` : ''}
-                            </span>
-                            <a
-                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${alert.venue.name}, ${alert.venue.address} London`)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="Open in Maps"
-                              onClick={e => e.stopPropagation()}
-                              className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0"
-                            >
-                              <MapIcon />
-                            </a>
-                          </div>
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${alert.venue.name}, ${alert.venue.address} London`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-light text-zinc-400 hover:text-zinc-700 transition-colors block"
+                          >
+                            {alert.venue.address}{alert.venue.postcode ? `, ${alert.venue.postcode}` : ''}
+                          </a>
                         )}
-                        <p className="text-sm font-light text-zinc-500 pt-1">
+                        <p className="text-sm font-light text-zinc-500 pt-0.5">
                           {formatSlotDate(alert.slot.start_at)} · {formatSlotTime(alert.slot.start_at)} · {alert.slot.party_min === alert.slot.party_max ? `Party of ${alert.slot.party_min}` : `${alert.slot.party_min}–${alert.slot.party_max} guests`}
                         </p>
                       </div>
@@ -310,14 +294,10 @@ export default function AlertsPage() {
                             type="button"
                             onClick={() => handleBook(alert)}
                             disabled={isBookingThis}
-                            className={[
-                              'h-9 px-5 text-sm font-light whitespace-nowrap transition-colors border border-zinc-200 rounded-lg',
-                              isBookingThis
-                                ? 'bg-zinc-100 text-zinc-500 cursor-not-allowed'
-                                : 'bg-white text-zinc-900 hover:bg-zinc-50',
-                            ].join(' ')}
+                            className="h-9 px-6 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-white transition-colors disabled:opacity-40"
+                            style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
                           >
-                            {isBookingThis ? 'Booking...' : 'Book'}
+                            {isBookingThis ? 'Booking…' : 'Book'}
                           </button>
                         </div>
                       )}
