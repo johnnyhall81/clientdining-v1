@@ -452,9 +452,7 @@ const handleCancel = async () => {
     <div className="space-y-6">
 
       {/* Search bar */}
-      <div className="sticky top-16 z-40 bg-zinc-50 py-3 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
-        <SearchBar filters={filters} venues={venues} onChange={setFilters} />
-      </div>
+      <SearchBar filters={filters} venues={venues} onChange={setFilters} />
 
       {/* Results */}
       {loading ? (
@@ -463,12 +461,12 @@ const handleCancel = async () => {
           <p className="mt-4 text-zinc-500 font-light">Searching...</p>
         </div>
       ) : results.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border border-zinc-200">
+        <div className="text-center py-12 bg-white" style={{ borderRadius: '6px', border: '1px solid #F0EDE9' }}>
           <p className="text-zinc-500 font-light">No slots found matching your criteria.</p>
-          <p className="text-sm text-zinc-500 font-light mt-2">Try adjusting your filters</p>
+          <p className="text-sm text-zinc-400 font-light mt-2">Try adjusting your filters</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-4">
           {Object.values(
             results.reduce((acc, r) => {
               const vid = r.venue.id
@@ -479,59 +477,50 @@ const handleCancel = async () => {
           ).map(({ venue, slots }) => {
             const MAX_VISIBLE = 6
             const visibleSlots = slots.slice(0, MAX_VISIBLE)
-            const mapsUrl = venue.address
-              ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, London`)}`
-              : null
 
             return (
-              <div key={venue.id} className="bg-white border border-zinc-100 rounded-2xl overflow-hidden hover:border-zinc-200 hover:shadow-sm transition-all duration-300">
+              <div key={venue.id} className="bg-white overflow-hidden hover:shadow-sm transition-all duration-300" style={{ borderRadius: '6px', border: '1px solid #F0EDE9', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
                 <div className="flex flex-col md:flex-row">
 
                   {/* Image */}
-                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-60 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-56 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
                     {venue.image_hero ? (
-                      <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 240px" quality={70} className="object-cover" />
+                      <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 224px" quality={70} className="object-cover" />
                     ) : (
                       <div className="w-full h-full bg-zinc-100" />
                     )}
                   </Link>
 
                   {/* Content */}
-                  <div className="flex-1 px-9 py-8 flex flex-col justify-between gap-7">
+                  <div className="flex-1 px-7 py-6 flex flex-col justify-between gap-5">
 
                     {/* Venue info */}
-                    <div className="space-y-1.5">
-                      <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-70 transition-opacity">
-                        <h3 className="text-xl font-light text-zinc-900 tracking-tight">{venue.name}</h3>
+                    <div className="space-y-1">
+                      <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-60 transition-opacity">
+                        <h3 className="text-lg font-light text-zinc-900 tracking-tight">{venue.name}</h3>
                       </Link>
                       {venue.address && (
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-light text-zinc-400">
-                            {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                          </span>
-                          {mapsUrl && (
-                            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-zinc-400 hover:text-zinc-500 transition-colors flex-shrink-0">
-                              <MapIcon />
-                            </a>
-                          )}
-                        </div>
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, London`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-light text-zinc-400 hover:text-zinc-700 transition-colors block"
+                        >
+                          {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                        </a>
                       )}
                     </div>
 
-                    {/* Time pills */}
-                    <div className="flex flex-wrap gap-2.5">
+                    {/* Time slots */}
+                    <div className="flex flex-wrap gap-2">
                       {visibleSlots.map(slot => {
                         const isBookedByMe = bookedSlots.has(slot.id)
 
                         if (isBookedByMe) {
                           const partySize = bookedPartySizes.get(slot.id)
-                          const guestLabel = partySize ? ` · +${partySize - 1}` : ''
                           return (
-                            <Link href="/bookings" key={slot.id} className="inline-flex items-center gap-3 px-5 py-2.5 rounded-xl border hover:opacity-80 transition-opacity" style={{minHeight: '46px', backgroundColor: '#F7FBF9', borderColor: '#D4EDE2'}}>
-                              <span className="flex flex-col">
-                                <span className="text-sm font-light leading-tight" style={{color: '#2A6B4A'}}>{formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}</span>
-                                <span className="text-[11px] font-light leading-tight mt-1" style={{color: '#7BB89A'}}>{partySize ? `Your party of ${partySize}` : 'Your table'}</span>
-                              </span>
+                            <Link href="/bookings" key={slot.id} className="inline-flex items-center px-3.5 py-2 text-sm font-light transition-opacity hover:opacity-80" style={{ backgroundColor: '#F7FBF9', border: '1px solid #D4EDE2', borderRadius: '3px', color: '#2A6B4A' }}>
+                              {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                             </Link>
                           )
                         }
@@ -542,14 +531,11 @@ const handleCancel = async () => {
                             <button
                               key={slot.id}
                               onClick={() => handleToggleAlert(slot.id)}
-                              className={[
-                                'inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-light border transition-colors',
-                                hasAlert ? 'bg-zinc-50 border-zinc-200 text-zinc-500' : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:border-zinc-200',
-                              ].join(' ')}
-                              style={{minHeight: '44px'}}
+                              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-600"
+                              style={{ backgroundColor: '#FAFAFA', border: '1px solid #F0EDE9', borderRadius: '3px' }}
                             >
                               {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
-                              <span className="text-[10px] ml-0.5">{hasAlert ? '🔔' : 'Alert me'}</span>
+                              <span className="text-[10px]">{hasAlert ? '🔔' : '· Alert'}</span>
                             </button>
                           )
                         }
@@ -559,8 +545,8 @@ const handleCancel = async () => {
                             key={slot.id}
                             onClick={() => handleBook(slot.id)}
                             disabled={bookingSlotId === slot.id}
-                            className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light border border-zinc-200 bg-white text-zinc-900 hover:border-zinc-200 hover:bg-zinc-50 transition-colors disabled:opacity-40"
-                            style={{minHeight: '44px'}}
+                            className="inline-flex items-center px-3.5 py-2 text-sm font-light text-zinc-700 bg-white hover:bg-zinc-50 transition-colors disabled:opacity-40"
+                            style={{ border: '1px solid #E8E4DF', borderRadius: '3px' }}
                           >
                             {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                           </button>
@@ -568,7 +554,7 @@ const handleCancel = async () => {
                       })}
 
                       {slots.length > MAX_VISIBLE && (
-                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-light text-zinc-500 border border-zinc-100 hover:border-zinc-200 hover:text-zinc-500 transition-colors" style={{minHeight: '44px'}}>
+                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-3.5 py-2 text-sm font-light text-zinc-400 hover:text-zinc-700 transition-colors" style={{ border: '1px solid #F0EDE9', borderRadius: '3px' }}>
                           +{slots.length - MAX_VISIBLE} more
                         </Link>
                       )}
