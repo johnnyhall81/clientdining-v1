@@ -35,8 +35,8 @@ export default function LoginPage() {
     setLoading(true)
 
     const redirectUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
-      ? 'http://localhost:3000/home'
-      : 'https://clientdining.com/home'
+      ? 'http://localhost:3000/auth/callback'
+      : 'https://clientdining.com/auth/callback'
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',
