@@ -166,11 +166,12 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   // Full-page SevenRooms widget — skip ClientDining editorial entirely
   if ((venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url) {
     return (
-      <div style={{ height: 'calc(100vh - 64px)' }}>
+      <div style={{ marginTop: '-32px' }}>
         <iframe
           src={(venue as any).booking_widget_url}
           width="100%"
-          height="100%"
+          height="2400"
+          scrolling="no"
           style={{ border: 'none', display: 'block' }}
           title={venue.name}
         />
