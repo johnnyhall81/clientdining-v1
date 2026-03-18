@@ -19,6 +19,7 @@ export interface Venue {
   image_hero?: string
   is_active: boolean
   requires_guest_names: boolean
+  menus?: { label: string; url: string }[] | null
   created_at: string
   updated_at?: string
 }
