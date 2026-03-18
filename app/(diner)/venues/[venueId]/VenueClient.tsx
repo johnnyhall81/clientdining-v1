@@ -287,11 +287,11 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                     href={menu.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-light text-zinc-600 hover:text-zinc-400 transition-colors inline-flex items-center gap-1.5"
+                    className="text-sm font-light text-zinc-500 hover:text-zinc-800 transition-colors inline-flex items-center gap-1"
                   >
                     {menu.label}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2.5 h-2.5 opacity-60">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                     </svg>
                   </a>
                 ))}
