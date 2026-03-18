@@ -163,6 +163,21 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   ].filter(Boolean)
 
+  // Full-page SevenRooms widget — skip ClientDining editorial entirely
+  if ((venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url) {
+    return (
+      <div style={{ height: 'calc(100vh - 64px)' }}>
+        <iframe
+          src={(venue as any).booking_widget_url}
+          width="100%"
+          height="100%"
+          style={{ border: 'none', display: 'block' }}
+          title={venue.name}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -238,13 +253,15 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             ) : (venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url ? (
               <div>
                 <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-7 font-light">Reserve a table</p>
-                <iframe
-                  src={(venue as any).booking_widget_url}
-                  width="100%"
-                  height="640"
-                  style={{ border: 'none', borderRadius: '3px', display: 'block' }}
-                  title={`Book at ${venue.name}`}
-                />
+                <div style={{ overflow: 'hidden', borderRadius: '3px', height: '600px' }}>
+                  <iframe
+                    src={(venue as any).booking_widget_url}
+                    width="100%"
+                    height="680"
+                    style={{ border: 'none', display: 'block', marginTop: '-80px' }}
+                    title={`Book at ${venue.name}`}
+                  />
+                </div>
               </div>
             ) : !hasSlots && !hasPrivateDining ? (
               <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
