@@ -235,11 +235,11 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   Your application is being reviewed. You will be able to book once your membership has been verified.
                 </p>
               </div>
-            ) : (venue as any).use_sevenrooms_widget && venue.booking_widget_url ? (
+            ) : (venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url ? (
               <div>
                 <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-7 font-light">Reserve a table</p>
                 <iframe
-                  src={venue.booking_widget_url}
+                  src={(venue as any).booking_widget_url}
                   width="100%"
                   height="640"
                   style={{ border: 'none', borderRadius: '3px', display: 'block' }}
