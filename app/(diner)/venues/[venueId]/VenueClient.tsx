@@ -55,6 +55,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const [showCorporateEventsModal, setShowCorporateEventsModal] = useState(false)
   const [showMap, setShowMap] = useState(false)
   const [isVerified, setIsVerified] = useState<boolean | null>(null)
+  const [activeTab, setActiveTab] = useState<'reserve' | 'menu' | 'location'>('reserve')
+  const [menuModalUrl, setMenuModalUrl] = useState<string | null>(null)
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
@@ -276,28 +278,63 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
 
 
-{/* Menus */}
-{(venue as any).menus && (venue as any).menus.length > 0 && (
-            <div className="px-7 sm:px-9 lg:px-11 py-7" style={{ borderTop: '1px solid #F0EDE9' }}>
-              <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Menus</p>
-              <div className="flex flex-wrap gap-x-6 gap-y-2">
-                {(venue as any).menus.map((menu: { label: string; url: string }, i: number) => (
-                  <a
-                    key={i}
-                    href={menu.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-light text-zinc-500 hover:text-zinc-800 transition-colors inline-flex items-center gap-1"
-                  >
-                    {menu.label}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2.5 h-2.5 opacity-60">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                    </svg>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
+{/* Menu Highlights */}
+{(venue as any).menu_highlights && (
+  <div className="px-7 sm:px-9 lg:px-11 py-7" style={{ borderTop: '1px solid #F0EDE9' }}>
+    <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-4 font-light">Menu Highlights</p>
+    <div className="flex flex-col gap-3">
+      {/* Cuisine + price */}
+      <div className="flex items-center gap-3">
+        <span className="text-sm font-light text-zinc-700">{(venue as any).menu_highlights.cuisine_style}</span>
+        <span className="text-zinc-300 text-xs">·</span>
+        <span className="text-sm font-light text-zinc-500">{(venue as any).menu_highlights.price_range}</span>
+      </div>
+      {/* Sample dishes */}
+      {(venue as any).menu_highlights.sample_dishes?.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {(venue as any).menu_highlights.sample_dishes.map((dish: string, i: number) => (
+            <span key={i} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
+              {dish}
+            </span>
+          ))}
+        </div>
+      )}
+      {/* Dietary options */}
+      {(venue as any).menu_highlights.dietary_options?.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {(venue as any).menu_highlights.dietary_options.map((opt: string, i: number) => (
+            <span key={i} className="text-[11px] font-light text-zinc-400 border border-zinc-200 px-2.5 py-1 rounded-full">
+              {opt}
+            </span>
+          ))}
+        </div>
+      )}
+      {/* Note */}
+      {(venue as any).menu_highlights.note && (
+        <p className="text-[11px] font-light text-zinc-400 italic">{(venue as any).menu_highlights.note}</p>
+      )}
+      {/* External menu links */}
+      {(venue as any).menus?.length > 0 && (
+        <div className="flex flex-wrap gap-x-5 gap-y-1.5 pt-1">
+          {(venue as any).menus.map((menu: { label: string; url: string }, i: number) => (
+            <a
+              key={i}
+              href={menu.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors inline-flex items-center gap-1"
+            >
+              {menu.label}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2.5 h-2.5 opacity-50">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
 
 
 
