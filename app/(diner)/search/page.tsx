@@ -452,7 +452,9 @@ const handleCancel = async () => {
     <div className="space-y-6">
 
       {/* Search bar */}
-      <SearchBar filters={filters} venues={venues} onChange={setFilters} />
+<div className="sticky top-0 z-20 bg-[#FAF9F7]">
+  <SearchBar filters={filters} venues={venues} onChange={setFilters} />
+</div>
 
       {/* Results */}
       {loading ? (
