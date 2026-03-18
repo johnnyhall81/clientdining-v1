@@ -28,6 +28,7 @@ export default function EditVenuePage() {
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [menus, setMenus] = useState<{ label: string; url: string }[]>([])
 
   // Gallery state
   const [galleryImages, setGalleryImages] = useState<VenueImage[]>([])
@@ -68,6 +69,7 @@ export default function EditVenuePage() {
       image_hero: data.image_hero || '',
       logo_url: (data as any).logo_url || '',
     })
+    setMenus(data.menus || [])
     setLoading(false)
   }
 
@@ -86,7 +88,12 @@ export default function EditVenuePage() {
     try {
       const { error } = await supabase
         .from('venues')
-        .update(formData)
+        .update({
+          ...formData,
+          menus: menus.filter(m => m.label && m.url).length > 0
+            ? menus.filter(m => m.label && m.url)
+            : null,
+        })
         .eq('id', venueId)
       if (error) throw error
       alert('Venue updated successfully!')
@@ -284,6 +291,54 @@ export default function EditVenuePage() {
               <img src={(formData as any).logo_url} alt="Logo preview" className="h-8 w-auto object-contain" />
             </div>
           )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Menus</label>
+          <div className="space-y-2">
+            {menus.map((menu, i) => (
+              <div key={i} className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Label (e.g. Dinner Menu)"
+                  value={menu.label}
+                  onChange={e => {
+                    const updated = [...menus]
+                    updated[i] = { ...updated[i], label: e.target.value }
+                    setMenus(updated)
+                  }}
+                  className="w-40 px-3 py-2 text-sm border rounded-md"
+                />
+                <input
+                  type="url"
+                  placeholder="https://..."
+                  value={menu.url}
+                  onChange={e => {
+                    const updated = [...menus]
+                    updated[i] = { ...updated[i], url: e.target.value }
+                    setMenus(updated)
+                  }}
+                  className="flex-1 px-3 py-2 text-sm border rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => setMenus(menus.filter((_, idx) => idx !== i))}
+                  className="px-2 text-gray-400 hover:text-gray-700"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {menus.length < 5 && (
+              <button
+                type="button"
+                onClick={() => setMenus([...menus, { label: '', url: '' }])}
+                className="text-xs text-gray-400 hover:text-gray-700 transition-colors"
+              >
+                + Add menu
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="flex gap-4 pt-2">
