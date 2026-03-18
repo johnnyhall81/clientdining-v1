@@ -27,13 +27,6 @@ export interface Venue {
     dietary_options: string[]
     note: string | null
   } | null
-  menu_highlights?: {
-    cuisine_style: string
-    price_range: string
-    sample_dishes: string[]
-    dietary_options: string[]
-    note: string | null
-  } | null
   created_at: string
   updated_at?: string
 }
