@@ -25,7 +25,7 @@ const DAYS_AHEAD = parseInt(process.argv.find(a => a.startsWith('--days='))?.spl
 const VENUE_FILTER = process.argv.find(a => a.startsWith('--venue='))?.split('=')[1]
 
 // Party sizes to query — we check each to get full availability picture
-const PARTY_SIZES = [2, 4, 6]
+const PARTY_SIZES = [2, 6]
 
 // Filter slots at or after this UTC hour. Use 14 during BST (Apr–Oct), 15 in GMT winter.
 const MAX_HOUR_UTC = parseInt(process.argv.find(a => a.startsWith('--max-hour='))?.split('=')[1] || '99')
@@ -73,54 +73,64 @@ async function fetchSevenRoomsSlots(
           `&start_date=${date}` +
           `&channel=SEVENROOMS_WIDGET`
 
-        try {
-          const res = await fetch(url, {
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-              'Accept': 'application/json',
+        const fetchWithRetry = async (attempt = 1): Promise<void> => {
+          try {
+            const res = await fetch(url, {
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                'Accept': 'application/json',
+              }
+            })
+
+            if (!res.ok) {
+              const rawErr = await res.text()
+              // SevenRooms returns 400 "invalid num_days" when rate limited (misleading error)
+              if (attempt < 3) {
+                const backoff = attempt * 3000
+                console.warn(`  ⚠ SevenRooms ${res.status} for ${date} party:${partySize} time:${timeSlot} — retrying in ${backoff/1000}s (attempt ${attempt})`)
+                await new Promise(r => setTimeout(r, backoff))
+                return fetchWithRetry(attempt + 1)
+              }
+              console.warn(`  ⚠ SevenRooms ${res.status} for ${date} party:${partySize} time:${timeSlot} — giving up after ${attempt} attempts`)
+              return
             }
-          })
 
-          if (!res.ok) {
-            const rawErr = await res.text()
-            console.warn(`  ⚠ SevenRooms returned ${res.status} for ${date} party:${partySize} time:${timeSlot}`)
-            console.warn(`  ⚠ Raw:`, rawErr.slice(0, 200))
-            continue
-          }
+            const rawText = await res.text()
+            if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
+              console.warn(`  ⚠ Non-JSON for ${date} party:${partySize} time:${timeSlot}`)
+              return
+            }
 
-          const rawText = await res.text()
-          if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
-            console.warn(`  ⚠ Non-JSON for ${date} party:${partySize} time:${timeSlot}`)
-            continue
-          }
+            const data: any = JSON.parse(rawText)
+            const shifts = data?.data?.availability?.[date] || []
 
-          const data: any = JSON.parse(rawText)
-          const shifts = data?.data?.availability?.[date] || []
+            for (const shift of shifts) {
+              for (const slot of (shift.times || [])) {
+                const start_at = slot.utc_datetime
+                  ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
+                  : toUTC(date, slot.time)
+                const existing = slots.get(start_at)
+                const sessionName = slot.public_time_slot_description || null
 
-          for (const shift of shifts) {
-            for (const slot of (shift.times || [])) {
-              const start_at = slot.utc_datetime
-                ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
-                : toUTC(date, slot.time)
-              const existing = slots.get(start_at)
-              const sessionName = slot.public_time_slot_description || null
-
-              if (!existing) {
-                slots.set(start_at, { party_min: partySize, party_max: partySize, session_name: sessionName })
-              } else {
-                slots.set(start_at, {
-                  party_min: Math.min(existing.party_min, partySize),
-                  party_max: Math.max(existing.party_max, partySize),
-                  session_name: existing.session_name || sessionName,
-                })
+                if (!existing) {
+                  slots.set(start_at, { party_min: partySize, party_max: partySize, session_name: sessionName })
+                } else {
+                  slots.set(start_at, {
+                    party_min: Math.min(existing.party_min, partySize),
+                    party_max: Math.max(existing.party_max, partySize),
+                    session_name: existing.session_name || sessionName,
+                  })
+                }
               }
             }
+          } catch (err) {
+            console.warn(`  ⚠ Error fetching ${date} party:${partySize} time:${timeSlot}:`, err)
           }
-        } catch (err) {
-          console.warn(`  ⚠ Error fetching ${date} party:${partySize} time:${timeSlot}:`, err)
         }
 
-        // 500ms delay — enough to avoid SevenRooms rate limiting
+        await fetchWithRetry()
+
+        // 500ms delay between requests
         await new Promise(r => setTimeout(r, 500))
       }
     }
