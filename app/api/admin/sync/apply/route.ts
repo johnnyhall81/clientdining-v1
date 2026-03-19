@@ -22,6 +22,7 @@ export async function POST(request: Request) {
       .from('slot_proposals')
       .select('*')
       .eq('status', 'pending')
+      .limit(10000)
 
     if (proposalIds?.length) {
       query = query.in('id', proposalIds)

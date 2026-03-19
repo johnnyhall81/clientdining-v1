@@ -57,66 +57,67 @@ async function fetchSevenRoomsSlots(
 ): Promise<{ start_at: string; party_min: number; party_max: number; session_name: string | null }[]> {
   const slots: Map<string, { party_min: number; party_max: number; session_name: string | null }> = new Map()
 
+  const startDate = dates[0]
+  const numDays = dates.length
+
   // Two time anchors cover the full day:
   // 12:00 ± 16 intervals = ~08:00–16:00
   // 19:00 ± 16 intervals = ~15:00–23:00
   const TIME_SLOTS = ['12:00', '19:00']
 
-  for (const date of dates) {
-    for (const partySize of PARTY_SIZES) {
-      for (const timeSlot of TIME_SLOTS) {
-        const url = `${baseEndpoint}` +
-          `?venue=${venueId}` +
-          `&time_slot=${timeSlot}` +
-          `&party_size=${partySize}` +
-          `&halo_size_interval=16` +
-          `&start_date=${date}` +
-          `&num_days=1` +
-          `&channel=SEVENROOMS_WIDGET`
+  // Single pass per party size + time slot covering all days at once
+  // This avoids the 180-request barbell pattern caused by day-by-day querying
+  for (const partySize of PARTY_SIZES) {
+    for (const timeSlot of TIME_SLOTS) {
+      const url = `${baseEndpoint}` +
+        `?venue=${venueId}` +
+        `&time_slot=${timeSlot}` +
+        `&party_size=${partySize}` +
+        `&halo_size_interval=16` +
+        `&start_date=${startDate}` +
+        `&num_days=${numDays}` +
+        `&channel=SEVENROOMS_WIDGET`
 
-        try {
-          const res = await fetch(url, {
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-              'Accept': 'application/json',
-            }
-          })
-
-          if (!res.ok) {
-            const rawErr = await res.text()
-            console.warn(`  ⚠ SevenRooms returned ${res.status} for ${date} party:${partySize} time:${timeSlot}`)
-            console.warn(`  ⚠ Raw response (first 500 chars):`, rawErr.slice(0, 500))
-            continue
+      try {
+        const res = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            'Accept': 'application/json',
           }
+        })
 
-          const rawText = await res.text()
-          if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
-            console.warn(`  ⚠ Non-JSON response for ${date} party:${partySize} time:${timeSlot} — first 500 chars:`)
-            console.warn(rawText.slice(0, 500))
-            continue
-          }
+        if (!res.ok) {
+          const rawErr = await res.text()
+          console.warn(`  ⚠ SevenRooms returned ${res.status} for party:${partySize} time:${timeSlot}`)
+          console.warn(`  ⚠ Raw response (first 500 chars):`, rawErr.slice(0, 500))
+          continue
+        }
 
-          const data: any = JSON.parse(rawText)
+        const rawText = await res.text()
+        if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
+          console.warn(`  ⚠ Non-JSON response for party:${partySize} time:${timeSlot}`)
+          console.warn(rawText.slice(0, 500))
+          continue
+        }
 
-          // SevenRooms actual response: { status: 200, data: { availability: { [date]: [ { times: [{time, type}] } ] } } }
-          const shifts = data?.data?.availability?.[date] || []
+        const data: any = JSON.parse(rawText)
 
+        // Iterate all dates returned in the availability map
+        const availability = data?.data?.availability || {}
+        for (const date of Object.keys(availability)) {
+          const shifts = availability[date] || []
           for (const shift of shifts) {
             for (const slot of (shift.times || [])) {
-              // Use utc_datetime directly if available, otherwise construct from date + time
               const start_at = slot.utc_datetime
                 ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
                 : toUTC(date, slot.time)
-              const key = start_at
-              const existing = slots.get(key)
-
-              // Only use slot-level seating area description — shift name is internal and not user-facing
+              const existing = slots.get(start_at)
               const sessionName = slot.public_time_slot_description || null
 
               if (!existing) {
-                slots.set(key, { party_min: partySize, party_max: partySize, session_name: sessionName })
+                slots.set(start_at, { party_min: partySize, party_max: partySize, session_name: sessionName })
               } else {
-                slots.set(key, {
+                slots.set(start_at, {
                   party_min: Math.min(existing.party_min, partySize),
                   party_max: Math.max(existing.party_max, partySize),
                   session_name: existing.session_name || sessionName,
@@ -124,13 +125,13 @@ async function fetchSevenRoomsSlots(
               }
             }
           }
-        } catch (err) {
-          console.warn(`  ⚠ Error fetching ${date} party:${partySize} time:${timeSlot}:`, err)
         }
-
-        // Small delay to be polite
-        await new Promise(r => setTimeout(r, 200))
+      } catch (err) {
+        console.warn(`  ⚠ Error fetching party:${partySize} time:${timeSlot}:`, err)
       }
+
+      // Polite delay between requests
+      await new Promise(r => setTimeout(r, 400))
     }
   }
 
