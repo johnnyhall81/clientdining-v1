@@ -57,81 +57,82 @@ async function fetchSevenRoomsSlots(
 ): Promise<{ start_at: string; party_min: number; party_max: number; session_name: string | null }[]> {
   const slots: Map<string, { party_min: number; party_max: number; session_name: string | null }> = new Map()
 
-  const startDate = dates[0]
-  const numDays = dates.length
-
-  // Two time anchors cover the full day:
-  // 12:00 ± 16 intervals = ~08:00–16:00
-  // 19:00 ± 16 intervals = ~15:00–23:00
+  // SevenRooms supports max num_days=7 per request
+  // Chunk dates into weekly batches to minimise requests while staying within limits
+  const CHUNK_SIZE = 7
   const TIME_SLOTS = ['12:00', '19:00']
 
-  // Single pass per party size + time slot covering all days at once
-  // This avoids the 180-request barbell pattern caused by day-by-day querying
+  const chunks: string[][] = []
+  for (let i = 0; i < dates.length; i += CHUNK_SIZE) {
+    chunks.push(dates.slice(i, i + CHUNK_SIZE))
+  }
+
   for (const partySize of PARTY_SIZES) {
     for (const timeSlot of TIME_SLOTS) {
-      const url = `${baseEndpoint}` +
-        `?venue=${venueId}` +
-        `&time_slot=${timeSlot}` +
-        `&party_size=${partySize}` +
-        `&halo_size_interval=16` +
-        `&start_date=${startDate}` +
-        `&num_days=${numDays}` +
-        `&channel=SEVENROOMS_WIDGET`
+      for (const chunk of chunks) {
+        const url = `${baseEndpoint}` +
+          `?venue=${venueId}` +
+          `&time_slot=${timeSlot}` +
+          `&party_size=${partySize}` +
+          `&halo_size_interval=16` +
+          `&start_date=${chunk[0]}` +
+          `&num_days=${chunk.length}` +
+          `&channel=SEVENROOMS_WIDGET`
 
-      try {
-        const res = await fetch(url, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-            'Accept': 'application/json',
+        try {
+          const res = await fetch(url, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+              'Accept': 'application/json',
+            }
+          })
+
+          if (!res.ok) {
+            const rawErr = await res.text()
+            console.warn(`  ⚠ SevenRooms returned ${res.status} for party:${partySize} time:${timeSlot} chunk:${chunk[0]}`)
+            console.warn(`  ⚠ Raw response (first 500 chars):`, rawErr.slice(0, 500))
+            continue
           }
-        })
 
-        if (!res.ok) {
-          const rawErr = await res.text()
-          console.warn(`  ⚠ SevenRooms returned ${res.status} for party:${partySize} time:${timeSlot}`)
-          console.warn(`  ⚠ Raw response (first 500 chars):`, rawErr.slice(0, 500))
-          continue
-        }
+          const rawText = await res.text()
+          if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
+            console.warn(`  ⚠ Non-JSON response for party:${partySize} time:${timeSlot} chunk:${chunk[0]}`)
+            console.warn(rawText.slice(0, 500))
+            continue
+          }
 
-        const rawText = await res.text()
-        if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
-          console.warn(`  ⚠ Non-JSON response for party:${partySize} time:${timeSlot}`)
-          console.warn(rawText.slice(0, 500))
-          continue
-        }
+          const data: any = JSON.parse(rawText)
+          const availability = data?.data?.availability || {}
 
-        const data: any = JSON.parse(rawText)
+          for (const date of Object.keys(availability)) {
+            const shifts = availability[date] || []
+            for (const shift of shifts) {
+              for (const slot of (shift.times || [])) {
+                const start_at = slot.utc_datetime
+                  ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
+                  : toUTC(date, slot.time)
+                const existing = slots.get(start_at)
+                const sessionName = slot.public_time_slot_description || null
 
-        // Iterate all dates returned in the availability map
-        const availability = data?.data?.availability || {}
-        for (const date of Object.keys(availability)) {
-          const shifts = availability[date] || []
-          for (const shift of shifts) {
-            for (const slot of (shift.times || [])) {
-              const start_at = slot.utc_datetime
-                ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
-                : toUTC(date, slot.time)
-              const existing = slots.get(start_at)
-              const sessionName = slot.public_time_slot_description || null
-
-              if (!existing) {
-                slots.set(start_at, { party_min: partySize, party_max: partySize, session_name: sessionName })
-              } else {
-                slots.set(start_at, {
-                  party_min: Math.min(existing.party_min, partySize),
-                  party_max: Math.max(existing.party_max, partySize),
-                  session_name: existing.session_name || sessionName,
-                })
+                if (!existing) {
+                  slots.set(start_at, { party_min: partySize, party_max: partySize, session_name: sessionName })
+                } else {
+                  slots.set(start_at, {
+                    party_min: Math.min(existing.party_min, partySize),
+                    party_max: Math.max(existing.party_max, partySize),
+                    session_name: existing.session_name || sessionName,
+                  })
+                }
               }
             }
           }
+        } catch (err) {
+          console.warn(`  ⚠ Error fetching party:${partySize} time:${timeSlot} chunk:${chunk[0]}:`, err)
         }
-      } catch (err) {
-        console.warn(`  ⚠ Error fetching party:${partySize} time:${timeSlot}:`, err)
-      }
 
-      // Polite delay between requests
-      await new Promise(r => setTimeout(r, 400))
+        // Polite delay between requests
+        await new Promise(r => setTimeout(r, 400))
+      }
     }
   }
 
