@@ -20,8 +20,8 @@ export default function LandingPage({ venues }: LandingPageProps) {
   const handleLinkedInLogin = async () => {
     setAuthLoading(true)
     const redirectUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-      ? 'http://localhost:3000/home'
-      : 'https://clientdining.com/home'
+      ? 'http://localhost:3000/auth/callback?next=/home'
+      : 'https://clientdining.com/auth/callback?next=/home'
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',
       options: { redirectTo: redirectUrl },
