@@ -57,26 +57,20 @@ async function fetchSevenRoomsSlots(
 ): Promise<{ start_at: string; party_min: number; party_max: number; session_name: string | null }[]> {
   const slots: Map<string, { party_min: number; party_max: number; session_name: string | null }> = new Map()
 
-  // SevenRooms supports max num_days=7 per request
-  // Chunk dates into weekly batches to minimise requests while staying within limits
-  const CHUNK_SIZE = 7
+  // SevenRooms widget API: num_days is not supported — must query one day at a time.
+  // To avoid rate limiting (which caused the barbell pattern), we query by time slot first
+  // across all dates, with a generous delay between requests.
   const TIME_SLOTS = ['12:00', '19:00']
-
-  const chunks: string[][] = []
-  for (let i = 0; i < dates.length; i += CHUNK_SIZE) {
-    chunks.push(dates.slice(i, i + CHUNK_SIZE))
-  }
 
   for (const partySize of PARTY_SIZES) {
     for (const timeSlot of TIME_SLOTS) {
-      for (const chunk of chunks) {
+      for (const date of dates) {
         const url = `${baseEndpoint}` +
           `?venue=${venueId}` +
           `&time_slot=${timeSlot}` +
           `&party_size=${partySize}` +
           `&halo_size_interval=16` +
-          `&start_date=${chunk[0]}` +
-          `&num_days=${chunk.length}` +
+          `&start_date=${date}` +
           `&channel=SEVENROOMS_WIDGET`
 
         try {
@@ -89,49 +83,45 @@ async function fetchSevenRoomsSlots(
 
           if (!res.ok) {
             const rawErr = await res.text()
-            console.warn(`  ⚠ SevenRooms returned ${res.status} for party:${partySize} time:${timeSlot} chunk:${chunk[0]}`)
-            console.warn(`  ⚠ Raw response (first 500 chars):`, rawErr.slice(0, 500))
+            console.warn(`  ⚠ SevenRooms returned ${res.status} for ${date} party:${partySize} time:${timeSlot}`)
+            console.warn(`  ⚠ Raw:`, rawErr.slice(0, 200))
             continue
           }
 
           const rawText = await res.text()
           if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
-            console.warn(`  ⚠ Non-JSON response for party:${partySize} time:${timeSlot} chunk:${chunk[0]}`)
-            console.warn(rawText.slice(0, 500))
+            console.warn(`  ⚠ Non-JSON for ${date} party:${partySize} time:${timeSlot}`)
             continue
           }
 
           const data: any = JSON.parse(rawText)
-          const availability = data?.data?.availability || {}
+          const shifts = data?.data?.availability?.[date] || []
 
-          for (const date of Object.keys(availability)) {
-            const shifts = availability[date] || []
-            for (const shift of shifts) {
-              for (const slot of (shift.times || [])) {
-                const start_at = slot.utc_datetime
-                  ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
-                  : toUTC(date, slot.time)
-                const existing = slots.get(start_at)
-                const sessionName = slot.public_time_slot_description || null
+          for (const shift of shifts) {
+            for (const slot of (shift.times || [])) {
+              const start_at = slot.utc_datetime
+                ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
+                : toUTC(date, slot.time)
+              const existing = slots.get(start_at)
+              const sessionName = slot.public_time_slot_description || null
 
-                if (!existing) {
-                  slots.set(start_at, { party_min: partySize, party_max: partySize, session_name: sessionName })
-                } else {
-                  slots.set(start_at, {
-                    party_min: Math.min(existing.party_min, partySize),
-                    party_max: Math.max(existing.party_max, partySize),
-                    session_name: existing.session_name || sessionName,
-                  })
-                }
+              if (!existing) {
+                slots.set(start_at, { party_min: partySize, party_max: partySize, session_name: sessionName })
+              } else {
+                slots.set(start_at, {
+                  party_min: Math.min(existing.party_min, partySize),
+                  party_max: Math.max(existing.party_max, partySize),
+                  session_name: existing.session_name || sessionName,
+                })
               }
             }
           }
         } catch (err) {
-          console.warn(`  ⚠ Error fetching party:${partySize} time:${timeSlot} chunk:${chunk[0]}:`, err)
+          console.warn(`  ⚠ Error fetching ${date} party:${partySize} time:${timeSlot}:`, err)
         }
 
-        // Polite delay between requests
-        await new Promise(r => setTimeout(r, 400))
+        // 500ms delay — enough to avoid SevenRooms rate limiting
+        await new Promise(r => setTimeout(r, 500))
       }
     }
   }
