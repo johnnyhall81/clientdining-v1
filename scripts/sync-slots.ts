@@ -25,7 +25,7 @@ const DAYS_AHEAD = parseInt(process.argv.find(a => a.startsWith('--days='))?.spl
 const VENUE_FILTER = process.argv.find(a => a.startsWith('--venue='))?.split('=')[1]
 
 // Party sizes to query — we check each to get full availability picture
-const PARTY_SIZES = [2, 6]
+const PARTY_SIZES = [2, 4, 6]
 
 // Filter slots at or after this UTC hour. Use 14 during BST (Apr–Oct), 15 in GMT winter.
 const MAX_HOUR_UTC = parseInt(process.argv.find(a => a.startsWith('--max-hour='))?.split('=')[1] || '99')
@@ -57,81 +57,79 @@ async function fetchSevenRoomsSlots(
 ): Promise<{ start_at: string; party_min: number; party_max: number; session_name: string | null }[]> {
   const slots: Map<string, { party_min: number; party_max: number; session_name: string | null }> = new Map()
 
-  // SevenRooms widget API: num_days is not supported — must query one day at a time.
-  // To avoid rate limiting (which caused the barbell pattern), we query by time slot first
-  // across all dates, with a generous delay between requests.
+  // Two time anchors cover the full day:
+  // 12:00 ± 16 intervals = ~08:00–16:00
+  // 19:00 ± 16 intervals = ~15:00–23:00
   const TIME_SLOTS = ['12:00', '19:00']
 
-  for (const partySize of PARTY_SIZES) {
-    for (const timeSlot of TIME_SLOTS) {
-      for (const date of dates) {
+  for (const date of dates) {
+    for (const partySize of PARTY_SIZES) {
+      for (const timeSlot of TIME_SLOTS) {
         const url = `${baseEndpoint}` +
           `?venue=${venueId}` +
           `&time_slot=${timeSlot}` +
           `&party_size=${partySize}` +
           `&halo_size_interval=16` +
           `&start_date=${date}` +
+          `&num_days=1` +
           `&channel=SEVENROOMS_WIDGET`
 
-        const fetchWithRetry = async (attempt = 1): Promise<void> => {
-          try {
-            const res = await fetch(url, {
-              headers: {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-                'Accept': 'application/json',
-              }
-            })
-
-            if (!res.ok) {
-              const rawErr = await res.text()
-              // SevenRooms returns 400 "invalid num_days" when rate limited (misleading error)
-              if (attempt < 3) {
-                const backoff = attempt * 3000
-                console.warn(`  ⚠ SevenRooms ${res.status} for ${date} party:${partySize} time:${timeSlot} — retrying in ${backoff/1000}s (attempt ${attempt})`)
-                await new Promise(r => setTimeout(r, backoff))
-                return fetchWithRetry(attempt + 1)
-              }
-              console.warn(`  ⚠ SevenRooms ${res.status} for ${date} party:${partySize} time:${timeSlot} — giving up after ${attempt} attempts`)
-              return
+        try {
+          const res = await fetch(url, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+              'Accept': 'application/json',
             }
+          })
 
-            const rawText = await res.text()
-            if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
-              console.warn(`  ⚠ Non-JSON for ${date} party:${partySize} time:${timeSlot}`)
-              return
-            }
-
-            const data: any = JSON.parse(rawText)
-            const shifts = data?.data?.availability?.[date] || []
-
-            for (const shift of shifts) {
-              for (const slot of (shift.times || [])) {
-                const start_at = slot.utc_datetime
-                  ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
-                  : toUTC(date, slot.time)
-                const existing = slots.get(start_at)
-                const sessionName = slot.public_time_slot_description || null
-
-                if (!existing) {
-                  slots.set(start_at, { party_min: partySize, party_max: partySize, session_name: sessionName })
-                } else {
-                  slots.set(start_at, {
-                    party_min: Math.min(existing.party_min, partySize),
-                    party_max: Math.max(existing.party_max, partySize),
-                    session_name: existing.session_name || sessionName,
-                  })
-                }
-              }
-            }
-          } catch (err) {
-            console.warn(`  ⚠ Error fetching ${date} party:${partySize} time:${timeSlot}:`, err)
+          if (!res.ok) {
+            const rawErr = await res.text()
+            console.warn(`  ⚠ SevenRooms returned ${res.status} for ${date} party:${partySize} time:${timeSlot}`)
+            console.warn(`  ⚠ Raw response (first 500 chars):`, rawErr.slice(0, 500))
+            continue
           }
+
+          const rawText = await res.text()
+          if (!rawText.trimStart().startsWith('{') && !rawText.trimStart().startsWith('[')) {
+            console.warn(`  ⚠ Non-JSON response for ${date} party:${partySize} time:${timeSlot} — first 500 chars:`)
+            console.warn(rawText.slice(0, 500))
+            continue
+          }
+
+          const data: any = JSON.parse(rawText)
+
+          // SevenRooms actual response: { status: 200, data: { availability: { [date]: [ { times: [{time, type}] } ] } } }
+          const shifts = data?.data?.availability?.[date] || []
+
+          for (const shift of shifts) {
+            for (const slot of (shift.times || [])) {
+              // Use utc_datetime directly if available, otherwise construct from date + time
+              const start_at = slot.utc_datetime
+                ? new Date(slot.utc_datetime.replace(' ', 'T') + 'Z').toISOString()
+                : toUTC(date, slot.time)
+              const key = start_at
+              const existing = slots.get(key)
+
+              // Only use slot-level seating area description — shift name is internal and not user-facing
+              const sessionName = slot.public_time_slot_description || null
+
+              if (!existing) {
+                slots.set(key, { party_min: partySize, party_max: partySize, session_name: sessionName })
+              } else {
+                slots.set(key, {
+                  party_min: Math.min(existing.party_min, partySize),
+                  party_max: Math.max(existing.party_max, partySize),
+                  session_name: existing.session_name || sessionName,
+                })
+              }
+            }
+          }
+        } catch (err) {
+          console.warn(`  ⚠ Error fetching ${date} party:${partySize} time:${timeSlot}:`, err)
         }
 
-        await fetchWithRetry()
-
-        // 500ms delay between requests
-        await new Promise(r => setTimeout(r, 500))
+        // Small delay to be polite
+        await new Promise(r => setTimeout(r, 200))
       }
     }
   }
@@ -189,12 +187,7 @@ async function main() {
     const widgetUrl = new URL(venue.booking_widget_url)
     const venueId = widgetUrl.searchParams.get('venue') ||
       widgetUrl.pathname.match(/\/explore\/([^/]+)/)?.[1] || ''
-
-    // Derive correct base endpoint from the venue's own URL
-    // Some venues use /ng/ variant, others use the standard endpoint
-    const baseEndpoint = venue.booking_widget_url.includes('/ng/')
-      ? 'https://www.sevenrooms.com/api-yoa/availability/ng/widget/range'
-      : 'https://www.sevenrooms.com/api-yoa/availability/widget/range'
+    const baseEndpoint = 'https://www.sevenrooms.com/api-yoa/availability/widget/range'
 
     // 3. Fetch live availability
     console.log(`   Fetching availability...`)
