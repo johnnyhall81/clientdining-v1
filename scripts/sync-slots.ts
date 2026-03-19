@@ -189,7 +189,12 @@ async function main() {
     const widgetUrl = new URL(venue.booking_widget_url)
     const venueId = widgetUrl.searchParams.get('venue') ||
       widgetUrl.pathname.match(/\/explore\/([^/]+)/)?.[1] || ''
-    const baseEndpoint = 'https://www.sevenrooms.com/api-yoa/availability/widget/range'
+
+    // Derive correct base endpoint from the venue's own URL
+    // Some venues use /ng/ variant, others use the standard endpoint
+    const baseEndpoint = venue.booking_widget_url.includes('/ng/')
+      ? 'https://www.sevenrooms.com/api-yoa/availability/ng/widget/range'
+      : 'https://www.sevenrooms.com/api-yoa/availability/widget/range'
 
     // 3. Fetch live availability
     console.log(`   Fetching availability...`)
