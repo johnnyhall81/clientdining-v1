@@ -1,14 +1,14 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Venue } from '@/lib/supabase'
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
 
 interface VenueWithCoords extends Venue {
-  lng?: number
-  lat?: number
+  lng: number
+  lat: number
 }
 
 interface VenueMapProps {
@@ -16,7 +16,6 @@ interface VenueMapProps {
 }
 
 async function geocodeVenue(venue: Venue): Promise<{ lat: number; lng: number } | null> {
-  // Use address+postcode if available, fall back to name+area
   const query = venue.address
     ? [venue.address, venue.postcode, 'London', 'UK'].filter(Boolean).join(', ')
     : [venue.name, venue.area, 'London', 'UK'].filter(Boolean).join(', ')
@@ -25,12 +24,8 @@ async function geocodeVenue(venue: Venue): Promise<{ lat: number; lng: number } 
     const res = await fetch(url)
     const data = await res.json()
     const feature = data.features?.[0]
-    if (!feature) {
-      console.warn(`[VenueMap] No result for: ${venue.name}`)
-      return null
-    }
+    if (!feature) return null
     const [lng, lat] = feature.center
-    console.log(`[VenueMap] ✓ ${venue.name} → ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
     return { lat, lng }
   } catch {
     return null
@@ -40,29 +35,69 @@ async function geocodeVenue(venue: Venue): Promise<{ lat: number; lng: number } 
 export default function VenueMap({ venues }: VenueMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
   const mapRef = useRef<any>(null)
+  const stripRef = useRef<HTMLDivElement>(null)
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const router = useRouter()
-  const [activeVenue, setActiveVenue] = useState<VenueWithCoords | null>(null)
+
   const [geocoded, setGeocoded] = useState<VenueWithCoords[]>([])
   const [loading, setLoading] = useState(true)
+  const [visibleVenues, setVisibleVenues] = useState<VenueWithCoords[]>([])
+  const [activeId, setActiveId] = useState<string | null>(null)
 
-  // Geocode all venues on mount
+  // Geocode on mount
   useEffect(() => {
     async function geocodeAll() {
-      console.log('[VenueMap] Token present:', !!MAPBOX_TOKEN)
-      console.log('[VenueMap] Geocoding', venues.length, 'venues')
       const results = await Promise.all(
         venues.map(async (v) => {
           const coords = await geocodeVenue(v)
-          return { ...v, ...(coords || {}) }
+          return coords ? { ...v, ...coords } : null
         })
       )
-      setGeocoded(results.filter(v => v.lat && v.lng))
+      const valid = results.filter(Boolean) as VenueWithCoords[]
+      setGeocoded(valid)
       setLoading(false)
     }
     geocodeAll()
   }, [venues])
 
-  // Init map once geocoding done
+  // Update visible venues based on map bounds
+  const updateVisible = useCallback((map: any, all: VenueWithCoords[]) => {
+    const bounds = map.getBounds()
+    const visible = all.filter(v =>
+      v.lng >= bounds.getWest() &&
+      v.lng <= bounds.getEast() &&
+      v.lat >= bounds.getSouth() &&
+      v.lat <= bounds.getNorth()
+    )
+    setVisibleVenues(visible)
+  }, [])
+
+  // Highlight a dot on the map
+  const highlightDot = useCallback((map: any, id: string | null) => {
+    if (!map.getLayer('venues-dots')) return
+    map.setPaintProperty('venues-dots', 'circle-color', [
+      'case',
+      ['==', ['get', 'id'], id ?? ''],
+      '#C85A00',
+      '#E87C2E'
+    ])
+    map.setPaintProperty('venues-dots', 'circle-radius', [
+      'case',
+      ['==', ['get', 'id'], id ?? ''],
+      9,
+      6
+    ])
+  }, [])
+
+  // Scroll strip to card
+  const scrollToCard = useCallback((id: string) => {
+    const card = cardRefs.current.get(id)
+    if (card && stripRef.current) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+    }
+  }, [])
+
+  // Init map
   useEffect(() => {
     if (loading || !mapContainer.current || geocoded.length === 0) return
     if (mapRef.current) return
@@ -73,62 +108,116 @@ export default function VenueMap({ venues }: VenueMapProps) {
       const map = new mapboxgl.default.Map({
         container: mapContainer.current!,
         style: 'mapbox://styles/mapbox/light-v11',
-        center: [-0.1276, 51.5074],
-        zoom: 11.5,
+        center: [-0.1400, 51.5100],
+        zoom: 12,
       })
 
       mapRef.current = map
 
       map.on('load', () => {
-        geocoded.forEach((venue) => {
-          if (!venue.lng || !venue.lat) return
-
-          const wrapper = document.createElement('div')
-          wrapper.style.cssText = `cursor: pointer;`
-
-          const el = document.createElement('div')
-          el.style.cssText = `
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #E87C2E;
-            border: 2px solid white;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-            transition: width 0.15s ease, height 0.15s ease, margin 0.15s ease;
-          `
-
-          wrapper.appendChild(el)
-
-          wrapper.addEventListener('mouseenter', () => {
-            el.style.width = '16px'
-            el.style.height = '16px'
-            el.style.margin = '-2px'
-          })
-          wrapper.addEventListener('mouseleave', () => {
-            el.style.width = '12px'
-            el.style.height = '12px'
-            el.style.margin = '0'
-          })
-          wrapper.addEventListener('click', (e) => {
-            e.stopPropagation()
-            setActiveVenue(venue)
-          })
-
-          new mapboxgl.default.Marker({ element: wrapper, anchor: 'center' })
-            .setLngLat([venue.lng!, venue.lat!])
-            .addTo(map)
+        // GeoJSON source with clustering
+        map.addSource('venues', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: geocoded.map(v => ({
+              type: 'Feature',
+              properties: { id: v.id, name: v.name, area: v.area },
+              geometry: { type: 'Point', coordinates: [v.lng, v.lat] }
+            }))
+          },
+          cluster: true,
+          clusterMaxZoom: 13,
+          clusterRadius: 40,
         })
 
-        // Fit bounds to all markers
+        // Cluster circles
+        map.addLayer({
+          id: 'clusters',
+          type: 'circle',
+          source: 'venues',
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': '#E87C2E',
+            'circle-radius': ['step', ['get', 'point_count'], 18, 5, 22, 10, 26],
+            'circle-opacity': 0.9,
+          }
+        })
+
+        // Cluster count labels
+        map.addLayer({
+          id: 'cluster-count',
+          type: 'symbol',
+          source: 'venues',
+          filter: ['has', 'point_count'],
+          layout: {
+            'text-field': '{point_count_abbreviated}',
+            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+            'text-size': 12,
+          },
+          paint: { 'text-color': '#ffffff' }
+        })
+
+        // Individual dots
+        map.addLayer({
+          id: 'venues-dots',
+          type: 'circle',
+          source: 'venues',
+          filter: ['!', ['has', 'point_count']],
+          paint: {
+            'circle-color': '#E87C2E',
+            'circle-radius': 6,
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#ffffff',
+          }
+        })
+
+        // Click cluster → zoom in
+        map.on('click', 'clusters', (e: any) => {
+          const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] })
+          const clusterId = features[0].properties.cluster_id
+          ;(map.getSource('venues') as any).getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
+            if (err) return
+            map.easeTo({ center: features[0].geometry.coordinates, zoom })
+          })
+        })
+
+        // Click dot → highlight + scroll strip
+        map.on('click', 'venues-dots', (e: any) => {
+          const id = e.features[0].properties.id
+          setActiveId(id)
+          highlightDot(map, id)
+          scrollToCard(id)
+        })
+
+        // Click empty map → clear active
+        map.on('click', (e: any) => {
+          const features = map.queryRenderedFeatures(e.point, { layers: ['venues-dots', 'clusters'] })
+          if (!features.length) {
+            setActiveId(null)
+            highlightDot(map, null)
+          }
+        })
+
+        // Cursor
+        map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer' })
+        map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = '' })
+        map.on('mouseenter', 'venues-dots', () => { map.getCanvas().style.cursor = 'pointer' })
+        map.on('mouseleave', 'venues-dots', () => { map.getCanvas().style.cursor = '' })
+
+        // Update strip on move
+        map.on('moveend', () => updateVisible(map, geocoded))
+
+        // Initial visible set
+        updateVisible(map, geocoded)
+
+        // Fit bounds
         if (geocoded.length > 1) {
           const bounds = new mapboxgl.default.LngLatBounds()
-          geocoded.forEach(v => { if (v.lng && v.lat) bounds.extend([v.lng, v.lat]) })
+          geocoded.forEach(v => bounds.extend([v.lng, v.lat]))
           map.fitBounds(bounds, { padding: 80, maxZoom: 13 })
         }
       })
-
-      // Close card on map click
-      map.on('click', () => setActiveVenue(null))
     })
 
     return () => {
@@ -137,42 +226,61 @@ export default function VenueMap({ venues }: VenueMapProps) {
     }
   }, [loading, geocoded])
 
+  // When activeId changes from card click, highlight dot
+  const handleCardClick = (venue: VenueWithCoords) => {
+    setActiveId(venue.id)
+    if (mapRef.current) {
+      mapRef.current.easeTo({ center: [venue.lng, venue.lat], zoom: Math.max(mapRef.current.getZoom(), 14) })
+      highlightDot(mapRef.current, venue.id)
+    }
+  }
+
   return (
-    <div className="relative w-full" style={{ height: 'calc(100vh - 130px)', minHeight: '520px' }}>
+    <div className="relative w-full flex flex-col" style={{ height: 'calc(100vh - 130px)', minHeight: '520px' }}>
+
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-zinc-50 z-10 rounded-xl">
           <p className="text-sm font-light text-zinc-400">Locating venues…</p>
         </div>
       )}
 
-      <div ref={mapContainer} className="w-full h-full rounded-xl overflow-hidden" />
+      {/* Map */}
+      <div ref={mapContainer} className="flex-1 rounded-xl overflow-hidden" />
 
-      {/* Venue card */}
-      {activeVenue && (
+      {/* Bottom card strip */}
+      {visibleVenues.length > 0 && (
         <div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-72 bg-white overflow-hidden cursor-pointer"
-          style={{ borderRadius: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', border: '1px solid #F0EDE9' }}
-          onClick={() => router.push(`/venues/${activeVenue.id}`)}
+          ref={stripRef}
+          className="flex gap-3 overflow-x-auto py-3"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', flexShrink: 0 }}
         >
-          {activeVenue.image_hero && (
-            <div className="relative w-full overflow-hidden" style={{ height: '140px' }}>
-              <img
-                src={activeVenue.image_hero}
-                alt={activeVenue.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+          {visibleVenues.map(venue => (
+            <div
+              key={venue.id}
+              ref={el => { if (el) cardRefs.current.set(venue.id, el) }}
+              onClick={() => {
+                handleCardClick(venue)
+                router.push(`/venues/${venue.id}`)
+              }}
+              className="flex-shrink-0 bg-white overflow-hidden cursor-pointer transition-all duration-200"
+              style={{
+                width: '200px',
+                borderRadius: '10px',
+                border: activeId === venue.id ? '2px solid #E87C2E' : '1px solid #F0EDE9',
+                boxShadow: activeId === venue.id ? '0 2px 12px rgba(232,124,46,0.2)' : '0 1px 4px rgba(0,0,0,0.07)',
+              }}
+            >
+              {venue.image_hero && (
+                <div style={{ height: '100px', overflow: 'hidden' }}>
+                  <img src={venue.image_hero} alt={venue.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              )}
+              <div style={{ padding: '8px 10px' }}>
+                <p style={{ fontSize: '12px', fontWeight: 500, color: '#18181B', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{venue.name}</p>
+                <p style={{ fontSize: '11px', color: '#a1a1aa', margin: '2px 0 0', fontWeight: 400 }}>{venue.area}</p>
+              </div>
             </div>
-          )}
-          <div className="px-4 py-3 flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="text-sm font-light text-zinc-900 truncate">{activeVenue.name}</p>
-              <p className="text-xs font-light text-zinc-400 mt-0.5">{activeVenue.area}</p>
-            </div>
-            <svg className="w-4 h-4 text-zinc-300 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </div>
+          ))}
         </div>
       )}
 
