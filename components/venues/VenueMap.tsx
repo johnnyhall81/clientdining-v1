@@ -72,7 +72,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
       const map = new mapboxgl.default.Map({
         container: mapContainer.current!,
-        style: 'mapbox://styles/mapbox/light-v11',
+        style: 'mapbox://styles/mapbox/outdoors-v12',
         center: [-0.1276, 51.5074],
         zoom: 11.5,
       })
@@ -83,53 +83,40 @@ export default function VenueMap({ venues }: VenueMapProps) {
         geocoded.forEach((venue) => {
           if (!venue.lng || !venue.lat) return
 
-          // Outer wrapper — this is what Mapbox positions. Scale this, not the inner el.
+          // Outer wrapper
           const wrapper = document.createElement('div')
           wrapper.style.cssText = `
-            width: 34px;
-            height: 34px;
             cursor: pointer;
             transition: transform 0.15s ease;
           `
 
           const el = document.createElement('div')
           el.style.cssText = `
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: white;
-            border: 1.5px solid #a1a1aa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-            transition: box-shadow 0.15s ease, border-color 0.15s ease;
-            overflow: hidden;
+            background: #E87C2E;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 5px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            transition: box-shadow 0.15s ease, background 0.15s ease;
+            letter-spacing: 0.01em;
           `
-
-          if (venue.image_hero) {
-            const img = document.createElement('img')
-            img.src = venue.image_hero
-            img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 50%;'
-            el.appendChild(img)
-          } else {
-            el.style.background = '#F0EDE9'
-            const dot = document.createElement('div')
-            dot.style.cssText = 'width: 6px; height: 6px; border-radius: 50%; background: #a1a1aa;'
-            el.appendChild(dot)
-          }
+          el.textContent = venue.name
 
           wrapper.appendChild(el)
 
           wrapper.addEventListener('mouseenter', () => {
-            wrapper.style.transform = 'scale(1.2)'
-            el.style.boxShadow = '0 2px 10px rgba(0,0,0,0.18)'
-            el.style.borderColor = '#3f3f46'
+            wrapper.style.transform = 'scale(1.06)'
+            el.style.boxShadow = '0 3px 10px rgba(0,0,0,0.25)'
+            el.style.background = '#CF6A1E'
           })
           wrapper.addEventListener('mouseleave', () => {
             wrapper.style.transform = 'scale(1)'
-            el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.12)'
-            el.style.borderColor = '#a1a1aa'
+            el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)'
+            el.style.background = '#E87C2E'
           })
           wrapper.addEventListener('click', (e) => {
             e.stopPropagation()
