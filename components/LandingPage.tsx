@@ -286,12 +286,6 @@ export default function LandingPage({ venues }: LandingPageProps) {
         </div>
         {/* Fallback CTA for scrollers who don't click a tile */}
         <div className="mt-16 pt-12 border-t border-zinc-100 flex flex-col items-center gap-3 text-center">
-          <p
-            className="font-[family-name:var(--font-cormorant)] text-zinc-800"
-            style={{ fontSize: '24px', fontWeight: 400 }}
-          >
-            When the table matters.
-          </p>
           <button
             onClick={() => { setPendingVenueId(null); setShowModal(true) }}
             className="mt-3 inline-flex items-center gap-3 px-8 py-3 text-sm font-light rounded-lg transition-all duration-300"
