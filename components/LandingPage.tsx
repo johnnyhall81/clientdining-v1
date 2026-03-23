@@ -147,10 +147,11 @@ export default function LandingPage({ venues }: LandingPageProps) {
             For corporate and creative professionals
           </p>
 
-          <div className="pt-2 flex flex-col items-center gap-5">
+          <div className="pt-2 flex flex-col items-center">
             <button
-              onClick={handleBrowse}
-              className="inline-flex items-center gap-2 px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300"
+              onClick={handleLinkedInLogin}
+              disabled={authLoading}
+              className="inline-flex items-center gap-2 px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300 disabled:opacity-50"
               style={{
                 color: '#F3F1ED',
                 background: 'rgba(255,255,255,0.08)',
@@ -168,18 +169,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
                 el.style.borderColor = 'rgba(255,255,255,0.35)'
               }}
             >
-              Browse venues
-            </button>
-
-            <button
-              onClick={handleLinkedInLogin}
-              disabled={authLoading}
-              className="text-xs font-light tracking-wide transition-all duration-300 disabled:opacity-50"
-              style={{ color: 'rgba(243,241,237,0.55)' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.color = 'rgba(243,241,237,0.9)')}
-              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.color = 'rgba(243,241,237,0.55)')}
-            >
-              Sign in
+              {authLoading ? 'Redirecting…' : 'Sign in'}
             </button>
           </div>
         </div>
