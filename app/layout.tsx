@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { Cormorant_Garamond, Inter } from 'next/font/google'
 import './globals.css'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
