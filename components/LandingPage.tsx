@@ -338,7 +338,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
             {/* Body */}
             <div className="px-7 py-7">
               <p className="text-sm font-light text-zinc-500 leading-relaxed mb-8">
-                Use LinkedIn to sign in or apply to ClientDining. Selected venues may require verification.
+                Use LinkedIn to sign in. Selected venues may require verification.
               </p>
 
               <button
