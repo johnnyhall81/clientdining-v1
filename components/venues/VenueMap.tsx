@@ -16,14 +16,21 @@ interface VenueMapProps {
 }
 
 async function geocodeVenue(venue: Venue): Promise<{ lat: number; lng: number } | null> {
-  const query = [venue.address, venue.postcode, 'London', 'UK'].filter(Boolean).join(', ')
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&country=GB&limit=1`
+  // Use address+postcode if available, fall back to name+area
+  const query = venue.address
+    ? [venue.address, venue.postcode, 'London', 'UK'].filter(Boolean).join(', ')
+    : [venue.name, venue.area, 'London', 'UK'].filter(Boolean).join(', ')
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&country=GB&limit=1&proximity=-0.1276,51.5074`
   try {
     const res = await fetch(url)
     const data = await res.json()
     const feature = data.features?.[0]
-    if (!feature) return null
+    if (!feature) {
+      console.warn(`[VenueMap] No result for: ${venue.name}`)
+      return null
+    }
     const [lng, lat] = feature.center
+    console.log(`[VenueMap] ✓ ${venue.name} → ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
     return { lat, lng }
   } catch {
     return null
@@ -41,6 +48,8 @@ export default function VenueMap({ venues }: VenueMapProps) {
   // Geocode all venues on mount
   useEffect(() => {
     async function geocodeAll() {
+      console.log('[VenueMap] Token present:', !!MAPBOX_TOKEN)
+      console.log('[VenueMap] Geocoding', venues.length, 'venues')
       const results = await Promise.all(
         venues.map(async (v) => {
           const coords = await geocodeVenue(v)
@@ -117,7 +126,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
             setActiveVenue(venue)
           })
 
-          new mapboxgl.default.Marker({ element: el })
+          new mapboxgl.default.Marker({ element: el, anchor: 'center' })
             .setLngLat([venue.lng!, venue.lat!])
             .addTo(map)
         })
