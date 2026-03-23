@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Venue } from '@/lib/supabase'
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiY2xpZW50ZGluaW5nIiwiYSI6ImNtbjM2N3lrcjB4N2Yyc3Nla3V4aGtzZTIifQ.ZMnMZjuNS38bMxJiXIbzWA'
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
 
 interface VenueWithCoords extends Venue {
   lng?: number
