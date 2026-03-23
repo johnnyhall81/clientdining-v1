@@ -175,7 +175,8 @@ export default function VenueMap({ venues }: VenueMapProps) {
         // Click cluster → zoom in
         map.on('click', 'clusters', (e: any) => {
           const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] })
-          const clusterId = features[0].properties.cluster_id
+          const clusterId = features[0]?.properties?.cluster_id
+          if (!clusterId) return
           ;(map.getSource('venues') as any).getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
             if (err) return
             map.easeTo({ center: features[0].geometry.coordinates, zoom })
