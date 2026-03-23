@@ -354,7 +354,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
                 Access
               </p>
               <p className="text-sm font-light text-zinc-500 leading-relaxed mb-8">
-                Use LinkedIn to reserve tables, enquire about private dining, and unlock selected member venues.
+                Sign in with LinkedIn to book a table at this venue.
               </p>
 
               <button
