@@ -366,11 +366,11 @@ export default function LandingPage({ venues }: LandingPageProps) {
                 {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
               </button>
 
-              <p className="text-[10px] tracking-[0.1em] text-zinc-300 text-center mt-4 font-light">
+              <p className="text-[11px] text-zinc-400 text-center mt-4 font-light">
                 New to ClientDining?{' '}
                 <a
                   href="/signup"
-                  className="text-zinc-400 hover:text-zinc-600 transition-colors"
+                  className="text-zinc-600 hover:text-zinc-900 transition-colors"
                   onClick={handleCloseModal}
                 >
                   Apply here
