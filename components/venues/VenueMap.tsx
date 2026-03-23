@@ -83,40 +83,31 @@ export default function VenueMap({ venues }: VenueMapProps) {
         geocoded.forEach((venue) => {
           if (!venue.lng || !venue.lat) return
 
-          // Outer wrapper
           const wrapper = document.createElement('div')
-          wrapper.style.cssText = `
-            cursor: pointer;
-            transition: transform 0.15s ease;
-          `
+          wrapper.style.cssText = `cursor: pointer;`
 
           const el = document.createElement('div')
           el.style.cssText = `
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
             background: #E87C2E;
-            color: white;
-            font-size: 12px;
-            font-weight: 500;
-            font-family: system-ui, -apple-system, sans-serif;
-            padding: 5px 10px;
-            border-radius: 20px;
-            white-space: nowrap;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-            transition: box-shadow 0.15s ease, background 0.15s ease;
-            letter-spacing: 0.01em;
+            border: 2px solid white;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+            transition: width 0.15s ease, height 0.15s ease, margin 0.15s ease;
           `
-          el.textContent = venue.name
 
           wrapper.appendChild(el)
 
           wrapper.addEventListener('mouseenter', () => {
-            wrapper.style.transform = 'scale(1.06)'
-            el.style.boxShadow = '0 3px 10px rgba(0,0,0,0.25)'
-            el.style.background = '#CF6A1E'
+            el.style.width = '16px'
+            el.style.height = '16px'
+            el.style.margin = '-2px'
           })
           wrapper.addEventListener('mouseleave', () => {
-            wrapper.style.transform = 'scale(1)'
-            el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)'
-            el.style.background = '#E87C2E'
+            el.style.width = '12px'
+            el.style.height = '12px'
+            el.style.margin = '0'
           })
           wrapper.addEventListener('click', (e) => {
             e.stopPropagation()
