@@ -355,7 +355,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
                 {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
               </button>
 
-              <p className="text-[11px] text-zinc-400 text-center mt-4 font-light">
+              <p className="text-sm font-light text-zinc-400 text-center mt-4">
                 New to ClientDining?{' '}
                 <a
                   href="/signup"
