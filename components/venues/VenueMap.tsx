@@ -83,6 +83,15 @@ export default function VenueMap({ venues }: VenueMapProps) {
         geocoded.forEach((venue) => {
           if (!venue.lng || !venue.lat) return
 
+          // Outer wrapper — this is what Mapbox positions. Scale this, not the inner el.
+          const wrapper = document.createElement('div')
+          wrapper.style.cssText = `
+            width: 34px;
+            height: 34px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+          `
+
           const el = document.createElement('div')
           el.style.cssText = `
             width: 34px;
@@ -90,12 +99,11 @@ export default function VenueMap({ venues }: VenueMapProps) {
             border-radius: 50%;
             background: white;
             border: 1.5px solid #a1a1aa;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            transition: box-shadow 0.15s ease, border-color 0.15s ease;
             overflow: hidden;
           `
 
@@ -111,22 +119,24 @@ export default function VenueMap({ venues }: VenueMapProps) {
             el.appendChild(dot)
           }
 
-          el.addEventListener('mouseenter', () => {
-            el.style.transform = 'scale(1.2)'
+          wrapper.appendChild(el)
+
+          wrapper.addEventListener('mouseenter', () => {
+            wrapper.style.transform = 'scale(1.2)'
             el.style.boxShadow = '0 2px 10px rgba(0,0,0,0.18)'
             el.style.borderColor = '#3f3f46'
           })
-          el.addEventListener('mouseleave', () => {
-            el.style.transform = 'scale(1)'
+          wrapper.addEventListener('mouseleave', () => {
+            wrapper.style.transform = 'scale(1)'
             el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.12)'
             el.style.borderColor = '#a1a1aa'
           })
-          el.addEventListener('click', (e) => {
+          wrapper.addEventListener('click', (e) => {
             e.stopPropagation()
             setActiveVenue(venue)
           })
 
-          new mapboxgl.default.Marker({ element: el, anchor: 'center' })
+          new mapboxgl.default.Marker({ element: wrapper, anchor: 'center' })
             .setLngLat([venue.lng!, venue.lat!])
             .addTo(map)
         })
