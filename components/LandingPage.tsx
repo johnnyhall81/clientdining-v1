@@ -299,10 +299,10 @@ export default function LandingPage({ venues }: LandingPageProps) {
             className="font-[family-name:var(--font-cormorant)] text-zinc-800"
             style={{ fontSize: '24px', fontWeight: 400 }}
           >
-            Ready to book?
+            Ready to reserve?
           </p>
           <p className="text-sm font-light text-zinc-400 leading-relaxed" style={{ maxWidth: '280px' }}>
-            Sign in to reserve a table or enquire about private dining.
+            Sign in with LinkedIn to reserve tables, enquire about private dining, and unlock selected member venues.
           </p>
           <button
             onClick={() => { setPendingVenueId(null); setShowModal(true) }}
@@ -324,60 +324,61 @@ export default function LandingPage({ venues }: LandingPageProps) {
       {/* Sign-in modal */}
       {showModal && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4 pb-4 sm:pb-0"
-          style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
           onClick={e => { if (e.target === e.currentTarget) handleCloseModal() }}
         >
           <div
-            className="w-full sm:max-w-sm bg-white text-center"
-            style={{ borderRadius: '12px', padding: '40px 32px 36px' }}
+            className="bg-white w-full max-w-sm shadow-xl overflow-hidden"
+            style={{ borderRadius: '6px' }}
           >
-            {/* Close */}
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-700 transition-colors"
-              aria-label="Close"
-              style={{ position: 'absolute' }}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            <p
-              className="font-[family-name:var(--font-cormorant)] text-zinc-900 mb-2"
-              style={{ fontSize: '26px', fontWeight: 400, lineHeight: 1.3 }}
-            >
-              Join to book
-            </p>
-            <p className="text-sm font-light text-zinc-400 leading-relaxed mb-8" style={{ maxWidth: '260px', margin: '0 auto 28px' }}>
-              Sign in with LinkedIn to access the full collection and reserve a table.
-            </p>
-
-            <button
-              onClick={handleLinkedInLogin}
-              disabled={authLoading}
-              className="w-full inline-flex items-center justify-center gap-3 py-3 text-sm font-light rounded-lg transition-all duration-300 disabled:opacity-50"
-              style={{ color: '#3f3f46', background: 'white', border: '1px solid #d4d4d8' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#a1a1aa')}
-              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#d4d4d8')}
-            >
-              <svg className="w-4 h-4 flex-shrink-0 opacity-60" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-              </svg>
-              {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
-            </button>
-
-            <p className="mt-5 text-xs font-light text-zinc-400">
-              New here?{' '}
-              <a
-                href="/signup"
-                className="text-zinc-600 hover:text-zinc-900 transition-colors"
+            {/* Header */}
+            <div className="relative px-7 pt-7 pb-6" style={{ borderBottom: '1px solid #F0EDE9' }}>
+              <button
                 onClick={handleCloseModal}
+                className="absolute top-5 right-5 text-zinc-300 hover:text-zinc-600 transition-colors"
+                aria-label="Close"
               >
-                Apply to join
-              </a>
-            </p>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+              <h2 className="text-2xl font-light text-zinc-900 tracking-tight pr-8 leading-tight">
+                Sign in to reserve
+              </h2>
+            </div>
+
+            {/* Body */}
+            <div className="px-7 py-7">
+              <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-4">
+                Access
+              </p>
+              <p className="text-sm font-light text-zinc-500 leading-relaxed mb-8">
+                Use LinkedIn to reserve tables, enquire about private dining, and unlock selected member venues.
+              </p>
+
+              <button
+                onClick={handleLinkedInLogin}
+                disabled={authLoading}
+                className="w-full h-11 inline-flex items-center justify-center gap-3 text-xs font-light tracking-widest uppercase transition-colors disabled:opacity-50"
+                style={{ backgroundColor: authLoading ? '#F4F4F5' : '#18181B', color: authLoading ? '#A1A1AA' : '#FFFFFF', borderRadius: '3px' }}
+              >
+                <svg className="w-4 h-4 flex-shrink-0 opacity-70" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                </svg>
+                {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
+              </button>
+
+              <p className="text-[10px] tracking-[0.1em] text-zinc-300 text-center mt-4 uppercase font-light">
+                New to ClientDining?{' '}
+                <a
+                  href="/signup"
+                  className="text-zinc-400 hover:text-zinc-600 transition-colors"
+                  onClick={handleCloseModal}
+                >
+                  Apply to join
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       )}
