@@ -351,7 +351,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
             {/* Body */}
             <div className="px-7 py-7">
               <p className="text-sm font-light text-zinc-500 leading-relaxed mb-8">
-                Use LinkedIn to sign in to ClientDining or apply in one step. Selected venues may require verification.
+                Use LinkedIn to sign in or apply to ClientDining. Selected venues may require verification.
               </p>
 
               <button
@@ -373,7 +373,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
                   className="text-zinc-400 hover:text-zinc-600 transition-colors"
                   onClick={handleCloseModal}
                 >
-                  Apply in the same step
+                  Apply here
                 </a>
               </p>
             </div>
