@@ -344,17 +344,14 @@ export default function LandingPage({ venues }: LandingPageProps) {
                 </svg>
               </button>
               <h2 className="text-2xl font-light text-zinc-900 tracking-tight pr-8 leading-tight">
-                Sign in to reserve
+                Continue with LinkedIn
               </h2>
             </div>
 
             {/* Body */}
             <div className="px-7 py-7">
-              <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-4">
-                Access
-              </p>
               <p className="text-sm font-light text-zinc-500 leading-relaxed mb-8">
-                Sign in with LinkedIn to book a table at this venue.
+                Use LinkedIn to sign in or apply to ClientDining. Selected venues may require verification.
               </p>
 
               <button
@@ -369,14 +366,14 @@ export default function LandingPage({ venues }: LandingPageProps) {
                 {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
               </button>
 
-              <p className="text-[10px] tracking-[0.1em] text-zinc-300 text-center mt-4 uppercase font-light">
+              <p className="text-[10px] tracking-[0.1em] text-zinc-300 text-center mt-4 font-light">
                 New to ClientDining?{' '}
                 <a
                   href="/signup"
                   className="text-zinc-400 hover:text-zinc-600 transition-colors"
                   onClick={handleCloseModal}
                 >
-                  Apply to join
+                  Apply in the same step
                 </a>
               </p>
             </div>
