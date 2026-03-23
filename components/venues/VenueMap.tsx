@@ -72,7 +72,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
       const map = new mapboxgl.default.Map({
         container: mapContainer.current!,
-        style: 'mapbox://styles/mapbox/outdoors-v12',
+        style: 'mapbox://styles/mapbox/light-v11',
         center: [-0.1276, 51.5074],
         zoom: 11.5,
       })
