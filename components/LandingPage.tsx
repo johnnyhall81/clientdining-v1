@@ -82,7 +82,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
               ClientDining
             </span>
             <button
-              onClick={() => { setPendingVenueId(null); setShowModal(true) }}
+              onClick={handleLinkedInLogin}
               disabled={authLoading}
               className="transition-all duration-300"
               style={{ color: loginHovered ? 'rgba(242,241,237,1)' : 'rgba(242,241,238,0.7)' }}
