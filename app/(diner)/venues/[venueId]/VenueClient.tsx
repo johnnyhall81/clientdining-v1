@@ -93,7 +93,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   const handleBook = (slotId: string) => {
     if (!user) { router.push('/login'); return }
-    if (isVerified === false) return
+    if (isVerified === false && venue.venue_type === 'club') return
     const slot = slots.find((s) => s.id === slotId)
     if (!slot) return
     setSelectedSlot(slot)
@@ -244,7 +244,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
           {/* Booking section */}
           <div className="px-7 sm:px-9 lg:px-11 py-11" style={{ backgroundColor: '#F8F6F3' }}>
-            {user && isVerified === false ? (
+            {user && isVerified === false && venue.venue_type === 'club' ? (
               <div>
                 <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Membership pending</p>
                 <p className="text-sm font-light text-zinc-500 leading-relaxed max-w-md">
