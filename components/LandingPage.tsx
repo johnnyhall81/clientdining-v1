@@ -172,8 +172,9 @@ export default function LandingPage({ venues }: LandingPageProps) {
             </button>
 
             <button
-              onClick={() => { setPendingVenueId(null); setShowModal(true) }}
-              className="text-xs font-light tracking-wide transition-all duration-300"
+              onClick={handleLinkedInLogin}
+              disabled={authLoading}
+              className="text-xs font-light tracking-wide transition-all duration-300 disabled:opacity-50"
               style={{ color: 'rgba(243,241,237,0.55)' }}
               onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.color = 'rgba(243,241,237,0.9)')}
               onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.color = 'rgba(243,241,237,0.55)')}
