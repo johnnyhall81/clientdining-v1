@@ -290,10 +290,10 @@ export default function LandingPage({ venues }: LandingPageProps) {
             className="font-[family-name:var(--font-cormorant)] text-zinc-800"
             style={{ fontSize: '24px', fontWeight: 400 }}
           >
-            Ready to reserve?
+            When the table matters.
           </p>
           <p className="text-sm font-light text-zinc-400 leading-relaxed" style={{ maxWidth: '280px' }}>
-            Sign in with LinkedIn to reserve tables, enquire about private dining, and unlock selected member venues.
+            Sign in to get started.
           </p>
           <button
             onClick={() => { setPendingVenueId(null); setShowModal(true) }}
