@@ -179,13 +179,14 @@ export default function VenueMap({ venues }: VenueMapProps) {
           if (!clusterId) return
           ;(map.getSource('venues') as any).getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
             if (err) return
-            map.easeTo({ center: features[0].geometry.coordinates, zoom })
+            map.easeTo({ center: (features[0].geometry as any).coordinates, zoom })
           })
         })
 
         // Click dot → highlight + scroll strip
         map.on('click', 'venues-dots', (e: any) => {
-          const id = e.features[0].properties.id
+          const id = e.features[0]?.properties?.id
+          if (!id) return
           setActiveId(id)
           highlightDot(map, id)
           scrollToCard(id)
