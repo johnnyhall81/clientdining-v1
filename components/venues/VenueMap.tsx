@@ -37,7 +37,6 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const mapRef = useRef<any>(null)
   const stripRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
-  const markerRefs = useRef<Map<string, any>>(new Map())
   const router = useRouter()
 
   const [geocoded, setGeocoded] = useState<VenueWithCoords[]>([])
@@ -73,22 +72,18 @@ export default function VenueMap({ venues }: VenueMapProps) {
     setVisibleVenues(visible)
   }, [])
 
-  // Highlight a pin by toggling its SVG fill
-  const highlightPin = useCallback((id: string | null) => {
-    markerRefs.current.forEach(({ el }, venueId) => {
-      const path = el.querySelector('path')
-      const circle = el.querySelector('circle')
-      if (!path || !circle) return
-      if (venueId === id) {
-        path.setAttribute('fill', '#18181B')
-        circle.setAttribute('fill', '#ffffff')
-        el.style.zIndex = '10'
-      } else {
-        path.setAttribute('fill', '#ffffff')
-        circle.setAttribute('fill', '#18181B')
-        el.style.zIndex = '1'
-      }
-    })
+  // Highlight a dot on the map
+  const highlightDot = useCallback((map: any, id: string | null) => {
+    if (!map.getLayer('venues-dots')) return
+    map.setPaintProperty('venues-dots', 'circle-opacity', [
+      'case', ['==', ['get', 'id'], id ?? ''], 1, 0.7
+    ])
+    map.setPaintProperty('venues-dots', 'circle-radius', [
+      'case', ['==', ['get', 'id'], id ?? ''], 7, 5
+    ])
+    map.setPaintProperty('venues-dots', 'circle-color', [
+      'case', ['==', ['get', 'id'], id ?? ''], '#18181B', '#18181B'
+    ])
   }, [])
 
   // Scroll strip to card
@@ -117,13 +112,15 @@ export default function VenueMap({ venues }: VenueMapProps) {
       mapRef.current = map
 
       map.on('load', () => {
-        // Subtle Thames blue
-        if (map.getLayer('water')) {
-          map.setPaintProperty('water', 'fill-color', '#C8D8E8')
-        }
-        if (map.getLayer('water-shadow')) {
-          map.setPaintProperty('water-shadow', 'fill-color', '#C8D8E8')
-        }
+        // Water — soft blue
+        if (map.getLayer('water')) map.setPaintProperty('water', 'fill-color', '#C8D8E8')
+        if (map.getLayer('water-shadow')) map.setPaintProperty('water-shadow', 'fill-color', '#C8D8E8')
+
+        // Parks — soft green
+        const parkLayers = ['landuse', 'landuse_overlay', 'national_park', 'park', 'green_area']
+        parkLayers.forEach(layer => {
+          if (map.getLayer(layer)) map.setPaintProperty(layer, 'fill-color', '#C8DBC0')
+        })
         // GeoJSON source with clustering
         map.addSource('venues', {
           type: 'geojson',
@@ -167,38 +164,18 @@ export default function VenueMap({ venues }: VenueMapProps) {
           paint: { 'text-color': '#ffffff' }
         })
 
-        // Individual venue pins — SVG teardrop HTML markers
-        geocoded.forEach(venue => {
-          const el = document.createElement('div')
-          el.innerHTML = `
-            <svg width="22" height="30" viewBox="0 0 22 30" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.25));cursor:pointer">
-              <path d="M11 0C4.925 0 0 4.925 0 11C0 19.25 11 30 11 30C11 30 22 19.25 22 11C22 4.925 17.075 0 11 0Z" fill="white" stroke="#18181B" stroke-width="1.5"/>
-              <circle cx="11" cy="11" r="4" fill="#18181B"/>
-            </svg>
-          `
-          el.style.width = '22px'
-          el.style.height = '30px'
-          el.dataset.venueId = venue.id
-
-          el.addEventListener('click', () => {
-            setActiveId(venue.id)
-            highlightPin(venue.id)
-            scrollToCard(venue.id)
-          })
-
-          const marker = new mapboxgl.default.Marker({ element: el, anchor: 'bottom' })
-            .setLngLat([venue.lng, venue.lat])
-            .addTo(map)
-
-          markerRefs.current.set(venue.id, { marker, el })
-        })
-
-        // Click empty map → clear active
-        map.on('click', (e: any) => {
-          const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] })
-          if (!features.length) {
-            setActiveId(null)
-            highlightPin(null)
+        // Individual dots — light, unobtrusive
+        map.addLayer({
+          id: 'venues-dots',
+          type: 'circle',
+          source: 'venues',
+          filter: ['!', ['has', 'point_count']],
+          paint: {
+            'circle-color': '#18181B',
+            'circle-radius': 5,
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#ffffff',
+            'circle-opacity': 0.7,
           }
         })
 
@@ -213,9 +190,26 @@ export default function VenueMap({ venues }: VenueMapProps) {
           })
         })
 
-        // Cursor for clusters
+        // Click dot → highlight + scroll strip
+        map.on('click', 'venues-dots', (e: any) => {
+          const id = e.features[0]?.properties?.id
+          if (!id) return
+          setActiveId(id)
+          highlightDot(map, id)
+          scrollToCard(id)
+        })
+
+        // Click empty map → clear active
+        map.on('click', (e: any) => {
+          const features = map.queryRenderedFeatures(e.point, { layers: ['venues-dots', 'clusters'] })
+          if (!features.length) { setActiveId(null); highlightDot(map, null) }
+        })
+
+        // Cursor
         map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer' })
         map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = '' })
+        map.on('mouseenter', 'venues-dots', () => { map.getCanvas().style.cursor = 'pointer' })
+        map.on('mouseleave', 'venues-dots', () => { map.getCanvas().style.cursor = '' })
 
         // Update strip on move
         map.on('moveend', () => updateVisible(map, geocoded))
