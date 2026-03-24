@@ -32,7 +32,6 @@ type Room = {
   }
 }
 
-const OCCASIONS = ['Client dinner', 'Drinks reception', 'Away day', 'Team dinner', 'Board meeting', 'Product launch', 'Celebration']
 const GUEST_RANGES = [
   { label: 'Up to 10', max: 10 },
   { label: 'Up to 20', max: 20 },
@@ -96,8 +95,11 @@ export default function PrivateHirePage() {
   const toggleArea = (area: string) =>
     setFilterAreas(prev => prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area])
 
-  // Derive available areas from loaded rooms, sorted alphabetically
+  // Derive available areas and occasions from loaded rooms
   const availableAreas = Array.from(new Set(rooms.map(r => r.venue.area))).sort()
+  const availableOccasions = Array.from(
+    new Set(rooms.flatMap(r => r.best_for || []))
+  ).sort()
 
   const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
   const clearFilters = () => { setFilterAreas([]); setFilterGuest(''); setFilterOccasion('') }
@@ -136,7 +138,7 @@ export default function PrivateHirePage() {
           ))}
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {OCCASIONS.map(o => (
+          {availableOccasions.map(o => (
             <button key={o} onClick={() => setFilterOccasion(filterOccasion === o ? '' : o)}
               className="px-3 py-1 text-xs font-light transition-colors"
               style={pillStyle(filterOccasion === o)}>
