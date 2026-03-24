@@ -176,8 +176,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   ].filter(Boolean)
 
-  // Full-page SevenRooms widget — only when no private hire rooms to show and not hire_only
-  if ((venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url && !venue.private_hire_available && !(venue as any).hire_only) {
+  // Full-page SevenRooms widget — when on reservations tab and widget is configured
+  if (pageTab === 'reservations' && (venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url && !(venue as any).hire_only) {
     return (
       <div style={{ marginTop: '-32px' }}>
         <iframe
