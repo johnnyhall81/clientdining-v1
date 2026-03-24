@@ -718,9 +718,9 @@ export default function EditVenuePage() {
             {/* Images */}
             <div>
               <p className="text-xs font-medium text-zinc-600 mb-2">Room images</p>
-              {editingRoom.images.length > 0 && (
+              {(editingRoom.images || []).length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {editingRoom.images.map((img, i) => (
+                  {(editingRoom.images || []).map((img, i) => (
                     <div key={i} className="relative group">
                       <img src={img.url} alt="" className="w-20 h-14 object-cover rounded border" />
                       {img.is_main && (
@@ -731,7 +731,7 @@ export default function EditVenuePage() {
                           <button type="button"
                             onClick={() => setEditingRoom({
                               ...editingRoom,
-                              images: editingRoom.images.map((im, idx) => ({ ...im, is_main: idx === i }))
+                              images: (editingRoom.images || []).map((im, idx) => ({ ...im, is_main: idx === i }))
                             })}
                             className="text-[9px] text-white bg-zinc-700 px-1.5 py-0.5 rounded"
                           >Set main</button>
@@ -739,7 +739,7 @@ export default function EditVenuePage() {
                         <button type="button"
                           onClick={() => setEditingRoom({
                             ...editingRoom,
-                            images: editingRoom.images.filter((_, idx) => idx !== i)
+                            images: (editingRoom.images || []).filter((_, idx) => idx !== i)
                           })}
                           className="text-[9px] text-white bg-red-600 px-1.5 py-0.5 rounded"
                         >Remove</button>
@@ -756,10 +756,11 @@ export default function EditVenuePage() {
                     if (e.key === 'Enter') {
                       e.preventDefault()
                       if (!newRoomImageUrl.trim()) return
-                      const isFirst = editingRoom.images.length === 0
+                      const currentImages = editingRoom.images || []
+                      const isFirst = currentImages.length === 0
                       setEditingRoom({
                         ...editingRoom,
-                        images: [...editingRoom.images, { url: newRoomImageUrl.trim(), caption: '', is_main: isFirst }]
+                        images: [...currentImages, { url: newRoomImageUrl.trim(), caption: '', is_main: isFirst }]
                       })
                       setNewRoomImageUrl('')
                     }
@@ -768,10 +769,11 @@ export default function EditVenuePage() {
                 <button type="button"
                   onClick={() => {
                     if (!newRoomImageUrl.trim()) return
-                    const isFirst = editingRoom.images.length === 0
+                    const currentImages = editingRoom.images || []
+                    const isFirst = currentImages.length === 0
                     setEditingRoom({
                       ...editingRoom,
-                      images: [...editingRoom.images, { url: newRoomImageUrl.trim(), caption: '', is_main: isFirst }]
+                      images: [...currentImages, { url: newRoomImageUrl.trim(), caption: '', is_main: isFirst }]
                     })
                     setNewRoomImageUrl('')
                   }}
