@@ -207,14 +207,24 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
           {/* Lean venue header */}
-          <div className="flex items-baseline justify-between gap-4 mb-6">
+          <div className="flex items-baseline justify-between gap-4 mb-3">
             <div className="min-w-0">
               {taxonomyParts.length > 0 && (
                 <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-1.5">
                   {taxonomyParts.join(' · ')}
                 </p>
               )}
-              <h1 className="text-2xl font-light text-zinc-900 tracking-tight truncate">{venue.name}</h1>
+              <h1 className="text-2xl font-light text-zinc-900 tracking-tight truncate mb-1">{venue.name}</h1>
+              {venue.address && (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-light text-zinc-400 hover:text-zinc-600 transition-colors"
+                >
+                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                </a>
+              )}
             </div>
             <div className="flex items-baseline gap-5 flex-shrink-0 text-right">
               {maxCapacity > 0 && (
@@ -230,6 +240,17 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Browse link — orientation cue before rooms */}
+          <div className="mb-6">
+            <a href="/private-hire"
+              className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors inline-flex items-center gap-1.5">
+              Browse all private hire spaces
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
           </div>
 
           {/* Room cards */}
@@ -342,50 +363,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               })}
             </div>
           )}
-
-          {/* Location */}
-          {venue.address && (
-            <div className="mt-8 pt-6" style={{ borderTop: '1px solid #F0EDE9' }}>
-              <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-2.5 font-light">Location</p>
-              <div className="flex items-start justify-between gap-4">
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-light text-zinc-500 hover:text-zinc-800 transition-colors leading-relaxed"
-                >
-                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                </a>
-                <div className="flex-shrink-0 mt-0.5">
-                  <button type="button" onClick={() => setShowMap(v => !v)}
-                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-600 transition-colors">
-                    {showMap ? 'Hide map' : 'Map'}
-                  </button>
-                </div>
-              </div>
-              {showMap && (
-                <div className="mt-5 overflow-hidden w-full" style={{ height: 220, borderRadius: '4px' }}>
-                  <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
-                    src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Browse other spaces */}
-          <div className="mt-8">
-            <a
-              href="/private-hire"
-              className="flex items-center justify-between w-full px-7 py-5 bg-white hover:bg-zinc-50 transition-colors"
-              style={{ borderRadius: '6px', border: '1px solid #E4E0DB' }}
-            >
-              <span className="text-sm font-light text-zinc-700 tracking-wide">Browse all private hire spaces</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-400">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
 
         </div>
 
