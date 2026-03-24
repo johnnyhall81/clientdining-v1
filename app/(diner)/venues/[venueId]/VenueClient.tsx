@@ -204,58 +204,35 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
       <div className="min-h-screen">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-          {/* Text-led venue header */}
-          <div className="bg-white mb-6 overflow-hidden" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
-
-            {/* Top accent bar */}
-            <div style={{ height: '3px', backgroundColor: '#F0EDE9' }} />
-
-            <div className="px-7 sm:px-9 py-8">
-              <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-
-                {/* Left: identity */}
-                <div className="flex-1 min-w-0">
-                  {taxonomyParts.length > 0 && (
-                    <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-4">
-                      {taxonomyParts.join(' · ')}
-                    </p>
-                  )}
-                  <h1 className="text-[2rem] sm:text-[2.6rem] font-light text-zinc-900 tracking-tight leading-[1.05] mb-4">
-                    {venue.name}
-                  </h1>
-                  <p className="text-sm font-light text-zinc-400 leading-relaxed">
-                    {rooms.length === 0
-                      ? 'Private spaces available on request.'
-                      : rooms.length === 1
-                      ? '1 private space for dinners, meetings and receptions.'
-                      : `${rooms.length} private spaces for dinners, meetings and receptions.`}
-                  </p>
+          {/* Lean venue header */}
+          <div className="flex items-baseline justify-between gap-4 mb-6">
+            <div className="min-w-0">
+              {taxonomyParts.length > 0 && (
+                <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-1.5">
+                  {taxonomyParts.join(' · ')}
+                </p>
+              )}
+              <h1 className="text-2xl font-light text-zinc-900 tracking-tight truncate">{venue.name}</h1>
+            </div>
+            <div className="flex items-baseline gap-5 flex-shrink-0 text-right">
+              {maxCapacity > 0 && (
+                <div>
+                  <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Up to</p>
+                  <p className="text-xs font-light text-zinc-700">{maxCapacity} guests</p>
                 </div>
-
-                {/* Right: key facts — inline on mobile, stacked right on desktop */}
-                {(maxCapacity > 0 || minSpend) && (
-                  <div className="flex gap-8 lg:flex-col lg:gap-4 flex-shrink-0 pt-4 lg:pt-0">
-                    {maxCapacity > 0 && (
-                      <div className="lg:text-right">
-                        <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Up to</p>
-                        <p className="text-sm font-light text-zinc-700">{maxCapacity} guests</p>
-                      </div>
-                    )}
-                    {minSpend && (
-                      <div className="lg:text-right">
-                        <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">From</p>
-                        <p className="text-sm font-light text-zinc-700">£{minSpend.toLocaleString()}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+              )}
+              {minSpend && (
+                <div>
+                  <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">From</p>
+                  <p className="text-xs font-light text-zinc-700">£{minSpend.toLocaleString()}</p>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Section title */}
           {rooms.length > 0 && (
-            <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-5">
+            <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-4">
               Private spaces at {venue.name}
             </p>
           )}
