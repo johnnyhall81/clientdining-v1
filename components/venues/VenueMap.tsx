@@ -145,7 +145,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
           source: 'venues',
           filter: ['has', 'point_count'],
           paint: {
-            'circle-color': '#A0522D',
+            'circle-color': '#DA7756',
             'circle-radius': ['step', ['get', 'point_count'], 16, 5, 20, 10, 24],
             'circle-opacity': 0.85,
           }
@@ -172,7 +172,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
           source: 'venues',
           filter: ['!', ['has', 'point_count']],
           paint: {
-            'circle-color': '#A0522D',
+            'circle-color': '#DA7756',
             'circle-radius': 6,
             'circle-stroke-width': 2,
             'circle-stroke-color': '#ffffff',
@@ -273,7 +273,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
               style={{
                 width: '200px',
                 borderRadius: '10px',
-                border: activeId === venue.id ? '2px solid #A0522D' : '1px solid #F0EDE9',
+                border: activeId === venue.id ? '2px solid #DA7756' : '1px solid #F0EDE9',
                 boxShadow: activeId === venue.id ? '0 2px 12px rgba(232,124,46,0.2)' : '0 1px 4px rgba(0,0,0,0.07)',
               }}
             >
