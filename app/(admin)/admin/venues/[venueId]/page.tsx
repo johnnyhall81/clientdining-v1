@@ -560,7 +560,13 @@ export default function EditVenuePage() {
             </div>
             <div className="flex gap-2 flex-shrink-0">
               <button
-                onClick={() => setEditingRoom({ ...room })}
+                onClick={() => setEditingRoom({
+                  ...room,
+                  facilities: room.facilities || [],
+                  best_for: room.best_for || [],
+                  catering: room.catering || [],
+                  images: room.images || [],
+                })}
                 className="px-3 py-1.5 text-xs border rounded hover:bg-white transition-colors"
               >
                 Edit
