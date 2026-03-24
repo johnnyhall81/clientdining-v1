@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Venue, Slot, VenueImage } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
@@ -57,7 +57,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const [isVerified, setIsVerified] = useState<boolean | null>(null)
   const [activeTab, setActiveTab] = useState<'reserve' | 'menu' | 'location'>('reserve')
   const [menuModalUrl, setMenuModalUrl] = useState<string | null>(null)
-  const [pageTab, setPageTab] = useState<'reservations' | 'private_hire'>('reservations')
+  const searchParams = useSearchParams()
+  const pageTab = searchParams.get('tab') === 'private_hire' ? 'private_hire' : 'reservations'
   const [rooms, setRooms] = useState<any[]>([])
   const [enquiringRoom, setEnquiringRoom] = useState<any | null>(null)
 
@@ -252,29 +253,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             </div>
           </div>
 
-          {/* Tab switch — only shown when private hire is available */}
-          {venue.private_hire_available && (
-            <div className="mx-3 sm:mx-6 mt-3" style={{ borderBottom: '1px solid #F0EDE9' }}>
-              <div className="flex">
-                {(['reservations', 'private_hire'] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setPageTab(tab)}
-                    className="px-6 py-3.5 text-xs font-light tracking-widest uppercase transition-colors relative"
-                    style={{
-                      color: pageTab === tab ? '#18181B' : '#A1A1AA',
-                      borderBottom: pageTab === tab ? '1px solid #18181B' : '1px solid transparent',
-                      marginBottom: '-1px',
-                    }}
-                  >
-                    {tab === 'reservations' ? 'Reserve a table' : 'Private hire'}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Reservations tab */}
+          {/* Booking section — tab driven by URL ?tab= param */}
           {pageTab === 'reservations' && (
           <div className="px-7 sm:px-9 lg:px-11 py-11" style={{ backgroundColor: '#F8F6F3' }}>
             {user && isVerified === false && venue.venue_type === 'club' ? (

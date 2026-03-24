@@ -3,17 +3,23 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
 
 export default function TopNav() {
   const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user } = useAuth()
   const [profile, setProfile] = useState<any>(null)
   const [bookingCount, setBookingCount] = useState(0)
   const [alertCount, setAlertCount] = useState(0)
+
+  // Detect venue page
+  const venueMatch = pathname.match(/^\/venues\/([^/]+)$/)
+  const isVenuePage = !!venueMatch
+  const currentTab = searchParams.get('tab') || 'reservations'
 
   useEffect(() => {
     if (user) {
@@ -115,18 +121,75 @@ export default function TopNav() {
   return (
     <header className="bg-white border-b border-zinc-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href={user ? "/home" : "/"} className="text-xl font-light text-zinc-900 flex-shrink-0">
-            ClientDining
-          </Link>
 
-          {/* Navigation */}
-          {user ? (
-            <nav className="flex items-center gap-3 sm:gap-6">
+        {/* Venue page layout: back | tabs | user */}
+        {isVenuePage ? (
+          <div className="flex items-center justify-between h-16">
 
-              <Link
-                href="/home"
+            {/* Back */}
+            <button
+              onClick={() => router.back()}
+              className="text-zinc-400 hover:text-zinc-900 transition-colors flex-shrink-0"
+              aria-label="Back"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+            </button>
+
+            {/* Centre tabs — only shown when venue has private hire */}
+            <div className="flex items-center gap-1">
+              {(['reservations', 'private_hire'] as const).map(tab => (
+                <Link
+                  key={tab}
+                  href={`${pathname}${tab === 'reservations' ? '' : '?tab=private_hire'}`}
+                  className="px-4 py-2 text-xs font-light tracking-widest uppercase transition-colors"
+                  style={{
+                    color: currentTab === tab ? '#18181B' : '#A1A1AA',
+                    borderBottom: currentTab === tab ? '2px solid #18181B' : '2px solid transparent',
+                  }}
+                >
+                  {tab === 'reservations' ? 'Reserve' : 'Private hire'}
+                </Link>
+              ))}
+            </div>
+
+            {/* User icon */}
+            {user ? (
+              <div className="relative group flex-shrink-0">
+                <button className="flex items-center hover:opacity-80 transition-opacity">
+                  {profile?.avatar_url ? (
+                    <div className="relative w-8 h-8">
+                      <Image src={profile.avatar_url} alt={profile.full_name || 'Profile'} fill sizes="32px" quality={70} className="rounded-full object-cover border border-zinc-200" />
+                    </div>
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-sm font-light text-zinc-500">
+                      {profile?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </button>
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                  <Link href="/account" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">Account</Link>
+                  <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-b-lg">Sign Out</button>
+                </div>
+              </div>
+            ) : (
+              <Link href="/login" className="text-zinc-400 hover:text-zinc-900 transition-colors flex-shrink-0">
+                <div className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                </div>
+              </Link>
+            )}
+          </div>
+
+        ) : (
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link href={user ? "/home" : "/"} className="text-xl font-light text-zinc-900 flex-shrink-0">
+              ClientDining
+            </Link>
                 className={`transition-colors ${
                   isActive('/home')
                     ? 'text-zinc-900'
@@ -157,6 +220,20 @@ export default function TopNav() {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                </svg>
+              </Link>
+
+              <Link
+                href="/private-hire"
+                className={`transition-colors ${
+                  isActive('/private-hire')
+                    ? 'text-zinc-900'
+                    : 'text-zinc-500 hover:text-zinc-900'
+                }`}
+                aria-label="Private hire"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
                 </svg>
               </Link>
 
@@ -290,7 +367,9 @@ export default function TopNav() {
               </Link>
             </nav>
           )}
-        </div>
+          </div>
+        )}
+
       </div>
     </header>
   )
