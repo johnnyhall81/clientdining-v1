@@ -329,7 +329,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
     )
   }
 
-
+  return (
+    <div className="min-h-screen">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white overflow-hidden" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
 
