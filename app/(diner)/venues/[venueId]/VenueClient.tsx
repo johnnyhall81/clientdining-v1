@@ -310,8 +310,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
                       {/* Short description — 3 lines max */}
                       {room.description && (
-                        <p className="text-sm font-light text-zinc-500 leading-relaxed mb-4"
-                          style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        <p className="text-sm font-light text-zinc-500 leading-relaxed mb-4">
                           {room.description}
                         </p>
                       )}
@@ -355,8 +354,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 </a>
                 <div className="flex-shrink-0 mt-0.5">
                   <button type="button" onClick={() => setShowMap(v => !v)}
-                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors">
-                    {showMap ? 'Hide map' : 'View map'}
+                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-600 transition-colors">
+                    {showMap ? 'Hide map' : 'Map'}
                   </button>
                 </div>
               </div>

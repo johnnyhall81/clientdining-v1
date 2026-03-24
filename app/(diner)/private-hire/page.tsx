@@ -34,12 +34,27 @@ type Room = {
 
 const AREAS = ['Mayfair', 'City', 'Soho', 'St James\'s', 'Chelsea', 'Marylebone', 'Covent Garden', 'Canary Wharf', 'Knightsbridge']
 const OCCASIONS = ['Client dinner', 'Drinks reception', 'Away day', 'Team dinner', 'Board meeting', 'Product launch', 'Celebration']
+const GUEST_RANGES = [
+  { label: 'Up to 10', max: 10 },
+  { label: 'Up to 20', max: 20 },
+  { label: 'Up to 40', max: 40 },
+  { label: 'Up to 80', max: 80 },
+  { label: '80+', max: Infinity },
+]
+
+const pillStyle = (active: boolean) => ({
+  borderRadius: '20px',
+  border: '1px solid',
+  borderColor: active ? '#18181B' : '#E4E4E7',
+  backgroundColor: active ? '#18181B' : 'transparent',
+  color: active ? 'white' : '#71717A',
+})
 
 export default function PrivateHirePage() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [loading, setLoading] = useState(true)
-  const [filterArea, setFilterArea] = useState('')
-  const [filterGuests, setFilterGuests] = useState('')
+  const [filterAreas, setFilterAreas] = useState<string[]>([])
+  const [filterGuest, setFilterGuest] = useState('')
   const [filterOccasion, setFilterOccasion] = useState('')
   const [enquiringRoom, setEnquiringRoom] = useState<Room | null>(null)
 
@@ -48,14 +63,10 @@ export default function PrivateHirePage() {
       setLoading(true)
       const { data, error } = await supabase
         .from('private_hire_rooms')
-        .select(`
-          *,
-          venue:venues!inner(id, name, area, image_hero)
-        `)
+        .select(`*, venue:venues!inner(id, name, area, image_hero)`)
         .eq('is_active', true)
         .eq('venues.is_active', true)
         .order('display_order', { ascending: true })
-
       if (!error) setRooms((data || []) as any)
       setLoading(false)
     }
@@ -63,101 +74,80 @@ export default function PrivateHirePage() {
   }, [])
 
   const filtered = rooms.filter(room => {
-    if (filterArea && room.venue.area !== filterArea) return false
+    if (filterAreas.length > 0 && !filterAreas.includes(room.venue.area)) return false
     if (filterOccasion && !room.best_for?.includes(filterOccasion)) return false
-    if (filterGuests) {
-      const n = parseInt(filterGuests)
-      if (!isNaN(n)) {
+    if (filterGuest) {
+      const range = GUEST_RANGES.find(r => r.label === filterGuest)
+      if (range) {
         const maxCap = Math.max(
           room.capacity_dining || 0,
           room.capacity_standing || 0,
           room.capacity_boardroom || 0
         )
-        if (maxCap > 0 && maxCap < n) return false
+        if (range.max === Infinity) {
+          if (maxCap > 0 && maxCap < 80) return false
+        } else {
+          if (maxCap > 0 && maxCap < range.max) return false
+        }
       }
     }
     return true
   })
 
-  const clearFilters = () => {
-    setFilterArea('')
-    setFilterGuests('')
-    setFilterOccasion('')
-  }
+  const toggleArea = (area: string) =>
+    setFilterAreas(prev => prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area])
 
-  const hasFilters = filterArea || filterGuests || filterOccasion
+  const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
+  const clearFilters = () => { setFilterAreas([]); setFilterGuest(''); setFilterOccasion('') }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
 
-      {/* Page header */}
-      <div>
-        <h1 className="text-3xl font-light text-zinc-900 tracking-tight mb-1">Private hire</h1>
-        <p className="text-sm font-light text-zinc-400">
-          Private dining rooms and event spaces across London's best venues.
-        </p>
+      {/* Minimal header */}
+      <div className="flex items-baseline justify-between">
+        <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light">Private hire · London</p>
+        {hasFilters && (
+          <button onClick={clearFilters} className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+            Clear
+          </button>
+        )}
       </div>
 
-      {/* Filters — no card, just a clean strip */}
-      <div className="space-y-3">
-
-        {/* Guests + area + clear — inline row */}
-        <div className="flex flex-wrap items-center gap-2">
-          <input
-            type="number"
-            min="1"
-            placeholder="Guests"
-            value={filterGuests}
-            onChange={e => setFilterGuests(e.target.value)}
-            className="w-24 px-3 py-1.5 border border-zinc-200 text-sm font-light text-zinc-700 bg-white focus:outline-none focus:border-zinc-400 transition-colors"
-            style={{ borderRadius: '3px' }}
-          />
-          <select
-            value={filterArea}
-            onChange={e => setFilterArea(e.target.value)}
-            className="px-3 py-1.5 border border-zinc-200 text-sm font-light text-zinc-700 focus:outline-none focus:border-zinc-400 transition-colors bg-white"
-            style={{ borderRadius: '3px' }}
-          >
-            <option value="">All areas</option>
-            {AREAS.map(a => <option key={a} value={a}>{a}</option>)}
-          </select>
-          {hasFilters && (
-            <button
-              onClick={clearFilters}
-              className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
-            >
-              Clear
+      {/* All-pill filters */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-1.5">
+          {GUEST_RANGES.map(r => (
+            <button key={r.label} onClick={() => setFilterGuest(filterGuest === r.label ? '' : r.label)}
+              className="px-3 py-1 text-xs font-light transition-colors"
+              style={pillStyle(filterGuest === r.label)}>
+              {r.label}
             </button>
-          )}
+          ))}
         </div>
-
-        {/* Occasion chips */}
+        <div className="flex flex-wrap gap-1.5">
+          {AREAS.map(a => (
+            <button key={a} onClick={() => toggleArea(a)}
+              className="px-3 py-1 text-xs font-light transition-colors"
+              style={pillStyle(filterAreas.includes(a))}>
+              {a}
+            </button>
+          ))}
+        </div>
         <div className="flex flex-wrap gap-1.5">
           {OCCASIONS.map(o => (
-            <button
-              key={o}
-              onClick={() => setFilterOccasion(filterOccasion === o ? '' : o)}
+            <button key={o} onClick={() => setFilterOccasion(filterOccasion === o ? '' : o)}
               className="px-3 py-1 text-xs font-light transition-colors"
-              style={{
-                borderRadius: '20px',
-                border: '1px solid',
-                borderColor: filterOccasion === o ? '#18181B' : '#E4E4E7',
-                backgroundColor: filterOccasion === o ? '#18181B' : 'transparent',
-                color: filterOccasion === o ? 'white' : '#71717A',
-              }}
-            >
+              style={pillStyle(filterOccasion === o)}>
               {o}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Results count — more legible */}
+      {/* Result count */}
       {!loading && (
         <p className="text-sm font-light text-zinc-500">
-          {filtered.length === 0
-            ? 'No spaces found'
-            : `${filtered.length} ${filtered.length === 1 ? 'private space' : 'private spaces'}`}
+          {filtered.length === 0 ? 'No spaces found' : `${filtered.length} ${filtered.length === 1 ? 'private space' : 'private spaces'}`}
         </p>
       )}
 
@@ -250,8 +240,7 @@ export default function PrivateHirePage() {
 
                   {/* Description — 2 lines max */}
                   {room.description && (
-                    <p className="text-sm font-light text-zinc-500 leading-relaxed mb-4"
-                      style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    <p className="text-sm font-light text-zinc-500 leading-relaxed mb-4">
                       {room.description}
                     </p>
                   )}
