@@ -204,56 +204,40 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
       <div className="min-h-screen">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-          {/* Hero + intro card — same structure as Reserve page */}
-          <div className="bg-white overflow-hidden mb-8" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
-
-            {/* Hero image */}
-            <VenueGallery
-              heroImage={venue.image_hero}
-              galleryImages={galleryImages}
-              venueName={venue.name}
-              logoUrl={(venue as any).logo_url || undefined}
-            />
-
-            {/* Intro card — overlaps hero, same as Reserve */}
-            <div className="relative -mt-10 mx-3 sm:mx-6 bg-white z-10" style={{ borderRadius: '6px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-              <div className="px-7 sm:px-9 pt-7 pb-8">
+          {/* Text-led venue header — no hero */}
+          <div className="bg-white px-7 sm:px-9 py-8 mb-6" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+              <div>
                 {taxonomyParts.length > 0 && (
-                  <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-4 font-light">
+                  <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-3">
                     {taxonomyParts.join(' · ')}
                   </p>
                 )}
-                <div className="flex flex-col lg:flex-row lg:gap-14">
-                  <div className="flex-1 min-w-0">
-                    <h1 className="text-[2rem] sm:text-[2.4rem] font-light text-zinc-900 tracking-tight leading-[1.1] mb-3">
-                      {venue.name}
-                    </h1>
-                    <p className="text-sm font-light text-zinc-400">
-                      {rooms.length === 0
-                        ? 'Private spaces available on request'
-                        : rooms.length === 1
-                        ? '1 private space available'
-                        : `${rooms.length} private spaces available`}
-                    </p>
+                <h1 className="text-[2rem] sm:text-[2.4rem] font-light text-zinc-900 tracking-tight leading-[1.1] mb-3">
+                  {venue.name}
+                </h1>
+                <p className="text-sm font-light text-zinc-400">
+                  {rooms.length === 0
+                    ? 'Private spaces available on request'
+                    : rooms.length === 1
+                    ? '1 private space for dinners, meetings and receptions'
+                    : `${rooms.length} private spaces for dinners, meetings and receptions`}
+                </p>
+              </div>
+              {/* Key hire facts */}
+              <div className="flex gap-8 lg:flex-col lg:gap-5 lg:text-right flex-shrink-0">
+                {maxCapacity > 0 && (
+                  <div>
+                    <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Up to</p>
+                    <p className="text-[13px] font-light text-zinc-700">{maxCapacity} guests</p>
                   </div>
-                  {/* Right: key hire facts */}
-                  <div className="mt-7 lg:mt-1 lg:w-40 flex-shrink-0">
-                    <div className="grid grid-cols-2 lg:grid-cols-1 gap-x-8 gap-y-5">
-                      {maxCapacity > 0 && (
-                        <div>
-                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Up to</p>
-                          <p className="text-[13px] font-light text-zinc-700">{maxCapacity} guests</p>
-                        </div>
-                      )}
-                      {minSpend && (
-                        <div>
-                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">From</p>
-                          <p className="text-[13px] font-light text-zinc-700">£{minSpend.toLocaleString()}</p>
-                        </div>
-                      )}
-                    </div>
+                )}
+                {minSpend && (
+                  <div>
+                    <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">From</p>
+                    <p className="text-[13px] font-light text-zinc-700">£{minSpend.toLocaleString()}</p>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
