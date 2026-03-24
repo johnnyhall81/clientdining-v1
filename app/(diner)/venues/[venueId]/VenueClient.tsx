@@ -316,6 +316,17 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             </div>
           )}
 
+          {/* Browse other private hire spaces */}
+          <div className="mt-8 pt-6 flex items-center justify-between" style={{ borderTop: '1px solid #F0EDE9' }}>
+            <p className="text-xs font-light text-zinc-400">Looking for something different?</p>
+            <a
+              href="/private-hire"
+              className="text-xs font-light text-zinc-600 hover:text-zinc-900 transition-colors underline underline-offset-2"
+            >
+              Browse all private hire spaces →
+            </a>
+          </div>
+
         </div>
 
         <CorporateEventsModal
