@@ -302,17 +302,36 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             </div>
           )}
 
-          {/* Light address footer */}
+          {/* Location — matches reserve tab style */}
           {venue.address && (
             <div className="mt-8 pt-6" style={{ borderTop: '1px solid #F0EDE9' }}>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
-              >
-                {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-              </a>
+              <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-2.5 font-light">Location</p>
+              <div className="flex items-start justify-between gap-4">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-light text-zinc-500 hover:text-zinc-800 transition-colors leading-relaxed"
+                >
+                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                </a>
+                <div className="flex-shrink-0 mt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setShowMap(v => !v)}
+                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+                  >
+                    {showMap ? 'Hide map' : 'View map'}
+                  </button>
+                </div>
+              </div>
+              {showMap && (
+                <div className="mt-5 overflow-hidden w-full" style={{ height: 220, borderRadius: '4px' }}>
+                  <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
+                  />
+                </div>
+              )}
             </div>
           )}
 
