@@ -374,10 +374,16 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
           )}
 
           {/* Browse other spaces */}
-          <div className="mt-8 pt-6 flex items-center justify-between" style={{ borderTop: '1px solid #F0EDE9' }}>
-            <p className="text-xs font-light text-zinc-400">Looking for something different?</p>
-            <a href="/private-hire" className="text-xs font-light text-zinc-600 hover:text-zinc-900 transition-colors underline underline-offset-2">
-              Browse all private hire spaces →
+          <div className="mt-8">
+            <a
+              href="/private-hire"
+              className="flex items-center justify-between w-full px-7 py-5 bg-zinc-900 hover:bg-zinc-700 transition-colors"
+              style={{ borderRadius: '6px' }}
+            >
+              <span className="text-sm font-light text-white tracking-wide">Browse all private hire spaces</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
             </a>
           </div>
 
