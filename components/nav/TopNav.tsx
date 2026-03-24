@@ -149,7 +149,7 @@ export default function TopNav() {
                     borderBottom: currentTab === tab ? '2px solid #18181B' : '2px solid transparent',
                   }}
                 >
-                  {tab === 'reservations' ? 'Reserve' : 'Hire'}
+                  {tab === 'reservations' ? 'Book' : 'Hire'}
                 </Link>
               ))}
             </div>
