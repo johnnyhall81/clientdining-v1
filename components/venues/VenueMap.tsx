@@ -137,6 +137,13 @@ export default function VenueMap({ venues }: VenueMapProps) {
       mapRef.current = map
 
       map.on('load', () => {
+        // Subtle Thames blue
+        if (map.getLayer('water')) {
+          map.setPaintProperty('water', 'fill-color', '#C8D8E8')
+        }
+        if (map.getLayer('water-shadow')) {
+          map.setPaintProperty('water-shadow', 'fill-color', '#C8D8E8')
+        }
         // GeoJSON source with clustering
         map.addSource('venues', {
           type: 'geojson',
