@@ -88,85 +88,76 @@ export default function PrivateHirePage() {
   const hasFilters = filterArea || filterGuests || filterOccasion
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
 
       {/* Page header */}
       <div>
-        <h1 className="text-3xl font-light text-zinc-900 tracking-tight mb-2">Private hire</h1>
+        <h1 className="text-3xl font-light text-zinc-900 tracking-tight mb-1">Private hire</h1>
         <p className="text-sm font-light text-zinc-400">
           Private dining rooms and event spaces across London's best venues.
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl border border-zinc-100 p-5 space-y-4">
+      {/* Filters — no card, just a clean strip */}
+      <div className="space-y-3">
 
-        {/* Guest count + area */}
-        <div className="flex flex-wrap gap-3 items-end">
-          <div>
-            <label className="block text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-2">Guests</label>
-            <input
-              type="number"
-              min="1"
-              placeholder="e.g. 20"
-              value={filterGuests}
-              onChange={e => setFilterGuests(e.target.value)}
-              className="w-28 px-3 py-2 border border-zinc-200 text-sm font-light text-zinc-700 focus:outline-none focus:border-zinc-400 transition-colors"
-              style={{ borderRadius: '3px' }}
-            />
-          </div>
-          <div>
-            <label className="block text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-2">Area</label>
-            <select
-              value={filterArea}
-              onChange={e => setFilterArea(e.target.value)}
-              className="px-3 py-2 border border-zinc-200 text-sm font-light text-zinc-700 focus:outline-none focus:border-zinc-400 transition-colors bg-white"
-              style={{ borderRadius: '3px' }}
-            >
-              <option value="">All areas</option>
-              {AREAS.map(a => <option key={a} value={a}>{a}</option>)}
-            </select>
-          </div>
+        {/* Guests + area + clear — inline row */}
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            type="number"
+            min="1"
+            placeholder="Guests"
+            value={filterGuests}
+            onChange={e => setFilterGuests(e.target.value)}
+            className="w-24 px-3 py-1.5 border border-zinc-200 text-sm font-light text-zinc-700 bg-white focus:outline-none focus:border-zinc-400 transition-colors"
+            style={{ borderRadius: '3px' }}
+          />
+          <select
+            value={filterArea}
+            onChange={e => setFilterArea(e.target.value)}
+            className="px-3 py-1.5 border border-zinc-200 text-sm font-light text-zinc-700 focus:outline-none focus:border-zinc-400 transition-colors bg-white"
+            style={{ borderRadius: '3px' }}
+          >
+            <option value="">All areas</option>
+            {AREAS.map(a => <option key={a} value={a}>{a}</option>)}
+          </select>
           {hasFilters && (
             <button
               onClick={clearFilters}
-              className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors pb-2"
+              className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
             >
-              Clear filters
+              Clear
             </button>
           )}
         </div>
 
         {/* Occasion chips */}
-        <div>
-          <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-2">Occasion</p>
-          <div className="flex flex-wrap gap-2">
-            {OCCASIONS.map(o => (
-              <button
-                key={o}
-                onClick={() => setFilterOccasion(filterOccasion === o ? '' : o)}
-                className="px-3 py-1.5 text-xs font-light transition-colors"
-                style={{
-                  borderRadius: '20px',
-                  border: '1px solid',
-                  borderColor: filterOccasion === o ? '#18181B' : '#E4E4E7',
-                  backgroundColor: filterOccasion === o ? '#18181B' : 'white',
-                  color: filterOccasion === o ? 'white' : '#71717A',
-                }}
-              >
-                {o}
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-1.5">
+          {OCCASIONS.map(o => (
+            <button
+              key={o}
+              onClick={() => setFilterOccasion(filterOccasion === o ? '' : o)}
+              className="px-3 py-1 text-xs font-light transition-colors"
+              style={{
+                borderRadius: '20px',
+                border: '1px solid',
+                borderColor: filterOccasion === o ? '#18181B' : '#E4E4E7',
+                backgroundColor: filterOccasion === o ? '#18181B' : 'transparent',
+                color: filterOccasion === o ? 'white' : '#71717A',
+              }}
+            >
+              {o}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Results count */}
+      {/* Results count — more legible */}
       {!loading && (
-        <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light">
+        <p className="text-sm font-light text-zinc-500">
           {filtered.length === 0
             ? 'No spaces found'
-            : `${filtered.length} ${filtered.length === 1 ? 'space' : 'spaces'}`}
+            : `${filtered.length} ${filtered.length === 1 ? 'private space' : 'private spaces'}`}
         </p>
       )}
 
