@@ -58,7 +58,9 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const [activeTab, setActiveTab] = useState<'reserve' | 'menu' | 'location'>('reserve')
   const [menuModalUrl, setMenuModalUrl] = useState<string | null>(null)
   const searchParams = useSearchParams()
-  const pageTab = searchParams.get('tab') === 'private_hire' ? 'private_hire' : 'reservations'
+  const pageTab = (venue as any).hire_only
+    ? 'private_hire'
+    : searchParams.get('tab') === 'private_hire' ? 'private_hire' : 'reservations'
   const [rooms, setRooms] = useState<any[]>([])
   const [enquiringRoom, setEnquiringRoom] = useState<any | null>(null)
 
@@ -174,8 +176,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   ].filter(Boolean)
 
-  // Full-page SevenRooms widget — only when no private hire rooms to show
-  if ((venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url && !venue.private_hire_available) {
+  // Full-page SevenRooms widget — only when no private hire rooms to show and not hire_only
+  if ((venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url && !venue.private_hire_available && !(venue as any).hire_only) {
     return (
       <div style={{ marginTop: '-32px' }}>
         <iframe
@@ -442,7 +444,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                           <p className="text-[13px] font-light text-zinc-700 leading-snug">{stat.value}</p>
                         </div>
                       ))}
-                      {venue.private_hire_available && (
+                      {venue.private_hire_available && !(venue as any).hire_only && (
                         <div>
                           <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1.5 font-light">Private hire</p>
                           <a

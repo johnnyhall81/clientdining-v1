@@ -22,15 +22,19 @@ export default function TopNav() {
   const venueId = venueMatch?.[1] ?? null
   const currentTab = searchParams.get('tab') || 'reservations'
   const [venueHasPrivateHire, setVenueHasPrivateHire] = useState(false)
+  const [venueHireOnly, setVenueHireOnly] = useState(false)
 
   useEffect(() => {
-    if (!venueId) { setVenueHasPrivateHire(false); return }
+    if (!venueId) { setVenueHasPrivateHire(false); setVenueHireOnly(false); return }
     supabase
       .from('venues')
-      .select('private_hire_available')
+      .select('private_hire_available, hire_only')
       .eq('id', venueId)
       .single()
-      .then(({ data }) => setVenueHasPrivateHire(data?.private_hire_available ?? false))
+      .then(({ data }) => {
+        setVenueHasPrivateHire(data?.private_hire_available ?? false)
+        setVenueHireOnly(data?.hire_only ?? false)
+      })
   }, [venueId])
 
   useEffect(() => {
@@ -149,9 +153,14 @@ export default function TopNav() {
               </svg>
             </button>
 
-            {/* Centre tabs — only when venue has private hire */}
+            {/* Centre tabs */}
             <div className="flex items-center gap-1">
-              {venueHasPrivateHire ? (
+              {venueHireOnly ? (
+                <span className="px-4 py-2 text-xs font-light tracking-widest uppercase text-zinc-900"
+                  style={{ borderBottom: '2px solid #18181B' }}>
+                  Hire
+                </span>
+              ) : venueHasPrivateHire ? (
                 (['reservations', 'private_hire'] as const).map(tab => (
                   <Link
                     key={tab}
