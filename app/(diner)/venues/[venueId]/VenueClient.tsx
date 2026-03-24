@@ -190,28 +190,84 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
     )
   }
 
-  // Private hire mode — completely different layout
+  // Private hire mode — elevated room-led layout
   if (pageTab === 'private_hire') {
+    const maxCapacity = rooms.reduce((max: number, r: any) => {
+      return Math.max(max, r.capacity_dining || 0, r.capacity_standing || 0, r.capacity_boardroom || 0)
+    }, 0)
+    const minSpend = rooms.reduce((min: number | null, r: any) => {
+      if (!r.pricing_from) return min
+      return min === null ? r.pricing_from : Math.min(min, r.pricing_from)
+    }, null as number | null)
+
     return (
       <div className="min-h-screen">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-          {/* Light venue header */}
-          <div className="mb-8">
-            <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-2">
-              {taxonomyParts.join(' · ')}
-            </p>
-            <h1 className="text-2xl font-light text-zinc-900 tracking-tight mb-1">{venue.name}</h1>
-            {rooms.length > 0 && (
-              <p className="text-sm font-light text-zinc-400">
-                {rooms.length === 1 ? '1 private space available' : `${rooms.length} private spaces available`}
-              </p>
-            )}
+          {/* Hero + intro card — same structure as Reserve page */}
+          <div className="bg-white overflow-hidden mb-8" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
+
+            {/* Hero image */}
+            <VenueGallery
+              heroImage={venue.image_hero}
+              galleryImages={galleryImages}
+              venueName={venue.name}
+              logoUrl={(venue as any).logo_url || undefined}
+            />
+
+            {/* Intro card — overlaps hero, same as Reserve */}
+            <div className="relative -mt-10 mx-3 sm:mx-6 bg-white z-10" style={{ borderRadius: '6px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+              <div className="px-7 sm:px-9 pt-7 pb-8">
+                {taxonomyParts.length > 0 && (
+                  <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-4 font-light">
+                    {taxonomyParts.join(' · ')}
+                  </p>
+                )}
+                <div className="flex flex-col lg:flex-row lg:gap-14">
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-[2rem] sm:text-[2.4rem] font-light text-zinc-900 tracking-tight leading-[1.1] mb-3">
+                      {venue.name}
+                    </h1>
+                    <p className="text-sm font-light text-zinc-400">
+                      {rooms.length === 0
+                        ? 'Private spaces available on request'
+                        : rooms.length === 1
+                        ? '1 private space available'
+                        : `${rooms.length} private spaces available`}
+                    </p>
+                  </div>
+                  {/* Right: key hire facts */}
+                  <div className="mt-7 lg:mt-1 lg:w-40 flex-shrink-0">
+                    <div className="grid grid-cols-2 lg:grid-cols-1 gap-x-8 gap-y-5">
+                      {maxCapacity > 0 && (
+                        <div>
+                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Up to</p>
+                          <p className="text-[13px] font-light text-zinc-700">{maxCapacity} guests</p>
+                        </div>
+                      )}
+                      {minSpend && (
+                        <div>
+                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">From</p>
+                          <p className="text-[13px] font-light text-zinc-700">£{minSpend.toLocaleString()}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Section title */}
+          {rooms.length > 0 && (
+            <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-6">
+              Private spaces at {venue.name}
+            </p>
+          )}
 
           {/* Room cards */}
           {rooms.length === 0 ? (
-            <div className="bg-white p-8 text-center" style={{ borderRadius: '8px', border: '1px solid #F0EDE9' }}>
+            <div className="bg-white p-10 text-center" style={{ borderRadius: '8px', border: '1px solid #F0EDE9' }}>
               <p className="text-sm font-light text-zinc-400 mb-5">Private dining rooms and event spaces available on request.</p>
               <button
                 onClick={() => setShowCorporateEventsModal(true)}
@@ -222,79 +278,90 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               </button>
             </div>
           ) : (
-            <div className="space-y-6">
-              {rooms.map((room) => {
+            <div className="space-y-5">
+              {rooms.map((room: any) => {
                 const mainImage = room.images?.find((i: any) => i.is_main) || room.images?.[0]
-                const capacityParts = [
-                  room.capacity_dining ? `${room.capacity_dining} dining` : null,
-                  room.capacity_standing ? `${room.capacity_standing} standing` : null,
-                  room.capacity_boardroom ? `${room.capacity_boardroom} boardroom` : null,
-                ].filter(Boolean)
+
+                const specs: { label: string; value: string }[] = []
+                if (room.capacity_dining) specs.push({ label: 'Dining', value: `${room.capacity_dining} seated` })
+                if (room.capacity_standing) specs.push({ label: 'Standing', value: `${room.capacity_standing} guests` })
+                if (room.capacity_boardroom) specs.push({ label: 'Boardroom', value: `${room.capacity_boardroom} seats` })
+                if (room.pricing_from) specs.push({
+                  label: room.pricing_type === 'min_spend' ? 'Min spend' : room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From',
+                  value: `£${room.pricing_from.toLocaleString()}${room.pricing_notes ? ` ${room.pricing_notes}` : ''}`
+                })
+                if (room.best_for?.length > 0) specs.push({ label: 'Best for', value: room.best_for.join(', ') })
 
                 return (
                   <div key={room.id} className="bg-white overflow-hidden" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
+
+                    {/* Room image */}
                     {mainImage?.url && (
-                      <div className="relative w-full overflow-hidden" style={{ height: '260px' }}>
+                      <div className="relative w-full overflow-hidden" style={{ height: '240px' }}>
                         <img src={mainImage.url} alt={room.name} className="w-full h-full object-cover" />
                         {room.images?.length > 1 && (
                           <span className="absolute bottom-3 right-3 text-[10px] font-light text-white bg-black/50 px-2 py-1 rounded">
                             {room.images.length} photos
                           </span>
                         )}
+                        <div className="absolute bottom-3 left-4">
+                          <span className="text-[9px] tracking-[0.18em] uppercase font-light text-white/80">
+                            {room.space_type === 'whole_venue' ? 'Whole venue' :
+                             room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
+                          </span>
+                        </div>
                       </div>
                     )}
 
-                    <div className="px-7 sm:px-9 py-7">
-                      <p className="text-[9px] tracking-[0.22em] text-zinc-400 uppercase font-light mb-2">
-                        {room.space_type === 'whole_venue' ? 'Whole venue' :
-                         room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
-                      </p>
-                      <h2 className="text-xl font-light text-zinc-900 mb-3">{room.name}</h2>
+                    {/* Two-column content */}
+                    <div className="flex flex-col sm:flex-row">
 
-                      {room.description && (
-                        <p className="text-sm font-light text-zinc-500 leading-relaxed mb-6 max-w-lg">
-                          {room.description}
-                        </p>
-                      )}
+                      {/* Left: name + description + tags + CTA */}
+                      <div className="flex-1 px-7 sm:px-9 py-7 min-w-0">
+                        {!mainImage?.url && (
+                          <p className="text-[9px] tracking-[0.22em] text-zinc-400 uppercase font-light mb-2">
+                            {room.space_type === 'whole_venue' ? 'Whole venue' :
+                             room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
+                          </p>
+                        )}
+                        <h2 className="text-xl font-light text-zinc-900 mb-3 tracking-tight">{room.name}</h2>
 
-                      <div className="flex flex-wrap gap-x-8 gap-y-4 mb-6">
-                        {capacityParts.length > 0 && (
-                          <div>
-                            <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Capacity</p>
-                            <p className="text-[13px] font-light text-zinc-700">{capacityParts.join(' · ')}</p>
+                        {room.description && (
+                          <p className="text-sm font-light text-zinc-500 leading-relaxed mb-5" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            {room.description}
+                          </p>
+                        )}
+
+                        {room.facilities?.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mb-6">
+                            {room.facilities.map((f: string) => (
+                              <span key={f} className="text-[11px] font-light text-zinc-400 border border-zinc-200 px-2.5 py-1 rounded-full">{f}</span>
+                            ))}
                           </div>
                         )}
-                        {room.pricing_from && (
-                          <div>
-                            <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">
-                              {room.pricing_type === 'min_spend' ? 'Min spend' :
-                               room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
-                            </p>
-                            <p className="text-[13px] font-light text-zinc-700">
-                              £{room.pricing_from.toLocaleString()}{room.pricing_notes ? ` ${room.pricing_notes}` : ''}
-                            </p>
-                          </div>
-                        )}
+
+                        <button
+                          onClick={() => { setEnquiringRoom(room); setShowCorporateEventsModal(true) }}
+                          className="h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
+                          style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
+                        >
+                          Enquire
+                        </button>
                       </div>
 
-                      {(room.best_for?.length > 0 || room.facilities?.length > 0) && (
-                        <div className="flex flex-wrap gap-1.5 mb-7">
-                          {room.best_for?.map((tag: string) => (
-                            <span key={tag} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">{tag}</span>
-                          ))}
-                          {room.facilities?.map((f: string) => (
-                            <span key={f} className="text-[11px] font-light text-zinc-400 border border-zinc-200 px-2.5 py-1 rounded-full">{f}</span>
-                          ))}
+                      {/* Right: spec rail */}
+                      {specs.length > 0 && (
+                        <div className="sm:w-44 flex-shrink-0 px-7 sm:px-6 pb-7 sm:py-7 sm:border-l" style={{ borderColor: '#F0EDE9' }}>
+                          <div className="grid grid-cols-2 sm:grid-cols-1 gap-x-6 gap-y-5">
+                            {specs.map(spec => (
+                              <div key={spec.label}>
+                                <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">{spec.label}</p>
+                                <p className="text-[13px] font-light text-zinc-700 leading-snug">{spec.value}</p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
-
-                      <button
-                        onClick={() => { setEnquiringRoom(room); setShowCorporateEventsModal(true) }}
-                        className="h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
-                        style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
-                      >
-                        Enquire about this space
-                      </button>
                     </div>
                   </div>
                 )
@@ -302,7 +369,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             </div>
           )}
 
-          {/* Location — matches reserve tab style */}
+          {/* Location */}
           {venue.address && (
             <div className="mt-8 pt-6" style={{ borderTop: '1px solid #F0EDE9' }}>
               <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-2.5 font-light">Location</p>
@@ -316,11 +383,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </a>
                 <div className="flex-shrink-0 mt-0.5">
-                  <button
-                    type="button"
-                    onClick={() => setShowMap(v => !v)}
-                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
-                  >
+                  <button type="button" onClick={() => setShowMap(v => !v)}
+                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors">
                     {showMap ? 'Hide map' : 'View map'}
                   </button>
                 </div>
@@ -335,13 +399,10 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             </div>
           )}
 
-          {/* Browse other private hire spaces */}
+          {/* Browse other spaces */}
           <div className="mt-8 pt-6 flex items-center justify-between" style={{ borderTop: '1px solid #F0EDE9' }}>
             <p className="text-xs font-light text-zinc-400">Looking for something different?</p>
-            <a
-              href="/private-hire"
-              className="text-xs font-light text-zinc-600 hover:text-zinc-900 transition-colors underline underline-offset-2"
-            >
+            <a href="/private-hire" className="text-xs font-light text-zinc-600 hover:text-zinc-900 transition-colors underline underline-offset-2">
               Browse all private hire spaces →
             </a>
           </div>
