@@ -186,15 +186,16 @@ export default function TopNav() {
 
         ) : (
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
             <Link href={user ? "/home" : "/"} className="text-xl font-light text-zinc-900 flex-shrink-0">
               ClientDining
             </Link>
-                className={`transition-colors ${
-                  isActive('/home')
-                    ? 'text-zinc-900'
-                    : 'text-zinc-400 hover:text-zinc-900'
-                }`}
+
+            {user ? (
+            <nav className="flex items-center gap-3 sm:gap-6">
+
+              <Link
+                href="/home"
+                className={`transition-colors ${isActive('/home') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
                 aria-label="Home"
               >
                 {isActive('/home') ? (
