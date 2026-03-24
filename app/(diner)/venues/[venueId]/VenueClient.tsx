@@ -484,7 +484,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               </div>
             ) : (venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url ? (
               <div>
-                <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-7 font-light">Reserve a table</p>
+                <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-7 font-light">Book a table</p>
                 <div style={{ overflow: 'hidden', borderRadius: '3px', height: '600px' }}>
                   <iframe
                     src={(venue as any).booking_widget_url}
@@ -501,7 +501,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               <div className="space-y-12">
                 {hasSlots && (
                   <div>
-                    <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-7 font-light">Reserve a table</p>
+                    <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-7 font-light">Book a table</p>
                     <SlotPicker
                       slots={slots}
                       onBook={handleBook}
