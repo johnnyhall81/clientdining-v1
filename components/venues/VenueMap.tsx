@@ -76,13 +76,10 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const highlightDot = useCallback((map: any, id: string | null) => {
     if (!map.getLayer('venues-dots')) return
     map.setPaintProperty('venues-dots', 'circle-opacity', [
-      'case', ['==', ['get', 'id'], id ?? ''], 1, 0.7
+      'case', ['==', ['get', 'id'], id ?? ''], 1, 0.8
     ])
     map.setPaintProperty('venues-dots', 'circle-radius', [
-      'case', ['==', ['get', 'id'], id ?? ''], 7, 5
-    ])
-    map.setPaintProperty('venues-dots', 'circle-color', [
-      'case', ['==', ['get', 'id'], id ?? ''], '#18181B', '#18181B'
+      'case', ['==', ['get', 'id'], id ?? ''], 9, 6
     ])
   }, [])
 
@@ -112,14 +109,18 @@ export default function VenueMap({ venues }: VenueMapProps) {
       mapRef.current = map
 
       map.on('load', () => {
+        // Warm the land slightly
+        if (map.getLayer('land')) map.setPaintProperty('land', 'background-color', '#F5F0EA')
+        if (map.getLayer('background')) map.setPaintProperty('background', 'background-color', '#F5F0EA')
+
         // Water — soft blue
         if (map.getLayer('water')) map.setPaintProperty('water', 'fill-color', '#C8D8E8')
         if (map.getLayer('water-shadow')) map.setPaintProperty('water-shadow', 'fill-color', '#C8D8E8')
 
-        // Parks — soft green
+        // Parks — muted sage
         const parkLayers = ['landuse', 'landuse_overlay', 'national_park', 'park', 'green_area']
         parkLayers.forEach(layer => {
-          if (map.getLayer(layer)) map.setPaintProperty(layer, 'fill-color', '#C8DBC0')
+          if (map.getLayer(layer)) map.setPaintProperty(layer, 'fill-color', '#C8D8BC')
         })
         // GeoJSON source with clustering
         map.addSource('venues', {
@@ -137,15 +138,15 @@ export default function VenueMap({ venues }: VenueMapProps) {
           clusterRadius: 40,
         })
 
-        // Cluster circles — zinc, subtle
+        // Cluster circles — warm terracotta
         map.addLayer({
           id: 'clusters',
           type: 'circle',
           source: 'venues',
           filter: ['has', 'point_count'],
           paint: {
-            'circle-color': '#18181B',
-            'circle-radius': ['step', ['get', 'point_count'], 18, 5, 22, 10, 26],
+            'circle-color': '#A0522D',
+            'circle-radius': ['step', ['get', 'point_count'], 16, 5, 20, 10, 24],
             'circle-opacity': 0.85,
           }
         })
@@ -164,18 +165,18 @@ export default function VenueMap({ venues }: VenueMapProps) {
           paint: { 'text-color': '#ffffff' }
         })
 
-        // Individual dots — light, unobtrusive
+        // Individual dots — warm, visible but light
         map.addLayer({
           id: 'venues-dots',
           type: 'circle',
           source: 'venues',
           filter: ['!', ['has', 'point_count']],
           paint: {
-            'circle-color': '#18181B',
-            'circle-radius': 5,
+            'circle-color': '#A0522D',
+            'circle-radius': 6,
             'circle-stroke-width': 2,
             'circle-stroke-color': '#ffffff',
-            'circle-opacity': 0.7,
+            'circle-opacity': 0.8,
           }
         })
 
@@ -272,7 +273,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
               style={{
                 width: '200px',
                 borderRadius: '10px',
-                border: activeId === venue.id ? '2px solid #18181B' : '1px solid #F0EDE9',
+                border: activeId === venue.id ? '2px solid #A0522D' : '1px solid #F0EDE9',
                 boxShadow: activeId === venue.id ? '0 2px 12px rgba(232,124,46,0.2)' : '0 1px 4px rgba(0,0,0,0.07)',
               }}
             >
