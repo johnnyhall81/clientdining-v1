@@ -161,12 +161,24 @@ export default function BookingsPage() {
       {/* Bookings List */}
       <div className="space-y-4">
         {filteredBookings.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-2xl border border-zinc-100">
-            <p className="text-zinc-500 font-light">
-              {activeTab === 'upcoming' && 'No upcoming bookings'}
-              {activeTab === 'past' && 'No past bookings'}
-              {activeTab === 'cancelled' && 'No cancelled bookings'}
-            </p>
+          <div className="py-16 text-center">
+            {activeTab === 'upcoming' ? (
+              <>
+                <p className="text-sm font-light text-zinc-500 mb-1">No upcoming bookings</p>
+                <p className="text-sm font-light text-zinc-400 mb-6">When you book a table, it will appear here.</p>
+                <a
+                  href="/home"
+                  className="inline-flex items-center h-10 px-7 text-xs font-light tracking-widest uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
+                  style={{ borderRadius: '3px' }}
+                >
+                  Browse venues
+                </a>
+              </>
+            ) : (
+              <p className="text-sm font-light text-zinc-400">
+                {activeTab === 'past' ? 'No past bookings yet.' : 'No cancelled bookings.'}
+              </p>
+            )}
           </div>
         ) : (
           filteredBookings.filter(({ venue, slot }) => venue && slot).map(({ booking, venue, slot }) => (
