@@ -377,11 +377,11 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
           <div className="mt-8">
             <a
               href="/private-hire"
-              className="flex items-center justify-between w-full px-7 py-5 bg-zinc-900 hover:bg-zinc-700 transition-colors"
-              style={{ borderRadius: '6px' }}
+              className="flex items-center justify-between w-full px-7 py-5 bg-white hover:bg-zinc-50 transition-colors"
+              style={{ borderRadius: '6px', border: '1px solid #E4E0DB' }}
             >
-              <span className="text-sm font-light text-white tracking-wide">Browse all private hire spaces</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
+              <span className="text-sm font-light text-zinc-700 tracking-wide">Browse all private hire spaces</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-400">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </a>
