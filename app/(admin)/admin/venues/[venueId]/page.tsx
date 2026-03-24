@@ -30,6 +30,51 @@ export default function EditVenuePage() {
   const [saving, setSaving] = useState(false)
   const [menus, setMenus] = useState<{ label: string; url: string }[]>([])
 
+  // Private hire rooms
+  type Room = {
+    id: string
+    name: string
+    description: string
+    space_type: string
+    capacity_dining: number | null
+    capacity_standing: number | null
+    capacity_boardroom: number | null
+    pricing_type: string
+    pricing_from: number | null
+    pricing_notes: string
+    facilities: string[]
+    best_for: string[]
+    catering: string[]
+    images: { url: string; caption: string; is_main: boolean }[]
+    display_order: number
+    is_active: boolean
+  }
+  const blankRoom = (): Omit<Room, 'id'> => ({
+    name: '',
+    description: '',
+    space_type: 'private',
+    capacity_dining: null,
+    capacity_standing: null,
+    capacity_boardroom: null,
+    pricing_type: 'min_spend',
+    pricing_from: null,
+    pricing_notes: '',
+    facilities: [],
+    best_for: [],
+    catering: [],
+    images: [],
+    display_order: 0,
+    is_active: true,
+  })
+  const [rooms, setRooms] = useState<Room[]>([])
+  const [editingRoom, setEditingRoom] = useState<(Omit<Room, 'id'> & { id?: string }) | null>(null)
+  const [savingRoom, setSavingRoom] = useState(false)
+  const [newRoomImageUrl, setNewRoomImageUrl] = useState('')
+
+  const FACILITIES = ['WiFi', 'AV screen', 'PA system', 'Projector', 'Flatscreen TV', 'Natural light', 'Air con', 'Dance floor', 'Terrace', 'Soundproof']
+  const BEST_FOR = ['Client dinner', 'Drinks reception', 'Away day', 'Team dinner', 'Board meeting', 'Product launch', 'Celebration']
+  const CATERING = ['In-house catering', 'External allowed', 'BYO allowed']
+
   // Gallery state
   const [galleryImages, setGalleryImages] = useState<VenueImage[]>([])
   const [newImageUrl, setNewImageUrl] = useState('')
@@ -38,6 +83,7 @@ export default function EditVenuePage() {
   useEffect(() => {
     loadVenue()
     loadGallery()
+    loadRooms()
   }, [venueId])
 
   const loadVenue = async () => {
@@ -80,6 +126,66 @@ export default function EditVenuePage() {
       .eq('venue_id', venueId)
       .order('sort_order', { ascending: true })
     setGalleryImages(data || [])
+  }
+
+  const loadRooms = async () => {
+    const { data } = await supabase
+      .from('private_hire_rooms')
+      .select('*')
+      .eq('venue_id', venueId)
+      .order('display_order', { ascending: true })
+    setRooms((data || []) as any)
+  }
+
+  const handleSaveRoom = async () => {
+    if (!editingRoom?.name.trim()) return
+    setSavingRoom(true)
+    try {
+      const payload = {
+        venue_id: venueId,
+        name: editingRoom.name,
+        description: editingRoom.description,
+        space_type: editingRoom.space_type,
+        capacity_dining: editingRoom.capacity_dining,
+        capacity_standing: editingRoom.capacity_standing,
+        capacity_boardroom: editingRoom.capacity_boardroom,
+        pricing_type: editingRoom.pricing_type,
+        pricing_from: editingRoom.pricing_from,
+        pricing_notes: editingRoom.pricing_notes,
+        facilities: editingRoom.facilities,
+        best_for: editingRoom.best_for,
+        catering: editingRoom.catering,
+        images: editingRoom.images,
+        display_order: editingRoom.display_order,
+        is_active: editingRoom.is_active,
+      }
+      if (editingRoom.id) {
+        const { error } = await supabase.from('private_hire_rooms').update(payload).eq('id', editingRoom.id)
+        if (error) throw error
+      } else {
+        const { error } = await supabase.from('private_hire_rooms').insert(payload)
+        if (error) throw error
+      }
+      await loadRooms()
+      setEditingRoom(null)
+    } catch (err: any) {
+      alert('Failed to save room: ' + err.message)
+    } finally {
+      setSavingRoom(false)
+    }
+  }
+
+  const handleDeleteRoom = async (roomId: string) => {
+    if (!confirm('Delete this room?')) return
+    const { error } = await supabase.from('private_hire_rooms').delete().eq('id', roomId)
+    if (!error) setRooms(prev => prev.filter(r => r.id !== roomId))
+  }
+
+  const toggleRoomFlag = (field: 'facilities' | 'best_for' | 'catering', value: string) => {
+    if (!editingRoom) return
+    const current = editingRoom[field]
+    const updated = current.includes(value) ? current.filter(v => v !== value) : [...current, value]
+    setEditingRoom({ ...editingRoom, [field]: updated })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -415,6 +521,286 @@ export default function EditVenuePage() {
             {addingImage ? 'Adding...' : 'Add'}
           </button>
         </div>
+      </div>
+      {/* Private hire rooms */}
+      <div className="bg-white rounded-lg border p-6 space-y-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">Private Hire Rooms</h2>
+            <p className="text-xs text-zinc-400 mt-1">Each room appears as a card on the venue's private hire tab.</p>
+          </div>
+          {!editingRoom && (
+            <button
+              onClick={() => setEditingRoom(blankRoom())}
+              className="px-4 py-2 bg-zinc-900 text-white text-sm rounded-lg hover:bg-zinc-800"
+            >
+              + Add room
+            </button>
+          )}
+        </div>
+
+        {/* Room list */}
+        {rooms.length === 0 && !editingRoom && (
+          <p className="text-sm text-zinc-400">No rooms yet.</p>
+        )}
+        {rooms.map(room => (
+          <div key={room.id} className="flex items-start gap-4 p-4 border rounded-lg bg-zinc-50">
+            {room.images?.[0]?.url && (
+              <img src={room.images[0].url} alt={room.name} className="w-20 h-16 object-cover rounded flex-shrink-0" />
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-zinc-900">{room.name}</p>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                {[
+                  room.capacity_dining ? `${room.capacity_dining} dining` : null,
+                  room.capacity_standing ? `${room.capacity_standing} standing` : null,
+                  room.pricing_from ? `from £${room.pricing_from.toLocaleString()}` : null,
+                ].filter(Boolean).join(' · ')}
+              </p>
+            </div>
+            <div className="flex gap-2 flex-shrink-0">
+              <button
+                onClick={() => setEditingRoom({ ...room })}
+                className="px-3 py-1.5 text-xs border rounded hover:bg-white transition-colors"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteRoom(room.id)}
+                className="px-3 py-1.5 text-xs text-red-500 border border-red-200 rounded hover:bg-red-50 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* Room editor */}
+        {editingRoom && (
+          <div className="border rounded-lg p-5 space-y-5 bg-zinc-50">
+            <p className="text-sm font-semibold text-zinc-700">{editingRoom.id ? 'Edit room' : 'New room'}</p>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <label className="block text-xs font-medium text-zinc-600 mb-1">Room name</label>
+                <input type="text" value={editingRoom.name} placeholder="e.g. The Drawing Room"
+                  onChange={e => setEditingRoom({ ...editingRoom, name: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-md text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-600 mb-1">Space type</label>
+                <select value={editingRoom.space_type}
+                  onChange={e => setEditingRoom({ ...editingRoom, space_type: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-md text-sm">
+                  <option value="private">Private space</option>
+                  <option value="semi_private">Semi-private</option>
+                  <option value="whole_venue">Whole venue</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-600 mb-1">Display order</label>
+                <input type="number" value={editingRoom.display_order}
+                  onChange={e => setEditingRoom({ ...editingRoom, display_order: parseInt(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border rounded-md text-sm" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-zinc-600 mb-1">Description</label>
+              <textarea value={editingRoom.description} rows={3}
+                placeholder="Describe the room — atmosphere, best use, standout features…"
+                onChange={e => setEditingRoom({ ...editingRoom, description: e.target.value })}
+                className="w-full px-3 py-2 border rounded-md text-sm resize-none" />
+            </div>
+
+            {/* Capacity */}
+            <div>
+              <p className="text-xs font-medium text-zinc-600 mb-2">Capacity</p>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { key: 'capacity_dining', label: 'Dining (seated)' },
+                  { key: 'capacity_standing', label: 'Standing' },
+                  { key: 'capacity_boardroom', label: 'Boardroom' },
+                ].map(({ key, label }) => (
+                  <div key={key}>
+                    <label className="block text-[11px] text-zinc-400 mb-1">{label}</label>
+                    <input type="number" placeholder="–"
+                      value={(editingRoom as any)[key] ?? ''}
+                      onChange={e => setEditingRoom({ ...editingRoom, [key]: e.target.value ? parseInt(e.target.value) : null } as any)}
+                      className="w-full px-3 py-2 border rounded-md text-sm" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pricing */}
+            <div>
+              <p className="text-xs font-medium text-zinc-600 mb-2">Pricing</p>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] text-zinc-400 mb-1">Type</label>
+                  <select value={editingRoom.pricing_type}
+                    onChange={e => setEditingRoom({ ...editingRoom, pricing_type: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-md text-sm">
+                    <option value="min_spend">Min spend</option>
+                    <option value="hire_fee">Hire fee</option>
+                    <option value="hire_fee_plus_min_spend">Hire fee + min spend</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] text-zinc-400 mb-1">From (£)</label>
+                  <input type="number" placeholder="e.g. 1500"
+                    value={editingRoom.pricing_from ?? ''}
+                    onChange={e => setEditingRoom({ ...editingRoom, pricing_from: e.target.value ? parseInt(e.target.value) : null })}
+                    className="w-full px-3 py-2 border rounded-md text-sm" />
+                </div>
+                <div className="col-span-1">
+                  <label className="block text-[11px] text-zinc-400 mb-1">Pricing notes</label>
+                  <input type="text" placeholder="e.g. per evening"
+                    value={editingRoom.pricing_notes}
+                    onChange={e => setEditingRoom({ ...editingRoom, pricing_notes: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-md text-sm" />
+                </div>
+              </div>
+            </div>
+
+            {/* Facilities */}
+            <div>
+              <p className="text-xs font-medium text-zinc-600 mb-2">Facilities</p>
+              <div className="flex flex-wrap gap-2">
+                {FACILITIES.map(f => (
+                  <button key={f} type="button"
+                    onClick={() => toggleRoomFlag('facilities', f)}
+                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                      editingRoom.facilities.includes(f)
+                        ? 'bg-zinc-900 text-white border-zinc-900'
+                        : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'
+                    }`}
+                  >{f}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Best for */}
+            <div>
+              <p className="text-xs font-medium text-zinc-600 mb-2">Best for</p>
+              <div className="flex flex-wrap gap-2">
+                {BEST_FOR.map(f => (
+                  <button key={f} type="button"
+                    onClick={() => toggleRoomFlag('best_for', f)}
+                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                      editingRoom.best_for.includes(f)
+                        ? 'bg-zinc-900 text-white border-zinc-900'
+                        : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'
+                    }`}
+                  >{f}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Catering */}
+            <div>
+              <p className="text-xs font-medium text-zinc-600 mb-2">Catering</p>
+              <div className="flex flex-wrap gap-2">
+                {CATERING.map(f => (
+                  <button key={f} type="button"
+                    onClick={() => toggleRoomFlag('catering', f)}
+                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                      editingRoom.catering.includes(f)
+                        ? 'bg-zinc-900 text-white border-zinc-900'
+                        : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'
+                    }`}
+                  >{f}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Images */}
+            <div>
+              <p className="text-xs font-medium text-zinc-600 mb-2">Room images</p>
+              {editingRoom.images.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {editingRoom.images.map((img, i) => (
+                    <div key={i} className="relative group">
+                      <img src={img.url} alt="" className="w-20 h-14 object-cover rounded border" />
+                      {img.is_main && (
+                        <span className="absolute top-1 left-1 bg-zinc-900 text-white text-[9px] px-1 rounded">Main</span>
+                      )}
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center gap-1">
+                        {!img.is_main && (
+                          <button type="button"
+                            onClick={() => setEditingRoom({
+                              ...editingRoom,
+                              images: editingRoom.images.map((im, idx) => ({ ...im, is_main: idx === i }))
+                            })}
+                            className="text-[9px] text-white bg-zinc-700 px-1.5 py-0.5 rounded"
+                          >Set main</button>
+                        )}
+                        <button type="button"
+                          onClick={() => setEditingRoom({
+                            ...editingRoom,
+                            images: editingRoom.images.filter((_, idx) => idx !== i)
+                          })}
+                          className="text-[9px] text-white bg-red-600 px-1.5 py-0.5 rounded"
+                        >Remove</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex gap-2">
+                <input type="text" placeholder="Paste image URL…"
+                  value={newRoomImageUrl}
+                  onChange={e => setNewRoomImageUrl(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      if (!newRoomImageUrl.trim()) return
+                      const isFirst = editingRoom.images.length === 0
+                      setEditingRoom({
+                        ...editingRoom,
+                        images: [...editingRoom.images, { url: newRoomImageUrl.trim(), caption: '', is_main: isFirst }]
+                      })
+                      setNewRoomImageUrl('')
+                    }
+                  }}
+                  className="flex-1 px-3 py-2 border rounded-md text-sm" />
+                <button type="button"
+                  onClick={() => {
+                    if (!newRoomImageUrl.trim()) return
+                    const isFirst = editingRoom.images.length === 0
+                    setEditingRoom({
+                      ...editingRoom,
+                      images: [...editingRoom.images, { url: newRoomImageUrl.trim(), caption: '', is_main: isFirst }]
+                    })
+                    setNewRoomImageUrl('')
+                  }}
+                  className="px-4 py-2 bg-zinc-900 text-white text-sm rounded-lg hover:bg-zinc-800"
+                >Add</button>
+              </div>
+            </div>
+
+            {/* Active toggle */}
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="room_active" checked={editingRoom.is_active}
+                onChange={e => setEditingRoom({ ...editingRoom, is_active: e.target.checked })}
+                className="rounded h-4 w-4" />
+              <label htmlFor="room_active" className="text-sm text-zinc-600">Active (visible on venue page)</label>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-1">
+              <button type="button" onClick={handleSaveRoom} disabled={savingRoom}
+                className="px-6 py-2 bg-zinc-900 text-white text-sm rounded-lg hover:bg-zinc-800 disabled:opacity-50">
+                {savingRoom ? 'Saving…' : editingRoom.id ? 'Save changes' : 'Add room'}
+              </button>
+              <button type="button" onClick={() => { setEditingRoom(null); setNewRoomImageUrl('') }}
+                className="px-4 py-2 border text-sm rounded-lg hover:bg-white transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
