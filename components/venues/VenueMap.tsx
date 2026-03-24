@@ -37,6 +37,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const mapRef = useRef<any>(null)
   const stripRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const markerRefs = useRef<Map<string, any>>(new Map())
   const router = useRouter()
 
   const [geocoded, setGeocoded] = useState<VenueWithCoords[]>([])
@@ -72,43 +73,22 @@ export default function VenueMap({ venues }: VenueMapProps) {
     setVisibleVenues(visible)
   }, [])
 
-  // Highlight a dot on the map
-  const highlightDot = useCallback((map: any, id: string | null) => {
-    if (!map.getLayer('venues-dots')) return
-    // Outer ring — white normally, zinc when active
-    map.setPaintProperty('venues-dots', 'circle-stroke-color', [
-      'case',
-      ['==', ['get', 'id'], id ?? ''],
-      '#18181B',
-      '#18181B'
-    ])
-    map.setPaintProperty('venues-dots', 'circle-radius', [
-      'case',
-      ['==', ['get', 'id'], id ?? ''],
-      10,
-      7
-    ])
-    map.setPaintProperty('venues-dots', 'circle-color', [
-      'case',
-      ['==', ['get', 'id'], id ?? ''],
-      '#18181B',
-      '#ffffff'
-    ])
-    // Inner dot — white when active, zinc normally
-    if (map.getLayer('venues-dots-inner')) {
-      map.setPaintProperty('venues-dots-inner', 'circle-color', [
-        'case',
-        ['==', ['get', 'id'], id ?? ''],
-        '#ffffff',
-        '#18181B'
-      ])
-      map.setPaintProperty('venues-dots-inner', 'circle-radius', [
-        'case',
-        ['==', ['get', 'id'], id ?? ''],
-        4,
-        3
-      ])
-    }
+  // Highlight a pin by toggling its SVG fill
+  const highlightPin = useCallback((id: string | null) => {
+    markerRefs.current.forEach(({ el }, venueId) => {
+      const path = el.querySelector('path')
+      const circle = el.querySelector('circle')
+      if (!path || !circle) return
+      if (venueId === id) {
+        path.setAttribute('fill', '#18181B')
+        circle.setAttribute('fill', '#ffffff')
+        el.style.zIndex = '10'
+      } else {
+        path.setAttribute('fill', '#ffffff')
+        circle.setAttribute('fill', '#18181B')
+        el.style.zIndex = '1'
+      }
+    })
   }, [])
 
   // Scroll strip to card
@@ -187,30 +167,38 @@ export default function VenueMap({ venues }: VenueMapProps) {
           paint: { 'text-color': '#ffffff' }
         })
 
-        // Individual dots — white with zinc border, teardrop via offset
-        map.addLayer({
-          id: 'venues-dots',
-          type: 'circle',
-          source: 'venues',
-          filter: ['!', ['has', 'point_count']],
-          paint: {
-            'circle-color': '#ffffff',
-            'circle-radius': 7,
-            'circle-stroke-width': 2,
-            'circle-stroke-color': '#18181B',
-            'circle-opacity': 1,
-          }
+        // Individual venue pins — SVG teardrop HTML markers
+        geocoded.forEach(venue => {
+          const el = document.createElement('div')
+          el.innerHTML = `
+            <svg width="22" height="30" viewBox="0 0 22 30" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.25));cursor:pointer">
+              <path d="M11 0C4.925 0 0 4.925 0 11C0 19.25 11 30 11 30C11 30 22 19.25 22 11C22 4.925 17.075 0 11 0Z" fill="white" stroke="#18181B" stroke-width="1.5"/>
+              <circle cx="11" cy="11" r="4" fill="#18181B"/>
+            </svg>
+          `
+          el.style.width = '22px'
+          el.style.height = '30px'
+          el.dataset.venueId = venue.id
+
+          el.addEventListener('click', () => {
+            setActiveId(venue.id)
+            highlightPin(venue.id)
+            scrollToCard(venue.id)
+          })
+
+          const marker = new mapboxgl.default.Marker({ element: el, anchor: 'bottom' })
+            .setLngLat([venue.lng, venue.lat])
+            .addTo(map)
+
+          markerRefs.current.set(venue.id, { marker, el })
         })
 
-        // Inner dot
-        map.addLayer({
-          id: 'venues-dots-inner',
-          type: 'circle',
-          source: 'venues',
-          filter: ['!', ['has', 'point_count']],
-          paint: {
-            'circle-color': '#18181B',
-            'circle-radius': 3,
+        // Click empty map → clear active
+        map.on('click', (e: any) => {
+          const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] })
+          if (!features.length) {
+            setActiveId(null)
+            highlightPin(null)
           }
         })
 
@@ -225,31 +213,9 @@ export default function VenueMap({ venues }: VenueMapProps) {
           })
         })
 
-        // Click dot → highlight + scroll strip
-        map.on('click', 'venues-dots', (e: any) => {
-          const id = e.features[0]?.properties?.id
-          if (!id) return
-          setActiveId(id)
-          highlightDot(map, id)
-          scrollToCard(id)
-        })
-
-        // Click empty map → clear active
-        map.on('click', (e: any) => {
-          const features = map.queryRenderedFeatures(e.point, { layers: ['venues-dots', 'venues-dots-inner', 'clusters'] })
-          if (!features.length) {
-            setActiveId(null)
-            highlightDot(map, null)
-          }
-        })
-
-        // Cursor
+        // Cursor for clusters
         map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer' })
         map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = '' })
-        map.on('mouseenter', 'venues-dots', () => { map.getCanvas().style.cursor = 'pointer' })
-        map.on('mouseleave', 'venues-dots', () => { map.getCanvas().style.cursor = '' })
-        map.on('mouseenter', 'venues-dots-inner', () => { map.getCanvas().style.cursor = 'pointer' })
-        map.on('mouseleave', 'venues-dots-inner', () => { map.getCanvas().style.cursor = '' })
 
         // Update strip on move
         map.on('moveend', () => updateVisible(map, geocoded))
