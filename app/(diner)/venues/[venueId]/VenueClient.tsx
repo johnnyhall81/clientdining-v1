@@ -529,52 +529,42 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
 {/* Menu Highlights */}
 {(venue as any).menu_highlights && (
-  <div className="px-7 sm:px-9 lg:px-11 py-7" style={{ borderTop: '1px solid #F0EDE9' }}>
-    <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-4 font-light">Menu Highlights</p>
-    <div className="flex flex-col gap-3">
-      {/* Cuisine + price */}
-      <div className="flex items-center gap-3">
+  <div className="px-7 sm:px-9 lg:px-11 py-6" style={{ borderTop: '1px solid #F0EDE9' }}>
+    <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Menu</p>
+    <div className="flex flex-col gap-2.5">
+      <div className="flex items-baseline gap-2">
         <span className="text-sm font-light text-zinc-700">{(venue as any).menu_highlights.cuisine_style}</span>
-        <span className="text-zinc-300 text-xs">·</span>
-        <span className="text-sm font-light text-zinc-500">{(venue as any).menu_highlights.price_range}</span>
+        {(venue as any).menu_highlights.price_range && (
+          <>
+            <span className="text-zinc-300 text-xs">·</span>
+            <span className="text-sm font-light text-zinc-400">{(venue as any).menu_highlights.price_range}</span>
+          </>
+        )}
       </div>
-      {/* Sample dishes */}
       {(venue as any).menu_highlights.sample_dishes?.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {(venue as any).menu_highlights.sample_dishes.map((dish: string, i: number) => (
-            <span key={i} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
-              {dish}
-            </span>
+            <span key={i} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">{dish}</span>
           ))}
         </div>
       )}
-      {/* Dietary options */}
       {(venue as any).menu_highlights.dietary_options?.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {(venue as any).menu_highlights.dietary_options.map((opt: string, i: number) => (
-            <span key={i} className="text-[11px] font-light text-zinc-400 border border-zinc-200 px-2.5 py-1 rounded-full">
-              {opt}
-            </span>
+            <span key={i} className="text-[11px] font-light text-zinc-400 border border-zinc-200 px-2.5 py-1 rounded-full">{opt}</span>
           ))}
         </div>
       )}
-      {/* Note */}
       {(venue as any).menu_highlights.note && (
         <p className="text-[11px] font-light text-zinc-400 italic">{(venue as any).menu_highlights.note}</p>
       )}
-      {/* External menu links */}
       {(venue as any).menus?.length > 0 && (
-        <div className="flex flex-wrap gap-x-5 gap-y-1.5 pt-1">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 pt-0.5">
           {(venue as any).menus.map((menu: { label: string; url: string }, i: number) => (
-            <a
-              key={i}
-              href={menu.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors inline-flex items-center gap-1"
-            >
+            <a key={i} href={menu.url} target="_blank" rel="noopener noreferrer"
+              className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors inline-flex items-center gap-1">
               {menu.label}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2.5 h-2.5 opacity-50">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2.5 h-2.5 opacity-40">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
               </svg>
             </a>
@@ -584,6 +574,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
     </div>
   </div>
 )}
+      {/* Sample dishes */}
+      {(venue as any).menu_highlights?.sample_dishes?.length > 0 && null}
 
 
 
@@ -596,31 +588,30 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
 
 
-          {/* Location */}
+
+          {/* Location — address leads, map secondary */}
           {venue.address && (
-            <div className="px-7 sm:px-9 lg:px-11 py-7" style={{ borderTop: '1px solid #F0EDE9' }}>
-              <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-2.5 font-light">Location</p>
+            <div className="px-7 sm:px-9 lg:px-11 py-6" style={{ borderTop: '1px solid #F0EDE9' }}>
+              <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Location</p>
               <div className="flex items-start justify-between gap-4">
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-light text-zinc-500 hover:text-zinc-800 transition-colors leading-relaxed"
+                  className="text-sm font-light text-zinc-600 hover:text-zinc-900 transition-colors leading-relaxed"
                 >
                   {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
                 </a>
-                <div className="flex items-center gap-4 flex-shrink-0 mt-0.5">
-                  <button
-                    type="button"
-                    onClick={() => setShowMap(v => !v)}
-                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-700 transition-colors"
-                  >
-                    {showMap ? 'Hide map' : 'View map'}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowMap(v => !v)}
+                  className="text-[11px] font-light text-zinc-400 hover:text-zinc-600 transition-colors flex-shrink-0 mt-0.5"
+                >
+                  {showMap ? 'Hide map' : 'Map'}
+                </button>
               </div>
               {showMap && (
-                <div className="mt-5 overflow-hidden w-full" style={{ height: 220, borderRadius: '4px' }}>
+                <div className="mt-4 overflow-hidden w-full" style={{ height: 180, borderRadius: '4px', opacity: 0.85 }}>
                   <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
                     src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
                   />
