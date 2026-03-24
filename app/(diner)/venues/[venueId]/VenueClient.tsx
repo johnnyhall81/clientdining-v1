@@ -347,8 +347,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                       {/* CTA */}
                       <button
                         onClick={() => { setEnquiringRoom(room); setShowCorporateEventsModal(true) }}
-                        className="h-10 px-6 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors w-full sm:w-auto"
-                        style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
+                        className="h-10 px-6 text-xs font-light tracking-widest uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors w-full sm:w-auto"
+                        style={{ borderRadius: '3px' }}
                       >
                         Enquire
                       </button>

@@ -277,11 +277,11 @@ export default function PrivateHirePage() {
                   )}
 
                   {/* CTAs */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <button
                       onClick={() => setEnquiringRoom(room)}
-                      className="h-9 px-5 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
-                      style={{ border: '1px solid #C8C4BF', borderRadius: '3px' }}
+                      className="h-9 px-5 text-xs font-light tracking-widest uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
+                      style={{ borderRadius: '3px' }}
                     >
                       Enquire
                     </button>
