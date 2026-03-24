@@ -462,12 +462,16 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                       ))}
                       {venue.private_hire_available && (
                         <div>
-                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Private hire</p>
+                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1.5 font-light">Private hire</p>
                           <a
                             href="?tab=private_hire"
-                            className="text-[13px] font-light text-zinc-700 hover:text-zinc-900 underline underline-offset-2 transition-colors"
+                            className="inline-flex items-center gap-1 text-[11px] font-light tracking-widest uppercase text-zinc-600 hover:text-zinc-900 transition-colors"
+                            style={{ borderBottom: '1px solid #C8C4BF', paddingBottom: '1px' }}
                           >
-                            View spaces →
+                            View spaces
+                            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
                           </a>
                         </div>
                       )}
