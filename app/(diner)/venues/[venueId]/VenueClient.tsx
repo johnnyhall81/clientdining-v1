@@ -382,7 +382,12 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                       {venue.private_hire_available && (
                         <div>
                           <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Private dining</p>
-                          <p className="text-[13px] font-light text-zinc-700">Available</p>
+                          <a
+                            href="?tab=private_hire"
+                            className="text-[13px] font-light text-zinc-700 hover:text-zinc-900 underline underline-offset-2 transition-colors"
+                          >
+                            View spaces →
+                          </a>
                         </div>
                       )}
                     </div>
