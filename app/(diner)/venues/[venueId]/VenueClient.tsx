@@ -266,86 +266,92 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               {rooms.map((room: any) => {
                 const mainImage = room.images?.find((i: any) => i.is_main) || room.images?.[0]
 
-                const specs: { label: string; value: string }[] = []
-                if (room.capacity_dining) specs.push({ label: 'Dining', value: `${room.capacity_dining} seated` })
-                if (room.capacity_standing) specs.push({ label: 'Standing', value: `${room.capacity_standing} guests` })
-                if (room.capacity_boardroom) specs.push({ label: 'Boardroom', value: `${room.capacity_boardroom} seats` })
-                if (room.pricing_from) specs.push({
-                  label: room.pricing_type === 'min_spend' ? 'Min spend' : room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From',
-                  value: `£${room.pricing_from.toLocaleString()}${room.pricing_notes ? ` ${room.pricing_notes}` : ''}`
-                })
-                if (room.best_for?.length > 0) specs.push({ label: 'Best for', value: room.best_for.join(', ') })
-
                 return (
                   <div key={room.id} className="bg-white overflow-hidden" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
 
-                    {/* Room image */}
+                    {/* 4:3 image */}
                     {mainImage?.url && (
-                      <div className="relative w-full overflow-hidden" style={{ height: '240px' }}>
-                        <img src={mainImage.url} alt={room.name} className="w-full h-full object-cover" />
+                      <div className="relative w-full overflow-hidden" style={{ paddingTop: '75%' }}>
+                        <img
+                          src={mainImage.url}
+                          alt={room.name}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
                         {room.images?.length > 1 && (
                           <span className="absolute bottom-3 right-3 text-[10px] font-light text-white bg-black/50 px-2 py-1 rounded">
                             {room.images.length} photos
                           </span>
                         )}
-                        <div className="absolute bottom-3 left-4">
-                          <span className="text-[9px] tracking-[0.18em] uppercase font-light text-white/80">
-                            {room.space_type === 'whole_venue' ? 'Whole venue' :
-                             room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
-                          </span>
-                        </div>
+                        <span className="absolute top-3 left-3 text-[9px] tracking-[0.18em] uppercase font-light text-white/80 bg-black/30 px-2 py-1 rounded">
+                          {room.space_type === 'whole_venue' ? 'Whole venue' :
+                           room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
+                        </span>
                       </div>
                     )}
 
-                    {/* Two-column content */}
-                    <div className="flex flex-col sm:flex-row">
+                    <div className="px-5 sm:px-7 py-5">
 
-                      {/* Left: name + description + tags + CTA */}
-                      <div className="flex-1 px-7 sm:px-9 py-7 min-w-0">
-                        {!mainImage?.url && (
-                          <p className="text-[9px] tracking-[0.22em] text-zinc-400 uppercase font-light mb-2">
-                            {room.space_type === 'whole_venue' ? 'Whole venue' :
-                             room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
-                          </p>
-                        )}
-                        <h2 className="text-xl font-light text-zinc-900 mb-3 tracking-tight">{room.name}</h2>
+                      {/* Room name */}
+                      <h2 className="text-lg font-light text-zinc-900 tracking-tight mb-3">{room.name}</h2>
 
-                        {room.description && (
-                          <p className="text-sm font-light text-zinc-500 leading-relaxed mb-5" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                            {room.description}
-                          </p>
-                        )}
-
-                        {room.facilities?.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mb-6">
-                            {room.facilities.map((f: string) => (
-                              <span key={f} className="text-[11px] font-light text-zinc-400 border border-zinc-200 px-2.5 py-1 rounded-full">{f}</span>
-                            ))}
+                      {/* Spec row — decision data first */}
+                      <div className="flex flex-wrap gap-x-5 gap-y-2 mb-4 pb-4" style={{ borderBottom: '1px solid #F0EDE9' }}>
+                        {room.capacity_dining && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Dining</p>
+                            <p className="text-xs font-light text-zinc-700">{room.capacity_dining} seated</p>
                           </div>
                         )}
-
-                        <button
-                          onClick={() => { setEnquiringRoom(room); setShowCorporateEventsModal(true) }}
-                          className="h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
-                          style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
-                        >
-                          Enquire
-                        </button>
+                        {room.capacity_standing && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Standing</p>
+                            <p className="text-xs font-light text-zinc-700">{room.capacity_standing} guests</p>
+                          </div>
+                        )}
+                        {room.capacity_boardroom && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Boardroom</p>
+                            <p className="text-xs font-light text-zinc-700">{room.capacity_boardroom} seats</p>
+                          </div>
+                        )}
+                        {room.pricing_from && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
+                              {room.pricing_type === 'min_spend' ? 'Min spend' :
+                               room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
+                            </p>
+                            <p className="text-xs font-light text-zinc-700">
+                              £{room.pricing_from.toLocaleString()}{room.pricing_notes ? ` ${room.pricing_notes}` : ''}
+                            </p>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Right: spec rail */}
-                      {specs.length > 0 && (
-                        <div className="sm:w-44 flex-shrink-0 px-7 sm:px-6 pb-7 sm:py-7 sm:border-l" style={{ borderColor: '#F0EDE9' }}>
-                          <div className="grid grid-cols-2 sm:grid-cols-1 gap-x-6 gap-y-5">
-                            {specs.map(spec => (
-                              <div key={spec.label}>
-                                <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">{spec.label}</p>
-                                <p className="text-[13px] font-light text-zinc-700 leading-snug">{spec.value}</p>
-                              </div>
-                            ))}
-                          </div>
+                      {/* Short description — 3 lines max */}
+                      {room.description && (
+                        <p className="text-sm font-light text-zinc-500 leading-relaxed mb-4"
+                          style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {room.description}
+                        </p>
+                      )}
+
+                      {/* Tags */}
+                      {room.best_for?.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mb-5">
+                          {room.best_for.map((tag: string) => (
+                            <span key={tag} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">{tag}</span>
+                          ))}
                         </div>
                       )}
+
+                      {/* CTA */}
+                      <button
+                        onClick={() => { setEnquiringRoom(room); setShowCorporateEventsModal(true) }}
+                        className="h-10 px-6 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors w-full sm:w-auto"
+                        style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
+                      >
+                        Enquire
+                      </button>
                     </div>
                   </div>
                 )
