@@ -10,9 +10,10 @@ interface CorporateEventsModalProps {
   onClose: () => void
   venueName: string
   venueId: string
+  roomName?: string
 }
 
-export default function CorporateEventsModal({ isOpen, onClose, venueName, venueId }: CorporateEventsModalProps) {
+export default function CorporateEventsModal({ isOpen, onClose, venueName, venueId, roomName }: CorporateEventsModalProps) {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
@@ -93,7 +94,9 @@ export default function CorporateEventsModal({ isOpen, onClose, venueName, venue
         <div className="sticky top-0 bg-white px-8 py-6 flex items-start justify-between" style={{ borderBottom: '1px solid #F0EDE9' }}>
           <div>
             <h2 className="text-2xl font-light text-zinc-900 tracking-tight leading-tight">{venueName}</h2>
-            <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase mt-2 font-light">Private rooms & events</p>
+            <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase mt-2 font-light">
+              {roomName ? roomName : 'Private rooms & events'}
+            </p>
           </div>
           <button onClick={onClose} className="text-zinc-300 hover:text-zinc-600 transition-colors mt-1">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

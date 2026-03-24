@@ -57,8 +57,18 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   const [isVerified, setIsVerified] = useState<boolean | null>(null)
   const [activeTab, setActiveTab] = useState<'reserve' | 'menu' | 'location'>('reserve')
   const [menuModalUrl, setMenuModalUrl] = useState<string | null>(null)
+  const [pageTab, setPageTab] = useState<'reservations' | 'private_hire'>('reservations')
+  const [rooms, setRooms] = useState<any[]>([])
+  const [enquiringRoom, setEnquiringRoom] = useState<any | null>(null)
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
+
+  useEffect(() => {
+    supabase.from('private_hire_rooms').select('*')
+      .eq('venue_id', venue.id).eq('is_active', true)
+      .order('display_order', { ascending: true })
+      .then(({ data }) => setRooms(data || []))
+  }, [venue.id])
 
   useEffect(() => {
     if (!user) { setIsVerified(null); return }
@@ -92,7 +102,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   }, [user, slots])
 
   const handleBook = (slotId: string) => {
-    if (!user) { router.push('/login'); return }
+    if (!user) return
     if (isVerified === false && venue.venue_type === 'club') return
     const slot = slots.find((s) => s.id === slotId)
     if (!slot) return
@@ -139,7 +149,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   }
 
   const handleToggleAlert = async (slotId: string) => {
-    if (!user) { router.push('/login'); return }
+    if (!user) return
     const response = await fetch('/api/alerts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slotId }) })
     const data = await response.json().catch(() => ({}))
     if (!response.ok) throw new Error(data?.error || 'Failed to update alert')
@@ -163,8 +173,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   ].filter(Boolean)
 
-  // Full-page SevenRooms widget — skip ClientDining editorial entirely
-  if ((venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url) {
+  // Full-page SevenRooms widget — only when no private hire rooms to show
+  if ((venue as any).use_sevenrooms_widget && (venue as any).booking_widget_url && !venue.private_hire_available) {
     return (
       <div style={{ marginTop: '-32px' }}>
         <iframe
@@ -242,7 +252,30 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             </div>
           </div>
 
-          {/* Booking section */}
+          {/* Tab switch — only shown when private hire is available */}
+          {venue.private_hire_available && (
+            <div className="mx-3 sm:mx-6 mt-3" style={{ borderBottom: '1px solid #F0EDE9' }}>
+              <div className="flex">
+                {(['reservations', 'private_hire'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setPageTab(tab)}
+                    className="px-6 py-3.5 text-xs font-light tracking-widest uppercase transition-colors relative"
+                    style={{
+                      color: pageTab === tab ? '#18181B' : '#A1A1AA',
+                      borderBottom: pageTab === tab ? '1px solid #18181B' : '1px solid transparent',
+                      marginBottom: '-1px',
+                    }}
+                  >
+                    {tab === 'reservations' ? 'Reserve a table' : 'Private hire'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Reservations tab */}
+          {pageTab === 'reservations' && (
           <div className="px-7 sm:px-9 lg:px-11 py-11" style={{ backgroundColor: '#F8F6F3' }}>
             {user && isVerified === false && venue.venue_type === 'club' ? (
               <div>
@@ -281,29 +314,131 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                     />
                   </div>
                 )}
-
-                {hasPrivateDining && (
-                  <div className={hasSlots ? 'pt-10' : ''} style={hasSlots ? { borderTop: '1px solid #E8E4DF' } : {}}>
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
-                      <div>
-                        <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Private dining</p>
-                        <p className="text-sm font-light text-zinc-500 max-w-xs leading-relaxed">
-                          Private dining rooms and corporate event hire. Available on request.
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => setShowCorporateEventsModal(true)}
-                        className="self-start sm:self-center flex-shrink-0 h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-white transition-colors"
-                        style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
-                      >
-                        Enquire
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>
+          )}
+
+          {/* Private hire tab */}
+          {pageTab === 'private_hire' && (
+          <div className="px-7 sm:px-9 lg:px-11 py-11" style={{ backgroundColor: '#F8F6F3' }}>
+            {rooms.length === 0 ? (
+              <div>
+                <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Private hire</p>
+                <p className="text-sm font-light text-zinc-500 leading-relaxed max-w-md">
+                  Private dining rooms and event spaces available on request.
+                </p>
+                <button
+                  onClick={() => setShowCorporateEventsModal(true)}
+                  className="mt-6 h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-white transition-colors"
+                  style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
+                >
+                  Enquire
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light">
+                  {rooms.length === 1 ? '1 space available' : `${rooms.length} spaces available`}
+                </p>
+                {rooms.map((room) => {
+                  const mainImage = room.images?.find((i: any) => i.is_main) || room.images?.[0]
+                  const capacityParts = [
+                    room.capacity_dining ? `${room.capacity_dining} dining` : null,
+                    room.capacity_standing ? `${room.capacity_standing} standing` : null,
+                    room.capacity_boardroom ? `${room.capacity_boardroom} boardroom` : null,
+                  ].filter(Boolean)
+                  return (
+                    <div
+                      key={room.id}
+                      className="bg-white overflow-hidden"
+                      style={{ borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+                    >
+                      {/* Room images */}
+                      {room.images?.length > 0 && (
+                        <div className="relative w-full overflow-hidden" style={{ height: '220px' }}>
+                          <img
+                            src={mainImage?.url}
+                            alt={room.name}
+                            className="w-full h-full object-cover"
+                          />
+                          {room.images.length > 1 && (
+                            <span className="absolute bottom-3 right-3 text-[10px] font-light text-white bg-black/50 px-2 py-1 rounded">
+                              {room.images.length} photos
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="p-6">
+                        {/* Room type badge */}
+                        <p className="text-[9px] tracking-[0.22em] text-zinc-400 uppercase font-light mb-2">
+                          {room.space_type === 'whole_venue' ? 'Whole venue' :
+                           room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
+                        </p>
+
+                        <h3 className="text-xl font-light text-zinc-900 mb-3">{room.name}</h3>
+
+                        {room.description && (
+                          <p className="text-sm font-light text-zinc-500 leading-relaxed mb-5 max-w-lg">
+                            {room.description}
+                          </p>
+                        )}
+
+                        {/* Stats row */}
+                        <div className="flex flex-wrap gap-x-6 gap-y-3 mb-5">
+                          {capacityParts.length > 0 && (
+                            <div>
+                              <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Capacity</p>
+                              <p className="text-[13px] font-light text-zinc-700">{capacityParts.join(' · ')}</p>
+                            </div>
+                          )}
+                          {room.pricing_from && (
+                            <div>
+                              <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">
+                                {room.pricing_type === 'min_spend' ? 'Min spend' :
+                                 room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
+                              </p>
+                              <p className="text-[13px] font-light text-zinc-700">
+                                £{room.pricing_from.toLocaleString()}
+                                {room.pricing_notes ? ` ${room.pricing_notes}` : ''}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Tags */}
+                        {(room.best_for?.length > 0 || room.facilities?.length > 0) && (
+                          <div className="flex flex-wrap gap-1.5 mb-6">
+                            {room.best_for?.map((tag: string) => (
+                              <span key={tag} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
+                                {tag}
+                              </span>
+                            ))}
+                            {room.facilities?.map((f: string) => (
+                              <span key={f} className="text-[11px] font-light text-zinc-400 border border-zinc-200 px-2.5 py-1 rounded-full">
+                                {f}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* CTA */}
+                        <button
+                          onClick={() => { setEnquiringRoom(room); setShowCorporateEventsModal(true) }}
+                          className="h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
+                          style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
+                        >
+                          Enquire about this space
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+          )}
 
 
 
@@ -440,9 +575,10 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
       <CorporateEventsModal
         isOpen={showCorporateEventsModal}
-        onClose={() => setShowCorporateEventsModal(false)}
+        onClose={() => { setShowCorporateEventsModal(false); setEnquiringRoom(null) }}
         venueName={venue.name}
         venueId={venue.id}
+        roomName={enquiringRoom?.name}
       />
     </div>
   )
