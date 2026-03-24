@@ -190,8 +190,146 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
     )
   }
 
-  return (
-    <div className="min-h-screen">
+  // Private hire mode — completely different layout
+  if (pageTab === 'private_hire') {
+    return (
+      <div className="min-h-screen">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+          {/* Light venue header */}
+          <div className="mb-8">
+            <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-2">
+              {taxonomyParts.join(' · ')}
+            </p>
+            <h1 className="text-2xl font-light text-zinc-900 tracking-tight mb-1">{venue.name}</h1>
+            {rooms.length > 0 && (
+              <p className="text-sm font-light text-zinc-400">
+                {rooms.length === 1 ? '1 private space available' : `${rooms.length} private spaces available`}
+              </p>
+            )}
+          </div>
+
+          {/* Room cards */}
+          {rooms.length === 0 ? (
+            <div className="bg-white p-8 text-center" style={{ borderRadius: '8px', border: '1px solid #F0EDE9' }}>
+              <p className="text-sm font-light text-zinc-400 mb-5">Private dining rooms and event spaces available on request.</p>
+              <button
+                onClick={() => setShowCorporateEventsModal(true)}
+                className="h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 transition-colors"
+                style={{ border: '1px solid #C8C4BF', borderRadius: '3px' }}
+              >
+                Enquire
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {rooms.map((room) => {
+                const mainImage = room.images?.find((i: any) => i.is_main) || room.images?.[0]
+                const capacityParts = [
+                  room.capacity_dining ? `${room.capacity_dining} dining` : null,
+                  room.capacity_standing ? `${room.capacity_standing} standing` : null,
+                  room.capacity_boardroom ? `${room.capacity_boardroom} boardroom` : null,
+                ].filter(Boolean)
+
+                return (
+                  <div key={room.id} className="bg-white overflow-hidden" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
+                    {mainImage?.url && (
+                      <div className="relative w-full overflow-hidden" style={{ height: '260px' }}>
+                        <img src={mainImage.url} alt={room.name} className="w-full h-full object-cover" />
+                        {room.images?.length > 1 && (
+                          <span className="absolute bottom-3 right-3 text-[10px] font-light text-white bg-black/50 px-2 py-1 rounded">
+                            {room.images.length} photos
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="px-7 sm:px-9 py-7">
+                      <p className="text-[9px] tracking-[0.22em] text-zinc-400 uppercase font-light mb-2">
+                        {room.space_type === 'whole_venue' ? 'Whole venue' :
+                         room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
+                      </p>
+                      <h2 className="text-xl font-light text-zinc-900 mb-3">{room.name}</h2>
+
+                      {room.description && (
+                        <p className="text-sm font-light text-zinc-500 leading-relaxed mb-6 max-w-lg">
+                          {room.description}
+                        </p>
+                      )}
+
+                      <div className="flex flex-wrap gap-x-8 gap-y-4 mb-6">
+                        {capacityParts.length > 0 && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Capacity</p>
+                            <p className="text-[13px] font-light text-zinc-700">{capacityParts.join(' · ')}</p>
+                          </div>
+                        )}
+                        {room.pricing_from && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">
+                              {room.pricing_type === 'min_spend' ? 'Min spend' :
+                               room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
+                            </p>
+                            <p className="text-[13px] font-light text-zinc-700">
+                              £{room.pricing_from.toLocaleString()}{room.pricing_notes ? ` ${room.pricing_notes}` : ''}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {(room.best_for?.length > 0 || room.facilities?.length > 0) && (
+                        <div className="flex flex-wrap gap-1.5 mb-7">
+                          {room.best_for?.map((tag: string) => (
+                            <span key={tag} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">{tag}</span>
+                          ))}
+                          {room.facilities?.map((f: string) => (
+                            <span key={f} className="text-[11px] font-light text-zinc-400 border border-zinc-200 px-2.5 py-1 rounded-full">{f}</span>
+                          ))}
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => { setEnquiringRoom(room); setShowCorporateEventsModal(true) }}
+                        className="h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
+                        style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
+                      >
+                        Enquire about this space
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Light address footer */}
+          {venue.address && (
+            <div className="mt-8 pt-6" style={{ borderTop: '1px solid #F0EDE9' }}>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+              >
+                {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+              </a>
+            </div>
+          )}
+
+        </div>
+
+        <CorporateEventsModal
+          isOpen={showCorporateEventsModal}
+          onClose={() => { setShowCorporateEventsModal(false); setEnquiringRoom(null) }}
+          venueName={venue.name}
+          venueId={venue.id}
+          roomName={enquiringRoom?.name}
+        />
+      </div>
+    )
+  }
+
+
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white overflow-hidden" style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
 
@@ -297,129 +435,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             )}
           </div>
           )}
-
-          {/* Private hire tab */}
-          {pageTab === 'private_hire' && (
-          <div className="px-7 sm:px-9 lg:px-11 py-11" style={{ backgroundColor: '#F8F6F3' }}>
-            {rooms.length === 0 ? (
-              <div>
-                <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Private hire</p>
-                <p className="text-sm font-light text-zinc-500 leading-relaxed max-w-md">
-                  Private dining rooms and event spaces available on request.
-                </p>
-                <button
-                  onClick={() => setShowCorporateEventsModal(true)}
-                  className="mt-6 h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-white transition-colors"
-                  style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
-                >
-                  Enquire
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light">
-                  {rooms.length === 1 ? '1 space available' : `${rooms.length} spaces available`}
-                </p>
-                {rooms.map((room) => {
-                  const mainImage = room.images?.find((i: any) => i.is_main) || room.images?.[0]
-                  const capacityParts = [
-                    room.capacity_dining ? `${room.capacity_dining} dining` : null,
-                    room.capacity_standing ? `${room.capacity_standing} standing` : null,
-                    room.capacity_boardroom ? `${room.capacity_boardroom} boardroom` : null,
-                  ].filter(Boolean)
-                  return (
-                    <div
-                      key={room.id}
-                      className="bg-white overflow-hidden"
-                      style={{ borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
-                    >
-                      {/* Room images */}
-                      {room.images?.length > 0 && (
-                        <div className="relative w-full overflow-hidden" style={{ height: '220px' }}>
-                          <img
-                            src={mainImage?.url}
-                            alt={room.name}
-                            className="w-full h-full object-cover"
-                          />
-                          {room.images.length > 1 && (
-                            <span className="absolute bottom-3 right-3 text-[10px] font-light text-white bg-black/50 px-2 py-1 rounded">
-                              {room.images.length} photos
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="p-6">
-                        {/* Room type badge */}
-                        <p className="text-[9px] tracking-[0.22em] text-zinc-400 uppercase font-light mb-2">
-                          {room.space_type === 'whole_venue' ? 'Whole venue' :
-                           room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
-                        </p>
-
-                        <h3 className="text-xl font-light text-zinc-900 mb-3">{room.name}</h3>
-
-                        {room.description && (
-                          <p className="text-sm font-light text-zinc-500 leading-relaxed mb-5 max-w-lg">
-                            {room.description}
-                          </p>
-                        )}
-
-                        {/* Stats row */}
-                        <div className="flex flex-wrap gap-x-6 gap-y-3 mb-5">
-                          {capacityParts.length > 0 && (
-                            <div>
-                              <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">Capacity</p>
-                              <p className="text-[13px] font-light text-zinc-700">{capacityParts.join(' · ')}</p>
-                            </div>
-                          )}
-                          {room.pricing_from && (
-                            <div>
-                              <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">
-                                {room.pricing_type === 'min_spend' ? 'Min spend' :
-                                 room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
-                              </p>
-                              <p className="text-[13px] font-light text-zinc-700">
-                                £{room.pricing_from.toLocaleString()}
-                                {room.pricing_notes ? ` ${room.pricing_notes}` : ''}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Tags */}
-                        {(room.best_for?.length > 0 || room.facilities?.length > 0) && (
-                          <div className="flex flex-wrap gap-1.5 mb-6">
-                            {room.best_for?.map((tag: string) => (
-                              <span key={tag} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
-                                {tag}
-                              </span>
-                            ))}
-                            {room.facilities?.map((f: string) => (
-                              <span key={f} className="text-[11px] font-light text-zinc-400 border border-zinc-200 px-2.5 py-1 rounded-full">
-                                {f}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* CTA */}
-                        <button
-                          onClick={() => { setEnquiringRoom(room); setShowCorporateEventsModal(true) }}
-                          className="h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
-                          style={{ border: '1px solid #C8C4BF', backgroundColor: 'transparent', borderRadius: '3px' }}
-                        >
-                          Enquire about this space
-                        </button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-          )}
-
-
 
 {/* Menu Highlights */}
 {(venue as any).menu_highlights && (
