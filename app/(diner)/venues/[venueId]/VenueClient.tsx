@@ -263,14 +263,16 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                             {room.images.length} photos
                           </span>
                         )}
-                        <span className="absolute top-3 left-3 text-[9px] tracking-[0.18em] uppercase font-light text-white/80 bg-black/30 px-2 py-1 rounded">
-                          {room.space_type === 'whole_venue' ? 'Whole venue' :
-                           room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
-                        </span>
                       </div>
                     )}
 
                     <div className="px-5 sm:px-7 py-5">
+
+                      {/* Space type label */}
+                      <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-1.5">
+                        {room.space_type === 'whole_venue' ? 'Whole venue' :
+                         room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
+                      </p>
 
                       {/* Room name */}
                       <h2 className="text-lg font-light text-zinc-900 tracking-tight mb-3">{room.name}</h2>

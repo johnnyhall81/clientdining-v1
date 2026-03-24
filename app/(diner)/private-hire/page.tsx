@@ -186,21 +186,15 @@ export default function PrivateHirePage() {
                   ) : (
                     <div className="absolute inset-0 bg-zinc-100" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  {/* Space type top-left */}
-                  <span className="absolute top-3 left-3 text-[9px] tracking-[0.18em] uppercase font-light text-white/80 bg-black/30 px-2 py-1 rounded">
-                    {room.space_type === 'whole_venue' ? 'Whole venue' :
-                     room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
-                  </span>
-                  {/* Venue name bottom-left */}
-                  <div className="absolute bottom-3 left-4">
-                    <p className="text-white/80 text-xs font-light">{room.venue.name}</p>
-                    <p className="text-white/50 text-[11px] font-light">{room.venue.area}</p>
-                  </div>
                 </Link>
 
                 {/* Content */}
                 <div className="px-5 py-5">
+
+                  {/* Venue label */}
+                  <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-1.5">
+                    {room.venue.name} · {room.venue.area}
+                  </p>
 
                   {/* Room name */}
                   <h3 className="text-lg font-light text-zinc-900 tracking-tight mb-3">{room.name}</h3>
