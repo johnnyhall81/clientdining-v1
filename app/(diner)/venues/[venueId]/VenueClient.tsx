@@ -230,13 +230,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             </div>
           </div>
 
-          {/* Section title */}
-          {rooms.length > 0 && (
-            <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-4">
-              Private spaces at {venue.name}
-            </p>
-          )}
-
           {/* Room cards */}
           {rooms.length === 0 ? (
             <div className="bg-white p-10 text-center" style={{ borderRadius: '8px', border: '1px solid #F0EDE9' }}>
