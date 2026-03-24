@@ -242,17 +242,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             </div>
           </div>
 
-          {/* Browse link — orientation cue before rooms */}
-          <div className="mb-6">
-            <a href="/private-hire"
-              className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors inline-flex items-center gap-1.5">
-              Browse all private hire spaces
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
-
           {/* Room cards */}
           {rooms.length === 0 ? (
             <div className="bg-white p-10 text-center" style={{ borderRadius: '8px', border: '1px solid #F0EDE9' }}>
@@ -363,6 +352,19 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               })}
             </div>
           )}
+
+          {/* Browse more — after exhausting venue spaces */}
+          <div className="mt-6">
+            <a href="/private-hire"
+              className="flex items-center justify-between w-full px-6 py-4 bg-white hover:bg-zinc-50 transition-colors"
+              style={{ borderRadius: '6px', border: '1px solid #E4E0DB' }}
+            >
+              <span className="text-sm font-light text-zinc-600">Browse more private hire spaces</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
 
         </div>
 
@@ -586,6 +588,17 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               )}
             </div>
           )}
+
+          {/* Browse — natural next step after exhausting this venue's spaces */}
+          <div className="mt-8 pt-6" style={{ borderTop: '1px solid #F0EDE9' }}>
+            <a href="/private-hire"
+              className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors inline-flex items-center gap-1.5">
+              Browse more private hire spaces
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
 
         </div>
       </div>
