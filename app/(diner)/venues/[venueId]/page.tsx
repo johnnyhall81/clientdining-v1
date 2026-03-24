@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import VenueClient from './VenueClient'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function VenuePage({ params }: { params: { venueId: string } }) {
