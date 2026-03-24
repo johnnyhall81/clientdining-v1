@@ -141,79 +141,54 @@ export default function FAQClient() {
   ]
 
   return (
-    <div className="">
-      <section className="max-w-4xl mx-auto px-6 pt-24 pb-16">
-        <h1 className="text-5xl md:text-6xl font-light text-zinc-900 mb-6 tracking-tight">
-          Questions
-        </h1>
-        <p className="text-xl text-zinc-500 font-light leading-relaxed">
-          
-        </p>
-      </section>
+    <div className="max-w-2xl">
+
+      <div className="mb-8">
+        <h1 className="text-3xl font-light text-zinc-900 tracking-tight mb-1">FAQ</h1>
+        <p className="text-sm font-light text-zinc-400">How ClientDining works.</p>
+      </div>
 
       {faqData.map((category, categoryIndex) => (
-        <div key={categoryIndex}>
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="border-t border-zinc-200"></div>
-          </div>
-
-          <section className="max-w-4xl mx-auto px-6 py-16">
-            <h2 className="text-2xl font-light text-zinc-900 mb-8">
-              {category.title}
-            </h2>
-
-            <div className="space-y-4">
-              {category.questions.map((item, itemIndex) => {
-                const itemId = `${categoryIndex}-${itemIndex}`
-                const isOpen = openItems.includes(itemId)
-
-                return (
-                  <div
-                    key={itemId}
-                    className="border-b border-zinc-200 last:border-0 pb-4 last:pb-0"
+        <div key={categoryIndex} className="mb-8">
+          <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-3">
+            {category.title}
+          </p>
+          <div>
+            {category.questions.map((item, itemIndex) => {
+              const itemId = `${categoryIndex}-${itemIndex}`
+              const isOpen = openItems.includes(itemId)
+              return (
+                <div key={itemId} className="border-b" style={{ borderColor: '#F0EDE9' }}>
+                  <button
+                    onClick={() => toggleItem(itemId)}
+                    className="w-full flex justify-between items-start text-left py-4 gap-4"
                   >
-                    <button
-                      onClick={() => toggleItem(itemId)}
-                      className="w-full flex justify-between text-left"
-                    >
-                      <span className="text-base font-light text-zinc-900 pr-4">
-                        {item.q}
-                      </span>
-                      <ChevronDown
-                        className={`w-5 h-5 text-zinc-400 flex-shrink-0 transition-transform ${
-                          isOpen ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </button>
-
-                    {isOpen && (
-                      <div className="mt-3 text-sm text-zinc-500 font-light leading-relaxed">
-                        {item.a}
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          </section>
+                    <span className="text-sm font-light text-zinc-700">{item.q}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-zinc-300 flex-shrink-0 mt-0.5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className="pb-4 text-sm font-light text-zinc-500 leading-relaxed">
+                      {item.a}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       ))}
 
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="border-t border-zinc-200"></div>
-      </div>
-
-      <section className="max-w-4xl mx-auto px-6 py-16">
-        <p className="text-zinc-500 font-light leading-relaxed mb-6">
-          Still have a question?
-        </p>
-        <a
-          href="mailto:support@clientdining.com"
-          className="text-zinc-900 font-light underline underline-offset-4 hover:no-underline"
-        >
+      <div className="pt-6 pb-4" style={{ borderTop: '1px solid #F0EDE9' }}>
+        <p className="text-sm font-light text-zinc-400 mb-1.5">Still have a question?</p>
+        <a href="mailto:support@clientdining.com"
+          className="text-sm font-light text-zinc-700 hover:text-zinc-900 transition-colors">
           support@clientdining.com
         </a>
-      </section>
+      </div>
+
     </div>
   )
 }
+

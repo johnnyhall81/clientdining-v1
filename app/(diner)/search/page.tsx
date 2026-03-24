@@ -481,47 +481,48 @@ const handleCancel = async () => {
             const visibleSlots = slots.slice(0, MAX_VISIBLE)
 
             return (
-              <div key={venue.id} className="bg-white overflow-hidden hover:shadow-sm transition-all duration-300" style={{ borderRadius: '6px', border: '1px solid #F0EDE9', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+              <div key={venue.id} className="bg-white overflow-hidden" style={{ borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
                 <div className="flex flex-col md:flex-row">
 
-                  {/* Image */}
-                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-56 aspect-[4/3] md:aspect-auto bg-zinc-100 overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity">
+                  {/* Image — 4:3 on mobile, fixed width on desktop */}
+                  <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-48 md:flex-shrink-0 bg-zinc-100 overflow-hidden hover:opacity-90 transition-opacity" style={{ aspectRatio: '4/3' }}>
                     {venue.image_hero ? (
-                      <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 224px" quality={70} className="object-cover" />
+                      <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 192px" quality={70} className="object-cover" />
                     ) : (
                       <div className="w-full h-full bg-zinc-100" />
                     )}
                   </Link>
 
                   {/* Content */}
-                  <div className="flex-1 px-7 py-6 flex flex-col justify-between gap-5">
+                  <div className="flex-1 px-6 py-5 flex flex-col justify-between gap-4 min-w-0">
 
                     {/* Venue info */}
-                    <div className="space-y-1">
+                    <div>
                       <Link href={`/venues/${venue.id}`} prefetch={true} className="hover:opacity-60 transition-opacity">
-                        <h3 className="text-lg font-light text-zinc-900 tracking-tight">{venue.name}</h3>
+                        <h3 className="text-base font-light text-zinc-900 tracking-tight mb-0.5">{venue.name}</h3>
                       </Link>
                       {venue.address && (
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, London`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm font-light text-zinc-400 hover:text-zinc-700 transition-colors block"
+                          className="text-xs font-light text-zinc-400 hover:text-zinc-600 transition-colors"
                         >
-                          {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                          {venue.area}{venue.address ? ` · ${venue.address}` : ''}
                         </a>
                       )}
                     </div>
 
-                    {/* Time slots */}
-                    <div className="flex flex-wrap gap-2">
+                    {/* Time slots — lighter, less boxy */}
+                    <div className="flex flex-wrap gap-1.5">
                       {visibleSlots.map(slot => {
                         const isBookedByMe = bookedSlots.has(slot.id)
 
                         if (isBookedByMe) {
-                          const partySize = bookedPartySizes.get(slot.id)
                           return (
-                            <Link href="/bookings" key={slot.id} className="inline-flex items-center px-3.5 py-2 text-sm font-light transition-opacity hover:opacity-80" style={{ backgroundColor: '#F7FBF9', border: '1px solid #D4EDE2', borderRadius: '3px', color: '#2A6B4A' }}>
+                            <Link href="/bookings" key={slot.id}
+                              className="inline-flex items-center px-3 py-1.5 text-xs font-light transition-opacity hover:opacity-80"
+                              style={{ backgroundColor: '#F0FAF5', border: '1px solid #C8E6D4', borderRadius: '3px', color: '#2A6B4A' }}>
                               {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                             </Link>
                           )
@@ -530,33 +531,29 @@ const handleCancel = async () => {
                         if (slot.status === 'booked') {
                           const hasAlert = alerts.has(slot.id)
                           return (
-                            <button
-                              key={slot.id}
-                              onClick={() => handleToggleAlert(slot.id)}
-                              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-600"
-                              style={{ backgroundColor: '#FAFAFA', border: '1px solid #F0EDE9', borderRadius: '3px' }}
-                            >
+                            <button key={slot.id} onClick={() => handleToggleAlert(slot.id)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-light text-zinc-400 hover:text-zinc-600 transition-colors"
+                              style={{ backgroundColor: 'transparent', border: '1px solid #F0EDE9', borderRadius: '3px' }}>
                               {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
-                              <span className="text-[10px]">{hasAlert ? '🔔' : '· Alert'}</span>
+                              {hasAlert && <span className="text-[9px] ml-0.5">🔔</span>}
                             </button>
                           )
                         }
 
                         return (
-                          <button
-                            key={slot.id}
-                            onClick={() => handleBook(slot.id)}
+                          <button key={slot.id} onClick={() => handleBook(slot.id)}
                             disabled={bookingSlotId === slot.id}
-                            className="inline-flex items-center px-3.5 py-2 text-sm font-light text-zinc-700 bg-white hover:bg-zinc-50 transition-colors disabled:opacity-40"
-                            style={{ border: '1px solid #E8E4DF', borderRadius: '3px' }}
-                          >
+                            className="inline-flex items-center px-3 py-1.5 text-xs font-light text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors disabled:opacity-40"
+                            style={{ border: '1px solid #E4E0DB', borderRadius: '3px' }}>
                             {formatSlotDate(slot.start_at)} · {formatSlotTime(slot.start_at)}
                           </button>
                         )
                       })}
 
                       {slots.length > MAX_VISIBLE && (
-                        <Link href={`/venues/${venue.id}`} prefetch={true} className="inline-flex items-center px-3.5 py-2 text-sm font-light text-zinc-400 hover:text-zinc-700 transition-colors" style={{ border: '1px solid #F0EDE9', borderRadius: '3px' }}>
+                        <Link href={`/venues/${venue.id}`} prefetch={true}
+                          className="inline-flex items-center px-3 py-1.5 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+                          style={{ border: '1px solid #F0EDE9', borderRadius: '3px' }}>
                           +{slots.length - MAX_VISIBLE} more
                         </Link>
                       )}
