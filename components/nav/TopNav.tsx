@@ -243,8 +243,6 @@ export default function TopNav() {
                 </svg>
               </Link>
 
-              <div className="w-px h-4 bg-zinc-200 mx-1" />
-
               <Link
                 href="/search"
                 className={`transition-colors ${
