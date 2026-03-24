@@ -183,76 +183,87 @@ export default function PrivateHirePage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {filtered.map(room => {
             const mainImage = room.images?.find(i => i.is_main) || room.images?.[0]
             const heroImage = mainImage?.url || room.venue.image_hero
-            const capacityParts = [
-              room.capacity_dining ? `${room.capacity_dining} dining` : null,
-              room.capacity_standing ? `${room.capacity_standing} standing` : null,
-              room.capacity_boardroom ? `${room.capacity_boardroom} boardroom` : null,
-            ].filter(Boolean)
 
             return (
               <div
                 key={room.id}
-                className="bg-white overflow-hidden transition-shadow duration-200 hover:shadow-md"
-                style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #F0EDE9' }}
+                className="bg-white overflow-hidden"
+                style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
               >
-                {/* Image */}
-                <Link href={`/venues/${room.venue_id}?tab=private_hire`} className="block relative overflow-hidden" style={{ height: '200px' }}>
+                {/* 4:3 image */}
+                <Link href={`/venues/${room.venue_id}?tab=private_hire`} className="block relative overflow-hidden" style={{ paddingTop: '75%' }}>
                   {heroImage ? (
                     <img
                       src={heroImage}
                       alt={room.name}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
                     />
                   ) : (
-                    <div className="w-full h-full bg-zinc-100" />
+                    <div className="absolute inset-0 bg-zinc-100" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                  {/* Venue name overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  {/* Space type top-left */}
+                  <span className="absolute top-3 left-3 text-[9px] tracking-[0.18em] uppercase font-light text-white/80 bg-black/30 px-2 py-1 rounded">
+                    {room.space_type === 'whole_venue' ? 'Whole venue' :
+                     room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
+                  </span>
+                  {/* Venue name bottom-left */}
                   <div className="absolute bottom-3 left-4">
-                    <p className="text-white/70 text-xs font-light">{room.venue.name}</p>
+                    <p className="text-white/80 text-xs font-light">{room.venue.name}</p>
                     <p className="text-white/50 text-[11px] font-light">{room.venue.area}</p>
                   </div>
                 </Link>
 
                 {/* Content */}
-                <div className="p-5">
-                  <p className="text-[9px] tracking-[0.22em] text-zinc-400 uppercase font-light mb-1.5">
-                    {room.space_type === 'whole_venue' ? 'Whole venue' :
-                     room.space_type === 'semi_private' ? 'Semi-private' : 'Private space'}
-                  </p>
-                  <h3 className="text-lg font-light text-zinc-900 mb-2">{room.name}</h3>
+                <div className="px-5 py-5">
 
-                  {room.description && (
-                    <p className="text-sm font-light text-zinc-500 leading-relaxed mb-4 line-clamp-2">
-                      {room.description}
-                    </p>
-                  )}
+                  {/* Room name */}
+                  <h3 className="text-lg font-light text-zinc-900 tracking-tight mb-3">{room.name}</h3>
 
-                  {/* Stats */}
-                  <div className="flex flex-wrap gap-x-5 gap-y-2 mb-4">
-                    {capacityParts.length > 0 && (
+                  {/* Spec row — decision data first */}
+                  <div className="flex flex-wrap gap-x-5 gap-y-2 mb-4 pb-4" style={{ borderBottom: '1px solid #F0EDE9' }}>
+                    {room.capacity_dining && (
                       <div>
-                        <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-0.5">Capacity</p>
-                        <p className="text-xs font-light text-zinc-700">{capacityParts.join(' · ')}</p>
+                        <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Dining</p>
+                        <p className="text-xs font-light text-zinc-700">{room.capacity_dining} seated</p>
+                      </div>
+                    )}
+                    {room.capacity_standing && (
+                      <div>
+                        <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Standing</p>
+                        <p className="text-xs font-light text-zinc-700">{room.capacity_standing} guests</p>
+                      </div>
+                    )}
+                    {room.capacity_boardroom && (
+                      <div>
+                        <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Boardroom</p>
+                        <p className="text-xs font-light text-zinc-700">{room.capacity_boardroom} seats</p>
                       </div>
                     )}
                     {room.pricing_from && (
                       <div>
-                        <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-0.5">
+                        <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
                           {room.pricing_type === 'min_spend' ? 'Min spend' :
                            room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
                         </p>
                         <p className="text-xs font-light text-zinc-700">
-                          £{room.pricing_from.toLocaleString()}
-                          {room.pricing_notes ? ` ${room.pricing_notes}` : ''}
+                          £{room.pricing_from.toLocaleString()}{room.pricing_notes ? ` ${room.pricing_notes}` : ''}
                         </p>
                       </div>
                     )}
                   </div>
+
+                  {/* Description — 2 lines max */}
+                  {room.description && (
+                    <p className="text-sm font-light text-zinc-500 leading-relaxed mb-4"
+                      style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {room.description}
+                    </p>
+                  )}
 
                   {/* Best for tags */}
                   {room.best_for?.length > 0 && (
