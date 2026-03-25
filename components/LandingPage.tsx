@@ -19,7 +19,7 @@ export default function LandingPage() {
         : 'https://clientdining.com'
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',
-      options: { redirectTo: `${base}/home` },
+      options: { redirectTo: `${base}/auth/callback?next=/home` },
     })
     if (error) setAuthLoading(false)
   }

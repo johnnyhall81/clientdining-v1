@@ -82,7 +82,7 @@ const [cancellingSlot, setCancellingSlot] = useState<{
         : 'https://clientdining.com'
     await supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',
-      options: { redirectTo: `${base}${pathname}` },
+      options: { redirectTo: `${base}/auth/callback?next=${encodeURIComponent(pathname)}` },
     })
   }
 
