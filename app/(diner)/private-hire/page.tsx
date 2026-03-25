@@ -29,6 +29,7 @@ type Room = {
     name: string
     area: string
     image_hero: string | null
+    logo_url: string | null
   }
 }
 
@@ -61,7 +62,7 @@ export default function PrivateHirePage() {
       setLoading(true)
       const { data, error } = await supabase
         .from('private_hire_rooms')
-        .select(`*, venue:venues!inner(id, name, area, image_hero)`)
+        .select(`*, venue:venues!inner(id, name, area, image_hero, logo_url)`)
         .eq('is_active', true)
         .eq('venues.is_active', true)
         .order('display_order', { ascending: true })
@@ -195,10 +196,20 @@ export default function PrivateHirePage() {
                 {/* Content */}
                 <div className="px-5 py-5">
 
-                  {/* Venue label */}
-                  <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-1.5">
+                {/* Venue label + logo */}
+                <div className="flex items-center justify-between mb-1.5">
+                  <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light">
                     {room.venue.name} · {room.venue.area}
                   </p>
+                  {room.venue.logo_url && (
+                    <img
+                      src={room.venue.logo_url}
+                      alt={room.venue.name}
+                      className="h-4 w-auto object-contain flex-shrink-0"
+                      style={{ filter: 'brightness(0)', opacity: 0.5, maxWidth: '80px' }}
+                    />
+                  )}
+                </div>
 
                   {/* Room name */}
                   <h3 className="text-lg font-light text-zinc-900 tracking-tight mb-3">{room.name}</h3>
