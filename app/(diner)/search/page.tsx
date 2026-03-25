@@ -613,10 +613,6 @@ const handleCancel = async () => {
   />
 )}
 
-
-
-    </div>
-
       {/* Pre-auth modal */}
       {showSignInModal && (
         <div
