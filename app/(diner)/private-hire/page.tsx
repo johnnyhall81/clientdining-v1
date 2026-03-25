@@ -49,8 +49,7 @@ const pillStyle = (active: boolean) => ({
   color: active ? 'white' : '#71717A',
 })
 
-  // Private hire discovery
-  // Private hire discovery
+export default function Page() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [loading, setLoading] = useState(true)
   const [filterAreas, setFilterAreas] = useState<string[]>([])
@@ -67,15 +66,18 @@ const pillStyle = (active: boolean) => ({
         .eq('is_active', true)
         .eq('venues.is_active', true)
         .order('display_order', { ascending: true })
+
       if (!error) setRooms((data || []) as any)
       setLoading(false)
     }
+
     load()
   }, [])
 
   const filtered = rooms.filter(room => {
     if (filterAreas.length > 0 && !filterAreas.includes(room.venue.area)) return false
     if (filterOccasion && !room.best_for?.includes(filterOccasion)) return false
+
     if (filterGuest) {
       const range = GUEST_RANGES.find(r => r.label === filterGuest)
       if (range) {
@@ -84,6 +86,7 @@ const pillStyle = (active: boolean) => ({
           room.capacity_standing || 0,
           room.capacity_boardroom || 0
         )
+
         if (range.max === Infinity) {
           if (maxCap > 0 && maxCap < 80) return false
         } else {
@@ -91,73 +94,90 @@ const pillStyle = (active: boolean) => ({
         }
       }
     }
+
     return true
   })
 
   const toggleArea = (area: string) =>
-    setFilterAreas(prev => prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area])
+    setFilterAreas(prev =>
+      prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area]
+    )
 
-  // Derive available areas and occasions from loaded rooms
   const availableAreas = Array.from(new Set(rooms.map(r => r.venue.area))).sort()
-  const availableOccasions = Array.from(
-    new Set(rooms.flatMap(r => r.best_for || []))
-  ).sort()
+  const availableOccasions = Array.from(new Set(rooms.flatMap(r => r.best_for || []))).sort()
 
   const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
-  const clearFilters = () => { setFilterAreas([]); setFilterGuest(''); setFilterOccasion('') }
+  const clearFilters = () => {
+    setFilterAreas([])
+    setFilterGuest('')
+    setFilterOccasion('')
+  }
 
   return (
     <div className="space-y-5">
-
-      {/* Minimal header */}
       <div className="flex items-baseline justify-between">
-        <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light">Private hire · London</p>
+        <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light">
+          Private hire · London
+        </p>
         {hasFilters && (
-          <button onClick={clearFilters} className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+          <button
+            onClick={clearFilters}
+            className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+          >
             Clear
           </button>
         )}
       </div>
 
-      {/* All-pill filters */}
       <div className="space-y-2">
         <div className="flex flex-wrap gap-1.5">
           {GUEST_RANGES.map(r => (
-            <button key={r.label} onClick={() => setFilterGuest(filterGuest === r.label ? '' : r.label)}
+            <button
+              key={r.label}
+              onClick={() => setFilterGuest(filterGuest === r.label ? '' : r.label)}
               className="px-3 py-1 text-xs font-light transition-colors"
-              style={pillStyle(filterGuest === r.label)}>
+              style={pillStyle(filterGuest === r.label)}
+            >
               {r.label}
             </button>
           ))}
         </div>
+
         <div className="flex flex-wrap gap-1.5">
           {availableAreas.map(a => (
-            <button key={a} onClick={() => toggleArea(a)}
+            <button
+              key={a}
+              onClick={() => toggleArea(a)}
               className="px-3 py-1 text-xs font-light transition-colors"
-              style={pillStyle(filterAreas.includes(a))}>
+              style={pillStyle(filterAreas.includes(a))}
+            >
               {a}
             </button>
           ))}
         </div>
+
         <div className="flex flex-wrap gap-1.5">
           {availableOccasions.map(o => (
-            <button key={o} onClick={() => setFilterOccasion(filterOccasion === o ? '' : o)}
+            <button
+              key={o}
+              onClick={() => setFilterOccasion(filterOccasion === o ? '' : o)}
               className="px-3 py-1 text-xs font-light transition-colors"
-              style={pillStyle(filterOccasion === o)}>
+              style={pillStyle(filterOccasion === o)}
+            >
               {o}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Result count */}
       {!loading && (
         <p className="text-sm font-light text-zinc-500">
-          {filtered.length === 0 ? 'No spaces found' : `${filtered.length} ${filtered.length === 1 ? 'private space' : 'private spaces'}`}
+          {filtered.length === 0
+            ? 'No spaces found'
+            : `${filtered.length} ${filtered.length === 1 ? 'private space' : 'private spaces'}`}
         </p>
       )}
 
-      {/* Room cards */}
       {loading ? (
         <div className="text-center py-16">
           <p className="text-sm font-light text-zinc-400">Loading spaces…</p>
@@ -165,7 +185,10 @@ const pillStyle = (active: boolean) => ({
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-xl border border-zinc-100">
           <p className="text-sm font-light text-zinc-400">No spaces match your filters.</p>
-          <button onClick={clearFilters} className="mt-3 text-xs font-light text-zinc-500 hover:text-zinc-800 transition-colors underline underline-offset-2">
+          <button
+            onClick={clearFilters}
+            className="mt-3 text-xs font-light text-zinc-500 hover:text-zinc-800 transition-colors underline underline-offset-2"
+          >
             Clear filters
           </button>
         </div>
@@ -181,8 +204,11 @@ const pillStyle = (active: boolean) => ({
                 className="bg-white overflow-hidden"
                 style={{ borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
               >
-                {/* 4:3 image */}
-                <Link href={`/venues/${room.venue_id}?tab=private_hire`} className="block relative overflow-hidden" style={{ paddingTop: '75%' }}>
+                <Link
+                  href={`/venues/${room.venue_id}?tab=private_hire`}
+                  className="block relative overflow-hidden"
+                  style={{ paddingTop: '75%' }}
+                >
                   {heroImage ? (
                     <img
                       src={heroImage}
@@ -194,79 +220,100 @@ const pillStyle = (active: boolean) => ({
                   )}
                 </Link>
 
-                {/* Content */}
                 <div className="px-5 py-5">
-
-                {/* Venue label + logo */}
-                <div className="flex items-center justify-between mb-1.5">
-                  <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light">
+                  <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-2">
                     {room.venue.name} · {room.venue.area}
                   </p>
-                  {room.venue.logo_url && (
-                    <img
-                      src={room.venue.logo_url}
-                      alt={room.venue.name}
-                      className="h-4 w-auto object-contain flex-shrink-0"
-                      style={{ filter: 'brightness(0)', opacity: 0.5, maxWidth: '80px' }}
-                    />
-                  )}
-                </div>
 
-                  {/* Room name */}
-                  <h3 className="text-lg font-light text-zinc-900 tracking-tight mb-3">{room.name}</h3>
+                  <div
+                    className={`grid gap-5 mb-4 pb-4 ${room.venue.logo_url ? 'grid-cols-1 sm:grid-cols-[minmax(0,1fr)_180px] lg:grid-cols-[minmax(0,1fr)_220px]' : 'grid-cols-1'}`}
+                    style={{ borderBottom: '1px solid #F0EDE9' }}
+                  >
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-light text-zinc-900 tracking-tight mb-3">
+                        {room.name}
+                      </h3>
 
-                  {/* Spec row — decision data first */}
-                  <div className="flex flex-wrap gap-x-5 gap-y-2 mb-4 pb-4" style={{ borderBottom: '1px solid #F0EDE9' }}>
-                    {room.capacity_dining && (
-                      <div>
-                        <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Dining</p>
-                        <p className="text-xs font-light text-zinc-700">{room.capacity_dining} seated</p>
+                      <div className="flex flex-wrap gap-x-5 gap-y-2">
+                        {room.capacity_dining && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
+                              Dining
+                            </p>
+                            <p className="text-xs font-light text-zinc-700">
+                              {room.capacity_dining} seated
+                            </p>
+                          </div>
+                        )}
+                        {room.capacity_standing && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
+                              Standing
+                            </p>
+                            <p className="text-xs font-light text-zinc-700">
+                              {room.capacity_standing} guests
+                            </p>
+                          </div>
+                        )}
+                        {room.capacity_boardroom && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
+                              Boardroom
+                            </p>
+                            <p className="text-xs font-light text-zinc-700">
+                              {room.capacity_boardroom} seats
+                            </p>
+                          </div>
+                        )}
+                        {room.pricing_from && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
+                              {room.pricing_type === 'min_spend'
+                                ? 'Min spend'
+                                : room.pricing_type === 'hire_fee'
+                                  ? 'Hire fee'
+                                  : 'From'}
+                            </p>
+                            <p className="text-xs font-light text-zinc-700">
+                              £{room.pricing_from.toLocaleString()}
+                              {room.pricing_notes ? ` ${room.pricing_notes}` : ''}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {room.capacity_standing && (
-                      <div>
-                        <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Standing</p>
-                        <p className="text-xs font-light text-zinc-700">{room.capacity_standing} guests</p>
-                      </div>
-                    )}
-                    {room.capacity_boardroom && (
-                      <div>
-                        <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Boardroom</p>
-                        <p className="text-xs font-light text-zinc-700">{room.capacity_boardroom} seats</p>
-                      </div>
-                    )}
-                    {room.pricing_from && (
-                      <div>
-                        <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
-                          {room.pricing_type === 'min_spend' ? 'Min spend' :
-                           room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
-                        </p>
-                        <p className="text-xs font-light text-zinc-700">
-                          £{room.pricing_from.toLocaleString()}{room.pricing_notes ? ` ${room.pricing_notes}` : ''}
-                        </p>
+                    </div>
+
+                    {room.venue.logo_url && (
+                      <div className="flex min-h-[88px] items-center justify-start sm:justify-end overflow-hidden">
+                        <img
+                          src={room.venue.logo_url}
+                          alt={room.venue.name}
+                          className="block w-full max-w-none h-[56px] sm:h-[72px] lg:h-[80px] object-contain object-left sm:object-right"
+                          style={{ filter: 'brightness(0)', opacity: 0.72 }}
+                        />
                       </div>
                     )}
                   </div>
 
-                  {/* Description — 2 lines max */}
                   {room.description && (
                     <p className="text-sm font-light text-zinc-500 leading-relaxed mb-4">
                       {room.description}
                     </p>
                   )}
 
-                  {/* Best for tags */}
                   {room.best_for?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-5">
                       {room.best_for.map(tag => (
-                        <span key={tag} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
+                        <span
+                          key={tag}
+                          className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full"
+                        >
                           {tag}
                         </span>
                       ))}
                     </div>
                   )}
 
-                  {/* CTAs */}
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setEnquiringRoom(room)}
@@ -289,7 +336,6 @@ const pillStyle = (active: boolean) => ({
         </div>
       )}
 
-      {/* Enquiry modal */}
       {enquiringRoom && (
         <CorporateEventsModal
           isOpen={true}
