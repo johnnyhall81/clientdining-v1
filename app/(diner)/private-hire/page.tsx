@@ -1,5 +1,5 @@
 'use client'
-
+// v2
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
@@ -49,7 +49,8 @@ const pillStyle = (active: boolean) => ({
   color: active ? 'white' : '#71717A',
 })
 
-export default function PrivateHirePage() {
+  // Private hire discovery
+  // Private hire discovery
   const [rooms, setRooms] = useState<Room[]>([])
   const [loading, setLoading] = useState(true)
   const [filterAreas, setFilterAreas] = useState<string[]>([])
