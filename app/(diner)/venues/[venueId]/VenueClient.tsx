@@ -164,6 +164,12 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
     } catch (error) { console.error('Cancel error:', error) }
   }
 
+  const handleEnquire = (room?: any) => {
+    if (!user) { setShowSignInModal(true); return }
+    if (room) setEnquiringRoom(room)
+    setShowCorporateEventsModal(true)
+  }
+
   const handleToggleAlert = async (slotId: string) => {
     if (!user) { setShowSignInModal(true); return }
     const response = await fetch('/api/alerts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slotId }) })
@@ -259,7 +265,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
             <div className="bg-white p-10 text-center" style={{ borderRadius: '8px', border: '1px solid #F0EDE9' }}>
               <p className="text-sm font-light text-zinc-400 mb-5">Private dining rooms and event spaces available on request.</p>
               <button
-                onClick={() => setShowCorporateEventsModal(true)}
+                onClick={() => handleEnquire()}
                 className="h-10 px-7 text-xs font-light tracking-widest uppercase text-zinc-700 hover:text-zinc-900 transition-colors"
                 style={{ border: '1px solid #C8C4BF', borderRadius: '3px' }}
               >
@@ -352,7 +358,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
                       {/* CTA */}
                       <button
-                        onClick={() => { setEnquiringRoom(room); setShowCorporateEventsModal(true) }}
+                        onClick={() => handleEnquire(room)}
                         className="h-10 px-6 text-xs font-light tracking-widest uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors w-full sm:w-auto"
                         style={{ borderRadius: '3px' }}
                       >
