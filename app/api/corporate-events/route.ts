@@ -56,7 +56,7 @@ export async function POST(request: Request) {
         email,
         phone,
         phone_ext: phoneExt,
-        company,
+        company: company ?? '',
         event_type: eventType,
         event_nature: eventNature,
         event_date: eventDate,
