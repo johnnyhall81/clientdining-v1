@@ -15,39 +15,18 @@ export default function LandingPage({ venues }: LandingPageProps) {
   const venueGridRef = useRef<HTMLDivElement>(null)
   const [loginHovered, setLoginHovered] = useState(false)
   const [authLoading, setAuthLoading] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const [pendingVenueId, setPendingVenueId] = useState<string | null>(null)
 
   const handleLinkedInLogin = async () => {
     setAuthLoading(true)
-    // After sign-in, send them to the venue they clicked if we have one
-    const destination = pendingVenueId
-      ? `/venues/${pendingVenueId}`
-      : '/home'
     const base =
       typeof window !== 'undefined' && window.location.hostname === 'localhost'
         ? 'http://localhost:3000'
         : 'https://clientdining.com'
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',
-      options: { redirectTo: `${base}${destination}` },
+      options: { redirectTo: `${base}/home` },
     })
     if (error) setAuthLoading(false)
-  }
-
-  const handleBrowse = () => {
-    venueGridRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  const handleVenueClick = (venueId: string) => {
-    setPendingVenueId(venueId)
-    setShowModal(true)
-  }
-
-  const handleCloseModal = () => {
-    setShowModal(false)
-    setPendingVenueId(null)
-    setAuthLoading(false)
   }
 
   useEffect(() => {
@@ -55,14 +34,6 @@ export default function LandingPage({ venues }: LandingPageProps) {
       if (session) router.replace('/home')
     })
   }, [])
-
-  // Close modal on Escape
-  useEffect(() => {
-    if (!showModal) return
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') handleCloseModal() }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [showModal])
 
   const sortedVenues = [...venues].sort(
     (a: any, b: any) => (a.display_order ?? 999) - (b.display_order ?? 999)
@@ -81,6 +52,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
             >
               ClientDining
             </span>
+            {/* Sign-in icon — for returning members */}
             <button
               onClick={handleLinkedInLogin}
               disabled={authLoading}
@@ -149,9 +121,8 @@ export default function LandingPage({ venues }: LandingPageProps) {
 
           <div className="pt-2 flex flex-col items-center">
             <button
-              onClick={handleLinkedInLogin}
-              disabled={authLoading}
-              className="inline-flex items-center gap-2 px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300 disabled:opacity-50"
+              onClick={() => router.push('/home')}
+              className="inline-flex items-center gap-2 px-10 py-3.5 text-sm font-light rounded-lg transition-all duration-300"
               style={{
                 color: '#F3F1ED',
                 background: 'rgba(255,255,255,0.08)',
@@ -169,13 +140,13 @@ export default function LandingPage({ venues }: LandingPageProps) {
                 el.style.borderColor = 'rgba(255,255,255,0.35)'
               }}
             >
-              {authLoading ? 'Redirecting…' : 'Sign in'}
+              Enter
             </button>
           </div>
         </div>
 
         <button
-          onClick={handleBrowse}
+          onClick={() => venueGridRef.current?.scrollIntoView({ behavior: 'smooth' })}
           className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
           style={{ animation: 'heroArrowFloat 3.5s ease-in-out infinite' }}
           aria-label="Browse venues"
@@ -197,7 +168,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
         `}</style>
       </section>
 
-      {/* Brand copy — original text restored */}
+      {/* Brand copy */}
       <section className="bg-zinc-50 py-24 px-8">
         <div className="max-w-2xl mx-auto text-center" style={{ WebkitFontSmoothing: 'antialiased' }}>
           <p
@@ -232,7 +203,7 @@ export default function LandingPage({ venues }: LandingPageProps) {
             return (
               <button
                 key={venue.id}
-                onClick={() => handleVenueClick(venue.id)}
+                onClick={() => router.push(`/venues/${venue.id}`)}
                 className="group block text-left w-full rounded-2xl border border-zinc-100 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-200 hover:shadow-sm"
               >
                 <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden">
@@ -284,11 +255,14 @@ export default function LandingPage({ venues }: LandingPageProps) {
             )
           })}
         </div>
-        {/* Fallback CTA for scrollers who don't click a tile */}
+
+        {/* Sign-in CTA for returning members */}
         <div className="mt-16 pt-12 border-t border-zinc-100 flex flex-col items-center gap-3 text-center">
+          <p className="text-sm font-light text-zinc-400">Already a member?</p>
           <button
-            onClick={() => { setPendingVenueId(null); setShowModal(true) }}
-            className="inline-flex items-center gap-3 px-8 h-12 text-sm font-light transition-all duration-300"
+            onClick={handleLinkedInLogin}
+            disabled={authLoading}
+            className="inline-flex items-center gap-3 px-8 h-12 text-sm font-light transition-all duration-300 disabled:opacity-50"
             style={{ color: '#3f3f46', background: 'white', border: '1px solid #a1a1aa', borderRadius: '3px' }}
             onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#71717a')}
             onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#a1a1aa')}
@@ -296,73 +270,12 @@ export default function LandingPage({ venues }: LandingPageProps) {
             <svg className="w-4 h-4 flex-shrink-0 opacity-50" fill="currentColor" viewBox="0 0 24 24">
               <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
             </svg>
-            Continue with LinkedIn
+            {authLoading ? 'Redirecting…' : 'Sign in with LinkedIn'}
           </button>
         </div>
       </section>
 
       <Footer />
-
-      {/* Sign-in modal */}
-      {showModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
-          onClick={e => { if (e.target === e.currentTarget) handleCloseModal() }}
-        >
-          <div
-            className="bg-white w-full max-w-sm shadow-xl overflow-hidden"
-            style={{ borderRadius: '6px' }}
-          >
-            {/* Header */}
-            <div className="relative px-7 pt-5 pb-4" style={{ borderBottom: '1px solid #F5F3F0' }}>
-              <button
-                onClick={handleCloseModal}
-                className="absolute top-4 right-5 text-zinc-400 hover:text-zinc-700 transition-colors"
-                aria-label="Close"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-              <h2 className="text-2xl font-light text-zinc-900 tracking-tight pr-8 leading-tight">
-                Sign in
-              </h2>
-            </div>
-
-            {/* Body */}
-            <div className="px-7 pt-5 pb-6">
-              <p className="text-sm font-light text-zinc-400 leading-relaxed mb-5">
-                Selected venues may require verification.
-              </p>
-
-              <button
-                onClick={handleLinkedInLogin}
-                disabled={authLoading}
-                className="w-full h-12 inline-flex items-center justify-center gap-3 text-sm font-light transition-all duration-300 disabled:opacity-50"
-                style={{ backgroundColor: 'white', color: '#3f3f46', borderRadius: '3px', border: '1px solid #a1a1aa' }}
-                onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#71717a')}
-                onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#a1a1aa')}
-              >
-                <svg className="w-4 h-4 flex-shrink-0 opacity-50" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-                {authLoading ? 'Redirecting…' : 'Continue with LinkedIn'}
-              </button>
-
-              <p className="text-sm font-light text-center mt-3">
-                <span className="text-zinc-500">New to ClientDining? </span>
-                <a
-                  href="/signup"
-                  className="text-zinc-700 underline underline-offset-2 hover:text-zinc-900 transition-colors"
-                  onClick={handleCloseModal}
-                >
-                  Apply here
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   )
