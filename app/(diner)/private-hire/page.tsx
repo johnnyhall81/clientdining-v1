@@ -226,7 +226,7 @@ export default function Page() {
                   </p>
 
                   <div
-                    className={`grid gap-5 mb-4 pb-4 ${room.venue.logo_url ? 'grid-cols-1 sm:grid-cols-[minmax(0,1fr)_180px] lg:grid-cols-[minmax(0,1fr)_220px]' : 'grid-cols-1'}`}
+                    className={`grid gap-4 sm:gap-5 mb-4 pb-4 items-start ${room.venue.logo_url ? 'grid-cols-[minmax(0,1fr)_120px] sm:grid-cols-[minmax(0,1fr)_160px] lg:grid-cols-[minmax(0,1fr)_220px]' : 'grid-cols-1'}`}
                     style={{ borderBottom: '1px solid #F0EDE9' }}
                   >
                     <div className="min-w-0">
