@@ -1,18 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase-client'
 import Footer from '@/components/common/Footer'
 
-interface LandingPageProps {
-  venues: any[]
-}
-
-export default function LandingPage({ venues }: LandingPageProps) {
+export default function LandingPage() {
   const router = useRouter()
-  const venueGridRef = useRef<HTMLDivElement>(null)
   const [loginHovered, setLoginHovered] = useState(false)
   const [authLoading, setAuthLoading] = useState(false)
 
@@ -35,10 +30,6 @@ export default function LandingPage({ venues }: LandingPageProps) {
     })
   }, [])
 
-  const sortedVenues = [...venues].sort(
-    (a: any, b: any) => (a.display_order ?? 999) - (b.display_order ?? 999)
-  )
-
   return (
     <div className="min-h-screen bg-white">
 
@@ -52,7 +43,6 @@ export default function LandingPage({ venues }: LandingPageProps) {
             >
               ClientDining
             </span>
-            {/* Sign-in icon — for returning members */}
             <button
               onClick={handleLinkedInLogin}
               disabled={authLoading}
@@ -144,28 +134,6 @@ export default function LandingPage({ venues }: LandingPageProps) {
             </button>
           </div>
         </div>
-
-        <button
-          onClick={() => venueGridRef.current?.scrollIntoView({ behavior: 'smooth' })}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
-          style={{ animation: 'heroArrowFloat 3.5s ease-in-out infinite' }}
-          aria-label="Browse venues"
-        >
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center"
-            style={{ border: '1px solid rgba(255,255,255,0.35)' }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="rgba(255,255,255,0.7)" className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-        </button>
-        <style>{`
-          @keyframes heroArrowFloat {
-            0%, 100% { transform: translateX(-50%); opacity: 0.5; }
-            50% { transform: translateX(-50%); opacity: 0.9; }
-          }
-        `}</style>
       </section>
 
       {/* Brand copy */}
@@ -184,94 +152,22 @@ export default function LandingPage({ venues }: LandingPageProps) {
           >
             A defined circle of established restaurants and private members' clubs for client hosting, team dinners, and professional occasions that call for the right setting. Trusted venues. Clear standards. When the table matters.
           </p>
-        </div>
-      </section>
-
-      {/* Venue grid */}
-      <section ref={venueGridRef} className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 pt-14 pb-24">
-        <p
-          className="font-serif text-zinc-900 mb-14 tracking-tight"
-          style={{ fontSize: '30px', lineHeight: 1.1, letterSpacing: '-0.01em' }}
-        >
-          The collection
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
-          {sortedVenues.map(venue => {
-            const imageSrc = venue.image_hero || venue.image
-            const isClub = venue.venue_type === 'club'
-            return (
-              <button
-                key={venue.id}
-                onClick={() => router.push(`/venues/${venue.id}`)}
-                className="group block text-left w-full rounded-2xl border border-zinc-100 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-200 hover:shadow-sm"
-              >
-                <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden">
-                  {imageSrc ? (
-                    <>
-                      <Image
-                        src={imageSrc}
-                        alt={venue.name}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
-                      {venue.logo_url ? (
-                        <img
-                          src={venue.logo_url}
-                          alt={venue.name}
-                          className="absolute inset-0 m-auto object-contain z-10"
-                          style={{ filter: 'brightness(0) invert(1)', maxHeight: '40%', maxWidth: '75%', width: 'auto', height: 'auto' }}
-                        />
-                      ) : (
-                        <p
-                          className="absolute inset-0 flex items-center justify-center z-10 text-white text-4xl tracking-tight text-center px-6 italic"
-                          style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                        >
-                          {venue.name}
-                        </p>
-                      )}
-                      <div className="absolute bottom-4 left-5 right-5 z-10 flex items-end justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-white text-sm font-light tracking-wide truncate">{venue.name}</p>
-                          {venue.area && <p className="text-white/60 text-xs font-light mt-0.5">{venue.area}</p>}
-                        </div>
-                        {isClub && (
-                          <span
-                            className="flex-shrink-0 text-[9px] tracking-[0.18em] uppercase font-light text-white/70 px-2 py-1"
-                            style={{ border: '1px solid rgba(255,255,255,0.28)', borderRadius: '2px' }}
-                          >
-                            Members' Club
-                          </span>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="w-full h-full bg-zinc-100" />
-                  )}
-                </div>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Sign-in CTA for returning members */}
-        <div className="mt-16 pt-12 border-t border-zinc-100 flex flex-col items-center gap-3 text-center">
-          <p className="text-sm font-light text-zinc-400">Already a member?</p>
-          <button
-            onClick={handleLinkedInLogin}
-            disabled={authLoading}
-            className="inline-flex items-center gap-3 px-8 h-12 text-sm font-light transition-all duration-300 disabled:opacity-50"
-            style={{ color: '#3f3f46', background: 'white', border: '1px solid #a1a1aa', borderRadius: '3px' }}
-            onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#71717a')}
-            onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#a1a1aa')}
-          >
-            <svg className="w-4 h-4 flex-shrink-0 opacity-50" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-            </svg>
-            {authLoading ? 'Redirecting…' : 'Sign in with LinkedIn'}
-          </button>
+          <div className="mt-12 flex flex-col items-center gap-3">
+            <p className="text-sm font-light text-zinc-400">Already a member?</p>
+            <button
+              onClick={handleLinkedInLogin}
+              disabled={authLoading}
+              className="inline-flex items-center gap-3 px-8 h-12 text-sm font-light transition-all duration-300 disabled:opacity-50"
+              style={{ color: '#3f3f46', background: 'white', border: '1px solid #a1a1aa', borderRadius: '3px' }}
+              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#71717a')}
+              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#a1a1aa')}
+            >
+              <svg className="w-4 h-4 flex-shrink-0 opacity-50" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+              {authLoading ? 'Redirecting…' : 'Sign in with LinkedIn'}
+            </button>
+          </div>
         </div>
       </section>
 
