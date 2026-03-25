@@ -137,7 +137,7 @@ export default function LandingPage() {
       </section>
 
       {/* Brand copy */}
-      <section className="bg-zinc-50 py-24 px-8">
+      <section className="bg-zinc-50 pt-24 pb-16 px-8">
         <div className="max-w-2xl mx-auto text-center" style={{ WebkitFontSmoothing: 'antialiased' }}>
           <p
             className="font-[family-name:var(--font-cormorant)] text-zinc-900"

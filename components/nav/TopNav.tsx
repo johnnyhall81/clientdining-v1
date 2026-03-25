@@ -144,7 +144,7 @@ export default function TopNav() {
 
             {/* Back */}
             <button
-              onClick={() => router.push(user ? '/home' : '/')}
+              onClick={() => router.push('/home')}
               className="text-zinc-400 hover:text-zinc-900 transition-colors flex-shrink-0"
               aria-label="Back"
             >
