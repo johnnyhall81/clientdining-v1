@@ -168,12 +168,11 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   const taxonomyParts = [
     venue.area,
-    venue.venue_type
-  ? venue.venue_type === 'club'
-    ? "Private Members' Club"
-    : 'Restaurant'
-  : null,
-
+    venue.venue_type === 'club'
+      ? "Private Members' Club"
+      : (venue as any).hotel_name
+      ? `Restaurant at ${(venue as any).hotel_name}`
+      : 'Restaurant'
   ].filter(Boolean)
 
   // Full-page SevenRooms widget — when on reservations tab and widget is configured
