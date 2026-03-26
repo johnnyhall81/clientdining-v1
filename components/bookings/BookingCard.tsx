@@ -19,7 +19,7 @@ type Tab = 'guests' | 'contact' | 'venuenote' | 'mynotes'
 
 export default function BookingCard({ booking, venue, slot, bookerName, onCancel }: BookingCardProps) {
   // For SevenRooms bookings, slot is null — use booked_at or created_at as fallback
-  const bookingDate = slot?.start_at || (booking as any).booked_at || null
+  const bookingDate = slot?.start_at || localBookedAt || null
   const isPast = bookingDate ? new Date(bookingDate) < new Date() : false
   const isSevenRooms = (booking as any).booking_source === 'sevenrooms'
   const isCancelled = booking.status === 'cancelled'
@@ -31,9 +31,11 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   const [dateEditing, setDateEditing] = useState(false)
   const [dateValue, setDateValue] = useState('')
   const [dateSaving, setDateSaving] = useState(false)
+  const [localBookedAt, setLocalBookedAt] = useState<string | null>((booking as any).booked_at || null)
   const [sizeEditing, setSizeEditing] = useState(false)
   const [sizeValue, setSizeValue] = useState('')
   const [sizeSaving, setSizeSaving] = useState(false)
+  const [localPartySize, setLocalPartySize] = useState<number | null>(booking.party_size || null)
 
   useEffect(() => {
     setNotesEditValue(booking.private_notes || '')
@@ -64,8 +66,8 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ booked_at: new Date(dateValue).toISOString() }),
       })
+      setLocalBookedAt(new Date(dateValue).toISOString())
       setDateEditing(false)
-      window.location.reload()
     } catch {
       // fail silently
     } finally {
@@ -83,8 +85,8 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ party_size: size }),
       })
+      setLocalPartySize(size)
       setSizeEditing(false)
-      window.location.reload()
     } catch {
       // fail silently
     } finally {
@@ -107,7 +109,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   const dateStr = bookingDate ? (slot ? formatSlotDate(slot.start_at) : formatSlotDate(bookingDate)) : null
   const timeStr = slot ? formatSlotTime(slot.start_at) : null
   const guestNames = booking.guest_names || []
-  const partySize = booking.party_size || null
+  const partySize = localPartySize
   const hostDisplayName = guestNames[0] || bookerName
   const namedGuests = guestNames.length > 0 ? guestNames : null
   const remainder = namedGuests && partySize ? partySize - guestNames.length : partySize ? partySize - 1 : 0
