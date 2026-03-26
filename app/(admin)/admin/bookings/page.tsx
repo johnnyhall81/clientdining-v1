@@ -10,11 +10,13 @@ interface BookingWithDetails {
   party_size: number
   notes?: string
   guest_names?: string[]
+  booking_source?: string
+  booked_at?: string
   slots: {
     start_at: string
     party_min: number
     party_max: number
-  }
+  } | null
   venues: {
     name: string
     area: string
@@ -138,10 +140,20 @@ export default function AdminBookingsPage() {
                       <div className="text-sm text-gray-500">{booking.venues.area}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                      {formatFullDateTime(booking.slots.start_at)}
+                      {booking.slots
+                        ? formatFullDateTime(booking.slots.start_at)
+                        : booking.booked_at
+                        ? new Date(booking.booked_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                        : <span className="text-gray-400 text-sm">Via restaurant</span>
+                      }
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                      {booking.party_size ? `${booking.party_size} guests` : `${booking.slots.party_min}–${booking.slots.party_max} guests`}
+                      {booking.party_size
+                        ? `${booking.party_size} guests`
+                        : booking.slots
+                        ? `${booking.slots.party_min}–${booking.slots.party_max} guests`
+                        : '—'
+                      }
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-3 py-1 text-xs rounded-full font-medium ${
