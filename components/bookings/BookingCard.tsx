@@ -28,6 +28,9 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   const [notesEditValue, setNotesEditValue] = useState(booking.private_notes || '')
   const [notesSaving, setNotesSaving] = useState(false)
   const [notesEditing, setNotesEditing] = useState(false)
+  const [dateEditing, setDateEditing] = useState(false)
+  const [dateValue, setDateValue] = useState('')
+  const [dateSaving, setDateSaving] = useState(false)
 
   useEffect(() => {
     setNotesEditValue(booking.private_notes || '')
@@ -46,6 +49,25 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
       // fail silently
     } finally {
       setNotesSaving(false)
+    }
+  }
+
+  const handleSaveDate = async () => {
+    if (!dateValue) return
+    setDateSaving(true)
+    try {
+      await fetch(`/api/bookings/${booking.id}/date`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ booked_at: new Date(dateValue).toISOString() }),
+      })
+      setDateEditing(false)
+      // Reload to reflect the new date
+      window.location.reload()
+    } catch {
+      // fail silently
+    } finally {
+      setDateSaving(false)
     }
   }
 
@@ -118,10 +140,45 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
               </a>
             )}
             <div className="flex items-center gap-2 pt-0.5">
-              <span className="text-sm font-light text-zinc-500">
-                {dateStr ?? 'Date confirmed with venue'}{timeStr ? ` · ${timeStr}` : ''}{partySize ? ` · Party of ${partySize}` : ''}
-                {isSevenRooms && <span className="ml-2 text-[10px] tracking-[0.15em] text-zinc-400 uppercase">via restaurant</span>}
-              </span>
+              {isSevenRooms && !bookingDate && !dateEditing ? (
+                <button
+                  onClick={() => setDateEditing(true)}
+                  className="text-sm font-light text-zinc-400 hover:text-zinc-700 transition-colors underline underline-offset-2"
+                >
+                  Add reservation date
+                </button>
+              ) : isSevenRooms && !bookingDate && dateEditing ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="date"
+                    value={dateValue}
+                    onChange={e => setDateValue(e.target.value)}
+                    autoFocus
+                    className="text-sm font-light text-zinc-600 border-b border-zinc-300 focus:border-zinc-700 bg-transparent focus:outline-none transition-colors"
+                  />
+                  <button
+                    onClick={handleSaveDate}
+                    disabled={dateSaving || !dateValue}
+                    className="text-xs font-light text-white px-3 py-1 transition-colors disabled:opacity-50"
+                    style={{ backgroundColor: '#18181B', borderRadius: '3px' }}
+                  >
+                    {dateSaving ? 'Saving…' : 'Save'}
+                  </button>
+                  <button
+                    onClick={() => { setDateEditing(false); setDateValue('') }}
+                    className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <span className="text-sm font-light text-zinc-500">
+                  {dateStr}{timeStr ? ` · ${timeStr}` : ''}{partySize ? ` · Party of ${partySize}` : ''}
+                </span>
+              )}
+              {isSevenRooms && (bookingDate || !dateEditing) && (
+                <span className="text-[10px] tracking-[0.15em] text-zinc-400 uppercase">via restaurant</span>
+              )}
               {!isPast && !isCancelled && calendarUrl && (
                 <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
