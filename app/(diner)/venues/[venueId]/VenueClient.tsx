@@ -70,6 +70,10 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   useEffect(() => {
     const handler = async (e: MessageEvent) => {
       if (e.origin !== 'https://www.sevenrooms.com') return
+
+      // Log ALL messages to explore what SevenRooms sends during slot selection
+      console.log('[SevenRooms raw]', JSON.stringify(e.data))
+
       if (typeof e.data !== 'object' || !e.data) return
 
       const { event, status, ...payload } = e.data
