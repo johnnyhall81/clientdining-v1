@@ -19,8 +19,6 @@ type Tab = 'guests' | 'contact' | 'venuenote' | 'mynotes'
 
 export default function BookingCard({ booking, venue, slot, bookerName, onCancel }: BookingCardProps) {
   // For SevenRooms bookings, slot is null — use booked_at or created_at as fallback
-  const bookingDate = slot?.start_at || localBookedAt || null
-  const isPast = bookingDate ? new Date(bookingDate) < new Date() : false
   const isSevenRooms = (booking as any).booking_source === 'sevenrooms'
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
@@ -36,6 +34,9 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   const [sizeValue, setSizeValue] = useState('')
   const [sizeSaving, setSizeSaving] = useState(false)
   const [localPartySize, setLocalPartySize] = useState<number | null>(booking.party_size || null)
+
+  const bookingDate = slot?.start_at || localBookedAt || null
+  const isPast = bookingDate ? new Date(bookingDate) < new Date() : false
 
   useEffect(() => {
     setNotesEditValue(booking.private_notes || '')
