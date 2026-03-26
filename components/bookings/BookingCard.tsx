@@ -119,8 +119,8 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   return (
     <div className="bg-white overflow-hidden relative" style={{ borderRadius: '6px', border: '1px solid #F0EDE9', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
 
-      {/* Cancel × */}
-      {!isCancelled && !isPast && (
+      {/* Cancel × — hidden for SevenRooms bookings, contact venue directly */}
+      {!isCancelled && !isPast && !isSevenRooms && (
         <button
           type="button"
           onClick={() => setShowCancelModal(true)}
@@ -149,9 +149,16 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
 
           {/* Header */}
           <div className="space-y-1">
-            <Link href={`/venues/${venue.id}`} prefetch={true}>
-              <h3 className="text-lg font-light text-zinc-900 hover:opacity-60 transition-opacity tracking-tight">{venue.name}</h3>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href={`/venues/${venue.id}`} prefetch={true}>
+                <h3 className="text-lg font-light text-zinc-900 hover:opacity-60 transition-opacity tracking-tight">{venue.name}</h3>
+              </Link>
+              {isSevenRooms && (
+                <span className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light px-1.5 py-0.5" style={{ border: '1px solid #E4E0DB', borderRadius: '2px' }}>
+                  Logged
+                </span>
+              )}
+            </div>
             {venue.address && (
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address}, ${venue.postcode || ''} London`)}`}
@@ -161,6 +168,11 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
               >
                 {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
               </a>
+            )}
+            {isSevenRooms && (
+              <p className="text-xs font-light text-zinc-400 leading-relaxed" style={{ maxWidth: '380px' }}>
+                Booked directly with the venue — edits below are your personal record only.
+              </p>
             )}
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-0.5">
 
@@ -187,9 +199,8 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                   </div>
                 ) : (
                   <button onClick={() => { setDateEditing(true); setDateValue('') }}
-                    className="text-sm font-light transition-colors"
-                    style={{ color: dateStr ? '#71717a' : '#f59e0b' }}>
-                    {dateStr ?? '⚠ Whoops, missed the date — tap to add'}
+                    className="text-sm font-light text-zinc-500 hover:text-zinc-700 transition-colors">
+                    {dateStr ?? <span className="text-zinc-300 italic">Add date</span>}
                     {dateStr && <span className="ml-1 text-zinc-300 text-xs">✎</span>}
                   </button>
                 )
@@ -225,9 +236,8 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                   </div>
                 ) : (
                   <button onClick={() => { setSizeEditing(true); setSizeValue(partySize?.toString() ?? '') }}
-                    className="text-sm font-light transition-colors"
-                    style={{ color: partySize ? '#71717a' : '#f59e0b' }}>
-                    {partySize ? `· Party of ${partySize}` : '· ⚠ How many guests?'}
+                    className="text-sm font-light text-zinc-500 hover:text-zinc-700 transition-colors">
+                    {partySize ? `· Party of ${partySize}` : <span className="text-zinc-300 italic">· Add guests</span>}
                     {partySize && <span className="ml-1 text-zinc-300 text-xs">✎</span>}
                   </button>
                 )
@@ -235,10 +245,6 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
 
               {!isSevenRooms && partySize && (
                 <span className="text-sm font-light text-zinc-500">· Party of {partySize}</span>
-              )}
-
-              {isSevenRooms && (
-                <span className="text-[10px] tracking-[0.15em] text-zinc-400 uppercase">via restaurant</span>
               )}
               {!isPast && !isCancelled && calendarUrl && (
                 <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
