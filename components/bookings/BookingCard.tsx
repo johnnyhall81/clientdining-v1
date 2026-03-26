@@ -31,6 +31,9 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   const [dateEditing, setDateEditing] = useState(false)
   const [dateValue, setDateValue] = useState('')
   const [dateSaving, setDateSaving] = useState(false)
+  const [sizeEditing, setSizeEditing] = useState(false)
+  const [sizeValue, setSizeValue] = useState('')
+  const [sizeSaving, setSizeSaving] = useState(false)
 
   useEffect(() => {
     setNotesEditValue(booking.private_notes || '')
@@ -62,12 +65,30 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
         body: JSON.stringify({ booked_at: new Date(dateValue).toISOString() }),
       })
       setDateEditing(false)
-      // Reload to reflect the new date
       window.location.reload()
     } catch {
       // fail silently
     } finally {
       setDateSaving(false)
+    }
+  }
+
+  const handleSaveSize = async () => {
+    const size = parseInt(sizeValue)
+    if (!size || size < 1) return
+    setSizeSaving(true)
+    try {
+      await fetch(`/api/bookings/${booking.id}/date`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ party_size: size }),
+      })
+      setSizeEditing(false)
+      window.location.reload()
+    } catch {
+      // fail silently
+    } finally {
+      setSizeSaving(false)
     }
   }
 
@@ -139,44 +160,82 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
                 {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
               </a>
             )}
-            <div className="flex items-center gap-2 pt-0.5">
-              {isSevenRooms && !bookingDate && !dateEditing ? (
-                <button
-                  onClick={() => setDateEditing(true)}
-                  className="text-sm font-light text-zinc-400 hover:text-zinc-700 transition-colors underline underline-offset-2"
-                >
-                  Add reservation date
-                </button>
-              ) : isSevenRooms && !bookingDate && dateEditing ? (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="date"
-                    value={dateValue}
-                    onChange={e => setDateValue(e.target.value)}
-                    autoFocus
-                    className="text-sm font-light text-zinc-600 border-b border-zinc-300 focus:border-zinc-700 bg-transparent focus:outline-none transition-colors"
-                  />
-                  <button
-                    onClick={handleSaveDate}
-                    disabled={dateSaving || !dateValue}
-                    className="text-xs font-light text-white px-3 py-1 transition-colors disabled:opacity-50"
-                    style={{ backgroundColor: '#18181B', borderRadius: '3px' }}
-                  >
-                    {dateSaving ? 'Saving…' : 'Save'}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-0.5">
+
+              {/* Date — editable for SevenRooms bookings */}
+              {isSevenRooms ? (
+                dateEditing ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="date"
+                      value={dateValue}
+                      onChange={e => setDateValue(e.target.value)}
+                      autoFocus
+                      className="text-sm font-light text-zinc-600 border-b border-zinc-300 focus:border-zinc-700 bg-transparent focus:outline-none transition-colors"
+                    />
+                    <button onClick={handleSaveDate} disabled={dateSaving || !dateValue}
+                      className="text-xs font-light text-white px-3 py-1 disabled:opacity-50"
+                      style={{ backgroundColor: '#18181B', borderRadius: '3px' }}>
+                      {dateSaving ? 'Saving…' : 'Save'}
+                    </button>
+                    <button onClick={() => { setDateEditing(false); setDateValue('') }}
+                      className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={() => { setDateEditing(true); setDateValue('') }}
+                    className="text-sm font-light transition-colors"
+                    style={{ color: dateStr ? '#71717a' : '#f59e0b' }}>
+                    {dateStr ?? '⚠ Whoops, missed the date — tap to add'}
+                    {dateStr && <span className="ml-1 text-zinc-300 text-xs">✎</span>}
                   </button>
-                  <button
-                    onClick={() => { setDateEditing(false); setDateValue('') }}
-                    className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
+                )
               ) : (
                 <span className="text-sm font-light text-zinc-500">
-                  {dateStr}{timeStr ? ` · ${timeStr}` : ''}{partySize ? ` · Party of ${partySize}` : ''}
+                  {dateStr}{timeStr ? ` · ${timeStr}` : ''}
                 </span>
               )}
-              {isSevenRooms && (bookingDate || !dateEditing) && (
+
+              {/* Party size — editable for SevenRooms bookings */}
+              {isSevenRooms && (
+                sizeEditing ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={1}
+                      max={50}
+                      value={sizeValue}
+                      onChange={e => setSizeValue(e.target.value)}
+                      autoFocus
+                      placeholder="Guests"
+                      className="w-20 text-sm font-light text-zinc-600 border-b border-zinc-300 focus:border-zinc-700 bg-transparent focus:outline-none transition-colors"
+                    />
+                    <button onClick={handleSaveSize} disabled={sizeSaving || !sizeValue}
+                      className="text-xs font-light text-white px-3 py-1 disabled:opacity-50"
+                      style={{ backgroundColor: '#18181B', borderRadius: '3px' }}>
+                      {sizeSaving ? 'Saving…' : 'Save'}
+                    </button>
+                    <button onClick={() => { setSizeEditing(false); setSizeValue('') }}
+                      className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={() => { setSizeEditing(true); setSizeValue(partySize?.toString() ?? '') }}
+                    className="text-sm font-light transition-colors"
+                    style={{ color: partySize ? '#71717a' : '#f59e0b' }}>
+                    {partySize ? `· Party of ${partySize}` : '· ⚠ How many guests?'}
+                    {partySize && <span className="ml-1 text-zinc-300 text-xs">✎</span>}
+                  </button>
+                )
+              )}
+
+              {!isSevenRooms && partySize && (
+                <span className="text-sm font-light text-zinc-500">· Party of {partySize}</span>
+              )}
+
+              {isSevenRooms && (
                 <span className="text-[10px] tracking-[0.15em] text-zinc-400 uppercase">via restaurant</span>
               )}
               {!isPast && !isCancelled && calendarUrl && (

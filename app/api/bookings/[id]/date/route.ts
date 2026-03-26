@@ -7,7 +7,8 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { booked_at } = await request.json()
+    const body = await request.json()
+    const { booked_at, party_size } = body
 
     const cookieStore = cookies()
     const supabase = createServerClient(
@@ -27,9 +28,13 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const updates: Record<string, any> = {}
+    if (booked_at !== undefined) updates.booked_at = booked_at
+    if (party_size !== undefined) updates.party_size = party_size
+
     const { error } = await supabase
       .from('bookings')
-      .update({ booked_at })
+      .update(updates)
       .eq('id', params.id)
       .eq('user_id', user.id)
 
