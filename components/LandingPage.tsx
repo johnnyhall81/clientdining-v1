@@ -37,8 +37,11 @@ export default function LandingPage() {
       <header className="absolute top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-          <Image src="/logo.png" alt="ClientDining" width={80} height={32} className="object-contain brightness-0 invert" />
-            <button
+          <span className="text-xl font-normal" style={{ color: '#F3F1ED', WebkitFontSmoothing: 'antialiased' }}>
+  ClientDining
+</span>
+
+  <button
               onClick={handleLinkedInLogin}
               disabled={authLoading}
               className="transition-all duration-300"
