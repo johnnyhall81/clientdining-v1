@@ -3,10 +3,8 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase-client'
-import { useAuth } from '@/contexts/AuthContext'
 import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
 
 type Room = {
@@ -57,26 +55,8 @@ export default function Page() {
   const [filterAreas, setFilterAreas] = useState<string[]>([])
   const [filterGuest, setFilterGuest] = useState('')
   const [filterOccasion, setFilterOccasion] = useState('')
+  const [filterCapacityType, setFilterCapacityType] = useState<'dining' | 'standing' | ''>('')
   const [enquiringRoom, setEnquiringRoom] = useState<Room | null>(null)
-  const [showSignInModal, setShowSignInModal] = useState(false)
-  const { user } = useAuth()
-  const pathname = usePathname()
-
-  const handleSignIn = async () => {
-    const base =
-      typeof window !== 'undefined' && window.location.hostname === 'localhost'
-        ? 'http://localhost:3000'
-        : 'https://clientdining.com'
-    await supabase.auth.signInWithOAuth({
-      provider: 'linkedin_oidc',
-      options: { redirectTo: `${base}/auth/callback?next=${encodeURIComponent(pathname)}` },
-    })
-  }
-
-  const handleEnquire = (room: Room) => {
-    if (!user) { setShowSignInModal(true); return }
-    setEnquiringRoom(room)
-  }
 
   useEffect(() => {
     const load = async () => {
@@ -102,16 +82,16 @@ export default function Page() {
     if (filterGuest) {
       const range = GUEST_RANGES.find(r => r.label === filterGuest)
       if (range) {
-        const maxCap = Math.max(
-          room.capacity_dining || 0,
-          room.capacity_standing || 0,
-          room.capacity_boardroom || 0
-        )
+        const cap = filterCapacityType === 'dining'
+          ? (room.capacity_dining || 0)
+          : filterCapacityType === 'standing'
+          ? (room.capacity_standing || 0)
+          : Math.max(room.capacity_dining || 0, room.capacity_standing || 0, room.capacity_boardroom || 0)
 
         if (range.max === Infinity) {
-          if (maxCap > 0 && maxCap < 80) return false
+          if (cap > 0 && cap < 80) return false
         } else {
-          if (maxCap > 0 && maxCap < range.max) return false
+          if (cap > 0 && cap < range.max) return false
         }
       }
     }
@@ -127,11 +107,12 @@ export default function Page() {
   const availableAreas = Array.from(new Set(rooms.map(r => r.venue.area))).sort()
   const availableOccasions = Array.from(new Set(rooms.flatMap(r => r.best_for || []))).sort()
 
-  const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
+  const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion || filterCapacityType
   const clearFilters = () => {
     setFilterAreas([])
     setFilterGuest('')
     setFilterOccasion('')
+    setFilterCapacityType('')
   }
 
   return (
@@ -151,6 +132,19 @@ export default function Page() {
       </div>
 
       <div className="space-y-2">
+        <div className="flex flex-wrap gap-1.5">
+          {(['dining', 'standing'] as const).map(type => (
+            <button
+              key={type}
+              onClick={() => setFilterCapacityType(filterCapacityType === type ? '' : type)}
+              className="px-3 py-1 text-xs font-light transition-colors"
+              style={pillStyle(filterCapacityType === type)}
+            >
+              {type === 'dining' ? 'Seated' : 'Standing'}
+            </button>
+          ))}
+        </div>
+
         <div className="flex flex-wrap gap-1.5">
           {GUEST_RANGES.map(r => (
             <button
@@ -337,7 +331,7 @@ export default function Page() {
 
                   <div className="flex items-center gap-4">
                     <button
-                      onClick={() => handleEnquire(room)}
+                      onClick={() => setEnquiringRoom(room)}
                       className="h-9 px-5 text-xs font-light tracking-widest uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
                       style={{ borderRadius: '3px' }}
                     >
@@ -365,46 +359,6 @@ export default function Page() {
           venueId={enquiringRoom.venue_id}
           roomName={enquiringRoom.name}
         />
-      )}
-
-      {showSignInModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
-          onClick={e => { if (e.target === e.currentTarget) setShowSignInModal(false) }}
-        >
-          <div className="bg-white w-full max-w-sm shadow-xl overflow-hidden" style={{ borderRadius: '6px' }}>
-            <div className="relative px-7 pt-5 pb-4" style={{ borderBottom: '1px solid #F5F3F0' }}>
-              <button onClick={() => setShowSignInModal(false)} className="absolute top-4 right-5 text-zinc-400 hover:text-zinc-700 transition-colors" aria-label="Close">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-              <p className="text-[9px] tracking-[0.22em] text-zinc-400 uppercase font-light mb-1.5">Members only</p>
-              <h2 className="text-xl font-light text-zinc-900 tracking-tight pr-8 leading-snug">Verify to send an enquiry</h2>
-            </div>
-            <div className="px-7 pt-5 pb-6 space-y-5">
-              <p className="text-sm font-light text-zinc-500 leading-relaxed">
-                ClientDining is free for verified professionals. We use LinkedIn to confirm your role — we don't post to your profile or access your connections.
-              </p>
-              <button
-                onClick={handleSignIn}
-                className="w-full h-12 inline-flex items-center justify-center gap-3 text-sm font-light transition-all duration-300"
-                style={{ backgroundColor: 'white', color: '#3f3f46', borderRadius: '3px', border: '1px solid #a1a1aa' }}
-                onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#71717a')}
-                onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#a1a1aa')}
-              >
-                <svg className="w-4 h-4 flex-shrink-0 opacity-50" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-                Continue with LinkedIn
-              </button>
-              <p className="text-xs font-light text-center text-zinc-400">
-                New to ClientDining?{' '}
-                <a href="/signup" onClick={() => setShowSignInModal(false)} className="text-zinc-600 hover:text-zinc-900 transition-colors underline underline-offset-2">Apply here</a>
-              </p>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   )
