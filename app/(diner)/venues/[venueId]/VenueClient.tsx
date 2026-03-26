@@ -66,19 +66,30 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
-  // postMessage listener — detect SevenRooms booking completion events
+  // postMessage listener — capture SevenRooms booking completion
   useEffect(() => {
-    const handler = (e: MessageEvent) => {
-      // Log everything so we can see what SevenRooms sends
-      console.log('[SevenRooms postMessage]', {
-        origin: e.origin,
-        data: e.data,
-        type: typeof e.data,
-      })
+    const handler = async (e: MessageEvent) => {
+      if (e.origin !== 'https://www.sevenrooms.com') return
+      if (typeof e.data !== 'object' || !e.data) return
+
+      const { event, status, ...payload } = e.data
+
+      if (event === 'booking' && status?.toUpperCase().startsWith('SUCCES')) {
+        console.log('[SevenRooms] Booking confirmed', payload)
+        try {
+          await fetch('/api/sevenrooms-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ venueId: venue.id, payload: { ...payload, status } }),
+          })
+        } catch (err) {
+          console.error('[SevenRooms] Failed to record booking', err)
+        }
+      }
     }
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
-  }, [])
+  }, [venue.id])
 
   useEffect(() => {
     supabase.from('private_hire_rooms').select('*')

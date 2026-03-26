@@ -10,7 +10,7 @@ import CancelBookingModal from '@/components/modals/CancelBookingModal'
 interface BookingCardProps {
   booking: Booking
   venue: Venue
-  slot: Slot
+  slot: Slot | null
   bookerName?: string
   onCancel: (bookingId: string) => void
 }
@@ -18,7 +18,10 @@ interface BookingCardProps {
 type Tab = 'guests' | 'contact' | 'venuenote' | 'mynotes'
 
 export default function BookingCard({ booking, venue, slot, bookerName, onCancel }: BookingCardProps) {
-  const isPast = new Date(slot.start_at) < new Date()
+  // For SevenRooms bookings, slot is null — use booked_at or created_at as fallback
+  const bookingDate = slot?.start_at || (booking as any).booked_at || booking.created_at
+  const isPast = new Date(bookingDate) < new Date()
+  const isSevenRooms = (booking as any).booking_source === 'sevenrooms'
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('guests')
@@ -47,6 +50,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
   }
 
   const calendarUrl = (() => {
+    if (!slot) return null
     const start = new Date(slot.start_at)
     const end = new Date(start.getTime() + 2 * 60 * 60 * 1000)
     const pad = (n: number) => String(n).padStart(2, '0')
@@ -57,8 +61,8 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Dinner — ${venue.name}`)}&dates=${fmt(start)}/${fmt(end)}&details=${details}&location=${location}`
   })()
 
-  const dateStr = formatSlotDate(slot.start_at)
-  const timeStr = formatSlotTime(slot.start_at)
+  const dateStr = slot ? formatSlotDate(slot.start_at) : formatSlotDate(bookingDate)
+  const timeStr = slot ? formatSlotTime(slot.start_at) : null
   const guestNames = booking.guest_names || []
   const partySize = booking.party_size || 1
   const hostDisplayName = guestNames[0] || bookerName
@@ -115,9 +119,10 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
             )}
             <div className="flex items-center gap-2 pt-0.5">
               <span className="text-sm font-light text-zinc-500">
-                {dateStr} · {timeStr} · Party of {partySize}
+                {dateStr}{timeStr ? ` · ${timeStr}` : ''} · Party of {partySize}
+                {isSevenRooms && <span className="ml-2 text-[10px] tracking-[0.15em] text-zinc-400 uppercase">via restaurant</span>}
               </span>
-              {!isPast && !isCancelled && (
+              {!isPast && !isCancelled && calendarUrl && (
                 <a href={calendarUrl} target="_blank" rel="noopener noreferrer" title="Add to calendar" className="text-zinc-300 hover:text-zinc-500 transition-colors flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />

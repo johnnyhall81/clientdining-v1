@@ -10,7 +10,7 @@ import { Booking, Venue, Slot } from '@/lib/supabase'
 interface BookingWithDetails {
   booking: Booking
   venue: Venue
-  slot: Slot
+  slot: Slot | null
 }
 
 export default function BookingsPage() {
@@ -76,9 +76,12 @@ export default function BookingsPage() {
           commission_paid: item.commission_paid,
           created_at: item.created_at,
           updated_at: item.updated_at,
+          booking_source: item.booking_source,
+          booked_at: item.booked_at,
+          sevenrooms_reservation_id: item.sevenrooms_reservation_id,
         },
         venue: item.venues,
-        slot: item.slots,
+        slot: item.slots || null,
       }))
 
       setBookings(transformed)
@@ -116,8 +119,9 @@ export default function BookingsPage() {
   }
 
   const filteredBookings = bookings.filter(({ booking, slot }) => {
-    const isPast = new Date(slot.start_at) < new Date()
-    
+    const dateStr = slot?.start_at || (booking as any).booked_at || booking.created_at
+    const isPast = new Date(dateStr) < new Date()
+
     if (activeTab === 'upcoming') {
       return booking.status === 'active' && !isPast
     } else if (activeTab === 'past') {
@@ -181,7 +185,7 @@ export default function BookingsPage() {
             )}
           </div>
         ) : (
-          filteredBookings.filter(({ venue, slot }) => venue && slot).map(({ booking, venue, slot }) => (
+          filteredBookings.filter(({ venue }) => venue).map(({ booking, venue, slot }) => (
             <BookingCard
               key={booking.id}
               booking={booking}
