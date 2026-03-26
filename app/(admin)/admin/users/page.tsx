@@ -174,11 +174,11 @@ export default function UsersPage() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Verified</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nominations</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tier</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Verified</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nominations</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member Since</th>
             </tr>
           </thead>
@@ -246,28 +246,6 @@ export default function UsersPage() {
                   </div>
                 </td>
 
-                <td className="px-6 py-4 whitespace-nowrap text-gray-600">{user.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <select
-                    value={user.diner_tier}
-                    onChange={(e) => updateUserTier(user.user_id, e.target.value as 'free' | 'premium')}
-                    className="text-sm border border-gray-300 rounded px-2 py-1"
-                  >
-                    <option value="free">Free</option>
-                    <option value="premium">Premium</option>
-                  </select>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <select
-                    value={user.role}
-                    onChange={(e) => updateUserRole(user.user_id, e.target.value as any)}
-                    className="text-sm border border-gray-300 rounded px-2 py-1"
-                  >
-                    <option value="diner">Diner</option>
-                    <option value="venue_manager">Venue Manager</option>
-                    <option value="platform_admin">Platform Admin</option>
-                  </select>
-                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     onClick={() => toggleVerification(user.user_id, user.is_professionally_verified)}
@@ -291,6 +269,28 @@ export default function UsersPage() {
                   >
                     {user.can_nominate ? '✓ Enabled' : 'Disabled'}
                   </button>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-gray-600">{user.email}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <select
+                    value={user.diner_tier}
+                    onChange={(e) => updateUserTier(user.user_id, e.target.value as 'free' | 'premium')}
+                    className="text-sm border border-gray-300 rounded px-2 py-1"
+                  >
+                    <option value="free">Free</option>
+                    <option value="premium">Premium</option>
+                  </select>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <select
+                    value={user.role}
+                    onChange={(e) => updateUserRole(user.user_id, e.target.value as any)}
+                    className="text-sm border border-gray-300 rounded px-2 py-1"
+                  >
+                    <option value="diner">Diner</option>
+                    <option value="venue_manager">Venue Manager</option>
+                    <option value="platform_admin">Platform Admin</option>
+                  </select>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                   {new Date(user.created_at).toLocaleDateString()}
