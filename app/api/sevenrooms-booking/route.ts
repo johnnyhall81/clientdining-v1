@@ -25,9 +25,8 @@ export async function POST(request: Request) {
     // Extract useful fields from the SevenRooms payload
     const reservationId = payload?.reservation_id || payload?.id || null
     const partySize = payload?.party_size || payload?.covers || null
-    const bookedAt = payload?.date
-      ? new Date(payload.date).toISOString()
-      : new Date().toISOString()
+    // SevenRooms postMessage doesn't include reservation date — leave null
+    const bookedAt = payload?.date ? new Date(payload.date).toISOString() : null
 
     // Write to sevenrooms_bookings for raw payload retention
     await supabase.from('sevenrooms_bookings').insert({

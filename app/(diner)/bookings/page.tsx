@@ -119,8 +119,9 @@ export default function BookingsPage() {
   }
 
   const filteredBookings = bookings.filter(({ booking, slot }) => {
-    const dateStr = slot?.start_at || (booking as any).booked_at || booking.created_at
-    const isPast = new Date(dateStr) < new Date()
+    const dateStr = slot?.start_at || (booking as any).booked_at
+    // If no date available (SevenRooms booking without date), treat as upcoming
+    const isPast = dateStr ? new Date(dateStr) < new Date() : false
 
     if (activeTab === 'upcoming') {
       return booking.status === 'active' && !isPast

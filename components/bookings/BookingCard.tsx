@@ -19,8 +19,8 @@ type Tab = 'guests' | 'contact' | 'venuenote' | 'mynotes'
 
 export default function BookingCard({ booking, venue, slot, bookerName, onCancel }: BookingCardProps) {
   // For SevenRooms bookings, slot is null — use booked_at or created_at as fallback
-  const bookingDate = slot?.start_at || (booking as any).booked_at || booking.created_at
-  const isPast = new Date(bookingDate) < new Date()
+  const bookingDate = slot?.start_at || (booking as any).booked_at || null
+  const isPast = bookingDate ? new Date(bookingDate) < new Date() : false
   const isSevenRooms = (booking as any).booking_source === 'sevenrooms'
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
@@ -61,13 +61,13 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Dinner — ${venue.name}`)}&dates=${fmt(start)}/${fmt(end)}&details=${details}&location=${location}`
   })()
 
-  const dateStr = slot ? formatSlotDate(slot.start_at) : formatSlotDate(bookingDate)
+  const dateStr = bookingDate ? (slot ? formatSlotDate(slot.start_at) : formatSlotDate(bookingDate)) : null
   const timeStr = slot ? formatSlotTime(slot.start_at) : null
   const guestNames = booking.guest_names || []
-  const partySize = booking.party_size || 1
+  const partySize = booking.party_size || null
   const hostDisplayName = guestNames[0] || bookerName
   const namedGuests = guestNames.length > 0 ? guestNames : null
-  const remainder = namedGuests ? partySize - guestNames.length : partySize - 1
+  const remainder = namedGuests && partySize ? partySize - guestNames.length : partySize ? partySize - 1 : 0
 
   const tabLabel = (tab: Tab) => tab === 'guests' ? 'Guests' : tab === 'contact' ? 'Contact' : tab === 'venuenote' ? 'Sent to venue' : 'My notes'
 
@@ -119,7 +119,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
             )}
             <div className="flex items-center gap-2 pt-0.5">
               <span className="text-sm font-light text-zinc-500">
-                {dateStr}{timeStr ? ` · ${timeStr}` : ''} · Party of {partySize}
+                {dateStr ?? 'Date confirmed with venue'}{timeStr ? ` · ${timeStr}` : ''}{partySize ? ` · Party of ${partySize}` : ''}
                 {isSevenRooms && <span className="ml-2 text-[10px] tracking-[0.15em] text-zinc-400 uppercase">via restaurant</span>}
               </span>
               {!isPast && !isCancelled && calendarUrl && (
