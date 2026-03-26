@@ -214,9 +214,9 @@ export default function TopNav() {
 
         ) : (
           <div className="flex justify-between items-center h-16">
-            <Link href={user ? "/home" : "/"} className="text-xl font-light text-zinc-900 flex-shrink-0">
-              ClientDining
-            </Link>
+          <Link href={user ? "/home" : "/"} className="flex-shrink-0">
+            <Image src="/logo.png" alt="ClientDining" width={80} height={32} className="object-contain" />
+          </Link>
 
             {user ? (
             <nav className="flex items-center gap-3 sm:gap-6">
