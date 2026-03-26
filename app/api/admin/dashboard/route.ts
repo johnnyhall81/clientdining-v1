@@ -42,9 +42,12 @@ export async function GET() {
 
     const activeWithUsers = (activeBookings || []).map((booking: any) => ({
       ...booking,
-      slot: {
+      slot: booking.slots ? {
         start_at: booking.slots.start_at,
         venue: booking.slots.venues
+      } : {
+        start_at: booking.booked_at || booking.created_at,
+        venue: null
       },
       user: {
         email: booking.profiles?.email || 'N/A',
@@ -72,9 +75,12 @@ export async function GET() {
 
     const cancelledWithUsers = (cancelledBookings || []).map((booking: any) => ({
       ...booking,
-      slot: {
+      slot: booking.slots ? {
         start_at: booking.slots.start_at,
         venue: booking.slots.venues
+      } : {
+        start_at: booking.booked_at || booking.created_at,
+        venue: null
       },
       user: {
         email: booking.profiles?.email || 'N/A',
@@ -102,9 +108,12 @@ export async function GET() {
 
     const completedWithUsers = (completedBookings || []).map((booking: any) => ({
       ...booking,
-      slot: {
+      slot: booking.slots ? {
         start_at: booking.slots.start_at,
         venue: booking.slots.venues
+      } : {
+        start_at: booking.booked_at || booking.created_at,
+        venue: null
       },
       user: {
         email: booking.profiles?.email || 'N/A',
