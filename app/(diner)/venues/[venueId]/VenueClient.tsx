@@ -85,6 +85,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
         } catch (err) {
           console.error('[SevenRooms] Failed to record booking', err)
         }
+        router.push('/bookings')
       }
     }
     window.addEventListener('message', handler)
