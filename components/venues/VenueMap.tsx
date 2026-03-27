@@ -272,42 +272,36 @@ export default function VenueMap({ venues }: VenueMapProps) {
               className="flex-shrink-0 bg-white overflow-hidden cursor-pointer transition-all duration-200"
               style={{
                 width: '160px',
-                height: '240px',
                 borderRadius: '10px',
                 border: activeId === venue.id ? '2px solid #DA7756' : '1px solid #F0EDE9',
                 boxShadow: activeId === venue.id ? '0 2px 12px rgba(232,124,46,0.2)' : '0 1px 4px rgba(0,0,0,0.07)',
-                display: 'flex',
-                flexDirection: 'column',
               }}
             >
-              {/* Top third — hero image */}
-              <div style={{ height: '80px', flexShrink: 0, overflow: 'hidden' }}>
-                {venue.image_hero ? (
+              {/* Image with logo overlay */}
+              <div style={{ height: '120px', position: 'relative', overflow: 'hidden', background: '#F4F2EF' }}>
+                {venue.image_hero && (
                   <img src={venue.image_hero} alt={venue.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', background: '#F4F2EF' }} />
                 )}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.5) 100%)' }} />
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
+                  {(venue as any).logo_url ? (
+                    <img
+                      src={(venue as any).logo_url}
+                      alt={venue.name}
+                      style={{ maxHeight: '48px', maxWidth: '120px', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.9 }}
+                    />
+                  ) : (
+                    <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.9)', textAlign: 'center', fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic', margin: 0, lineHeight: 1.3 }}>
+                      {venue.name}
+                    </p>
+                  )}
+                </div>
               </div>
 
-              {/* Middle third — logo */}
-              <div style={{ height: '80px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', borderTop: '1px solid #F0EDE9', borderBottom: '1px solid #F0EDE9', background: '#FAFAF9' }}>
-                {(venue as any).logo_url ? (
-                  <img
-                    src={(venue as any).logo_url}
-                    alt={venue.name}
-                    style={{ maxHeight: '44px', maxWidth: '120px', objectFit: 'contain', filter: 'brightness(0)', opacity: 0.75 }}
-                  />
-                ) : (
-                  <p style={{ fontSize: '13px', fontWeight: 400, color: '#71717a', textAlign: 'center', fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic', margin: 0, lineHeight: 1.3 }}>
-                    {venue.name}
-                  </p>
-                )}
-              </div>
-
-              {/* Bottom third — name + area */}
-              <div style={{ height: '80px', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 12px' }}>
+              {/* Info */}
+              <div style={{ padding: '9px 11px' }}>
                 <p style={{ fontSize: '12px', fontWeight: 500, color: '#18181B', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{venue.name}</p>
-                <p style={{ fontSize: '11px', color: '#a1a1aa', margin: '3px 0 0', fontWeight: 400 }}>{venue.area}</p>
+                <p style={{ fontSize: '11px', color: '#a1a1aa', margin: '2px 0 0', fontWeight: 400 }}>{venue.area}</p>
               </div>
             </div>
           ))}
