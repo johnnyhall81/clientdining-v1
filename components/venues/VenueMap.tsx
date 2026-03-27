@@ -284,16 +284,16 @@ export default function VenueMap({ venues }: VenueMapProps) {
                 )}
               </div>
 
-              {/* Square logo */}
-              <div style={{ width: '160px', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', borderTop: '1px solid #F0EDE9', flexShrink: 0 }}>
+              {/* Square logo — reduced visual weight, tighter spacing */}
+              <div style={{ width: '160px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px', borderTop: '1px solid #F0EDE9', flexShrink: 0 }}>
                 {(venue as any).logo_url ? (
                   <img
                     src={(venue as any).logo_url}
                     alt={venue.name}
-                    style={{ maxHeight: '80px', maxWidth: '112px', objectFit: 'contain', filter: 'brightness(0)', opacity: 0.8 }}
+                    style={{ maxHeight: '28px', maxWidth: '112px', width: '100%', objectFit: 'contain', filter: 'brightness(0)', opacity: 0.75 }}
                   />
                 ) : (
-                  <p style={{ fontSize: '14px', color: '#71717a', textAlign: 'center', fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic', margin: 0, lineHeight: 1.4 }}>
+                  <p style={{ fontSize: '12px', color: '#3a3a3a', textAlign: 'center', fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic', margin: 0, lineHeight: 1.4, opacity: 0.75 }}>
                     {venue.name}
                   </p>
                 )}
