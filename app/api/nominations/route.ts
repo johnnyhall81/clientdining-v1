@@ -42,6 +42,21 @@ export async function POST(request: Request) {
       )
     }
 
+    // Check for duplicate — same nominator + email
+    const { data: existing } = await supabase
+      .from('nominations')
+      .select('id')
+      .eq('nominator_user_id', user.id)
+      .eq('nominee_email', email)
+      .maybeSingle()
+
+    if (existing) {
+      return NextResponse.json(
+        { error: 'You have already sent an invitation to this email address.' },
+        { status: 400 }
+      )
+    }
+
     // Create nomination
     const { data: nomination, error: insertError } = await supabase
       .from('nominations')
@@ -140,8 +155,24 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    // Check which nominees have joined — look up their emails in profiles
+    const nomineeEmails = (nominations || []).map((n: any) => n.nominee_email)
+    const { data: joinedProfiles } = nomineeEmails.length > 0
+      ? await supabase
+          .from('profiles')
+          .select('email')
+          .in('email', nomineeEmails)
+      : { data: [] }
+
+    const joinedEmails = new Set((joinedProfiles || []).map((p: any) => p.email))
+
+    const nominationsWithStatus = (nominations || []).map((n: any) => ({
+      ...n,
+      status: joinedEmails.has(n.nominee_email) ? 'accepted' : 'pending',
+    }))
+
     return NextResponse.json({ 
-      nominations,
+      nominations: nominationsWithStatus,
       can_nominate: profile?.can_nominate || false
     })
   } catch (error: any) {

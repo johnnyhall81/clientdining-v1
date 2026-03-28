@@ -9,6 +9,7 @@ interface Nomination {
   nominee_email: string
   nominee_company: string | null
   created_at: string
+  status?: 'pending' | 'accepted'
 }
 
 interface Props {
@@ -25,12 +26,9 @@ export default function NominationCard({ userId, canNominate }: Props) {
 
   useEffect(() => {
     if (!canNominate) return
-    supabase
-      .from('nominations')
-      .select('id, nominee_name, nominee_email, nominee_company, created_at')
-      .eq('nominator_user_id', userId)
-      .order('created_at', { ascending: false })
-      .then(({ data }) => { if (data) setNominations(data) })
+    fetch('/api/nominations')
+      .then(r => r.json())
+      .then(({ nominations }) => { if (nominations) setNominations(nominations) })
   }, [userId, canNominate])
 
   if (!canNominate) return null
@@ -117,8 +115,12 @@ export default function NominationCard({ userId, canNominate }: Props) {
                     </p>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-                    <span className="text-[9px] tracking-[0.12em] uppercase font-light text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-full">
-                      Pending
+                    <span className={`text-[9px] tracking-[0.12em] uppercase font-light px-2 py-0.5 rounded-full ${
+                      nom.status === 'accepted'
+                        ? 'text-green-700 bg-green-50'
+                        : 'text-zinc-400 bg-zinc-100'
+                    }`}>
+                      {nom.status === 'accepted' ? 'Joined' : 'Pending'}
                     </span>
                     <span className="text-xs font-light text-zinc-300 tabular-nums">
                       {new Date(nom.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
