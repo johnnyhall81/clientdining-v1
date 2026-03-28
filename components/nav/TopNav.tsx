@@ -194,7 +194,8 @@ export default function TopNav() {
                   )}
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <Link href="/account" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">Account</Link>
+                  <Link href="/bookings" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">My Bookings</Link>
+                  <Link href="/account" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50">Account</Link>
                   <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-b-lg">Sign Out</button>
                 </div>
               </div>
@@ -353,10 +354,16 @@ export default function TopNav() {
 
                 {/* Dropdown */}
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                  <Link
+                    href="/bookings"
+                    className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
+                  >
+                    My Bookings
+                  </Link>
                   {!isAdmin && (
                     <Link
                       href="/account"
-                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
+                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50"
                     >
                       Account
                     </Link>
@@ -364,7 +371,7 @@ export default function TopNav() {
                   {isAdmin && (
                     <Link
                       href="/admin"
-                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
+                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50"
                     >
                       Admin Dashboard
                     </Link>
