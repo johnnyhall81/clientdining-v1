@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
@@ -155,10 +156,15 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    // Check which nominees have joined — look up their emails in profiles
+    // Check which nominees have joined — use service role to bypass RLS on profiles
+    const adminSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    )
     const nomineeEmails = (nominations || []).map((n: any) => n.nominee_email)
     const { data: joinedProfiles } = nomineeEmails.length > 0
-      ? await supabase
+      ? await adminSupabase
           .from('profiles')
           .select('email')
           .in('email', nomineeEmails)
