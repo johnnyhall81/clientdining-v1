@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase-client'
 import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
 
@@ -55,7 +56,6 @@ export default function Page() {
   const [filterAreas, setFilterAreas] = useState<string[]>([])
   const [filterGuest, setFilterGuest] = useState('')
   const [filterOccasion, setFilterOccasion] = useState('')
-  const [filterCapacityType, setFilterCapacityType] = useState<'dining' | 'standing' | ''>('')
   const [enquiringRoom, setEnquiringRoom] = useState<Room | null>(null)
 
   useEffect(() => {
@@ -82,16 +82,16 @@ export default function Page() {
     if (filterGuest) {
       const range = GUEST_RANGES.find(r => r.label === filterGuest)
       if (range) {
-        const cap = filterCapacityType === 'dining'
-          ? (room.capacity_dining || 0)
-          : filterCapacityType === 'standing'
-          ? (room.capacity_standing || 0)
-          : Math.max(room.capacity_dining || 0, room.capacity_standing || 0, room.capacity_boardroom || 0)
+        const maxCap = Math.max(
+          room.capacity_dining || 0,
+          room.capacity_standing || 0,
+          room.capacity_boardroom || 0
+        )
 
         if (range.max === Infinity) {
-          if (cap > 0 && cap < 80) return false
+          if (maxCap > 0 && maxCap < 80) return false
         } else {
-          if (cap > 0 && cap < range.max) return false
+          if (maxCap > 0 && maxCap < range.max) return false
         }
       }
     }
@@ -107,12 +107,11 @@ export default function Page() {
   const availableAreas = Array.from(new Set(rooms.map(r => r.venue.area))).sort()
   const availableOccasions = Array.from(new Set(rooms.flatMap(r => r.best_for || []))).sort()
 
-  const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion || filterCapacityType
+  const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
   const clearFilters = () => {
     setFilterAreas([])
     setFilterGuest('')
     setFilterOccasion('')
-    setFilterCapacityType('')
   }
 
   return (
@@ -132,19 +131,6 @@ export default function Page() {
       </div>
 
       <div className="space-y-2">
-        <div className="flex flex-wrap gap-1.5">
-          {(['dining', 'standing'] as const).map(type => (
-            <button
-              key={type}
-              onClick={() => setFilterCapacityType(filterCapacityType === type ? '' : type)}
-              className="px-3 py-1 text-xs font-light transition-colors"
-              style={pillStyle(filterCapacityType === type)}
-            >
-              {type === 'dining' ? 'Seated' : 'Standing'}
-            </button>
-          ))}
-        </div>
-
         <div className="flex flex-wrap gap-1.5">
           {GUEST_RANGES.map(r => (
             <button
@@ -209,7 +195,7 @@ export default function Page() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {filtered.map(room => {
+          {filtered.map((room, roomIndex) => {
             const mainImage = room.images?.find(i => i.is_main) || room.images?.[0]
             const heroImage = mainImage?.url || room.venue.image_hero
 
@@ -225,10 +211,15 @@ export default function Page() {
                   style={{ paddingTop: '75%' }}
                 >
                   {heroImage ? (
-                    <img
+                    <Image
                       src={heroImage}
                       alt={room.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      priority={roomIndex < 4}
+                      className="object-cover transition-[transform,opacity] duration-500 hover:scale-[1.02]"
+                      style={{ opacity: 0 }}
+                      onLoad={e => { (e.target as HTMLImageElement).style.opacity = '1' }}
                     />
                   ) : (
                     <div className="absolute inset-0 bg-zinc-100" />
@@ -303,8 +294,10 @@ export default function Page() {
                         <img
                           src={room.venue.logo_url}
                           alt={room.venue.name}
-                          className="block w-full max-w-none h-[56px] sm:h-[72px] lg:h-[80px] object-contain object-left sm:object-right"
-                          style={{ filter: 'brightness(0)', opacity: 0.72 }}
+                          loading="lazy"
+                          className="block w-full max-w-none h-[56px] sm:h-[72px] lg:h-[80px] object-contain object-left sm:object-right transition-opacity duration-500"
+                          style={{ filter: 'brightness(0)', opacity: 0 }}
+                          onLoad={e => { (e.target as HTMLImageElement).style.opacity = '0.72' }}
                         />
                       </div>
                     )}

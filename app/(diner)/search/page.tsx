@@ -3,7 +3,7 @@
 
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 import { useEffect, useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
@@ -72,19 +72,6 @@ const [cancellingSlot, setCancellingSlot] = useState<{
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null)
-  const [showSignInModal, setShowSignInModal] = useState(false)
-  const pathname = usePathname()
-
-  const handleSignIn = async () => {
-    const base =
-      typeof window !== 'undefined' && window.location.hostname === 'localhost'
-        ? 'http://localhost:3000'
-        : 'https://clientdining.com'
-    await supabase.auth.signInWithOAuth({
-      provider: 'linkedin_oidc',
-      options: { redirectTo: `${base}/auth/callback?next=${encodeURIComponent(pathname)}` },
-    })
-  }
 
 
   const [filters, setFilters] = useState<SearchFilters>({
@@ -318,7 +305,10 @@ const handleCancel = async () => {
   }
 
   const handleBook = async (slotId: string) => {
-    if (!user) { setShowSignInModal(true); return }
+    if (!user) {
+      router.push('/login')
+      return
+    }
   
     const result = results.find(r => r.slot.id === slotId)
     if (!result) return
@@ -384,7 +374,10 @@ const handleCancel = async () => {
 
 
   const handleToggleAlert = async (slotId: string) => {
-    if (!user) { setShowSignInModal(true); return }
+    if (!user) {
+      router.push('/login')
+      return
+    }
 
     // Check if alert exists
     const hasAlert = alerts.has(slotId)
@@ -483,7 +476,7 @@ const handleCancel = async () => {
               if (acc[vid].slots.length < 10) acc[vid].slots.push(r.slot)
               return acc
             }, {} as Record<string, { venue: SearchResult['venue'], slots: SearchResult['slot'][] }>)
-          ).map(({ venue, slots }) => {
+          ).map(({ venue, slots }, venueIndex) => {
             const MAX_VISIBLE = 6
             const visibleSlots = slots.slice(0, MAX_VISIBLE)
 
@@ -494,7 +487,17 @@ const handleCancel = async () => {
                   {/* Image — 4:3 on mobile, fixed width on desktop */}
                   <Link href={`/venues/${venue.id}`} prefetch={true} className="relative w-full md:w-48 md:flex-shrink-0 bg-zinc-100 overflow-hidden hover:opacity-90 transition-opacity" style={{ aspectRatio: '4/3' }}>
                     {venue.image_hero ? (
-                      <Image src={venue.image_hero} alt={venue.name} fill sizes="(max-width: 768px) 100vw, 192px" quality={70} className="object-cover" />
+                      <Image
+                        src={venue.image_hero}
+                        alt={venue.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 192px"
+                        quality={70}
+                        priority={venueIndex < 3}
+                        className="object-cover transition-opacity duration-500"
+                        style={{ opacity: 0 }}
+                        onLoad={e => { (e.target as HTMLImageElement).style.opacity = '1' }}
+                      />
                     ) : (
                       <div className="w-full h-full bg-zinc-100" />
                     )}
@@ -613,46 +616,8 @@ const handleCancel = async () => {
   />
 )}
 
-      {/* Pre-auth modal */}
-      {showSignInModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
-          onClick={e => { if (e.target === e.currentTarget) setShowSignInModal(false) }}
-        >
-          <div className="bg-white w-full max-w-sm shadow-xl overflow-hidden" style={{ borderRadius: '6px' }}>
-            <div className="relative px-7 pt-5 pb-4" style={{ borderBottom: '1px solid #F5F3F0' }}>
-              <button onClick={() => setShowSignInModal(false)} className="absolute top-4 right-5 text-zinc-400 hover:text-zinc-700 transition-colors" aria-label="Close">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-              <p className="text-[9px] tracking-[0.22em] text-zinc-400 uppercase font-light mb-1.5">Members only</p>
-              <h2 className="text-xl font-light text-zinc-900 tracking-tight pr-8 leading-snug">Verify to complete this booking</h2>
-            </div>
-            <div className="px-7 pt-5 pb-6 space-y-5">
-              <p className="text-sm font-light text-zinc-500 leading-relaxed">
-                ClientDining is free for verified professionals. We use LinkedIn to confirm your role — we don't post to your profile or access your connections.
-              </p>
-              <button
-                onClick={handleSignIn}
-                className="w-full h-12 inline-flex items-center justify-center gap-3 text-sm font-light transition-all duration-300"
-                style={{ backgroundColor: 'white', color: '#3f3f46', borderRadius: '3px', border: '1px solid #a1a1aa' }}
-                onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#71717a')}
-                onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#a1a1aa')}
-              >
-                <svg className="w-4 h-4 flex-shrink-0 opacity-50" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-                Continue with LinkedIn
-              </button>
-              <p className="text-xs font-light text-center text-zinc-400">
-                New to ClientDining?{' '}
-                <a href="/signup" onClick={() => setShowSignInModal(false)} className="text-zinc-600 hover:text-zinc-900 transition-colors underline underline-offset-2">Apply here</a>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+
+
     </div>
   )
 }

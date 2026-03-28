@@ -7,9 +7,13 @@ import { Venue } from '@/lib/supabase'
 interface VenueTileProps {
   venue: Venue & { image?: string }
   availableSlots?: number
+  priority?: boolean
 }
 
-export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps) {
+// Warm zinc blur placeholder — renders instantly, cross-fades to real image
+const BLUR_DATA_URL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAKABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUEB//EACMQAAIBBAIDAQAAAAAAAAAAAAECAwQREiExBUFRcf/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAABEB/9oADAMBAAIRAxEAPwCl2q2VrBYxy3MLvdTMXleRiQxPfnzS7VZoY7q4it5BIkcrKrgY3AHBxSlKiiSSST//2Q=='
+
+export default function VenueTile({ venue, availableSlots = 0, priority = false }: VenueTileProps) {
   const imageSrc = venue.image_hero || venue.image
 
   return (
@@ -27,7 +31,12 @@ export default function VenueTile({ venue, availableSlots = 0 }: VenueTileProps)
               alt={venue.name}
               fill
               sizes="(max-width: 768px) 100vw, 33vw"
-              className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
+              priority={priority}
+              placeholder="blur"
+              blurDataURL={BLUR_DATA_URL}
+              className="object-cover object-center transition-[transform,opacity] duration-700 group-hover:scale-[1.02]"
+              style={{ opacity: 0 }}
+              onLoad={e => { (e.target as HTMLImageElement).style.opacity = '1' }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
             {(venue as any).logo_url ? (
