@@ -66,36 +66,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
-  // postMessage listener — capture SevenRooms booking completion
-  useEffect(() => {
-    const handler = async (e: MessageEvent) => {
-      if (e.origin !== 'https://www.sevenrooms.com') return
-
-      // Log ALL messages to explore what SevenRooms sends during slot selection
-      console.log('[SevenRooms raw]', JSON.stringify(e.data))
-
-      if (typeof e.data !== 'object' || !e.data) return
-
-      const { event, status, ...payload } = e.data
-
-      if (event === 'booking' && status?.toUpperCase().startsWith('SUCCES')) {
-        console.log('[SevenRooms] Booking confirmed', payload)
-        try {
-          await fetch('/api/sevenrooms-booking', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ venueId: venue.id, payload: { ...payload, status } }),
-          })
-        } catch (err) {
-          console.error('[SevenRooms] Failed to record booking', err)
-        }
-        router.push('/bookings')
-      }
-    }
-    window.addEventListener('message', handler)
-    return () => window.removeEventListener('message', handler)
-  }, [venue.id])
-
   useEffect(() => {
     supabase.from('private_hire_rooms').select('*')
       .eq('venue_id', venue.id).eq('is_active', true)
@@ -388,7 +358,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               className="flex items-center justify-between w-full px-6 py-4 bg-white hover:bg-zinc-50 transition-colors"
               style={{ borderRadius: '6px', border: '1px solid #E4E0DB' }}
             >
-              <span className="text-sm font-light text-zinc-600">Browse more private hire spaces</span>
+              <span className="text-sm font-light text-zinc-500">Browse more private hire spaces</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-400">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
