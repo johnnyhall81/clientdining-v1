@@ -145,7 +145,7 @@ export default function TopNav() {
             {/* Back */}
             <button
               onClick={() => router.push('/home')}
-              className="text-zinc-400 hover:text-zinc-900 transition-colors flex-shrink-0"
+              className="text-zinc-300 hover:text-zinc-700 transition-colors flex-shrink-0"
               aria-label="Back"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -202,7 +202,7 @@ export default function TopNav() {
                 </div>
               </div>
             ) : (
-              <Link href="/login" className="text-zinc-400 hover:text-zinc-900 transition-colors flex-shrink-0">
+              <Link href="/login" className="text-zinc-300 hover:text-zinc-700 transition-colors flex-shrink-0">
                 <div className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -223,7 +223,7 @@ export default function TopNav() {
 
               <Link
                 href="/home"
-                className={`transition-colors ${isActive('/home') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
+                className={`transition-colors ${isActive('/home') ? 'text-zinc-900' : 'text-zinc-300 hover:text-zinc-700'}`}
                 aria-label="Home"
               >
                 {isActive('/home') ? (
@@ -242,7 +242,7 @@ export default function TopNav() {
                 className={`transition-colors ${
                   isActive('/map')
                     ? 'text-zinc-900'
-                    : 'text-zinc-500 hover:text-zinc-900'
+                    : 'text-zinc-300 hover:text-zinc-700'
                 }`}
                 aria-label="Map"
               >
@@ -257,7 +257,7 @@ export default function TopNav() {
                 className={`transition-colors ${
                   isActive('/search')
                     ? 'text-zinc-900'
-                    : 'text-zinc-500 hover:text-zinc-900'
+                    : 'text-zinc-300 hover:text-zinc-700'
                 }`}
                 aria-label="Search"
               >
@@ -285,7 +285,7 @@ export default function TopNav() {
                 className={`relative transition-colors ${
                   isActive('/bookings')
                     ? 'text-zinc-900'
-                    : 'text-zinc-400 hover:text-zinc-900'
+                    : 'text-zinc-300 hover:text-zinc-700'
                 }`}
                 aria-label="Bookings"
               >
@@ -314,7 +314,7 @@ export default function TopNav() {
                   className={`relative transition-colors ${
                     isActive('/alerts')
                       ? 'text-zinc-900'
-                      : 'text-zinc-500 hover:text-zinc-900'
+                      : 'text-zinc-300 hover:text-zinc-700'
                   }`}
                   aria-label="Alerts"
                 >
@@ -385,7 +385,7 @@ export default function TopNav() {
             <nav className="flex items-center gap-4">
               <Link
                 href="/login"
-                className="text-zinc-500 hover:text-zinc-900 transition-colors"
+                className="text-zinc-300 hover:text-zinc-700 transition-colors"
                 aria-label="Sign in"
               >
                 <div className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center hover:border-zinc-200 transition-colors">
