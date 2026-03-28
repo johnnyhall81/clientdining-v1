@@ -222,7 +222,10 @@ export default function VenueMap({ venues }: VenueMapProps) {
         if (geocoded.length > 1) {
           const bounds = new mapboxgl.default.LngLatBounds()
           geocoded.forEach(v => bounds.extend([v.lng, v.lat]))
-          map.fitBounds(bounds, { padding: 80, maxZoom: 13 })
+          map.fitBounds(bounds, {
+            padding: { top: 60, bottom: 180, left: 60, right: 60 },
+            maxZoom: 13
+          })
         }
       })
     })
