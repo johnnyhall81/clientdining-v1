@@ -21,7 +21,6 @@ export default function VenueGrid({ venues }: VenueGridProps) {
       {venues.map((venue, index) => (
         <VenueTile key={venue.id} venue={venue} priority={index < 6} />
       ))}
-      ))}
     </div>
   )
 }
