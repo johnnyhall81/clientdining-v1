@@ -145,7 +145,7 @@ export default function TopNav() {
             {/* Back */}
             <button
               onClick={() => router.push('/home')}
-              className="text-zinc-300 hover:text-zinc-700 transition-colors flex-shrink-0"
+              className="text-zinc-400 hover:text-zinc-900 transition-colors flex-shrink-0"
               aria-label="Back"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -156,7 +156,8 @@ export default function TopNav() {
             {/* Centre tabs */}
             <div className="flex items-center gap-1">
               {venueHireOnly ? (
-                <span className="px-4 py-2 text-xs font-light tracking-widest uppercase text-zinc-900">
+                <span className="px-4 py-2 text-xs font-light tracking-widest uppercase text-zinc-900"
+                  style={{ borderBottom: '2px solid #18181B' }}>
                   Hire
                 </span>
               ) : venueHasPrivateHire ? (
@@ -166,14 +167,16 @@ export default function TopNav() {
                     href={`${pathname}${tab === 'reservations' ? '' : '?tab=private_hire'}`}
                     className="px-4 py-2 text-xs font-light tracking-widest uppercase transition-colors"
                     style={{
-                      color: currentTab === tab ? '#18181B' : '#D4D4D8',
+                      color: currentTab === tab ? '#18181B' : '#A1A1AA',
+                      borderBottom: currentTab === tab ? '2px solid #18181B' : '2px solid transparent',
                     }}
                   >
                     {tab === 'reservations' ? 'Book' : 'Hire'}
                   </Link>
                 ))
               ) : (
-                <span className="px-4 py-2 text-xs font-light tracking-widest uppercase text-zinc-900">
+                <span className="px-4 py-2 text-xs font-light tracking-widest uppercase text-zinc-900"
+                  style={{ borderBottom: '2px solid #18181B' }}>
                   Book
                 </span>
               )}
@@ -194,13 +197,12 @@ export default function TopNav() {
                   )}
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <Link href="/bookings" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">My Bookings</Link>
-                  <Link href="/account" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50">Account</Link>
+                  <Link href="/account" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">Account</Link>
                   <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-b-lg">Sign Out</button>
                 </div>
               </div>
             ) : (
-              <Link href="/login" className="text-zinc-300 hover:text-zinc-700 transition-colors flex-shrink-0">
+              <Link href="/login" className="text-zinc-400 hover:text-zinc-900 transition-colors flex-shrink-0">
                 <div className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -221,7 +223,7 @@ export default function TopNav() {
 
               <Link
                 href="/home"
-                className={`transition-colors ${isActive('/home') ? 'text-zinc-900' : 'text-zinc-300 hover:text-zinc-700'}`}
+                className={`transition-colors ${isActive('/home') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
                 aria-label="Home"
               >
                 {isActive('/home') ? (
@@ -237,7 +239,11 @@ export default function TopNav() {
 
               <Link
                 href="/map"
-                className={`transition-colors ${isActive('/map') ? 'text-zinc-900' : 'text-zinc-300 hover:text-zinc-700'}`}
+                className={`transition-colors ${
+                  isActive('/map')
+                    ? 'text-zinc-900'
+                    : 'text-zinc-500 hover:text-zinc-900'
+                }`}
                 aria-label="Map"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -247,17 +253,31 @@ export default function TopNav() {
               </Link>
 
               <Link
-                href="/private-hire"
-                className={`transition-colors ${
-                  isActive('/private-hire')
+                href="/bookings"
+                className={`relative transition-colors ${
+                  isActive('/bookings')
                     ? 'text-zinc-900'
-                    : 'text-zinc-300 hover:text-zinc-700'
+                    : 'text-zinc-400 hover:text-zinc-900'
                 }`}
-                aria-label="Private hire"
+                aria-label="Bookings"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                </svg>
+                <div className="relative">
+                  {isActive('/bookings') ? (
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12.75 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM7.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM8.25 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM9.75 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM10.5 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM12.75 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM14.25 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 13.5a.75.75 0 100-1.5.75.75 0 000 1.5z" />
+                      <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                  )}
+                  {bookingCount > 0 && (
+                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[16px] h-4 px-1 text-[10px] font-light text-zinc-500 bg-zinc-200 rounded-full">
+                      {bookingCount}
+                    </span>
+                  )}
+                </div>
               </Link>
 
               {alertCount > 0 && (
@@ -266,7 +286,7 @@ export default function TopNav() {
                   className={`relative transition-colors ${
                     isActive('/alerts')
                       ? 'text-zinc-900'
-                      : 'text-zinc-300 hover:text-zinc-700'
+                      : 'text-zinc-500 hover:text-zinc-900'
                   }`}
                   aria-label="Alerts"
                 >
@@ -308,16 +328,10 @@ export default function TopNav() {
 
                 {/* Dropdown */}
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <Link
-                    href="/bookings"
-                    className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
-                  >
-                    My Bookings
-                  </Link>
                   {!isAdmin && (
                     <Link
                       href="/account"
-                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50"
+                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
                     >
                       Account
                     </Link>
@@ -325,7 +339,7 @@ export default function TopNav() {
                   {isAdmin && (
                     <Link
                       href="/admin"
-                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50"
+                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
                     >
                       Admin Dashboard
                     </Link>
@@ -343,7 +357,7 @@ export default function TopNav() {
             <nav className="flex items-center gap-4">
               <Link
                 href="/login"
-                className="text-zinc-300 hover:text-zinc-700 transition-colors"
+                className="text-zinc-500 hover:text-zinc-900 transition-colors"
                 aria-label="Sign in"
               >
                 <div className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center hover:border-zinc-200 transition-colors">
