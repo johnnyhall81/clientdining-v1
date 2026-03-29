@@ -419,34 +419,47 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   )}
                 </div>
 
-                {/* Right: stats */}
-                {parsed?.stats && parsed.stats.length > 0 && (
-                  <div className="mt-8 lg:mt-1 lg:w-40 flex-shrink-0">
-                    <div className="grid grid-cols-2 lg:grid-cols-1 gap-x-8 gap-y-5">
-                      {parsed.stats.map((stat) => (
-                        <div key={stat.label}>
-                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">{stat.label}</p>
-                          <p className="text-[13px] font-light text-zinc-700 leading-snug">{stat.value}</p>
-                        </div>
-                      ))}
-                      {venue.private_hire_available && !(venue as any).hire_only && (
-                        <div>
-                          <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1.5 font-light">Private hire</p>
-                          <a
-                            href="?tab=private_hire"
-                            className="inline-flex items-center gap-1 text-[11px] font-light tracking-widest uppercase text-zinc-600 hover:text-zinc-900 transition-colors"
-                            style={{ borderBottom: '1px solid #C8C4BF', paddingBottom: '1px' }}
-                          >
-                            View spaces
-                            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                          </a>
-                        </div>
-                      )}
+                {/* Right: stats — dedicated columns take precedence, fall back to description-parsed stats */}
+                {(() => {
+                  const dedicatedStats: { label: string; value: string }[] = [
+                    venue.best_for    ? { label: 'Best for', value: venue.best_for }    : null,
+                    venue.spend_range ? { label: 'Spend',    value: venue.spend_range } : null,
+                    venue.dress_code  ? { label: 'Dress',    value: venue.dress_code }  : null,
+                  ].filter(Boolean) as { label: string; value: string }[]
+
+                  const displayStats = dedicatedStats.length > 0 ? dedicatedStats : (parsed?.stats ?? [])
+                  const showPrivateHire = venue.private_hire_available && !(venue as any).hire_only
+
+                  if (displayStats.length === 0 && !showPrivateHire) return null
+
+                  return (
+                    <div className="mt-8 lg:mt-1 lg:w-40 flex-shrink-0">
+                      <div className="grid grid-cols-2 lg:grid-cols-1 gap-x-8 gap-y-5">
+                        {displayStats.map((stat) => (
+                          <div key={stat.label}>
+                            <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1 font-light">{stat.label}</p>
+                            <p className="text-[13px] font-light text-zinc-700 leading-snug">{stat.value}</p>
+                          </div>
+                        ))}
+                        {showPrivateHire && (
+                          <div>
+                            <p className="text-[8px] tracking-[0.2em] text-zinc-400 uppercase mb-1.5 font-light">Private hire</p>
+                            <a
+                              href="?tab=private_hire"
+                              className="inline-flex items-center gap-1 text-[11px] font-light tracking-widest uppercase text-zinc-600 hover:text-zinc-900 transition-colors"
+                              style={{ borderBottom: '1px solid #C8C4BF', paddingBottom: '1px' }}
+                            >
+                              View spaces
+                              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                              </svg>
+                            </a>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )
+                })()}
               </div>
             </div>
           </div>
