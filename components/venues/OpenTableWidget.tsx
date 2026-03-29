@@ -7,17 +7,17 @@ interface OpenTableWidgetProps {
 }
 
 export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidgetProps) {
-  const widgetUrl = `https://www.opentable.co.uk/widget/reservation/canvas?rid=${rid}&type=standard&theme=standard&color=1&dark=false&iframe=true&domain=couk&lang=en-GB&newtab=false&ot_source=Restaurant%20website`
-
+  // Try iframe first — if OpenTable allows embedding for this venue it renders inline
+  // The header "Make a booking" is clipped by negative margin + overflow hidden
   return (
     <div>
-      <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-7 font-light">Book a table</p>
-      <div style={{ overflow: 'hidden', borderRadius: '3px' }}>
+      <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-4 font-light">Book a table</p>
+      <div style={{ overflow: 'hidden', height: '280px', borderRadius: '6px' }}>
         <iframe
-          src={widgetUrl}
-          width="224"
-          height="301"
-          style={{ border: 'none', display: 'block' }}
+          src={`https://www.opentable.co.uk/widget/reservation/loader?rid=${rid}&type=standard&theme=standard&lang=en-GB&overlay=false&iframe=true`}
+          width="100%"
+          height="340"
+          style={{ border: 'none', display: 'block', marginTop: '-56px' }}
           title={`Book at ${venueName}`}
         />
       </div>
