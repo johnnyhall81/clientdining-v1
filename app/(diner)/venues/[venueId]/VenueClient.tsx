@@ -192,19 +192,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
     )
   }
 
-  // OpenTable venue — show info page with CTA, no slots
-  if (pageTab === 'reservations' && (venue as any).opentable_rid && !(venue as any).hire_only) {
-    return (
-      <div className="max-w-lg">
-        <OpenTableWidget
-          rid={(venue as any).opentable_rid}
-          slug={(venue as any).opentable_slug || ''}
-          venueName={venue.name}
-        />
-      </div>
-    )
-  }
-
   // Private hire mode — elevated room-led layout
   if (pageTab === 'private_hire') {
     const maxCapacity = rooms.reduce((max: number, r: any) => {
