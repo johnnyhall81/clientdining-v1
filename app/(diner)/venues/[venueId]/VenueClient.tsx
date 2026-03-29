@@ -11,6 +11,7 @@ import PartySizeModal from '@/components/modals/PartySizeModal'
 import CancelBookingModal from '@/components/modals/CancelBookingModal'
 import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
 import VenueGallery from '@/components/venues/VenueGallery'
+import OpenTableWidget from '@/components/venues/OpenTableWidget'
 
 interface VenueClientProps {
   venue: Venue
@@ -191,6 +192,15 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
     )
   }
 
+  // Full-page OpenTable widget
+  if (pageTab === 'reservations' && (venue as any).opentable_slug && !(venue as any).hire_only) {
+    return (
+      <div className="max-w-lg mx-auto py-8">
+        <OpenTableWidget slug={(venue as any).opentable_slug} venueName={venue.name} />
+      </div>
+    )
+  }
+
   // Private hire mode — elevated room-led layout
   if (pageTab === 'private_hire') {
     const maxCapacity = rooms.reduce((max: number, r: any) => {
@@ -358,7 +368,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               className="flex items-center justify-between w-full px-6 py-4 bg-white hover:bg-zinc-50 transition-colors"
               style={{ borderRadius: '6px', border: '1px solid #E4E0DB' }}
             >
-              <span className="text-sm font-light text-zinc-500">Browse more private hire spaces</span>
+              <span className="text-sm font-light text-zinc-600">Browse more private hire spaces</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-400">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
@@ -473,6 +483,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   />
                 </div>
               </div>
+            ) : (venue as any).opentable_slug ? (
+              <OpenTableWidget slug={(venue as any).opentable_slug} venueName={venue.name} />
             ) : !hasSlots && !hasPrivateDining ? (
               <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
             ) : (
