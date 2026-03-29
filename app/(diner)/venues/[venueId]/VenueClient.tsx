@@ -193,10 +193,10 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
   }
 
   // Full-page OpenTable widget
-  if (pageTab === 'reservations' && (venue as any).opentable_slug && !(venue as any).hire_only) {
+  if (pageTab === 'reservations' && (venue as any).opentable_rid && !(venue as any).hire_only) {
     return (
       <div className="max-w-lg mx-auto py-8">
-        <OpenTableWidget slug={(venue as any).opentable_slug} venueName={venue.name} />
+        <OpenTableWidget rid={(venue as any).opentable_rid} venueName={venue.name} />
       </div>
     )
   }
@@ -483,8 +483,8 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   />
                 </div>
               </div>
-            ) : (venue as any).opentable_slug ? (
-              <OpenTableWidget slug={(venue as any).opentable_slug} venueName={venue.name} />
+            ) : (venue as any).opentable_rid ? (
+              <OpenTableWidget rid={(venue as any).opentable_rid} venueName={venue.name} />
             ) : !hasSlots && !hasPrivateDining ? (
               <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
             ) : (
