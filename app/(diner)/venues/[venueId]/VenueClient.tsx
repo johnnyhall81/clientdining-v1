@@ -359,7 +359,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               className="flex items-center justify-between w-full px-6 py-4 bg-white hover:bg-zinc-50 transition-colors"
               style={{ borderRadius: '6px', border: '1px solid #E4E0DB' }}
             >
-              <span className="text-sm font-light text-zinc-600">Browse more private hire spaces</span>
+              <span className="text-sm font-light text-zinc-500">Browse more private hire spaces</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-400">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
