@@ -157,8 +157,7 @@ export default function TopNav() {
             {/* Centre tabs */}
             <div className="flex items-center gap-1">
               {venueHireOnly ? (
-                <span className="px-4 py-2 text-xs font-light tracking-widest uppercase text-zinc-900"
-                  style={{ borderBottom: '2px solid #18181B' }}>
+                <span className="px-4 py-2 text-xs font-light tracking-widest uppercase text-zinc-900">
                   Hire
                 </span>
               ) : venueHasPrivateHire ? (
@@ -169,15 +168,13 @@ export default function TopNav() {
                     className="px-4 py-2 text-xs font-light tracking-widest uppercase transition-colors"
                     style={{
                       color: currentTab === tab ? '#18181B' : '#A1A1AA',
-                      borderBottom: currentTab === tab ? '2px solid #18181B' : '2px solid transparent',
                     }}
                   >
                     {tab === 'reservations' ? 'Book' : 'Hire'}
                   </Link>
                 ))
               ) : (
-                <span className="px-4 py-2 text-xs font-light tracking-widest uppercase text-zinc-900"
-                  style={{ borderBottom: '2px solid #18181B' }}>
+                <span className="px-4 py-2 text-xs font-light tracking-widest uppercase text-zinc-900">
                   Book
                 </span>
               )}
