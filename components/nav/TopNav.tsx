@@ -243,7 +243,7 @@ export default function TopNav() {
                 className={`transition-colors ${
                   isActive('/map')
                     ? 'text-zinc-900'
-                    : 'text-zinc-500 hover:text-zinc-900'
+                    : 'text-zinc-400 hover:text-zinc-900'
                 }`}
                 aria-label="Map"
               >
@@ -258,7 +258,7 @@ export default function TopNav() {
                 className={`transition-colors ${
                   isActive('/private-hire')
                     ? 'text-zinc-900'
-                    : 'text-zinc-500 hover:text-zinc-900'
+                    : 'text-zinc-400 hover:text-zinc-900'
                 }`}
                 aria-label="Private hire"
               >
@@ -301,7 +301,7 @@ export default function TopNav() {
                   className={`relative transition-colors ${
                     isActive('/alerts')
                       ? 'text-zinc-900'
-                      : 'text-zinc-500 hover:text-zinc-900'
+                      : 'text-zinc-400 hover:text-zinc-900'
                   }`}
                   aria-label="Alerts"
                 >
