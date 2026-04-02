@@ -19,25 +19,20 @@ export default function VenueGrid({ venues }: VenueGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
 
-      {/* Intro panel */}
-      <div className="col-span-1 md:col-span-2 lg:col-span-3 -mb-4">
-        <div
-          className="rounded-2xl px-9 py-8"
-          style={{ backgroundColor: '#F5F3F0', border: '1px solid #EBE8E4' }}
+      {/* Intro */}
+      <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 md:py-12">
+        <h1
+          className="text-zinc-900 mb-3"
+          style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 1.15 }}
         >
-          <p
-            className="text-zinc-800 font-light mb-2 leading-snug"
-            style={{ fontSize: '1.125rem', letterSpacing: '-0.01em', maxWidth: '480px' }}
-          >
-            A defined circle for business dining in London
-          </p>
-          <p
-            className="font-light leading-relaxed"
-            style={{ fontSize: '0.8125rem', color: '#6B6763', maxWidth: '420px' }}
-          >
-            Trusted tables and spaces for hosting, team occasions, and private events.
-          </p>
-        </div>
+          London's Best Tables & Spaces
+        </h1>
+        <p
+          className="font-light"
+          style={{ fontSize: '0.9375rem', color: '#8A8580', letterSpacing: '0.01em' }}
+        >
+          For hosting, team occasions, and private events.
+        </p>
       </div>
 
       {/* Venue tiles */}
