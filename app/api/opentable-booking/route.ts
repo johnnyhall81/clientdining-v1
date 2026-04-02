@@ -1,14 +1,14 @@
 import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-
-const GUEST_USER_ID = '00000000-0000-0000-0000-000000000000'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
     const { venueId, payload } = body
 
+    // Get the logged-in user if there is one
     const cookieStore = cookies()
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -21,7 +21,6 @@ export async function POST(request: Request) {
         },
       }
     )
-
     const { data: { user } } = await supabase.auth.getUser()
 
     const confirmationNumber = payload?.confirmationNumber?.toString() || null
@@ -30,8 +29,14 @@ export async function POST(request: Request) {
       ? new Date(payload.reservationDateTime).toISOString()
       : null
 
-    const { error } = await supabase.from('bookings').insert({
-      user_id: user?.id || GUEST_USER_ID,
+    // Use service role to bypass RLS — allows null user_id for guest bookings
+    const adminSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    const { error } = await adminSupabase.from('bookings').insert({
+      user_id: user?.id || null,
       venue_id: venueId,
       slot_id: null,
       party_size: partySize,
