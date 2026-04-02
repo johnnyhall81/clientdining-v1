@@ -6,6 +6,7 @@ interface OpenTableWidgetProps {
   rid: string
   slug: string
   venueName: string
+  venueId: string
 }
 
 function getTomorrow() {
@@ -42,24 +43,38 @@ const DATES = getDates()
 const TIMES = getTimes()
 const PARTY_SIZES = Array.from({ length: 10 }, (_, i) => i + 1)
 
-export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidgetProps) {
+export default function OpenTableWidget({ rid, slug, venueName, venueId }: OpenTableWidgetProps) {
   const [date, setDate] = useState(getTomorrow())
   const [time, setTime] = useState('19:00')
   const [partySize, setPartySize] = useState(2)
   const [iframeUrl, setIframeUrl] = useState<string | null>(null)
-  const [iframeHeight, setIframeHeight] = useState(1400)
 
   useEffect(() => {
-    const handler = (event: MessageEvent) => {
+    const handler = async (event: MessageEvent) => {
       if (typeof event.origin !== 'string') return
-      if (event.origin.includes('opentable') || event.origin.includes('otstatic')) {
-        console.log('[OpenTable postMessage] origin:', event.origin)
-        console.log('[OpenTable postMessage] data:', JSON.stringify(event.data, null, 2))
+      if (!event.origin.includes('opentable')) return
+
+      const data = event.data
+      if (!data || typeof data !== 'object') return
+
+      // Capture confirmed reservation
+      if (data.source === 'opentable-events' && data.type === 'reservation-made') {
+        console.log('[OpenTable] reservation-made:', data.payload)
+        try {
+          await fetch('/api/opentable-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ venueId, payload: data.payload }),
+          })
+        } catch (err) {
+          console.error('[OpenTable] booking capture failed:', err)
+        }
       }
     }
+
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
-  }, [])
+  }, [venueId])
 
   function handleSearch() {
     const dateTime = encodeURIComponent(`${date}T${time}`)
@@ -125,7 +140,7 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
             key={iframeUrl}
             src={iframeUrl}
             width="100%"
-            height={iframeHeight}
+            height={1400}
             scrolling="no"
             style={{ border: 'none', display: 'block', overflow: 'hidden' }}
             title={`Book at ${venueName}`}
