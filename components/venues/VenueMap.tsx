@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 import { Venue } from '@/lib/supabase'
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
@@ -38,6 +39,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const stripRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const router = useRouter()
+  const { user } = useAuth()
 
   const [geocoded, setGeocoded] = useState<VenueWithCoords[]>([])
   const [loading, setLoading] = useState(true)
@@ -270,7 +272,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
               ref={el => { if (el) cardRefs.current.set(venue.id, el) }}
               onClick={() => {
                 handleCardClick(venue)
-                router.push(`/venues/${venue.id}`)
+                user ? router.push(`/venues/${venue.id}`) : router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)
               }}
               className="flex-shrink-0 bg-white overflow-hidden cursor-pointer transition-all duration-200"
               style={{

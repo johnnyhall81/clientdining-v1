@@ -1,8 +1,9 @@
 'use client'
 
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Venue } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface VenueTileProps {
   venue: Venue & { image?: string }
@@ -10,16 +11,24 @@ interface VenueTileProps {
   priority?: boolean
 }
 
-// Warm zinc blur placeholder — renders instantly, cross-fades to real image
 const BLUR_DATA_URL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAKABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUEB//EACMQAAIBBAIDAQAAAAAAAAAAAAECAwQREiExBUFRcf/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAABEB/9oADAMBAAIRAxEAPwCl2q2VrBYxy3MLvdTMXleRiQxPfnzS7VZoY7q4it5BIkcrKrgY3AHBxSlKiiSSST//2Q=='
 
 export default function VenueTile({ venue, availableSlots = 0, priority = false }: VenueTileProps) {
+  const router = useRouter()
+  const { user } = useAuth()
   const imageSrc = venue.image_hero || venue.image
 
+  const handleClick = () => {
+    if (!user) {
+      router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)
+    } else {
+      router.push(`/venues/${venue.id}`)
+    }
+  }
+
   return (
-    <Link
-      href={`/venues/${venue.id}`}
-      prefetch={true}
+    <div
+      onClick={handleClick}
       className="group block cursor-pointer focus:outline-none rounded-2xl border border-zinc-100 bg-white overflow-hidden transition-all duration-300 hover:border-zinc-200 hover:shadow-sm"
     >
       {/* Image */}
@@ -67,7 +76,6 @@ export default function VenueTile({ venue, availableSlots = 0, priority = false 
           </div>
         )}
 
-        {/* Available badge */}
         {availableSlots > 0 && (
           <div className="absolute top-3 right-3 z-10">
             <span className="text-xs font-light text-green-700 bg-green-50 px-3 py-1 rounded-full">
@@ -76,6 +84,6 @@ export default function VenueTile({ venue, availableSlots = 0, priority = false 
           </div>
         )}
       </div>
-    </Link>
+    </div>
   )
 }
