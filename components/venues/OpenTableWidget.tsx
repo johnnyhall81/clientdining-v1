@@ -9,12 +9,11 @@ interface OpenTableWidgetProps {
 }
 
 export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidgetProps) {
-  // Default: tomorrow at 19:00, party of 2
   const defaultDateTime = useMemo(() => {
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
     tomorrow.setHours(19, 0, 0, 0)
-    return tomorrow.toISOString().slice(0, 16) // "YYYY-MM-DDTHH:MM"
+    return tomorrow.toISOString().slice(0, 16)
   }, [])
 
   const widgetUrl = `https://www.opentable.co.uk/booking/restref/availability?rid=${rid}&restRef=${rid}&lang=en-GB&color=1&partySize=2&dateTime=${encodeURIComponent(defaultDateTime)}&otSource=Restaurant%20website`
@@ -28,7 +27,6 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
         console.log('[OpenTable postMessage] data:', JSON.stringify(event.data, null, 2))
       }
 
-      // Catch-all for any unknown origin during debugging
       if (
         !event.origin.includes('clientdining') &&
         !event.origin.includes('localhost') &&
@@ -49,8 +47,8 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
       <div style={{ overflow: 'hidden', borderRadius: '3px' }}>
         <iframe
           src={widgetUrl}
-          width="224"
-          height="301"
+          width="100%"
+          height="600"
           style={{ border: 'none', display: 'block' }}
           title={`Book at ${venueName}`}
         />
