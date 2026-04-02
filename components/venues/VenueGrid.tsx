@@ -19,22 +19,24 @@ export default function VenueGrid({ venues }: VenueGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
 
-      {/* Intro panel — full width across all columns */}
-      <div className="col-span-1 md:col-span-2 lg:col-span-3">
+      {/* Intro panel */}
+      <div className="col-span-1 md:col-span-2 lg:col-span-3 -mb-4">
         <div
-          className="rounded-2xl border border-zinc-100 bg-zinc-50 px-10 py-12 md:px-16 md:py-14"
+          className="rounded-2xl px-9 py-8"
+          style={{ backgroundColor: '#F5F3F0', border: '1px solid #EBE8E4' }}
         >
-          <div className="max-w-xl">
-            <h1
-              className="text-zinc-900 font-light mb-4 leading-snug"
-              style={{ fontSize: '1.375rem', letterSpacing: '-0.01em' }}
-            >
-              A defined circle for business dining in London
-            </h1>
-            <p className="text-sm font-light text-zinc-400 leading-relaxed">
-              Trusted tables and spaces for hosting, team occasions, and private events.
-            </p>
-          </div>
+          <p
+            className="text-zinc-800 font-light mb-2 leading-snug"
+            style={{ fontSize: '1.125rem', letterSpacing: '-0.01em', maxWidth: '480px' }}
+          >
+            A defined circle for business dining in London
+          </p>
+          <p
+            className="font-light leading-relaxed"
+            style={{ fontSize: '0.8125rem', color: '#6B6763', maxWidth: '420px' }}
+          >
+            Trusted tables and spaces for hosting, team occasions, and private events.
+          </p>
         </div>
       </div>
 
