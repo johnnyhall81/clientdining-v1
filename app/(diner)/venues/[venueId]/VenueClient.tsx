@@ -482,7 +482,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                     Sign in to book a table at {venue.name}.
                   </p>
                   <button
-                    onClick={() => router.push('/login')}
+                    onClick={() => router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)}
                     className="py-2.5 px-6 text-[10px] tracking-[0.2em] uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
                     style={{ borderRadius: '3px' }}
                   >

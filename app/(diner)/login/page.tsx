@@ -1,24 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase-client'
 
-export default function LoginPage() {
+function LoginContent() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const searchParams = useSearchParams()
+  const next = searchParams.get('next') || '/home'
 
   const handleLinkedIn = async () => {
     setError('')
     setLoading(true)
 
-    const redirectUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-      ? 'http://localhost:3000/auth/callback'
-      : 'https://clientdining.com/auth/callback'
+    const base = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+      ? 'http://localhost:3000'
+      : 'https://clientdining.com'
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',
-      options: { redirectTo: redirectUrl },
+      options: { redirectTo: `${base}/auth/callback?next=${encodeURIComponent(next)}` },
     })
 
     if (error) {
@@ -72,5 +75,13 @@ export default function LoginPage() {
 
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   )
 }
