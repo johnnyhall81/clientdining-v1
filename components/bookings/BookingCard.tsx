@@ -20,6 +20,7 @@ type Tab = 'guests' | 'contact' | 'venuenote' | 'mynotes'
 export default function BookingCard({ booking, venue, slot, bookerName, onCancel }: BookingCardProps) {
   // For SevenRooms bookings, slot is null — use booked_at or created_at as fallback
   const isSevenRooms = (booking as any).booking_source === 'sevenrooms'
+  const isOpenTable = (booking as any).booking_source === 'opentable'
   const isCancelled = booking.status === 'cancelled'
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('guests')
@@ -121,7 +122,7 @@ export default function BookingCard({ booking, venue, slot, bookerName, onCancel
     <div className="bg-white overflow-hidden relative" style={{ borderRadius: '6px', border: '1px solid #F0EDE9', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
 
       {/* Cancel × — hidden for SevenRooms bookings, contact venue directly */}
-      {!isCancelled && !isPast && !isSevenRooms && (
+      {!isCancelled && !isPast && !isSevenRooms && !isOpenTable && (
         <button
           type="button"
           onClick={() => setShowCancelModal(true)}

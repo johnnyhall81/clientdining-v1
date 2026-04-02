@@ -44,6 +44,7 @@ const TIMES = getTimes()
 const PARTY_SIZES = Array.from({ length: 10 }, (_, i) => i + 1)
 
 export default function OpenTableWidget({ rid, slug, venueName, venueId }: OpenTableWidgetProps) {
+  const router = useRouter()
   const [date, setDate] = useState(getTomorrow())
   const [time, setTime] = useState('19:00')
   const [partySize, setPartySize] = useState(2)
@@ -69,6 +70,9 @@ export default function OpenTableWidget({ rid, slug, venueName, venueId }: OpenT
         } catch (err) {
           console.error('[OpenTable] booking capture failed:', err)
         }
+
+        // Redirect to My Bookings
+        router.push('/bookings')
       }
     }
 

@@ -475,28 +475,12 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 </div>
               </div>
             ) : (venue as any).opentable_rid ? (
-              !user ? (
-                <div>
-                  <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-3 font-light">Book a table</p>
-                  <p className="text-sm font-light text-zinc-500 leading-relaxed max-w-md mb-6">
-                    Sign in to book a table at {venue.name}.
-                  </p>
-                  <button
-                    onClick={() => router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)}
-                    className="py-2.5 px-6 text-[10px] tracking-[0.2em] uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
-                    style={{ borderRadius: '3px' }}
-                  >
-                    Sign in
-                  </button>
-                </div>
-              ) : (
-                <OpenTableWidget
-                  rid={(venue as any).opentable_rid}
-                  slug={(venue as any).opentable_slug || ''}
-                  venueName={venue.name}
-                  venueId={venue.id}
-                />
-              )
+              <OpenTableWidget
+                rid={(venue as any).opentable_rid}
+                slug={(venue as any).opentable_slug || ''}
+                venueName={venue.name}
+                venueId={venue.id}
+              />
             ) : !hasSlots && !hasPrivateDining ? (
               <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
             ) : (
