@@ -479,6 +479,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 rid={(venue as any).opentable_rid}
                 slug={(venue as any).opentable_slug || ''}
                 venueName={venue.name}
+                venueId={venue.id}
               />
             ) : !hasSlots && !hasPrivateDining ? (
               <p className="text-sm font-light text-zinc-400">No availability at this time.</p>
