@@ -140,7 +140,7 @@ export default function OpenTableWidget({ rid, slug, venueName, venueId }: OpenT
             key={iframeUrl}
             src={iframeUrl}
             width="100%"
-            height={1400}
+            height={2200}
             scrolling="no"
             style={{ border: 'none', display: 'block', overflow: 'hidden' }}
             title={`Book at ${venueName}`}
