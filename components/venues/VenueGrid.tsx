@@ -31,7 +31,7 @@ export default function VenueGrid({ venues }: VenueGridProps) {
           className="font-light"
           style={{ fontSize: '0.9375rem', color: '#8A8580', letterSpacing: '0.01em' }}
         >
-          For hosting, team occasions, and private events.
+          For hosting, team occasions and private events
         </p>
       </div>
 
