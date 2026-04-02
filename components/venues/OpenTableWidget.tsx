@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 interface OpenTableWidgetProps {
   rid: string
@@ -9,25 +9,31 @@ interface OpenTableWidgetProps {
 }
 
 export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidgetProps) {
-  const widgetUrl = `https://www.opentable.co.uk/widget/reservation/canvas?rid=${rid}&type=standard&theme=standard&color=1&dark=false&iframe=true&domain=couk&lang=en-GB&newtab=false&ot_source=Restaurant%20website`
+  // Default: tomorrow at 19:00, party of 2
+  const defaultDateTime = useMemo(() => {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    tomorrow.setHours(19, 0, 0, 0)
+    return tomorrow.toISOString().slice(0, 16) // "YYYY-MM-DDTHH:MM"
+  }, [])
+
+  const widgetUrl = `https://www.opentable.co.uk/booking/restref/availability?rid=${rid}&restRef=${rid}&lang=en-GB&color=1&partySize=2&dateTime=${encodeURIComponent(defaultDateTime)}&otSource=Restaurant%20website`
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
-      // Log everything from OpenTable origins
-      if (
-        typeof event.origin === 'string' &&
-        (event.origin.includes('opentable') || event.origin.includes('ot-cdn'))
-      ) {
+      if (typeof event.origin !== 'string') return
+
+      if (event.origin.includes('opentable') || event.origin.includes('otstatic')) {
         console.log('[OpenTable postMessage] origin:', event.origin)
-        console.log('[OpenTable postMessage] data:', event.data)
+        console.log('[OpenTable postMessage] data:', JSON.stringify(event.data, null, 2))
       }
 
-      // Also log anything unknown during debugging — remove once confirmed
+      // Catch-all for any unknown origin during debugging
       if (
-        typeof event.origin === 'string' &&
         !event.origin.includes('clientdining') &&
         !event.origin.includes('localhost') &&
-        !event.origin.includes('vercel')
+        !event.origin.includes('vercel') &&
+        !event.origin.includes('supabase')
       ) {
         console.log('[postMessage unknown origin]', event.origin, event.data)
       }
