@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface OpenTableWidgetProps {
   rid: string
@@ -11,7 +11,7 @@ interface OpenTableWidgetProps {
 function getTomorrow() {
   const d = new Date()
   d.setDate(d.getDate() + 1)
-  return d.toISOString().slice(0, 10) // YYYY-MM-DD
+  return d.toISOString().slice(0, 10)
 }
 
 function formatDateLabel(dateStr: string) {
@@ -19,7 +19,6 @@ function formatDateLabel(dateStr: string) {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-// Generate next 60 days
 function getDates() {
   const dates = []
   for (let i = 1; i <= 60; i++) {
@@ -30,7 +29,6 @@ function getDates() {
   return dates
 }
 
-// 30-min slots 12:00–22:00
 function getTimes() {
   const times = []
   for (let h = 12; h <= 22; h++) {
@@ -49,14 +47,28 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
   const [time, setTime] = useState('19:00')
   const [partySize, setPartySize] = useState(2)
   const [iframeUrl, setIframeUrl] = useState<string | null>(null)
+  const [iframeHeight, setIframeHeight] = useState(900)
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       if (typeof event.origin !== 'string') return
-      if (event.origin.includes('opentable') || event.origin.includes('otstatic')) {
+
+      const isOT = event.origin.includes('opentable') || event.origin.includes('otstatic')
+
+      if (isOT) {
         console.log('[OpenTable postMessage] origin:', event.origin)
         console.log('[OpenTable postMessage] data:', JSON.stringify(event.data, null, 2))
+
+        // Dynamic height adjustment
+        const data = event.data
+        if (data && typeof data === 'object') {
+          const h = data.height || data.iframeHeight || data.frameHeight || data.size?.height
+          if (h && typeof h === 'number' && h > 100) {
+            setIframeHeight(h + 40) // 40px buffer
+          }
+        }
       }
+
       if (
         !event.origin.includes('clientdining') &&
         !event.origin.includes('localhost') &&
@@ -66,6 +78,7 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
         console.log('[postMessage unknown origin]', event.origin, event.data)
       }
     }
+
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
   }, [])
@@ -74,6 +87,7 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
     const dateTime = encodeURIComponent(`${date}T${time}`)
     const url = `https://www.opentable.co.uk/booking/restref/availability?rid=${rid}&restRef=${rid}&lang=en-GB&color=1&partySize=${partySize}&dateTime=${dateTime}&otSource=Restaurant%20website`
     setIframeUrl(url)
+    setIframeHeight(900)
   }
 
   const selectClass = "w-full bg-transparent border-b border-zinc-200 text-zinc-800 text-sm py-2 pr-6 appearance-none cursor-pointer focus:outline-none focus:border-zinc-400"
@@ -82,9 +96,7 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
     <div>
       <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase mb-7 font-light">Book a table</p>
 
-      {/* Native picker */}
       <div className="space-y-4 mb-6">
-        {/* Date */}
         <div className="relative">
           <label className="block text-[9px] tracking-[0.2em] text-zinc-400 uppercase mb-1">Date</label>
           <select value={date} onChange={e => setDate(e.target.value)} className={selectClass}>
@@ -97,7 +109,6 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
           </div>
         </div>
 
-        {/* Time */}
         <div className="relative">
           <label className="block text-[9px] tracking-[0.2em] text-zinc-400 uppercase mb-1">Time</label>
           <select value={time} onChange={e => setTime(e.target.value)} className={selectClass}>
@@ -110,7 +121,6 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
           </div>
         </div>
 
-        {/* Party size */}
         <div className="relative">
           <label className="block text-[9px] tracking-[0.2em] text-zinc-400 uppercase mb-1">Guests</label>
           <select value={partySize} onChange={e => setPartySize(Number(e.target.value))} className={selectClass}>
@@ -132,14 +142,13 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
         </button>
       </div>
 
-      {/* OpenTable iframe — only shown after search */}
       {iframeUrl && (
         <div style={{ overflow: 'hidden', borderRadius: '3px', marginTop: '8px' }}>
           <iframe
             key={iframeUrl}
             src={iframeUrl}
             width="100%"
-            height="900"
+            height={iframeHeight}
             style={{ border: 'none', display: 'block' }}
             title={`Book at ${venueName}`}
           />
