@@ -24,7 +24,7 @@ interface BookingWithDetails {
   profiles: {
     full_name: string
     email: string
-  }
+  } | null
 }
 
 export default function AdminBookingsPage() {
@@ -72,36 +72,21 @@ export default function AdminBookingsPage() {
       {/* Filter Tabs */}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setFilter('all')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              filter === 'all'
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            All ({bookings.length})
-          </button>
-          <button
-            onClick={() => setFilter('active')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              filter === 'active'
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Active ({bookings.filter(b => b.status === 'active').length})
-          </button>
-          <button
-            onClick={() => setFilter('cancelled')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              filter === 'cancelled'
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Cancelled ({bookings.filter(b => b.status === 'cancelled').length})
-          </button>
+          {(['all', 'active', 'cancelled'] as const).map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                filter === f
+                  ? 'border-gray-900 text-gray-900'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)} ({
+                f === 'all' ? bookings.length : bookings.filter(b => b.status === f).length
+              })
+            </button>
+          ))}
         </nav>
       </div>
 
@@ -132,12 +117,20 @@ export default function AdminBookingsPage() {
                     className={`hover:bg-gray-50 ${hasGuests || hasNotes ? 'cursor-pointer' : ''}`}
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-gray-900">{booking.profiles.full_name}</div>
-                      <div className="text-sm text-gray-500">{booking.profiles.email}</div>
+                      {booking.profiles ? (
+                        <>
+                          <div className="font-medium text-gray-900">{booking.profiles.full_name}</div>
+                          <div className="text-sm text-gray-500">{booking.profiles.email}</div>
+                        </>
+                      ) : (
+                        <div className="text-sm text-gray-400 italic">
+                          Guest ({booking.booking_source === 'opentable' ? 'OpenTable' : 'Unknown'})
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-gray-900">{booking.venues.name}</div>
-                      <div className="text-sm text-gray-500">{booking.venues.area}</div>
+                      <div className="font-medium text-gray-900">{booking.venues?.name}</div>
+                      <div className="text-sm text-gray-500">{booking.venues?.area}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                       {booking.slots
