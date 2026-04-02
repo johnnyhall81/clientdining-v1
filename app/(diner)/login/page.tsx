@@ -35,12 +35,9 @@ function LoginContent() {
       <div className="w-full max-w-sm">
 
         <div className="mb-10 text-center">
-          <h1 className="text-3xl font-light text-zinc-900 tracking-tight mb-4">
-            A trusted network for<br />business dining in London
+          <h1 className="text-2xl font-light text-zinc-900 tracking-tight">
+            ClientDining
           </h1>
-          <p className="text-sm font-light text-zinc-500 leading-relaxed">
-            ClientDining is built for professionals who host clients, colleagues, and guests as part of their role. Continue with LinkedIn to access or create your account.
-          </p>
         </div>
 
         <div className="bg-white rounded-2xl border border-zinc-100 p-8">
@@ -62,7 +59,7 @@ function LoginContent() {
           </button>
 
           <p className="mt-5 text-center text-xs text-zinc-400 font-light leading-relaxed">
-            Used only to confirm professional identity. We never post without permission.
+            LinkedIn is used only to verify professional identity.
           </p>
 
           <p className="mt-4 text-center text-xs text-zinc-400 font-light">
