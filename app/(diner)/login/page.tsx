@@ -34,13 +34,7 @@ function LoginContent() {
     <div className="flex items-center justify-center px-4 py-20">
       <div className="w-full max-w-sm">
 
-        <div className="mb-10 text-center">
-          <h1 className="text-2xl font-light text-zinc-900 tracking-tight">
-            ClientDining
-          </h1>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-zinc-100 p-8">
+<div className="bg-white rounded-2xl border border-zinc-100 p-8">
           {error && (
             <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm font-light">
               {error}
