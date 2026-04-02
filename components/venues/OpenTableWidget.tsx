@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface OpenTableWidgetProps {
   rid: string
@@ -47,38 +47,16 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
   const [time, setTime] = useState('19:00')
   const [partySize, setPartySize] = useState(2)
   const [iframeUrl, setIframeUrl] = useState<string | null>(null)
-  const [iframeHeight, setIframeHeight] = useState(900)
+  const [iframeHeight, setIframeHeight] = useState(1400)
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       if (typeof event.origin !== 'string') return
-
-      const isOT = event.origin.includes('opentable') || event.origin.includes('otstatic')
-
-      if (isOT) {
+      if (event.origin.includes('opentable') || event.origin.includes('otstatic')) {
         console.log('[OpenTable postMessage] origin:', event.origin)
         console.log('[OpenTable postMessage] data:', JSON.stringify(event.data, null, 2))
-
-        // Dynamic height adjustment
-        const data = event.data
-        if (data && typeof data === 'object') {
-          const h = data.height || data.iframeHeight || data.frameHeight || data.size?.height
-          if (h && typeof h === 'number' && h > 100) {
-            setIframeHeight(h + 40) // 40px buffer
-          }
-        }
-      }
-
-      if (
-        !event.origin.includes('clientdining') &&
-        !event.origin.includes('localhost') &&
-        !event.origin.includes('vercel') &&
-        !event.origin.includes('supabase')
-      ) {
-        console.log('[postMessage unknown origin]', event.origin, event.data)
       }
     }
-
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
   }, [])
@@ -87,7 +65,6 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
     const dateTime = encodeURIComponent(`${date}T${time}`)
     const url = `https://www.opentable.co.uk/booking/restref/availability?rid=${rid}&restRef=${rid}&lang=en-GB&color=1&partySize=${partySize}&dateTime=${dateTime}&otSource=Restaurant%20website`
     setIframeUrl(url)
-    setIframeHeight(900)
   }
 
   const selectClass = "w-full bg-transparent border-b border-zinc-200 text-zinc-800 text-sm py-2 pr-6 appearance-none cursor-pointer focus:outline-none focus:border-zinc-400"
@@ -143,13 +120,14 @@ export default function OpenTableWidget({ rid, slug, venueName }: OpenTableWidge
       </div>
 
       {iframeUrl && (
-        <div style={{ overflow: 'hidden', borderRadius: '3px', marginTop: '8px' }}>
+        <div style={{ borderRadius: '3px', marginTop: '8px' }}>
           <iframe
             key={iframeUrl}
             src={iframeUrl}
             width="100%"
             height={iframeHeight}
-            style={{ border: 'none', display: 'block' }}
+            scrolling="no"
+            style={{ border: 'none', display: 'block', overflow: 'hidden' }}
             title={`Book at ${venueName}`}
           />
         </div>
