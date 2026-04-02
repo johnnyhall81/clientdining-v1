@@ -36,7 +36,7 @@ function LoginContent() {
 
         <div className="mb-10 text-center">
           <h1 className="text-3xl font-light text-zinc-900 tracking-tight mb-4">
-            Join a trusted network for<br />business dining in London
+            A trusted network for<br />business dining in London
           </h1>
           <p className="text-sm font-light text-zinc-500 leading-relaxed">
             ClientDining is built for professionals who host clients, colleagues, and guests as part of their role. Continue with LinkedIn to access or create your account.
