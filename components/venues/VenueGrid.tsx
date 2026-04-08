@@ -25,8 +25,7 @@ export default function VenueGrid({ venues }: VenueGridProps) {
           className="text-zinc-900 mb-3"
           style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 1.15 }}
         >
-          <span style={{ display: 'block' }}>London&apos;s Best Tables</span>
-          <span style={{ display: 'block', fontSize: '0.72em', letterSpacing: '-0.01em' }}>&amp; Spaces</span>
+          <span style={{ display: 'block' }}>London&apos;s Best Tables &amp; Spaces</span>
         </h1>
         <p
           className="font-light"
