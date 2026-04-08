@@ -110,8 +110,20 @@ export default function Page() {
       prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area]
     )
 
-  const availableAreas = Array.from(new Set(rooms.map(r => r.venue.area))).sort()
-  const availableOccasions = Array.from(new Set(rooms.flatMap(r => r.best_for || []))).sort()
+  const PRIORITY_AREAS = ['Canary Wharf', 'The City', 'Mayfair']
+  const PRIORITY_OCCASIONS = ['Summer party', 'Christmas party', 'Board meeting', 'Networking']
+
+  const allAreas = Array.from(new Set(rooms.map(r => r.venue.area))).sort()
+  const availableAreas = [
+    ...PRIORITY_AREAS.filter(a => allAreas.includes(a)),
+    ...allAreas.filter(a => !PRIORITY_AREAS.includes(a)),
+  ]
+
+  const allOccasions = Array.from(new Set(rooms.flatMap(r => r.best_for || []))).sort()
+  const availableOccasions = [
+    ...PRIORITY_OCCASIONS.filter(o => allOccasions.includes(o)),
+    ...allOccasions.filter(o => !PRIORITY_OCCASIONS.includes(o)),
+  ]
 
   const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
   const clearFilters = () => {
