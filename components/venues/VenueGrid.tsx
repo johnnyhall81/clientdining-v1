@@ -17,21 +17,27 @@ export default function VenueGrid({ venues }: VenueGridProps) {
   }
 
   return (
+    
+
+
     <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 md:py-12">
-    <h1
-      className="text-zinc-900 mb-3"
-      style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 1.15 }}
-    >
-      London's Best Tables<br />
-      <span style={{ fontSize: '0.72em', letterSpacing: '-0.01em' }}>&amp; Spaces</span>
-    </h1>
-    <p
-      className="font-light"
-      style={{ fontSize: '0.9375rem', color: '#8A8580', letterSpacing: '0.01em' }}
-    >
-      For hosting, team occasions and private events
-    </p>
-  </div>
+  <h1
+    className="text-zinc-900 mb-3"
+    style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 1.15 }}
+  >
+    London's Best Tables<br />
+    <span style={{ fontSize: '0.72em', letterSpacing: '-0.01em' }}>&amp; Spaces</span>
+  </h1>
+  <p
+    className="font-light"
+    style={{ fontSize: '0.9375rem', color: '#8A8580', letterSpacing: '0.01em' }}
+  >
+    For hosting, team occasions and private events
+  </p>
+</div>
+
+
+
 
       {/* Venue tiles */}
       {venues.map((venue, index) => (
