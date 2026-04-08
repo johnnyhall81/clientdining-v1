@@ -50,6 +50,8 @@ const pillStyle = (active: boolean) => ({
   color: active ? 'white' : '#71717A',
 })
 
+const DEFAULT_VISIBLE = 4 // chips shown before "+ more"
+
 export default function Page() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [loading, setLoading] = useState(true)
@@ -57,6 +59,10 @@ export default function Page() {
   const [filterGuest, setFilterGuest] = useState('')
   const [filterOccasion, setFilterOccasion] = useState('')
   const [enquiringRoom, setEnquiringRoom] = useState<Room | null>(null)
+  const [openGroup, setOpenGroup] = useState<'size' | 'area' | 'occasion' | null>(null)
+
+  const toggleGroup = (group: 'size' | 'area' | 'occasion') =>
+    setOpenGroup(prev => prev === group ? null : group)
 
   useEffect(() => {
     const load = async () => {
@@ -125,50 +131,140 @@ export default function Page() {
             onClick={clearFilters}
             className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
           >
-            Clear
+            Clear all
           </button>
         )}
       </div>
 
-      <div className="space-y-2">
-        <div className="flex flex-wrap gap-1.5">
-          {GUEST_RANGES.map(r => (
-            <button
-              key={r.label}
-              onClick={() => setFilterGuest(filterGuest === r.label ? '' : r.label)}
-              className="px-3 py-1 text-xs font-light transition-colors"
-              style={pillStyle(filterGuest === r.label)}
-            >
-              {r.label}
-            </button>
-          ))}
-        </div>
+      {/* ── Filter bar ─────────────────────────────────────────────── */}
+      <div className="space-y-3 pb-4" style={{ borderBottom: '1px solid #F0EDE9' }}>
 
-        <div className="flex flex-wrap gap-1.5">
-          {availableAreas.map(a => (
-            <button
-              key={a}
-              onClick={() => toggleArea(a)}
-              className="px-3 py-1 text-xs font-light transition-colors"
-              style={pillStyle(filterAreas.includes(a))}
-            >
-              {a}
-            </button>
-          ))}
-        </div>
+        {/* Size */}
+        {(() => {
+          // Size is always short enough to show all — no expand needed
+          return (
+            <div className="flex items-start gap-3">
+              <span className="flex-shrink-0 mt-1.5" style={{ minWidth: '4.5rem' }}>
+                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Size</span>
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {GUEST_RANGES.map(r => (
+                  <button
+                    key={r.label}
+                    onClick={() => setFilterGuest(filterGuest === r.label ? '' : r.label)}
+                    className="px-3 py-1 text-xs font-light transition-colors"
+                    style={pillStyle(filterGuest === r.label)}
+                  >
+                    {r.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )
+        })()}
 
-        <div className="flex flex-wrap gap-1.5">
-          {availableOccasions.map(o => (
-            <button
-              key={o}
-              onClick={() => setFilterOccasion(filterOccasion === o ? '' : o)}
-              className="px-3 py-1 text-xs font-light transition-colors"
-              style={pillStyle(filterOccasion === o)}
-            >
-              {o}
-            </button>
-          ))}
-        </div>
+        {/* Area */}
+        {(() => {
+          const selected = filterAreas
+          const unselected = availableAreas.filter(a => !selected.includes(a))
+          const isOpen = openGroup === 'area'
+          const visibleUnselected = isOpen ? unselected : unselected.slice(0, Math.max(0, DEFAULT_VISIBLE - selected.length))
+          const hiddenCount = isOpen ? 0 : unselected.length - visibleUnselected.length
+          return (
+            <div className="flex items-start gap-3">
+              <button
+                onClick={() => toggleGroup('area')}
+                className="flex items-center gap-1.5 flex-shrink-0 mt-1.5"
+                style={{ minWidth: '4.5rem' }}
+              >
+                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Area</span>
+                {selected.length > 0 && (
+                  <span className="bg-zinc-900 text-white rounded-full flex items-center justify-center text-[9px]"
+                    style={{ minWidth: '1rem', height: '1rem', padding: '0 3px' }}>
+                    {selected.length}
+                  </span>
+                )}
+              </button>
+              <div className="flex flex-wrap gap-1.5">
+                {selected.map(a => (
+                  <button key={a} onClick={() => toggleArea(a)} className="px-3 py-1 text-xs font-light transition-colors" style={pillStyle(true)}>
+                    {a}
+                  </button>
+                ))}
+                {visibleUnselected.map(a => (
+                  <button key={a} onClick={() => toggleArea(a)} className="px-3 py-1 text-xs font-light transition-colors" style={pillStyle(false)}>
+                    {a}
+                  </button>
+                ))}
+                {hiddenCount > 0 && (
+                  <button onClick={() => toggleGroup('area')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                    + {hiddenCount} more
+                  </button>
+                )}
+                {isOpen && (
+                  <button onClick={() => toggleGroup('area')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                    Less
+                  </button>
+                )}
+                {selected.length > 0 && (
+                  <button onClick={() => setFilterAreas([])} className="px-2 py-1 text-xs font-light text-zinc-300 hover:text-zinc-500 transition-colors">
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+          )
+        })()}
+
+        {/* Occasion */}
+        {(() => {
+          const isOpen = openGroup === 'occasion'
+          const isSelected = (o: string) => filterOccasion === o
+          const selected = filterOccasion ? [filterOccasion] : []
+          const unselected = availableOccasions.filter(o => o !== filterOccasion)
+          const visibleUnselected = isOpen ? unselected : unselected.slice(0, Math.max(0, DEFAULT_VISIBLE - selected.length))
+          const hiddenCount = isOpen ? 0 : unselected.length - visibleUnselected.length
+          return (
+            <div className="flex items-start gap-3">
+              <button
+                onClick={() => toggleGroup('occasion')}
+                className="flex items-center gap-1.5 flex-shrink-0 mt-1.5"
+                style={{ minWidth: '4.5rem' }}
+              >
+                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Occasion</span>
+                {filterOccasion && (
+                  <span className="bg-zinc-900 text-white rounded-full flex items-center justify-center text-[9px]"
+                    style={{ minWidth: '1rem', height: '1rem', padding: '0 3px' }}>
+                    1
+                  </span>
+                )}
+              </button>
+              <div className="flex flex-wrap gap-1.5">
+                {selected.map(o => (
+                  <button key={o} onClick={() => setFilterOccasion('')} className="px-3 py-1 text-xs font-light transition-colors" style={pillStyle(true)}>
+                    {o}
+                  </button>
+                ))}
+                {visibleUnselected.map(o => (
+                  <button key={o} onClick={() => setFilterOccasion(o)} className="px-3 py-1 text-xs font-light transition-colors" style={pillStyle(false)}>
+                    {o}
+                  </button>
+                ))}
+                {hiddenCount > 0 && (
+                  <button onClick={() => toggleGroup('occasion')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                    + {hiddenCount} more
+                  </button>
+                )}
+                {isOpen && (
+                  <button onClick={() => toggleGroup('occasion')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
+                    Less
+                  </button>
+                )}
+              </div>
+            </div>
+          )
+        })()}
+
       </div>
 
       {!loading && (
