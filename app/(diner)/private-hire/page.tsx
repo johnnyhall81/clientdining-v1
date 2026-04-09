@@ -157,7 +157,7 @@ export default function Page() {
           return (
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 mt-1.5" style={{ minWidth: '4.5rem' }}>
-                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Size</span>
+                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Group size</span>
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {GUEST_RANGES.map(r => (
@@ -189,7 +189,7 @@ export default function Page() {
                 className="flex items-center gap-1.5 flex-shrink-0 mt-1.5"
                 style={{ minWidth: '4.5rem' }}
               >
-                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Area</span>
+                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Location</span>
                 {selected.length > 0 && (
                   <span className="bg-zinc-900 text-white rounded-full flex items-center justify-center text-[9px]"
                     style={{ minWidth: '1rem', height: '1rem', padding: '0 3px' }}>
