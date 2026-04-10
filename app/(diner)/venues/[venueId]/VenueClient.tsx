@@ -587,7 +587,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                 </button>
               </div>
               {showMap && (
-                <div className="mt-4 overflow-hidden w-full" style={{ height: 180, borderRadius: '4px', opacity: 0.85 }}>
+                <div className="mt-4 overflow-hidden w-full" style={{ height: 300, borderRadius: '4px', opacity: 0.85 }}>
                   <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
                     src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
                   />
