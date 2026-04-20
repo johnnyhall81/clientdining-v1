@@ -216,14 +216,30 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               )}
               <h1 className="text-2xl font-light text-zinc-900 tracking-tight truncate mb-1">{venue.name}</h1>
               {venue.address && (
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-light text-zinc-400 hover:text-zinc-600 transition-colors"
-                >
-                  {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
-                </a>
+                <div className="flex items-center gap-3">
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-light text-zinc-400 hover:text-zinc-600 transition-colors"
+                  >
+                    {venue.address}{venue.postcode ? `, ${venue.postcode}` : ''}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setShowMap(v => !v)}
+                    className="text-[11px] font-light text-zinc-400 hover:text-zinc-600 transition-colors flex-shrink-0"
+                  >
+                    {showMap ? 'Hide map' : 'Map'}
+                  </button>
+                </div>
+              )}
+              {showMap && venue.address && (
+                <div className="mt-3 overflow-hidden w-full" style={{ height: 300, borderRadius: '4px', opacity: 0.85 }}>
+                  <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
+                  />
+                </div>
               )}
             </div>
             <div className="flex items-baseline gap-5 flex-shrink-0 text-right">
