@@ -216,7 +216,7 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               )}
               <h1 className="text-2xl font-light text-zinc-900 tracking-tight truncate mb-1">{venue.name}</h1>
               {venue.address && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between gap-3">
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venue.address} London`)}`}
                     target="_blank"
@@ -232,13 +232,6 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                   >
                     {showMap ? 'Hide map' : 'Map'}
                   </button>
-                </div>
-              )}
-              {showMap && venue.address && (
-                <div className="mt-3 overflow-hidden w-full" style={{ height: 300, borderRadius: '4px', opacity: 0.85 }}>
-                  <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
-                    src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
-                  />
                 </div>
               )}
             </div>
@@ -257,6 +250,15 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
               )}
             </div>
           </div>
+
+          {/* Full-width map — outside the constrained header row */}
+          {showMap && venue.address && (
+            <div className="mb-5 overflow-hidden w-full" style={{ height: 300, borderRadius: '4px', opacity: 0.85 }}>
+              <iframe title="Venue map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" allowFullScreen
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(`${venue.name}, ${venue.address}${venue.postcode ? ` ${venue.postcode}` : ''}, London`)}&output=embed&z=15`}
+              />
+            </div>
+          )}
 
           {/* Room cards */}
           {rooms.length === 0 ? (
