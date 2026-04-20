@@ -38,6 +38,14 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const [visibleVenues, setVisibleVenues] = useState<VenueWithCoords[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
 
+  // Auto-highlight the middle card whenever the visible set changes
+  useEffect(() => {
+    if (!visibleVenues.length || !mapRef.current) return
+    const midVenue = visibleVenues[Math.floor(visibleVenues.length / 2)]
+    setActiveId(midVenue.id)
+    highlightDot(mapRef.current, midVenue.id)
+  }, [visibleVenues, highlightDot])
+
   // Update visible venues based on map bounds
   const updateVisible = useCallback((map: any, all: VenueWithCoords[]) => {
     const bounds = map.getBounds()
