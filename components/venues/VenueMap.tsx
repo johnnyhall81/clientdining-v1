@@ -52,21 +52,22 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
   // Highlight a dot on the map
   const highlightDot = useCallback((map: any, id: string | null) => {
-    if (!map.getLayer('venues-dots')) return
-    map.setPaintProperty('venues-dots', 'circle-color', [
-      'case', ['==', ['get', 'id'], id ?? ''], '#FFFFFF', '#DA7756'
-    ])
-    map.setPaintProperty('venues-dots', 'circle-radius', [
-      'case', ['==', ['get', 'id'], id ?? ''], 10, 6
-    ])
-    map.setPaintProperty('venues-dots', 'circle-stroke-color', [
-      'case', ['==', ['get', 'id'], id ?? ''], '#DA7756', '#ffffff'
-    ])
-    map.setPaintProperty('venues-dots', 'circle-stroke-width', [
-      'case', ['==', ['get', 'id'], id ?? ''], 3, 2
-    ])
-    map.setPaintProperty('venues-dots', 'circle-opacity', 1)
-  }, [])
+    if (!map.getSource('active-venue')) return
+    if (!id) {
+      ;(map.getSource('active-venue') as any).setData({ type: 'FeatureCollection', features: [] })
+      return
+    }
+    const venue = geocoded.find(v => v.id === id)
+    if (!venue) return
+    ;(map.getSource('active-venue') as any).setData({
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        properties: { id: venue.id },
+        geometry: { type: 'Point', coordinates: [venue.lng, venue.lat] }
+      }]
+    })
+  }, [geocoded])
 
   // Scroll strip to card
   const scrollToCard = useCallback((id: string) => {
@@ -162,6 +163,24 @@ export default function VenueMap({ venues }: VenueMapProps) {
             'circle-stroke-width': 2,
             'circle-stroke-color': '#ffffff',
             'circle-opacity': 0.8,
+          }
+        })
+
+        // Active venue overlay — always on top, even inside clusters
+        map.addSource('active-venue', {
+          type: 'geojson',
+          data: { type: 'FeatureCollection', features: [] }
+        })
+        map.addLayer({
+          id: 'active-dot',
+          type: 'circle',
+          source: 'active-venue',
+          paint: {
+            'circle-color': '#FFFFFF',
+            'circle-radius': 10,
+            'circle-stroke-width': 3,
+            'circle-stroke-color': '#DA7756',
+            'circle-opacity': 1,
           }
         })
 
