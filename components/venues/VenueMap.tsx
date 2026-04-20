@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Venue } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase-client'
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
 
@@ -21,8 +22,45 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const mapRef = useRef<any>(null)
   const stripRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const workMarkerRef = useRef<any>(null)
+  const dragRef = useRef({ isDown: false, startX: 0, scrollLeft: 0 })
   const router = useRouter()
   const { user } = useAuth()
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const strip = stripRef.current
+    if (!strip) return
+    dragRef.current = { isDown: true, startX: e.pageX - strip.offsetLeft, scrollLeft: strip.scrollLeft }
+    strip.style.cursor = 'grabbing'
+  }
+  const handleMouseUp = () => {
+    dragRef.current.isDown = false
+    if (stripRef.current) stripRef.current.style.cursor = 'grab'
+  }
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!dragRef.current.isDown || !stripRef.current) return
+    e.preventDefault()
+    const x = e.pageX - stripRef.current.offsetLeft
+    const walk = (x - dragRef.current.startX) * 1.2
+    stripRef.current.scrollLeft = dragRef.current.scrollLeft - walk
+  }
+
+  const [workCoords, setWorkCoords] = useState<{ lat: number; lng: number } | null>(null)
+
+  // Fetch and geocode the user's work postcode once
+  useEffect(() => {
+    if (!user) return
+    supabase.from('profiles').select('work_postcode').eq('user_id', user.id).single()
+      .then(async ({ data }) => {
+        const pc = data?.work_postcode
+        if (!pc) return
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(pc)}.json?access_token=${MAPBOX_TOKEN}&country=GB&limit=1`
+        const res = await fetch(url)
+        const json = await res.json()
+        const coords = json.features?.[0]?.center
+        if (coords) setWorkCoords({ lng: coords[0], lat: coords[1] })
+      })
+  }, [user])
 
   // Filter to only venues that have stored coords — memoised for stable map init
   const geocoded = useMemo(
@@ -69,12 +107,23 @@ export default function VenueMap({ venues }: VenueMapProps) {
     })
   }, [geocoded])
 
-  // Auto-highlight the middle card whenever the visible set changes
+  // Auto-highlight the middle card whenever the visible set changes + scroll strip to it
   useEffect(() => {
     if (!visibleVenues.length || !mapRef.current) return
     const midVenue = visibleVenues[Math.floor(visibleVenues.length / 2)]
     setActiveId(midVenue.id)
     highlightDot(mapRef.current, midVenue.id)
+    // Scroll strip so the highlighted card is centred
+    setTimeout(() => {
+      const card = cardRefs.current.get(midVenue.id)
+      const strip = stripRef.current
+      if (card && strip) {
+        strip.scrollTo({
+          left: card.offsetLeft - strip.clientWidth / 2 + card.offsetWidth / 2,
+          behavior: 'smooth',
+        })
+      }
+    }, 50)
   }, [visibleVenues, highlightDot])
 
   // Scroll strip to card
@@ -248,6 +297,30 @@ export default function VenueMap({ venues }: VenueMapProps) {
     }
   }, [geocoded])
 
+  // Place or update the office marker when workCoords arrive
+  useEffect(() => {
+    if (!mapRef.current || !workCoords) return
+
+    import('mapbox-gl').then((mapboxgl) => {
+      // Remove previous marker if any
+      workMarkerRef.current?.remove()
+
+      // Custom blue office dot
+      const el = document.createElement('div')
+      el.style.cssText = `
+        width: 20px; height: 20px; border-radius: 50%;
+        background: #2563EB; border: 3px solid #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+        cursor: default;
+      `
+      el.title = 'Your office'
+
+      workMarkerRef.current = new mapboxgl.default.Marker({ element: el })
+        .setLngLat([workCoords.lng, workCoords.lat])
+        .addTo(mapRef.current)
+    })
+  }, [workCoords])
+
   // When activeId changes from card click, highlight dot
   const handleCardClick = (venue: VenueWithCoords) => {
     setActiveId(venue.id)
@@ -298,12 +371,18 @@ export default function VenueMap({ venues }: VenueMapProps) {
         <div
           ref={stripRef}
           onScroll={handleStripScroll}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onMouseMove={handleMouseMove}
           className="flex gap-3 overflow-x-auto py-3 px-3"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             flexShrink: 0,
             scrollSnapType: 'x mandatory',
+            cursor: 'grab',
+            userSelect: 'none',
           }}
         >
           {visibleVenues.map(venue => (
