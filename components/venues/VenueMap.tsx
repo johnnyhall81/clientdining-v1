@@ -53,12 +53,19 @@ export default function VenueMap({ venues }: VenueMapProps) {
   // Highlight a dot on the map
   const highlightDot = useCallback((map: any, id: string | null) => {
     if (!map.getLayer('venues-dots')) return
-    map.setPaintProperty('venues-dots', 'circle-opacity', [
-      'case', ['==', ['get', 'id'], id ?? ''], 1, 0.8
+    map.setPaintProperty('venues-dots', 'circle-color', [
+      'case', ['==', ['get', 'id'], id ?? ''], '#FFFFFF', '#DA7756'
     ])
     map.setPaintProperty('venues-dots', 'circle-radius', [
-      'case', ['==', ['get', 'id'], id ?? ''], 9, 6
+      'case', ['==', ['get', 'id'], id ?? ''], 10, 6
     ])
+    map.setPaintProperty('venues-dots', 'circle-stroke-color', [
+      'case', ['==', ['get', 'id'], id ?? ''], '#DA7756', '#ffffff'
+    ])
+    map.setPaintProperty('venues-dots', 'circle-stroke-width', [
+      'case', ['==', ['get', 'id'], id ?? ''], 3, 2
+    ])
+    map.setPaintProperty('venues-dots', 'circle-opacity', 1)
   }, [])
 
   // Scroll strip to card
