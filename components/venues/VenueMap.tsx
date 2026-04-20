@@ -223,6 +223,30 @@ export default function VenueMap({ venues }: VenueMapProps) {
     }
   }
 
+  // As the strip scrolls, highlight the dot for the centremost card
+  const handleStripScroll = useCallback(() => {
+    if (!stripRef.current || !mapRef.current) return
+    const strip = stripRef.current
+    const stripCentre = strip.scrollLeft + strip.clientWidth / 2
+
+    let closestId: string | null = null
+    let closestDist = Infinity
+
+    cardRefs.current.forEach((el, id) => {
+      const cardCentre = el.offsetLeft + el.offsetWidth / 2
+      const dist = Math.abs(cardCentre - stripCentre)
+      if (dist < closestDist) {
+        closestDist = dist
+        closestId = id
+      }
+    })
+
+    if (closestId && closestId !== activeId) {
+      setActiveId(closestId)
+      highlightDot(mapRef.current, closestId)
+    }
+  }, [activeId, highlightDot])
+
   return (
     <div className="relative w-full flex flex-col" style={{ height: 'calc(100vh - 130px)', minHeight: '520px' }}>
 
@@ -239,6 +263,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
       {visibleVenues.length > 0 && (
         <div
           ref={stripRef}
+          onScroll={handleStripScroll}
           className="flex gap-3 overflow-x-auto py-3"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', flexShrink: 0 }}
         >
