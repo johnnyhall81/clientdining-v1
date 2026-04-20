@@ -382,7 +382,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
                   width: '160px',
                   borderRadius: '10px',
                   scrollSnapAlign: 'start',
-                  border: activeId === venue.id ? '2px solid #DA7756' : '1px solid #F0EDE9',
+                  border: activeId === venue.id ? '2px solid #DA7756' : '2px solid transparent',
                   boxShadow: activeId === venue.id ? '0 2px 12px rgba(232,124,46,0.2)' : '0 1px 4px rgba(0,0,0,0.07)',
                 }}
               >
