@@ -217,151 +217,101 @@ export default function TopNav() {
             </Link>
 
             {user ? (
-            <nav className="flex items-center gap-3 sm:gap-6">
+            <nav className="flex items-center gap-4 sm:gap-7">
 
+              {/* Venues */}
               <Link
                 href="/home"
                 className={`transition-colors ${isActive('/home') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
-                aria-label="Home"
+                aria-label="Venues"
               >
-                {isActive('/home') ? (
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path fillRule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clipRule="evenodd" />
-                  </svg>
-                ) : (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-                  </svg>
-                )}
+                {/* Mobile: icon */}
+                <span className="sm:hidden">
+                  {isActive('/home') ? (
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clipRule="evenodd" /></svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                  )}
+                </span>
+                {/* Desktop: text */}
+                <span className="hidden sm:inline text-sm font-light tracking-wide">Venues</span>
               </Link>
 
+              {/* Map */}
               <Link
                 href="/map"
-                className={`transition-colors ${
-                  isActive('/map')
-                    ? 'text-zinc-900'
-                    : 'text-zinc-400 hover:text-zinc-900'
-                }`}
+                className={`transition-colors ${isActive('/map') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
                 aria-label="Map"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                </svg>
+                <span className="sm:hidden">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                </span>
+                <span className="hidden sm:inline text-sm font-light tracking-wide">Map</span>
               </Link>
 
+              {/* Hire */}
               <Link
                 href="/private-hire"
-                className={`transition-colors ${
-                  isActive('/private-hire')
-                    ? 'text-zinc-900'
-                    : 'text-zinc-400 hover:text-zinc-900'
-                }`}
+                className={`transition-colors ${isActive('/private-hire') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
                 aria-label="Private hire"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
-                </svg>
+                <span className="sm:hidden">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" /></svg>
+                </span>
+                <span className="hidden sm:inline text-sm font-light tracking-wide">Hire</span>
               </Link>
 
+              {/* Bookings */}
               <Link
                 href="/bookings"
-                className={`relative transition-colors ${
-                  isActive('/bookings')
-                    ? 'text-zinc-900'
-                    : 'text-zinc-400 hover:text-zinc-900'
-                }`}
+                className={`relative transition-colors ${isActive('/bookings') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
                 aria-label="Bookings"
               >
-                <div className="relative">
-                  {isActive('/bookings') ? (
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12.75 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM7.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM8.25 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM9.75 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM10.5 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM12.75 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM14.25 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 13.5a.75.75 0 100-1.5.75.75 0 000 1.5z" />
-                      <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clipRule="evenodd" />
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                    </svg>
-                  )}
-                  {bookingCount > 0 && (
-                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[16px] h-4 px-1 text-[10px] font-light text-zinc-500 bg-zinc-200 rounded-full">
-                      {bookingCount}
-                    </span>
-                  )}
-                </div>
+                <span className="sm:hidden">
+                  <div className="relative">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                    {bookingCount > 0 && (
+                      <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[16px] h-4 px-1 text-[10px] font-light text-zinc-500 bg-zinc-200 rounded-full">{bookingCount}</span>
+                    )}
+                  </div>
+                </span>
+                <span className="hidden sm:inline text-sm font-light tracking-wide">
+                  Bookings{bookingCount > 0 && <sup className="ml-0.5 text-[10px] text-zinc-400">{bookingCount}</sup>}
+                </span>
               </Link>
 
+              {/* Alerts — icon only, conditional */}
               {alertCount > 0 && (
                 <Link
                   href="/alerts"
-                  className={`relative transition-colors ${
-                    isActive('/alerts')
-                      ? 'text-zinc-900'
-                      : 'text-zinc-400 hover:text-zinc-900'
-                  }`}
+                  className={`relative transition-colors ${isActive('/alerts') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
                   aria-label="Alerts"
                 >
                   <div className="relative">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                    </svg>
-                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[16px] h-4 px-1 text-[10px] font-light text-zinc-500 bg-zinc-200 rounded-full">
-                      {alertCount}
-                    </span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
+                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[16px] h-4 px-1 text-[10px] font-light text-zinc-500 bg-zinc-200 rounded-full">{alertCount}</span>
                   </div>
                 </Link>
               )}
 
-              {/* User Menu with Chevron */}
+              {/* User menu */}
               <div className="relative group">
                 <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                  
-                {profile?.avatar_url ? (
-                  <div className="relative w-8 h-8">
-                    <Image
-                      src={profile.avatar_url}
-                      alt={profile.full_name || 'Profile'}
-                      fill
-                      sizes="32px"
-                      quality={70}
-                      className="rounded-full object-cover border border-zinc-200"
-                    />
-                  </div>
+                  {profile?.avatar_url ? (
+                    <div className="relative w-8 h-8">
+                      <Image src={profile.avatar_url} alt={profile.full_name || 'Profile'} fill sizes="32px" quality={70} className="rounded-full object-cover border border-zinc-200" />
+                    </div>
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-sm font-light text-zinc-500">
                       {profile?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}
                     </div>
                   )}
-                  <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </button>
-
-                {/* Dropdown */}
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  {!isAdmin && (
-                    <Link
-                      href="/account"
-                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
-                    >
-                      Account
-                    </Link>
-                  )}
-                  {isAdmin && (
-                    <Link
-                      href="/admin"
-                      className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg"
-                    >
-                      Admin Dashboard
-                    </Link>
-                  )}
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full text-left px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-b-lg"
-                  >
-                    Sign Out
-                  </button>
+                  {!isAdmin && <Link href="/account" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">Account</Link>}
+                  {isAdmin && <Link href="/admin" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">Admin Dashboard</Link>}
+                  <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-b-lg">Sign Out</button>
                 </div>
               </div>
             </nav>
