@@ -23,27 +23,10 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const stripRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const workMarkerRef = useRef<any>(null)
-  const dragRef = useRef({ isDown: false, startX: 0, scrollLeft: 0 })
   const router = useRouter()
   const { user } = useAuth()
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    const strip = stripRef.current
-    if (!strip) return
-    dragRef.current = { isDown: true, startX: e.pageX - strip.offsetLeft, scrollLeft: strip.scrollLeft }
-    strip.style.cursor = 'grabbing'
-  }
-  const handleMouseUp = () => {
-    dragRef.current.isDown = false
-    if (stripRef.current) stripRef.current.style.cursor = 'grab'
-  }
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!dragRef.current.isDown || !stripRef.current) return
-    e.preventDefault()
-    const x = e.pageX - stripRef.current.offsetLeft
-    const walk = (x - dragRef.current.startX) * 1.2
-    stripRef.current.scrollLeft = dragRef.current.scrollLeft - walk
-  }
+  const [activeIndex, setActiveIndex] = useState(0)
 
   const [workCoords, setWorkCoords] = useState<{ lat: number; lng: number } | null>(null)
 
@@ -107,32 +90,27 @@ export default function VenueMap({ venues }: VenueMapProps) {
     })
   }, [geocoded])
 
-  // Auto-highlight the middle card whenever the visible set changes + scroll strip to it
-  useEffect(() => {
-    if (!visibleVenues.length || !mapRef.current) return
-    const midVenue = visibleVenues[Math.floor(visibleVenues.length / 2)]
-    setActiveId(midVenue.id)
-    highlightDot(mapRef.current, midVenue.id)
-    // Scroll strip so the highlighted card is centred
+  // Step to a specific index — highlight dot + scroll card into view
+  const stepTo = useCallback((index: number, venues: VenueWithCoords[]) => {
+    if (!venues.length || !mapRef.current) return
+    const clamped = Math.max(0, Math.min(index, venues.length - 1))
+    const venue = venues[clamped]
+    setActiveIndex(clamped)
+    setActiveId(venue.id)
+    highlightDot(mapRef.current, venue.id)
     setTimeout(() => {
-      const card = cardRefs.current.get(midVenue.id)
-      const strip = stripRef.current
-      if (card && strip) {
-        strip.scrollTo({
-          left: card.offsetLeft - strip.clientWidth / 2 + card.offsetWidth / 2,
-          behavior: 'smooth',
-        })
+      const card = cardRefs.current.get(venue.id)
+      if (card && stripRef.current) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
       }
     }, 50)
-  }, [visibleVenues, highlightDot])
+  }, [highlightDot])
 
-  // Scroll strip to card
-  const scrollToCard = useCallback((id: string) => {
-    const card = cardRefs.current.get(id)
-    if (card && stripRef.current) {
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
-    }
-  }, [])
+  // When visible venues change, reset to middle
+  useEffect(() => {
+    if (!visibleVenues.length || !mapRef.current) return
+    stepTo(Math.floor(visibleVenues.length / 2), visibleVenues)
+  }, [visibleVenues, stepTo])
 
   // Init map
   useEffect(() => {
@@ -256,9 +234,9 @@ export default function VenueMap({ venues }: VenueMapProps) {
         map.on('click', 'venues-dots', (e: any) => {
           const id = e.features[0]?.properties?.id
           if (!id) return
-          setActiveId(id)
-          highlightDot(map, id)
-          scrollToCard(id)
+          const visIndex = visibleVenues.findIndex(v => v.id === id)
+          if (visIndex >= 0) stepTo(visIndex, visibleVenues)
+          else { setActiveId(id); highlightDot(map, id) }
         })
 
         // Click empty map → clear active
@@ -321,8 +299,10 @@ export default function VenueMap({ venues }: VenueMapProps) {
     })
   }, [workCoords])
 
-  // When activeId changes from card click, highlight dot
+  // Card tapped — highlight its dot, pan map
   const handleCardClick = (venue: VenueWithCoords) => {
+    const index = visibleVenues.findIndex(v => v.id === venue.id)
+    setActiveIndex(index)
     setActiveId(venue.id)
     if (mapRef.current) {
       mapRef.current.easeTo({ center: [venue.lng, venue.lat], zoom: Math.max(mapRef.current.getZoom(), 14) })
@@ -330,29 +310,25 @@ export default function VenueMap({ venues }: VenueMapProps) {
     }
   }
 
-  // As the strip scrolls, highlight the dot for the centremost card
+  // Mobile swipe scroll — detect snapped card by closest offsetLeft to scrollLeft
   const handleStripScroll = useCallback(() => {
     if (!stripRef.current || !mapRef.current) return
     const strip = stripRef.current
-    const stripCentre = strip.scrollLeft + strip.clientWidth / 2
-
-    let closestId: string | null = null
+    let closestIndex = 0
     let closestDist = Infinity
-
-    cardRefs.current.forEach((el, id) => {
-      const cardCentre = el.offsetLeft + el.offsetWidth / 2
-      const dist = Math.abs(cardCentre - stripCentre)
-      if (dist < closestDist) {
-        closestDist = dist
-        closestId = id
-      }
+    visibleVenues.forEach((venue, i) => {
+      const card = cardRefs.current.get(venue.id)
+      if (!card) return
+      const dist = Math.abs(card.offsetLeft - strip.scrollLeft)
+      if (dist < closestDist) { closestDist = dist; closestIndex = i }
     })
-
-    if (closestId && closestId !== activeId) {
-      setActiveId(closestId)
-      highlightDot(mapRef.current, closestId)
+    if (visibleVenues[closestIndex]?.id !== activeId) {
+      const venue = visibleVenues[closestIndex]
+      setActiveIndex(closestIndex)
+      setActiveId(venue.id)
+      highlightDot(mapRef.current, venue.id)
     }
-  }, [activeId, highlightDot])
+  }, [visibleVenues, activeId, highlightDot])
 
   return (
     <div className="relative w-full flex flex-col" style={{ height: 'calc(100vh - 130px)', minHeight: '520px' }}>
@@ -368,69 +344,79 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
       {/* Bottom card strip */}
       {visibleVenues.length > 0 && (
-        <div
-          ref={stripRef}
-          onScroll={handleStripScroll}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          className="flex gap-3 overflow-x-auto py-3 px-3"
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            flexShrink: 0,
-            scrollSnapType: 'x mandatory',
-            cursor: 'grab',
-            userSelect: 'none',
-          }}
-        >
-          {visibleVenues.map(venue => (
-            <div
-              key={venue.id}
-              ref={el => { if (el) cardRefs.current.set(venue.id, el) }}
-              onClick={() => {
-                handleCardClick(venue)
-                user ? router.push(`/venues/${venue.id}`) : router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)
-              }}
-              className="flex-shrink-0 bg-white overflow-hidden cursor-pointer transition-all duration-200"
-              style={{
-                width: '160px',
-                borderRadius: '10px',
-                scrollSnapAlign: 'center',
-                border: activeId === venue.id ? '2px solid #DA7756' : '1px solid #F0EDE9',
-                boxShadow: activeId === venue.id ? '0 2px 12px rgba(232,124,46,0.2)' : '0 1px 4px rgba(0,0,0,0.07)',
-              }}
-            >
-              {/* Square image */}
-              <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: '#F4F2EF', flexShrink: 0 }}>
-                {venue.image_hero && (
-                  <img src={venue.image_hero} alt={venue.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                )}
-              </div>
+        <div className="flex items-center gap-2 pt-3 pb-1" style={{ flexShrink: 0 }}>
 
-              {/* Square logo — reduced visual weight, tighter spacing */}
-              <div style={{ width: '160px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px', borderTop: '1px solid #F0EDE9', flexShrink: 0 }}>
-                {(venue as any).logo_url ? (
-                  <img
-                    src={(venue as any).logo_url}
-                    alt={venue.name}
-                    style={{ maxHeight: '28px', maxWidth: '112px', width: '100%', objectFit: 'contain', filter: 'brightness(0)', opacity: 0.75 }}
-                  />
-                ) : (
-                  <p style={{ fontSize: '12px', color: '#3a3a3a', textAlign: 'center', fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic', margin: 0, lineHeight: 1.4, opacity: 0.75 }}>
-                    {venue.name}
-                  </p>
-                )}
-              </div>
+          {/* Prev arrow — desktop only */}
+          <button
+            onClick={() => stepTo(activeIndex - 1, visibleVenues)}
+            disabled={activeIndex === 0}
+            className="hidden sm:flex w-8 h-8 flex-shrink-0 items-center justify-center rounded-full border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-400 transition-colors disabled:opacity-20 disabled:pointer-events-none"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
 
-              {/* Two-line info */}
-              <div style={{ padding: '12px 14px 14px', borderTop: '1px solid #F0EDE9' }}>
-                <p style={{ fontSize: '12px', fontWeight: 500, color: '#18181B', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{venue.name}</p>
-                <p style={{ fontSize: '11px', color: '#a1a1aa', margin: '3px 0 0', fontWeight: 400 }}>{venue.area}</p>
+          {/* Scrollable cards */}
+          <div
+            ref={stripRef}
+            onScroll={handleStripScroll}
+            className="flex gap-3 overflow-x-auto"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              flexShrink: 1,
+              scrollSnapType: 'x mandatory',
+            }}
+          >
+            {visibleVenues.map(venue => (
+              <div
+                key={venue.id}
+                ref={el => { if (el) cardRefs.current.set(venue.id, el) }}
+                onClick={() => {
+                  handleCardClick(venue)
+                  user ? router.push(`/venues/${venue.id}`) : router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)
+                }}
+                className="flex-shrink-0 bg-white overflow-hidden cursor-pointer transition-all duration-200"
+                style={{
+                  width: '160px',
+                  borderRadius: '10px',
+                  scrollSnapAlign: 'start',
+                  border: activeId === venue.id ? '2px solid #DA7756' : '1px solid #F0EDE9',
+                  boxShadow: activeId === venue.id ? '0 2px 12px rgba(232,124,46,0.2)' : '0 1px 4px rgba(0,0,0,0.07)',
+                }}
+              >
+                <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: '#F4F2EF', flexShrink: 0 }}>
+                  {venue.image_hero && (
+                    <img src={venue.image_hero} alt={venue.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  )}
+                </div>
+                <div style={{ width: '160px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px', borderTop: '1px solid #F0EDE9', flexShrink: 0 }}>
+                  {(venue as any).logo_url ? (
+                    <img src={(venue as any).logo_url} alt={venue.name} style={{ maxHeight: '28px', maxWidth: '112px', width: '100%', objectFit: 'contain', filter: 'brightness(0)', opacity: 0.75 }} />
+                  ) : (
+                    <p style={{ fontSize: '12px', color: '#3a3a3a', textAlign: 'center', fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic', margin: 0, lineHeight: 1.4, opacity: 0.75 }}>{venue.name}</p>
+                  )}
+                </div>
+                <div style={{ padding: '12px 14px 14px', borderTop: '1px solid #F0EDE9' }}>
+                  <p style={{ fontSize: '12px', fontWeight: 500, color: '#18181B', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{venue.name}</p>
+                  <p style={{ fontSize: '11px', color: '#a1a1aa', margin: '3px 0 0', fontWeight: 400 }}>{venue.area}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Next arrow — desktop only */}
+          <button
+            onClick={() => stepTo(activeIndex + 1, visibleVenues)}
+            disabled={activeIndex === visibleVenues.length - 1}
+            className="hidden sm:flex w-8 h-8 flex-shrink-0 items-center justify-center rounded-full border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-400 transition-colors disabled:opacity-20 disabled:pointer-events-none"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+
         </div>
       )}
 
