@@ -17,29 +17,31 @@ export default function VenueGrid({ venues }: VenueGridProps) {
   }
 
   return (
-    <div>
-      {/* Hero band — full width, sits flush against the nav */}
-      <div className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-8 mb-10 bg-white border-b border-zinc-100 px-4 sm:px-6 lg:px-8 py-8">
-        <p className="text-[10px] tracking-[0.25em] text-zinc-400 uppercase font-light mb-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+
+      {/* Hero — first row, full width, same visual weight as tile row */}
+      <div className="col-span-1 md:col-span-2 lg:col-span-3 flex flex-col justify-end bg-white rounded-2xl border border-zinc-100 px-10 py-10"
+        style={{ minHeight: 'clamp(220px, 28vw, 360px)' }}
+      >
+        <p className="text-[9px] tracking-[0.3em] text-zinc-300 uppercase font-light mb-4">
           London
         </p>
         <h1
-          className="text-zinc-900 mb-2"
-          style={{ fontSize: 'clamp(1.5rem, 3vw, 2.25rem)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 1.15 }}
+          className="text-zinc-900 mb-3"
+          style={{ fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', fontWeight: 300, letterSpacing: '-0.03em', lineHeight: 1.05 }}
         >
           London&apos;s Best Tables &amp; Spaces
         </h1>
-        <p className="text-sm font-light text-zinc-400">
+        <p className="text-sm font-light text-zinc-400 max-w-md">
           For hosting, team occasions and private events
         </p>
       </div>
 
-      {/* Venue grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-        {venues.map((venue, index) => (
-          <VenueTile key={venue.id} venue={venue} priority={index < 6} />
-        ))}
-      </div>
+      {/* Venue tiles */}
+      {venues.map((venue, index) => (
+        <VenueTile key={venue.id} venue={venue} priority={index < 6} />
+      ))}
+
     </div>
   )
 }
