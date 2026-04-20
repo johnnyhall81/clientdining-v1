@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Venue } from '@/lib/supabase'
@@ -24,12 +24,16 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const router = useRouter()
   const { user } = useAuth()
 
-  // Filter to only venues that have stored coords
-  const geocoded = venues.filter(
-    (v): v is VenueWithCoords =>
-      typeof (v as any).lat === 'number' &&
-      typeof (v as any).lng === 'number'
-  ) as VenueWithCoords[]
+  // Filter to only venues that have stored coords — memoised for stable map init
+  const geocoded = useMemo(
+    () =>
+      venues.filter(
+        (v): v is VenueWithCoords =>
+          typeof (v as any).lat === 'number' &&
+          typeof (v as any).lng === 'number'
+      ) as VenueWithCoords[],
+    [venues]
+  )
 
   const [visibleVenues, setVisibleVenues] = useState<VenueWithCoords[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
