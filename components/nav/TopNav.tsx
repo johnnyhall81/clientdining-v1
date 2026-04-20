@@ -7,7 +7,6 @@ import Image from 'next/image'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
-import ShareButton from '@/components/venues/ShareButton'
 
 export default function TopNav() {
   const pathname = usePathname()
@@ -25,19 +24,17 @@ export default function TopNav() {
   const currentTab = searchParams.get('tab') || 'reservations'
   const [venueHasPrivateHire, setVenueHasPrivateHire] = useState(false)
   const [venueHireOnly, setVenueHireOnly] = useState(false)
-  const [venueName, setVenueName] = useState('')
 
   useEffect(() => {
     if (!venueId) { setVenueHasPrivateHire(false); setVenueHireOnly(false); return }
     supabase
       .from('venues')
-      .select('private_hire_available, hire_only, name')
+      .select('private_hire_available, hire_only')
       .eq('id', venueId)
       .single()
       .then(({ data }) => {
         setVenueHasPrivateHire(data?.private_hire_available ?? false)
         setVenueHireOnly(data?.hire_only ?? false)
-        setVenueName(data?.name ?? '')
       })
   }, [venueId])
 
@@ -182,13 +179,6 @@ export default function TopNav() {
                 </span>
               )}
             </div>
-
-            {/* Share */}
-            <ShareButton
-              url={pathname}
-              title={venueName || 'ClientDining'}
-              variant="bare"
-            />
 
             {/* User icon */}
             {user ? (

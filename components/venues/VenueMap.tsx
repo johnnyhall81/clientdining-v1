@@ -16,23 +16,6 @@ interface VenueMapProps {
   venues: Venue[]
 }
 
-async function geocodeVenue(venue: Venue): Promise<{ lat: number; lng: number } | null> {
-  const query = venue.address
-    ? [venue.address, venue.postcode, 'London', 'UK'].filter(Boolean).join(', ')
-    : [venue.name, venue.area, 'London', 'UK'].filter(Boolean).join(', ')
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&country=GB&limit=1&proximity=-0.1276,51.5074`
-  try {
-    const res = await fetch(url)
-    const data = await res.json()
-    const feature = data.features?.[0]
-    if (!feature) return null
-    const [lng, lat] = feature.center
-    return { lat, lng }
-  } catch {
-    return null
-  }
-}
-
 export default function VenueMap({ venues }: VenueMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
   const mapRef = useRef<any>(null)
@@ -41,26 +24,15 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const router = useRouter()
   const { user } = useAuth()
 
-  const [geocoded, setGeocoded] = useState<VenueWithCoords[]>([])
-  const [loading, setLoading] = useState(true)
+  // Filter to only venues that have stored coords
+  const geocoded = venues.filter(
+    (v): v is VenueWithCoords =>
+      typeof (v as any).lat === 'number' &&
+      typeof (v as any).lng === 'number'
+  ) as VenueWithCoords[]
+
   const [visibleVenues, setVisibleVenues] = useState<VenueWithCoords[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
-
-  // Geocode on mount
-  useEffect(() => {
-    async function geocodeAll() {
-      const results = await Promise.all(
-        venues.map(async (v) => {
-          const coords = await geocodeVenue(v)
-          return coords ? { ...v, ...coords } : null
-        })
-      )
-      const valid = results.filter(Boolean) as VenueWithCoords[]
-      setGeocoded(valid)
-      setLoading(false)
-    }
-    geocodeAll()
-  }, [venues])
 
   // Update visible venues based on map bounds
   const updateVisible = useCallback((map: any, all: VenueWithCoords[]) => {
@@ -95,7 +67,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
   // Init map
   useEffect(() => {
-    if (loading || !mapContainer.current || geocoded.length === 0) return
+    if (!mapContainer.current || geocoded.length === 0) return
     if (mapRef.current) return
 
     import('mapbox-gl').then((mapboxgl) => {
@@ -236,7 +208,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
       mapRef.current?.remove()
       mapRef.current = null
     }
-  }, [loading, geocoded])
+  }, [geocoded])
 
   // When activeId changes from card click, highlight dot
   const handleCardClick = (venue: VenueWithCoords) => {
@@ -250,9 +222,9 @@ export default function VenueMap({ venues }: VenueMapProps) {
   return (
     <div className="relative w-full flex flex-col" style={{ height: 'calc(100vh - 130px)', minHeight: '520px' }}>
 
-      {loading && (
+      {geocoded.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-zinc-50 z-10 rounded-xl">
-          <p className="text-sm font-light text-zinc-400">Locating venues…</p>
+          <p className="text-sm font-light text-zinc-400">No venues to display</p>
         </div>
       )}
 
@@ -285,7 +257,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
               {/* Square image */}
               <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: '#F4F2EF', flexShrink: 0 }}>
                 {venue.image_hero && (
-                  <img src={venue.image_hero} alt={venue.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={venue.image_hero} alt={venue.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 )}
               </div>
 

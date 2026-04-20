@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Venue } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import ShareButton from '@/components/venues/ShareButton'
 
 interface VenueTileProps {
   venue: Venue & { image?: string }
@@ -76,15 +75,6 @@ export default function VenueTile({ venue, availableSlots = 0, priority = false 
             </svg>
           </div>
         )}
-
-        {/* Share — top-right overlay */}
-        <div className="absolute top-3 right-3 z-10">
-          <ShareButton
-            url={`/venues/${venue.id}`}
-            title={venue.name}
-            variant="overlay"
-          />
-        </div>
 
         {availableSlots > 0 && (
           <div className="absolute top-3 left-3 z-10">

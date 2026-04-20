@@ -19,6 +19,8 @@ export interface Venue {
   image_hero?: string
   is_active: boolean
   requires_guest_names: boolean
+  lat?: number
+  lng?: number
   menus?: { label: string; url: string }[] | null
   menu_highlights?: {
     cuisine_style: string
