@@ -19,20 +19,15 @@ export default function VenueGrid({ venues }: VenueGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
 
-      {/* Hero — first row, full width, same visual weight as tile row */}
-      <div className="col-span-1 md:col-span-2 lg:col-span-3 flex flex-col justify-end bg-white rounded-2xl border border-zinc-100 px-10 py-10"
-        style={{ minHeight: 'clamp(220px, 28vw, 360px)' }}
-      >
-        <p className="text-[9px] tracking-[0.3em] text-zinc-300 uppercase font-light mb-4">
-          London
-        </p>
+      {/* Hero */}
+      <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 md:py-14">
         <h1
           className="text-zinc-900 mb-3"
-          style={{ fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', fontWeight: 300, letterSpacing: '-0.03em', lineHeight: 1.05 }}
+          style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 1.15 }}
         >
           London&apos;s Best Tables &amp; Spaces
         </h1>
-        <p className="text-sm font-light text-zinc-400 max-w-md">
+        <p className="font-light" style={{ fontSize: '0.9375rem', color: '#8A8580', letterSpacing: '0.01em' }}>
           For hosting, team occasions and private events
         </p>
       </div>
