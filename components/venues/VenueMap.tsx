@@ -298,13 +298,11 @@ export default function VenueMap({ venues }: VenueMapProps) {
         <div
           ref={stripRef}
           onScroll={handleStripScroll}
-          className="flex gap-3 overflow-x-auto py-3"
+          className="flex gap-3 overflow-x-auto py-3 px-3"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             flexShrink: 0,
-            paddingLeft: 'calc(50% - 80px)',
-            paddingRight: 'calc(50% - 80px)',
             scrollSnapType: 'x mandatory',
           }}
         >
