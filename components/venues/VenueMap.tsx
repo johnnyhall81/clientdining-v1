@@ -100,8 +100,18 @@ export default function VenueMap({ venues }: VenueMapProps) {
     highlightDot(mapRef.current, venue.id)
     setTimeout(() => {
       const card = cardRefs.current.get(venue.id)
-      if (card && stripRef.current) {
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
+      const strip = stripRef.current
+      if (card && strip) {
+        const isMobile = window.innerWidth < 640
+        if (isMobile) {
+          // Centre the card in the strip (accounts for edge padding)
+          strip.scrollTo({
+            left: card.offsetLeft + card.offsetWidth / 2 - strip.clientWidth / 2,
+            behavior: 'smooth',
+          })
+        } else {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
+        }
       }
     }, 50)
   }, [highlightDot])
@@ -310,16 +320,18 @@ export default function VenueMap({ venues }: VenueMapProps) {
     }
   }
 
-  // Mobile swipe scroll — detect snapped card by closest offsetLeft to scrollLeft
+  // Mobile swipe scroll — detect snapped card by centre proximity
   const handleStripScroll = useCallback(() => {
     if (!stripRef.current || !mapRef.current) return
     const strip = stripRef.current
+    const stripCentre = strip.scrollLeft + strip.clientWidth / 2
     let closestIndex = 0
     let closestDist = Infinity
     visibleVenues.forEach((venue, i) => {
       const card = cardRefs.current.get(venue.id)
       if (!card) return
-      const dist = Math.abs(card.offsetLeft - strip.scrollLeft)
+      const cardCentre = card.offsetLeft + card.offsetWidth / 2
+      const dist = Math.abs(cardCentre - stripCentre)
       if (dist < closestDist) { closestDist = dist; closestIndex = i }
     })
     if (visibleVenues[closestIndex]?.id !== activeId) {
@@ -361,7 +373,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
           <div
             ref={stripRef}
             onScroll={handleStripScroll}
-            className="flex gap-3 overflow-x-auto"
+            className="cd-strip flex gap-3 overflow-x-auto"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
@@ -377,11 +389,10 @@ export default function VenueMap({ venues }: VenueMapProps) {
                   handleCardClick(venue)
                   user ? router.push(`/venues/${venue.id}`) : router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)
                 }}
-                className="flex-shrink-0 bg-white overflow-hidden cursor-pointer transition-all duration-200"
+                className="cd-strip-card flex-shrink-0 bg-white overflow-hidden cursor-pointer transition-all duration-200"
                 style={{
                   width: '160px',
                   borderRadius: '10px',
-                  scrollSnapAlign: 'start',
                   border: activeId === venue.id ? '2px solid #DA7756' : '2px solid transparent',
                   boxShadow: activeId === venue.id ? '0 2px 12px rgba(232,124,46,0.2)' : '0 1px 4px rgba(0,0,0,0.07)',
                 }}
@@ -422,6 +433,17 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
       <style>{`
         .mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib { display: none !important; }
+        /* Mobile: centre-snap with edge padding so first/last cards can centre */
+        .cd-strip {
+          padding-left: calc(50% - 80px);
+          padding-right: calc(50% - 80px);
+        }
+        .cd-strip-card { scroll-snap-align: center; }
+        /* Desktop: no padding, start-snap — arrows handle navigation */
+        @media (min-width: 640px) {
+          .cd-strip { padding-left: 0; padding-right: 0; }
+          .cd-strip-card { scroll-snap-align: start; }
+        }
       `}</style>
     </div>
   )
