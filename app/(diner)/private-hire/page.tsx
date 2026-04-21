@@ -22,6 +22,7 @@ type Room = {
   pricing_notes: string
   facilities: string[]
   best_for: string[]
+  occasion_categories: string[]
   catering: string[]
   images: { url: string; caption: string; is_main: boolean }[]
   display_order: number
@@ -40,6 +41,19 @@ const GUEST_RANGES = [
   { label: 'Up to 40', max: 40 },
   { label: 'Up to 80', max: 80 },
   { label: '80+', max: Infinity },
+]
+
+const OCCASION_CATEGORIES = [
+  'Business dining',
+  'Client hosting',
+  'Team dining',
+  'Private dining',
+  'Drinks reception',
+  'Meetings & away days',
+  'Presentations & screenings',
+  'Networking',
+  'Celebrations',
+  'Weddings',
 ]
 
 const pillStyle = (active: boolean) => ({
@@ -83,7 +97,7 @@ export default function Page() {
 
   const filtered = rooms.filter(room => {
     if (filterAreas.length > 0 && !filterAreas.includes(room.venue.area)) return false
-    if (filterOccasion && !room.best_for?.includes(filterOccasion)) return false
+    if (filterOccasion && !room.occasion_categories?.includes(filterOccasion)) return false
 
     if (filterGuest) {
       const range = GUEST_RANGES.find(r => r.label === filterGuest)
@@ -111,7 +125,6 @@ export default function Page() {
     )
 
   const PRIORITY_AREAS = ['Canary Wharf', 'The City', 'Mayfair']
-  const PRIORITY_OCCASIONS = ['Summer party', 'Christmas party', 'Board meeting', 'Networking']
 
   const allAreas = Array.from(new Set(rooms.map(r => r.venue.area))).sort()
   const availableAreas = [
@@ -119,11 +132,10 @@ export default function Page() {
     ...allAreas.filter(a => !PRIORITY_AREAS.includes(a)),
   ]
 
-  const allOccasions = Array.from(new Set(rooms.flatMap(r => r.best_for || []))).sort()
-  const availableOccasions = [
-    ...PRIORITY_OCCASIONS.filter(o => allOccasions.includes(o)),
-    ...allOccasions.filter(o => !PRIORITY_OCCASIONS.includes(o)),
-  ]
+  // Only show occasion categories that have at least one room
+  const availableOccasions = OCCASION_CATEGORIES.filter(cat =>
+    rooms.some(r => r.occasion_categories?.includes(cat))
+  )
 
   const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
   const clearFilters = () => {
@@ -417,9 +429,9 @@ export default function Page() {
                     </p>
                   )}
 
-                  {room.best_for?.length > 0 && (
+                  {room.occasion_categories?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-5">
-                      {room.best_for.map(tag => (
+                      {room.occasion_categories.map(tag => (
                         <span
                           key={tag}
                           className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full"
