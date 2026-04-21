@@ -399,7 +399,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
               >
                 <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: '#F4F2EF', flexShrink: 0 }}>
                   {venue.image_hero && (
-                    <img src={venue.image_hero} alt={venue.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={venue.image_hero} alt={venue.name} loading="eager" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   )}
                 </div>
                 <div style={{ width: '160px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px', borderTop: '1px solid #F0EDE9', flexShrink: 0 }}>

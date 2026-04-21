@@ -13,7 +13,7 @@ export default async function MapPage() {
 
   const { data: venues } = await supabase
     .from('venues')
-    .select('id, name, slug, area, venue_type, description, private_hire_available, address, postcode, image_hero, is_active, requires_guest_names, lat, lng, logo_url, hire_only, created_at')
+    .select('id, name, area, image_hero, is_active, lat, lng, logo_url, hire_only, address, postcode, created_at')
     .eq('is_active', true)
     .order('display_order', { ascending: true })
 
