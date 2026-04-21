@@ -23,6 +23,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const stripRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const workMarkerRef = useRef<any>(null)
+  const suppressScrollRef = useRef(false)
   const router = useRouter()
   const { user } = useAuth()
 
@@ -104,13 +105,15 @@ export default function VenueMap({ venues }: VenueMapProps) {
       if (card && strip) {
         const isMobile = window.innerWidth < 640
         if (isMobile) {
-          // Centre the card in the strip (accounts for edge padding)
           strip.scrollTo({
             left: card.offsetLeft + card.offsetWidth / 2 - strip.clientWidth / 2,
             behavior: 'smooth',
           })
         } else {
+          // Suppress scroll handler while we programmatically scroll
+          suppressScrollRef.current = true
           card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
+          setTimeout(() => { suppressScrollRef.current = false }, 600)
         }
       }
     }, 50)
@@ -321,7 +324,10 @@ export default function VenueMap({ venues }: VenueMapProps) {
   }
 
   // Mobile swipe scroll — detect snapped card by centre proximity
+  // On desktop, arrows are sole source of truth — ignore scroll events
   const handleStripScroll = useCallback(() => {
+    if (suppressScrollRef.current) return
+    if (window.innerWidth >= 640) return // desktop: arrows only
     if (!stripRef.current || !mapRef.current) return
     const strip = stripRef.current
     const stripCentre = strip.scrollLeft + strip.clientWidth / 2
