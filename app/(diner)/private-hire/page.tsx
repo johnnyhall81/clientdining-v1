@@ -135,13 +135,17 @@ export default function Page() {
   return (
     <div className="space-y-5">
       <div className="flex items-baseline justify-between">
-        <p className="text-[9px] tracking-[0.25em] text-zinc-400 uppercase font-light">
-          Private hire · London
-        </p>
+        {!loading && (
+          <p className="font-light text-zinc-500" style={{ fontSize: '0.9375rem', letterSpacing: '0.01em' }}>
+            {filtered.length === 0
+              ? 'No spaces found'
+              : `${filtered.length} private ${filtered.length === 1 ? 'space' : 'spaces'} across London`}
+          </p>
+        )}
         {hasFilters && (
           <button
             onClick={clearFilters}
-            className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
+            className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors ml-auto"
           >
             Clear all
           </button>
@@ -276,14 +280,6 @@ export default function Page() {
         })()}
 
       </div>
-
-      {!loading && (
-        <p className="text-sm font-light text-zinc-500">
-          {filtered.length === 0
-            ? 'No spaces found'
-            : `${filtered.length} ${filtered.length === 1 ? 'private space' : 'private spaces'}`}
-        </p>
-      )}
 
       {loading ? (
         <div className="text-center py-16">
