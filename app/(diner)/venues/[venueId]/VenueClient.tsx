@@ -348,9 +348,9 @@ export default function VenueClient({ venue, slots, galleryImages }: VenueClient
                       )}
 
                       {/* Tags */}
-                      {room.best_for?.length > 0 && (
+                      {(room.occasion_categories?.length > 0 ? room.occasion_categories : room.best_for)?.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mb-5">
-                          {room.best_for.map((tag: string) => (
+                          {(room.occasion_categories?.length > 0 ? room.occasion_categories : room.best_for).map((tag: string) => (
                             <span key={tag} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">{tag}</span>
                           ))}
                         </div>

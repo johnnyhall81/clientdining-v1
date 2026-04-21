@@ -132,10 +132,8 @@ export default function Page() {
     ...allAreas.filter(a => !PRIORITY_AREAS.includes(a)),
   ]
 
-  // Only show occasion categories that have at least one room
-  const availableOccasions = OCCASION_CATEGORIES.filter(cat =>
-    rooms.some(r => r.occasion_categories?.includes(cat))
-  )
+  // Show all curated categories — they're all valid for this platform
+  const availableOccasions = OCCASION_CATEGORIES
 
   const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
   const clearFilters = () => {
