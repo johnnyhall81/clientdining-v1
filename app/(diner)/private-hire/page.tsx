@@ -22,7 +22,6 @@ type Room = {
   pricing_notes: string
   facilities: string[]
   best_for: string[]
-  occasion_categories: string[]
   catering: string[]
   images: { url: string; caption: string; is_main: boolean }[]
   display_order: number
@@ -41,19 +40,6 @@ const GUEST_RANGES = [
   { label: 'Up to 40', max: 40 },
   { label: 'Up to 80', max: 80 },
   { label: '80+', max: Infinity },
-]
-
-const OCCASION_CATEGORIES = [
-  'Business dining',
-  'Client hosting',
-  'Team dining',
-  'Private dining',
-  'Drinks reception',
-  'Meetings & away days',
-  'Presentations & screenings',
-  'Networking',
-  'Celebrations',
-  'Weddings',
 ]
 
 const pillStyle = (active: boolean) => ({
@@ -97,7 +83,7 @@ export default function Page() {
 
   const filtered = rooms.filter(room => {
     if (filterAreas.length > 0 && !filterAreas.includes(room.venue.area)) return false
-    if (filterOccasion && !room.occasion_categories?.includes(filterOccasion)) return false
+    if (filterOccasion && !room.best_for?.includes(filterOccasion)) return false
 
     if (filterGuest) {
       const range = GUEST_RANGES.find(r => r.label === filterGuest)
@@ -125,6 +111,7 @@ export default function Page() {
     )
 
   const PRIORITY_AREAS = ['Canary Wharf', 'The City', 'Mayfair']
+  const PRIORITY_OCCASIONS = ['Summer party', 'Christmas party', 'Board meeting', 'Networking']
 
   const allAreas = Array.from(new Set(rooms.map(r => r.venue.area))).sort()
   const availableAreas = [
@@ -132,8 +119,11 @@ export default function Page() {
     ...allAreas.filter(a => !PRIORITY_AREAS.includes(a)),
   ]
 
-  // Show all curated categories — they're all valid for this platform
-  const availableOccasions = OCCASION_CATEGORIES
+  const allOccasions = Array.from(new Set(rooms.flatMap(r => r.best_for || []))).sort()
+  const availableOccasions = [
+    ...PRIORITY_OCCASIONS.filter(o => allOccasions.includes(o)),
+    ...allOccasions.filter(o => !PRIORITY_OCCASIONS.includes(o)),
+  ]
 
   const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
   const clearFilters = () => {
@@ -163,7 +153,6 @@ export default function Page() {
 
         {/* Size */}
         {(() => {
-          // Size is always short enough to show all — no expand needed
           return (
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 mt-1.5" style={{ minWidth: '4.5rem' }}>
@@ -241,7 +230,6 @@ export default function Page() {
         {/* Occasion */}
         {(() => {
           const isOpen = openGroup === 'occasion'
-          const isSelected = (o: string) => filterOccasion === o
           const selected = filterOccasion ? [filterOccasion] : []
           const unselected = availableOccasions.filter(o => o !== filterOccasion)
           const visibleUnselected = isOpen ? unselected : unselected.slice(0, Math.max(0, DEFAULT_VISIBLE - selected.length))
@@ -361,46 +349,29 @@ export default function Page() {
                       <div className="flex flex-wrap gap-x-5 gap-y-2">
                         {room.capacity_dining && (
                           <div>
-                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
-                              Dining
-                            </p>
-                            <p className="text-xs font-light text-zinc-700">
-                              {room.capacity_dining} seated
-                            </p>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Dining</p>
+                            <p className="text-xs font-light text-zinc-700">{room.capacity_dining} seated</p>
                           </div>
                         )}
                         {room.capacity_standing && (
                           <div>
-                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
-                              Standing
-                            </p>
-                            <p className="text-xs font-light text-zinc-700">
-                              {room.capacity_standing} guests
-                            </p>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Standing</p>
+                            <p className="text-xs font-light text-zinc-700">{room.capacity_standing} guests</p>
                           </div>
                         )}
                         {room.capacity_boardroom && (
                           <div>
-                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
-                              Boardroom
-                            </p>
-                            <p className="text-xs font-light text-zinc-700">
-                              {room.capacity_boardroom} seats
-                            </p>
+                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Boardroom</p>
+                            <p className="text-xs font-light text-zinc-700">{room.capacity_boardroom} seats</p>
                           </div>
                         )}
                         {room.pricing_from && (
                           <div>
                             <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
-                              {room.pricing_type === 'min_spend'
-                                ? 'Min spend'
-                                : room.pricing_type === 'hire_fee'
-                                  ? 'Hire fee'
-                                  : 'From'}
+                              {room.pricing_type === 'min_spend' ? 'Min spend' : room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
                             </p>
                             <p className="text-xs font-light text-zinc-700">
-                              £{room.pricing_from.toLocaleString()}
-                              {room.pricing_notes ? ` ${room.pricing_notes}` : ''}
+                              £{room.pricing_from.toLocaleString()}{room.pricing_notes ? ` ${room.pricing_notes}` : ''}
                             </p>
                           </div>
                         )}
@@ -427,13 +398,10 @@ export default function Page() {
                     </p>
                   )}
 
-                  {room.occasion_categories?.length > 0 && (
+                  {room.best_for?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-5">
-                      {room.occasion_categories.map(tag => (
-                        <span
-                          key={tag}
-                          className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full"
-                        >
+                      {room.best_for.map(tag => (
+                        <span key={tag} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
                           {tag}
                         </span>
                       ))}
