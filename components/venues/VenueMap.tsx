@@ -6,10 +6,10 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Venue } from '@/lib/supabase'
 import { supabase } from '@/lib/supabase-client'
 
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
+
 const SUPABASE_STORAGE = 'supabase.co/storage/v1/object/public'
 
-// For Supabase-hosted images, append transform params to serve correctly-sized image.
-// Strip cards are 160px — serve 320px for retina, saving ~90% of payload vs full hero.
 function thumbUrl(src: string, width: number): string {
   if (src.includes(SUPABASE_STORAGE)) {
     return `${src}?width=${width}&quality=75&resize=cover`
