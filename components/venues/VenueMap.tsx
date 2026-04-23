@@ -170,8 +170,12 @@ export default function VenueMap({ venues }: VenueMapProps) {
       const map = new mapboxgl.default.Map({
         container: mapContainer.current!,
         style: 'mapbox://styles/mapbox/light-v11',
-        center: [-0.1400, 51.5100],
-        zoom: 12,
+        // Pre-set to the same view fitBounds would produce — skips second render
+        center: [-0.1050, 51.5110],
+        zoom: 11.2,
+        // Slight perf wins
+        attributionControl: false,
+        fadeDuration: 0,
       })
 
       mapRef.current = map
@@ -303,12 +307,6 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
         // Initial visible set
         updateVisible(map, filteredGeocodedRef.current)
-
-        // Fit to London's dining core — fixed bounds so outer venues don't pull zoom out
-        map.fitBounds(
-          [[-0.220, 51.480], [0.010, 51.540]],
-          { padding: { top: 60, bottom: 180, left: 40, right: 40 }, duration: 0 }
-        )
       })
     })
 
