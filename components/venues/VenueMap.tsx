@@ -346,12 +346,13 @@ export default function VenueMap({ venues }: VenueMapProps) {
   // Keep ref in sync so moveend always uses latest filtered set
   useEffect(() => { filteredGeocodedRef.current = filteredGeocoded }, [filteredGeocoded])
 
-  // When area filter changes, update map source data + strip
+  // When area filter changes, update map source data + strip + fit bounds
   useEffect(() => {
     if (!mapRef.current) return
     const map = mapRef.current
     const source = map.getSource('venues') as any
     if (!source) return
+
     source.setData({
       type: 'FeatureCollection',
       features: filteredGeocoded.map((v: VenueWithCoords) => ({
@@ -361,7 +362,20 @@ export default function VenueMap({ venues }: VenueMapProps) {
       }))
     })
     updateVisible(map, filteredGeocoded)
-  }, [filteredGeocoded, updateVisible])
+
+    // Fit map to the filtered venues
+    if (filteredGeocoded.length > 0) {
+      import('mapbox-gl').then((mapboxgl) => {
+        const bounds = new mapboxgl.default.LngLatBounds()
+        filteredGeocoded.forEach((v: VenueWithCoords) => bounds.extend([v.lng, v.lat]))
+        map.fitBounds(bounds, {
+          padding: { top: 80, bottom: 80, left: 60, right: 60 },
+          maxZoom: filterAreas.length > 0 ? 15 : 13,
+          duration: 600,
+        })
+      })
+    }
+  }, [filteredGeocoded, updateVisible, filterAreas.length])
 
   // Card tapped — highlight its dot, pan map
   const handleCardClick = (venue: VenueWithCoords) => {
@@ -409,7 +423,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
       )}
 
       {/* Map — full height */}
-      <div ref={mapContainer} className="flex-1 rounded-xl overflow-hidden" />
+      <div ref={mapContainer} className="cd-map flex-1 rounded-xl overflow-hidden" />
 
       {/* Area chips — overlaid on map top edge */}
       {allAreas.length > 0 && (
@@ -552,14 +566,15 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
       <style>{`
         .mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib { display: none !important; }
-        /* Mobile: centre-snap with edge padding so first/last cards can centre */
+        /* Mobile: fixed map height so cards are always visible below */
+        .cd-map { height: 46vh; flex: none; }
         .cd-strip {
           padding-left: calc(50% - 80px);
           padding-right: calc(50% - 80px);
         }
         .cd-strip-card { scroll-snap-align: center; }
-        /* Desktop: no padding, start-snap — arrows handle navigation */
         @media (min-width: 640px) {
+          .cd-map { flex: 1; height: auto; }
           .cd-strip { padding-left: 0; padding-right: 0; }
           .cd-strip-card { scroll-snap-align: start; }
         }
