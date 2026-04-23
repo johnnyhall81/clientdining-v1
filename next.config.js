@@ -13,6 +13,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'awqmgioeuxxuvisalpic.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'media.licdn.com',
       },
     ],

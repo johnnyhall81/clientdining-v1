@@ -6,7 +6,16 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Venue } from '@/lib/supabase'
 import { supabase } from '@/lib/supabase-client'
 
-const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
+const SUPABASE_STORAGE = 'supabase.co/storage/v1/object/public'
+
+// For Supabase-hosted images, append transform params to serve correctly-sized image.
+// Strip cards are 160px — serve 320px for retina, saving ~90% of payload vs full hero.
+function thumbUrl(src: string, width: number): string {
+  if (src.includes(SUPABASE_STORAGE)) {
+    return `${src}?width=${width}&quality=75&resize=cover`
+  }
+  return src
+}
 
 interface VenueWithCoords extends Venue {
   lng: number
@@ -405,7 +414,13 @@ export default function VenueMap({ venues }: VenueMapProps) {
               >
                 <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: '#F4F2EF', flexShrink: 0 }}>
                   {venue.image_hero && (
-                    <img src={venue.image_hero} alt={venue.name} loading="eager" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img
+                      src={thumbUrl(venue.image_hero, 320)}
+                      alt={venue.name}
+                      loading="eager"
+                      fetchPriority={activeIndex !== null && Math.abs(visibleVenues.indexOf(venue) - activeIndex) <= 2 ? 'high' : 'low'}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
                   )}
                 </div>
                 <div style={{ width: '160px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px', borderTop: '1px solid #F0EDE9', flexShrink: 0 }}>
