@@ -221,7 +221,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
           type: 'geojson',
           data: {
             type: 'FeatureCollection',
-            features: geocoded.map((v) => ({
+            features: filteredGeocoded.map((v) => ({
               type: 'Feature',
               properties: { id: v.id, name: v.name, area: v.area },
               geometry: { type: 'Point', coordinates: [v.lng, v.lat] },
@@ -339,7 +339,31 @@ export default function VenueMap({ venues }: VenueMapProps) {
         })
 
         map.on('moveend', () => updateVisible(map, filteredGeocodedRef.current))
-        updateVisible(map, filteredGeocodedRef.current)
+
+        const initialSet = filteredGeocoded.length > 0 ? filteredGeocoded : geocoded
+        updateVisible(map, initialSet)
+
+        if (filteredGeocoded.length > 0) {
+          const bounds = new mapboxgl.default.LngLatBounds()
+          filteredGeocoded.forEach((v: VenueWithCoords) => bounds.extend([v.lng, v.lat]))
+          map.fitBounds(bounds, {
+            padding: {
+              top: 84,
+              bottom: typeof window !== 'undefined' && window.innerWidth >= 640 ? 280 : 80,
+              left: 60,
+              right: 60,
+            },
+            maxZoom:
+              filters.areas.length === 1
+                ? 17
+                : filters.areas.length === 2
+                  ? 16
+                  : filters.mode !== 'all'
+                    ? 15
+                    : 13,
+            duration: 0,
+          })
+        }
       })
     })
 
