@@ -368,8 +368,13 @@ export default function VenueMap({ venues }: VenueMapProps) {
         const bounds = new mapboxgl.default.LngLatBounds()
         filteredGeocoded.forEach((v: VenueWithCoords) => bounds.extend([v.lng, v.lat]))
         map.fitBounds(bounds, {
-          padding: { top: 80, bottom: 80, left: 60, right: 60 },
-          maxZoom: (filterAreas.length > 0 || venueMode !== 'all') ? 15 : 13,
+          padding: {
+            top: 100,    // chip rows height
+            bottom: typeof window !== 'undefined' && window.innerWidth >= 640 ? 280 : 80,  // card strip on desktop
+            left: 60,
+            right: 60,
+          },
+          maxZoom: filterAreas.length === 1 ? 17 : filterAreas.length === 2 ? 16 : (venueMode !== 'all') ? 15 : 13,
           duration: 600,
         })
       })
