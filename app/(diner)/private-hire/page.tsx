@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -44,7 +44,7 @@ type Room = {
   }
 }
 
-export default function Page() {
+function PrivateHirePageContent() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [loading, setLoading] = useState(true)
   const [enquiringRoom, setEnquiringRoom] = useState<Room | null>(null)
@@ -367,5 +367,22 @@ export default function Page() {
         />
       )}
     </div>
+  )
+}
+
+
+export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-5">
+          <p className="font-light text-zinc-400" style={{ fontSize: '0.9375rem', letterSpacing: '0.01em' }}>
+            Loading spaces…
+          </p>
+        </div>
+      }
+    >
+      <PrivateHirePageContent />
+    </Suspense>
   )
 }
