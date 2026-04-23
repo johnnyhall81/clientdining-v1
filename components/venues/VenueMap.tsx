@@ -301,15 +301,11 @@ export default function VenueMap({ venues }: VenueMapProps) {
         // Initial visible set
         updateVisible(map, filteredGeocodedRef.current)
 
-        // Fit bounds
-        if (geocoded.length > 1) {
-          const bounds = new mapboxgl.default.LngLatBounds()
-          geocoded.forEach(v => bounds.extend([v.lng, v.lat]))
-          map.fitBounds(bounds, {
-            padding: { top: 60, bottom: 180, left: 60, right: 60 },
-            maxZoom: 13
-          })
-        }
+        // Fit to London's dining core — fixed bounds so outer venues don't pull zoom out
+        map.fitBounds(
+          [[-0.220, 51.480], [0.010, 51.540]],
+          { padding: { top: 60, bottom: 180, left: 40, right: 40 }, duration: 0 }
+        )
       })
     })
 
@@ -524,7 +520,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
                   boxShadow: activeId === venue.id ? '0 2px 12px rgba(232,124,46,0.2)' : '0 1px 4px rgba(0,0,0,0.07)',
                 }}
               >
-                <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: '#F4F2EF', flexShrink: 0 }}>
+                <div style={{ width: '160px', height: '140px', overflow: 'hidden', background: '#F4F2EF', flexShrink: 0 }}>
                   {venue.image_hero && (
                     <img
                       src={thumbUrl(venue.image_hero, 320)}
@@ -535,7 +531,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
                     />
                   )}
                 </div>
-                <div style={{ width: '160px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px', borderTop: '1px solid #F0EDE9', flexShrink: 0 }}>
+                <div style={{ width: '160px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px', borderTop: '1px solid #F0EDE9', flexShrink: 0 }}>
                   {(venue as any).logo_url ? (
                     <img src={(venue as any).logo_url} alt={venue.name} style={{ maxHeight: '28px', maxWidth: '112px', width: '100%', objectFit: 'contain', filter: 'brightness(0)', opacity: 0.75 }} />
                   ) : (
