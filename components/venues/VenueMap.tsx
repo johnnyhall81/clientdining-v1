@@ -418,7 +418,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
   }, [visibleVenues, activeId, highlightDot])
 
   return (
-    <div className="relative w-full flex flex-col" style={{ height: 'calc(100vh - 130px)', minHeight: '520px' }}>
+    <div className="relative w-full flex flex-col" style={{ height: '100%' }}>
 
       {geocoded.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-zinc-50 z-10 rounded-xl">
@@ -427,7 +427,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
       )}
 
       {/* Map — full height */}
-      <div ref={mapContainer} className="cd-map flex-1 rounded-xl overflow-hidden" />
+      <div ref={mapContainer} className="cd-map flex-1 overflow-hidden" />
 
       {/* Map controls — overlaid on map top edge */}
       <div className="absolute top-3 left-3 right-3 z-10 flex flex-col gap-2">
