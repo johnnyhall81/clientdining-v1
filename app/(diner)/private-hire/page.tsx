@@ -62,7 +62,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true)
   const [filterAreas, setFilterAreas] = useState<string[]>([])
   const [filterGuest, setFilterGuest] = useState('')
-  const [filterOccasion, setFilterOccasion] = useState('')
+  const [filterOccasions, setFilterOccasions] = useState<string[]>([])
   const [enquiringRoom, setEnquiringRoom] = useState<Room | null>(null)
   const [openGroup, setOpenGroup] = useState<'size' | 'area' | 'occasion' | null>(null)
 
@@ -88,7 +88,7 @@ export default function Page() {
 
   const filtered = rooms.filter(room => {
     if (filterAreas.length > 0 && !filterAreas.includes(room.venue.area)) return false
-    if (filterOccasion && !room.best_for?.includes(filterOccasion)) return false
+    if (filterOccasions.length > 0 && !filterOccasions.some(o => room.best_for?.includes(o))) return false
 
     if (filterGuest) {
       const range = GUEST_RANGES.find(r => r.label === filterGuest)
@@ -130,11 +130,11 @@ export default function Page() {
     ...allOccasions.filter(o => !PRIORITY_OCCASIONS.includes(o)),
   ]
 
-  const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasion
+  const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasions.length > 0
   const clearFilters = () => {
     setFilterAreas([])
     setFilterGuest('')
-    setFilterOccasion('')
+    setFilterOccasions([])
   }
 
   return (
@@ -239,10 +239,13 @@ export default function Page() {
         {/* Occasion */}
         {(() => {
           const isOpen = openGroup === 'occasion'
-          const selected = filterOccasion ? [filterOccasion] : []
-          const unselected = availableOccasions.filter(o => o !== filterOccasion)
+          const selected = availableOccasions.filter(o => filterOccasions.includes(o))
+          const unselected = availableOccasions.filter(o => !filterOccasions.includes(o))
           const visibleUnselected = isOpen ? unselected : unselected.slice(0, Math.max(0, DEFAULT_VISIBLE - selected.length))
           const hiddenCount = isOpen ? 0 : unselected.length - visibleUnselected.length
+          const toggle = (o: string) => setFilterOccasions(prev =>
+            prev.includes(o) ? prev.filter(x => x !== o) : [...prev, o]
+          )
           return (
             <div className="flex items-start gap-3">
               <button
@@ -251,23 +254,19 @@ export default function Page() {
                 style={{ minWidth: '4.5rem' }}
               >
                 <span className="text-[10px] font-light text-zinc-400">Occasion</span>
-                {filterOccasion && (
+                {filterOccasions.length > 0 && (
                   <span className="bg-zinc-900 text-white rounded-full flex items-center justify-center text-[9px]"
                     style={{ minWidth: '1rem', height: '1rem', padding: '0 3px' }}>
-                    1
+                    {filterOccasions.length}
                   </span>
                 )}
               </button>
               <div className="flex flex-wrap gap-1.5">
                 {selected.map(o => (
-                  <button key={o} onClick={() => setFilterOccasion('')} className="transition-colors" style={pillStyle(true)}>
-                    {o}
-                  </button>
+                  <button key={o} onClick={() => toggle(o)} className="transition-colors" style={pillStyle(true)}>{o}</button>
                 ))}
                 {visibleUnselected.map(o => (
-                  <button key={o} onClick={() => setFilterOccasion(o)} className="transition-colors" style={pillStyle(false)}>
-                    {o}
-                  </button>
+                  <button key={o} onClick={() => toggle(o)} className="transition-colors" style={pillStyle(false)}>{o}</button>
                 ))}
                 {hiddenCount > 0 && (
                   <button onClick={() => toggleGroup('occasion')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
@@ -277,6 +276,11 @@ export default function Page() {
                 {isOpen && (
                   <button onClick={() => toggleGroup('occasion')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
                     Less
+                  </button>
+                )}
+                {filterOccasions.length > 0 && (
+                  <button onClick={() => setFilterOccasions([])} className="px-2 py-1 text-xs font-light text-zinc-300 hover:text-zinc-500 transition-colors">
+                    Clear
                   </button>
                 )}
               </div>
