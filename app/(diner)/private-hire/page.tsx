@@ -361,9 +361,9 @@ export default function Page() {
         <CorporateEventsModal
           isOpen={true}
           onClose={() => setEnquiringRoom(null)}
-          prefilledVenueId={enquiringRoom.venue_id}
-          prefilledVenueName={enquiringRoom.venue.name}
-          prefilledRoomName={enquiringRoom.name}
+          venueId={enquiringRoom.venue_id}
+          venueName={enquiringRoom.venue.name}
+          roomName={enquiringRoom.name}
         />
       )}
     </div>
