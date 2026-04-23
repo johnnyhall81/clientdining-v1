@@ -409,10 +409,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
         </div>
       )}
 
-      {/* Map */}
-      <div ref={mapContainer} className="flex-1 rounded-xl overflow-hidden" />
-
-      {/* Area filter chips — between map and strip */}
+      {/* Area filter chips — above the map */}
       {allAreas.length > 0 && (() => {
         const SURFACE = 6
         const selected = filterAreas
@@ -420,7 +417,10 @@ export default function VenueMap({ venues }: VenueMapProps) {
         const visibleUnselected = showAllAreas ? unselected : unselected.slice(0, Math.max(0, SURFACE - selected.length))
         const hiddenCount = showAllAreas ? 0 : unselected.length - visibleUnselected.length
         return (
-          <div className="flex items-center gap-1.5 pt-3 flex-wrap" style={{ flexShrink: 0 }}>
+          <div
+            className="flex items-center gap-1.5 flex-wrap pb-3"
+            style={{ flexShrink: 0 }}
+          >
             {selected.map(a => (
               <button key={a} onClick={() => toggleArea(a)} className="transition-colors"
                 style={{ borderRadius: '20px', border: '1px solid #18181B', backgroundColor: '#18181B', color: 'white', fontSize: '11px', fontWeight: 300, padding: '3px 11px', whiteSpace: 'nowrap' }}>
@@ -454,6 +454,9 @@ export default function VenueMap({ venues }: VenueMapProps) {
           </div>
         )
       })()}
+
+      {/* Map */}
+      <div ref={mapContainer} className="flex-1 rounded-xl overflow-hidden" />
 
       {/* Bottom card strip */}
       {visibleVenues.length > 0 && (
