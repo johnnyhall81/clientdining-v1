@@ -1,63 +1,49 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Venue } from '@/lib/supabase'
 import VenueTile from './VenueTile'
 import VenueFilterModal, { VenueFilters } from './VenueFilterModal'
+import {
+  applyVenueFilters,
+  countActiveVenueFilters,
+  DEFAULT_VENUE_FILTERS,
+  parseVenueFilters,
+  serialiseVenueFilters,
+} from '@/lib/venueBrowseFilters'
 
 interface VenueGridProps {
   venues: Venue[]
   showHero?: boolean
 }
 
-const DEFAULT_FILTERS: VenueFilters = {
-  mode: 'all',
-  areas: [],
-  sort: 'featured',
-}
-
 export default function VenueGrid({ venues, showHero = false }: VenueGridProps) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [filtersOpen, setFiltersOpen] = useState(false)
-  const [filters, setFilters] = useState<VenueFilters>(DEFAULT_FILTERS)
 
-  const availableAreas = useMemo(() =>
-    Array.from(new Set(venues.map(v => v.area).filter(Boolean))),
+  const filters = useMemo(() => parseVenueFilters(searchParams), [searchParams])
+
+  const availableAreas = useMemo(
+    () => Array.from(new Set(venues.map((v) => v.area).filter(Boolean))),
     [venues]
   )
 
-  const filtered = useMemo(() => {
-    let result = [...venues]
+  const filtered = useMemo(() => applyVenueFilters(venues, filters), [venues, filters])
 
-    if (filters.mode === 'tables') {
-      result = result.filter(v => !(v as any).hire_only)
-    }
-    if (filters.mode === 'spaces') {
-      result = result.filter(v => v.private_hire_available || (v as any).hire_only)
-    }
-    if (filters.areas.length > 0) {
-      result = result.filter(v => filters.areas.includes(v.area))
-    }
-
-    if (filters.sort === 'alphabetical') {
-      result.sort((a, b) => a.name.localeCompare(b.name))
-    } else if (filters.sort === 'newest') {
-      result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    }
-    // 'featured' preserves the server's display_order ordering
-
-    return result
-  }, [venues, filters])
-
-  const activeCount =
-    (filters.mode !== 'all' ? 1 : 0) +
-    filters.areas.length +
-    (filters.sort !== 'featured' ? 1 : 0)
-
+  const activeCount = countActiveVenueFilters(filters)
   const hasVenues = venues.length > 0
+
+  const updateFilters = (next: VenueFilters) => {
+    const params = serialiseVenueFilters(next, searchParams)
+    const query = params.toString()
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+  }
 
   return (
     <div>
-
       {hasVenues && (
         <div className="flex items-baseline justify-between mb-6 md:mb-8">
           <p className="text-xs font-light text-zinc-400">
@@ -93,7 +79,7 @@ export default function VenueGrid({ venues, showHero = false }: VenueGridProps) 
           </p>
           {hasVenues && activeCount > 0 && (
             <button
-              onClick={() => setFilters(DEFAULT_FILTERS)}
+              onClick={() => updateFilters(DEFAULT_VENUE_FILTERS)}
               className="text-xs font-light text-zinc-500 hover:text-zinc-900 underline underline-offset-2 transition-colors"
             >
               Clear filters
@@ -102,39 +88,38 @@ export default function VenueGrid({ venues, showHero = false }: VenueGridProps) 
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-
-          {/* Hero — editorial chapter heading for all users */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 md:py-14">
-            <h1
-              className="text-zinc-900 mb-5"
-              style={{
-                fontFamily: 'var(--font-cormorant), Georgia, serif',
-                fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
-                fontWeight: 400,
-                letterSpacing: '-0.02em',
-                lineHeight: 1.0,
-              }}
-            >
-              London&rsquo;s Best Tables &amp; Spaces
-            </h1>
-            <p
-              className="font-light mx-auto"
-              style={{
-                fontSize: '0.9375rem',
-                color: '#8A8580',
-                letterSpacing: '0.005em',
-                lineHeight: 1.45,
-                maxWidth: '32rem',
-              }}
-            >
-              For hosting, team occasions, and private events
-            </p>
-          </div>
+          {showHero && (
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 md:py-14">
+              <h1
+                className="text-zinc-900 mb-5"
+                style={{
+                  fontFamily: 'var(--font-cormorant), Georgia, serif',
+                  fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+                  fontWeight: 400,
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.0,
+                }}
+              >
+                London&rsquo;s Best Tables &amp; Spaces
+              </h1>
+              <p
+                className="font-light mx-auto"
+                style={{
+                  fontSize: '0.9375rem',
+                  color: '#8A8580',
+                  letterSpacing: '0.005em',
+                  lineHeight: 1.45,
+                  maxWidth: '32rem',
+                }}
+              >
+                For hosting, team occasions, and private events
+              </p>
+            </div>
+          )}
 
           {filtered.map((venue, index) => (
             <VenueTile key={venue.id} venue={venue} priority={index < 6} />
           ))}
-
         </div>
       )}
 
@@ -142,10 +127,9 @@ export default function VenueGrid({ venues, showHero = false }: VenueGridProps) 
         open={filtersOpen}
         onClose={() => setFiltersOpen(false)}
         filters={filters}
-        onChange={setFilters}
+        onChange={updateFilters}
         availableAreas={availableAreas}
       />
-
     </div>
   )
 }

@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase-client'
+import { buildVenueBrowseHref } from '@/lib/venueBrowseFilters'
 
 export default function TopNav() {
   const pathname = usePathname()
@@ -16,6 +17,9 @@ export default function TopNav() {
   const [profile, setProfile] = useState<any>(null)
   const [bookingCount, setBookingCount] = useState(0)
   const [alertCount, setAlertCount] = useState(0)
+
+  const homeHref = buildVenueBrowseHref('/home', searchParams)
+  const mapHref = buildVenueBrowseHref('/map', searchParams)
 
   // Detect venue page
   const venueMatch = pathname.match(/^\/venues\/([^/]+)$/)
@@ -221,7 +225,7 @@ export default function TopNav() {
 
               {/* Venues */}
               <Link
-                href="/home"
+                href={homeHref}
                 className={`transition-colors ${isActive('/home') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
                 aria-label="Venues"
               >
@@ -239,7 +243,7 @@ export default function TopNav() {
 
               {/* Map */}
               <Link
-                href="/map"
+                href={mapHref}
                 className={`transition-colors ${isActive('/map') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}
                 aria-label="Map"
               >
@@ -317,11 +321,11 @@ export default function TopNav() {
             </nav>
           ) : (
             <nav className="flex items-center gap-4 sm:gap-7">
-              <Link href="/home" className={`transition-colors ${isActive('/home') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}>
+              <Link href={homeHref} className={`transition-colors ${isActive('/home') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}>
                 <span className="sm:hidden"><svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg></span>
                 <span className="hidden sm:inline text-sm font-light tracking-wide">Venues</span>
               </Link>
-              <Link href="/map" className={`transition-colors ${isActive('/map') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}>
+              <Link href={mapHref} className={`transition-colors ${isActive('/map') ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-900'}`}>
                 <span className="sm:hidden"><svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg></span>
                 <span className="hidden sm:inline text-sm font-light tracking-wide">Map</span>
               </Link>
