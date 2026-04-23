@@ -33,6 +33,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const workMarkerRef = useRef<any>(null)
   const suppressScrollRef = useRef(false)
+  const filteredGeocodedRef = useRef<VenueWithCoords[]>([])
   const router = useRouter()
   const { user } = useAuth()
 
@@ -299,7 +300,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
         map.on('moveend', () => updateVisible(map, filteredGeocodedRef.current))
 
         // Initial visible set
-        updateVisible(map, geocoded)
+        updateVisible(map, filteredGeocodedRef.current)
 
         // Fit bounds
         if (geocoded.length > 1) {
