@@ -1,12 +1,22 @@
 'use client'
-// v2
+
 export const dynamic = 'force-dynamic'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase-client'
 import CorporateEventsModal from '@/components/modals/CorporateEventsModal'
+import PrivateHireFilterModal from '@/components/modals/PrivateHireFilterModal'
+import {
+  DEFAULT_PRIVATE_HIRE_FILTERS,
+  GUEST_RANGES,
+  PrivateHireFilters,
+  parsePrivateHireFilters,
+  privateHireActiveCount,
+  serializePrivateHireFilters,
+} from '@/lib/privateHireBrowseFilters'
 
 type Room = {
   id: string
@@ -34,40 +44,20 @@ type Room = {
   }
 }
 
-const GUEST_RANGES = [
-  { label: 'Up to 10', max: 10 },
-  { label: 'Up to 20', max: 20 },
-  { label: 'Up to 40', max: 40 },
-  { label: 'Up to 80', max: 80 },
-  { label: '80+', max: Infinity },
-]
-
-const pillStyle = (active: boolean): React.CSSProperties => ({
-  borderRadius: '20px',
-  border: '1px solid',
-  borderColor: active ? '#18181B' : 'var(--divider)',
-  backgroundColor: active ? '#18181B' : 'transparent',
-  color: active ? 'white' : '#A1A1AA',
-  fontSize: '11px',
-  fontWeight: 300,
-  lineHeight: 1,
-  padding: '4px 12px',
-  whiteSpace: 'nowrap' as const,
-})
-
-const DEFAULT_VISIBLE = 4 // chips shown before "+ more"
-
 export default function Page() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [loading, setLoading] = useState(true)
-  const [filterAreas, setFilterAreas] = useState<string[]>([])
-  const [filterGuest, setFilterGuest] = useState('')
-  const [filterOccasions, setFilterOccasions] = useState<string[]>([])
   const [enquiringRoom, setEnquiringRoom] = useState<Room | null>(null)
-  const [openGroup, setOpenGroup] = useState<'size' | 'area' | 'occasion' | null>(null)
+  const [filtersOpen, setFiltersOpen] = useState(false)
 
-  const toggleGroup = (group: 'size' | 'area' | 'occasion') =>
-    setOpenGroup(prev => prev === group ? null : group)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const filters = useMemo(
+    () => parsePrivateHireFilters(searchParams),
+    [searchParams]
+  )
 
   useEffect(() => {
     const load = async () => {
@@ -86,60 +76,76 @@ export default function Page() {
     load()
   }, [])
 
-  const filtered = rooms.filter(room => {
-    if (filterAreas.length > 0 && !filterAreas.includes(room.venue.area)) return false
-    if (filterOccasions.length > 0 && !filterOccasions.some(o => room.best_for?.includes(o))) return false
+  const setFilters = (next: PrivateHireFilters) => {
+    const query = serializePrivateHireFilters(next)
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+  }
 
-    if (filterGuest) {
-      const range = GUEST_RANGES.find(r => r.label === filterGuest)
-      if (range) {
-        const maxCap = Math.max(
-          room.capacity_dining || 0,
-          room.capacity_standing || 0,
-          room.capacity_boardroom || 0
-        )
+  const filtered = useMemo(() => {
+    return rooms.filter(room => {
+      if (filters.areas.length > 0 && !filters.areas.includes(room.venue.area)) return false
+      if (filters.occasions.length > 0 && !filters.occasions.some(o => room.best_for?.includes(o))) return false
 
-        if (range.max === Infinity) {
-          if (maxCap > 0 && maxCap < 80) return false
-        } else {
-          if (maxCap > 0 && maxCap < range.max) return false
+      if (filters.guest) {
+        const range = GUEST_RANGES.find(r => r.label === filters.guest)
+        if (range) {
+          const maxCap = Math.max(
+            room.capacity_dining || 0,
+            room.capacity_standing || 0,
+            room.capacity_boardroom || 0,
+          )
+
+          if (range.max === Infinity) {
+            if (maxCap > 0 && maxCap < 80) return false
+          } else {
+            if (maxCap > 0 && maxCap < range.max) return false
+          }
         }
       }
-    }
 
-    return true
-  })
+      return true
+    })
+  }, [rooms, filters])
 
-  const toggleArea = (area: string) =>
-    setFilterAreas(prev =>
-      prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area]
-    )
-
-  const PRIORITY_AREAS = ['Canary Wharf', 'The City', 'Mayfair']
+  const PRIORITY_AREAS = ['Canary Wharf', 'The City', 'Mayfair', 'Belgravia', 'Soho', 'Marylebone']
   const PRIORITY_OCCASIONS = ['Summer party', 'Christmas party', 'Board meeting', 'Networking']
 
-  const allAreas = Array.from(new Set(rooms.map(r => r.venue.area))).sort()
-  const availableAreas = [
-    ...PRIORITY_AREAS.filter(a => allAreas.includes(a)),
-    ...allAreas.filter(a => !PRIORITY_AREAS.includes(a)),
-  ]
+  const allAreas = useMemo(
+    () => Array.from(new Set(rooms.map(r => r.venue.area).filter(Boolean))).sort(),
+    [rooms]
+  )
+  const availableAreas = useMemo(
+    () => [
+      ...PRIORITY_AREAS.filter(a => allAreas.includes(a)),
+      ...allAreas.filter(a => !PRIORITY_AREAS.includes(a)),
+    ],
+    [allAreas]
+  )
 
-  const allOccasions = Array.from(new Set(rooms.flatMap(r => r.best_for || []))).sort()
-  const availableOccasions = [
-    ...PRIORITY_OCCASIONS.filter(o => allOccasions.includes(o)),
-    ...allOccasions.filter(o => !PRIORITY_OCCASIONS.includes(o)),
-  ]
+  const allOccasions = useMemo(
+    () => Array.from(new Set(rooms.flatMap(r => r.best_for || []).filter(Boolean))).sort(),
+    [rooms]
+  )
+  const availableOccasions = useMemo(
+    () => [
+      ...PRIORITY_OCCASIONS.filter(o => allOccasions.includes(o)),
+      ...allOccasions.filter(o => !PRIORITY_OCCASIONS.includes(o)),
+    ],
+    [allOccasions]
+  )
 
-  const hasFilters = filterAreas.length > 0 || filterGuest || filterOccasions.length > 0
-  const clearFilters = () => {
-    setFilterAreas([])
-    setFilterGuest('')
-    setFilterOccasions([])
-  }
+  const activeCount = privateHireActiveCount(filters)
+  const hasFilters = activeCount > 0
+
+  const summaryRows: { label: string; values: string[] }[] = [
+    { label: 'Group size', values: filters.guest ? [filters.guest] : [] },
+    { label: 'Location', values: filters.areas },
+    { label: 'Occasion', values: filters.occasions },
+  ]
 
   return (
     <div className="space-y-5">
-      <div className="flex items-baseline justify-between">
+      <div className="flex items-baseline justify-between gap-4">
         {!loading && (
           <p className="font-light text-zinc-500" style={{ fontSize: '0.9375rem', letterSpacing: '0.01em' }}>
             {filtered.length === 0
@@ -147,148 +153,62 @@ export default function Page() {
               : `${filtered.length} private ${filtered.length === 1 ? 'space' : 'spaces'} across London`}
           </p>
         )}
-        {hasFilters && (
-          <button
-            onClick={clearFilters}
-            className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors ml-auto"
-          >
-            Clear all
-          </button>
-        )}
+
+        <button
+          onClick={() => setFiltersOpen(true)}
+          className="flex items-center gap-2 text-xs font-light text-zinc-600 hover:text-zinc-900 transition-colors py-1.5 px-3 ml-auto"
+          style={{ border: '1px solid var(--divider)', borderRadius: '20px' }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" d="M3 6h18M6 12h12M10 18h4" />
+          </svg>
+          <span>Filter</span>
+          {activeCount > 0 && (
+            <span
+              className="inline-flex items-center justify-center bg-zinc-900 text-white rounded-full"
+              style={{ minWidth: '18px', height: '18px', fontSize: '10px', padding: '0 5px' }}
+            >
+              {activeCount}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* ── Filter bar ─────────────────────────────────────────────── */}
-      <div className="space-y-3 pb-4" style={{ borderBottom: '1px solid #F0EDE9' }}>
-
-        {/* Size */}
-        {(() => {
-          return (
-            <div className="flex items-start gap-3">
-              <span className="flex-shrink-0 mt-1.5" style={{ minWidth: '4.5rem' }}>
-                <span className="text-[10px] font-light text-zinc-400">Group size</span>
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                {GUEST_RANGES.map(r => (
-                  <button
-                    key={r.label}
-                    onClick={() => setFilterGuest(filterGuest === r.label ? '' : r.label)}
-                    className="transition-colors"
-                    style={pillStyle(filterGuest === r.label)}
-                  >
-                    {r.label}
-                  </button>
-                ))}
+      {hasFilters && (
+        <div className="space-y-3 pb-4" style={{ borderBottom: '1px solid #F0EDE9' }}>
+          {summaryRows.map(row =>
+            row.values.length > 0 ? (
+              <div key={row.label} className="flex items-start gap-3">
+                <span className="flex-shrink-0 mt-1.5" style={{ minWidth: '4.5rem' }}>
+                  <span className="text-[10px] font-light text-zinc-400">{row.label}</span>
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {row.values.map(value => (
+                    <button
+                      key={value}
+                      onClick={() => setFiltersOpen(true)}
+                      className="transition-colors"
+                      style={{
+                        borderRadius: '20px',
+                        border: '1px solid #18181B',
+                        backgroundColor: '#18181B',
+                        color: 'white',
+                        fontSize: '11px',
+                        fontWeight: 300,
+                        lineHeight: 1,
+                        padding: '4px 12px',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {value}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )
-        })()}
-
-        {/* Area */}
-        {(() => {
-          const selected = filterAreas
-          const unselected = availableAreas.filter(a => !selected.includes(a))
-          const isOpen = openGroup === 'area'
-          const visibleUnselected = isOpen ? unselected : unselected.slice(0, Math.max(0, DEFAULT_VISIBLE - selected.length))
-          const hiddenCount = isOpen ? 0 : unselected.length - visibleUnselected.length
-          return (
-            <div className="flex items-start gap-3">
-              <button
-                onClick={() => toggleGroup('area')}
-                className="flex items-center gap-1.5 flex-shrink-0 mt-1.5"
-                style={{ minWidth: '4.5rem' }}
-              >
-                <span className="text-[10px] font-light text-zinc-400">Location</span>
-                {selected.length > 0 && (
-                  <span className="bg-zinc-900 text-white rounded-full flex items-center justify-center text-[9px]"
-                    style={{ minWidth: '1rem', height: '1rem', padding: '0 3px' }}>
-                    {selected.length}
-                  </span>
-                )}
-              </button>
-              <div className="flex flex-wrap gap-1.5">
-                {selected.map(a => (
-                  <button key={a} onClick={() => toggleArea(a)} className="transition-colors" style={pillStyle(true)}>
-                    {a}
-                  </button>
-                ))}
-                {visibleUnselected.map(a => (
-                  <button key={a} onClick={() => toggleArea(a)} className="transition-colors" style={pillStyle(false)}>
-                    {a}
-                  </button>
-                ))}
-                {hiddenCount > 0 && (
-                  <button onClick={() => toggleGroup('area')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
-                    + {hiddenCount} more
-                  </button>
-                )}
-                {isOpen && (
-                  <button onClick={() => toggleGroup('area')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
-                    Less
-                  </button>
-                )}
-                {selected.length > 0 && (
-                  <button onClick={() => setFilterAreas([])} className="px-2 py-1 text-xs font-light text-zinc-300 hover:text-zinc-500 transition-colors">
-                    Clear
-                  </button>
-                )}
-              </div>
-            </div>
-          )
-        })()}
-
-        {/* Occasion */}
-        {(() => {
-          const isOpen = openGroup === 'occasion'
-          const selected = availableOccasions.filter(o => filterOccasions.includes(o))
-          const unselected = availableOccasions.filter(o => !filterOccasions.includes(o))
-          const visibleUnselected = isOpen ? unselected : unselected.slice(0, Math.max(0, DEFAULT_VISIBLE - selected.length))
-          const hiddenCount = isOpen ? 0 : unselected.length - visibleUnselected.length
-          const toggle = (o: string) => setFilterOccasions(prev =>
-            prev.includes(o) ? prev.filter(x => x !== o) : [...prev, o]
-          )
-          return (
-            <div className="flex items-start gap-3">
-              <button
-                onClick={() => toggleGroup('occasion')}
-                className="flex items-center gap-1.5 flex-shrink-0 mt-1.5"
-                style={{ minWidth: '4.5rem' }}
-              >
-                <span className="text-[10px] font-light text-zinc-400">Occasion</span>
-                {filterOccasions.length > 0 && (
-                  <span className="bg-zinc-900 text-white rounded-full flex items-center justify-center text-[9px]"
-                    style={{ minWidth: '1rem', height: '1rem', padding: '0 3px' }}>
-                    {filterOccasions.length}
-                  </span>
-                )}
-              </button>
-              <div className="flex flex-wrap gap-1.5">
-                {selected.map(o => (
-                  <button key={o} onClick={() => toggle(o)} className="transition-colors" style={pillStyle(true)}>{o}</button>
-                ))}
-                {visibleUnselected.map(o => (
-                  <button key={o} onClick={() => toggle(o)} className="transition-colors" style={pillStyle(false)}>{o}</button>
-                ))}
-                {hiddenCount > 0 && (
-                  <button onClick={() => toggleGroup('occasion')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
-                    + {hiddenCount} more
-                  </button>
-                )}
-                {isOpen && (
-                  <button onClick={() => toggleGroup('occasion')} className="px-3 py-1 text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors">
-                    Less
-                  </button>
-                )}
-                {filterOccasions.length > 0 && (
-                  <button onClick={() => setFilterOccasions([])} className="px-2 py-1 text-xs font-light text-zinc-300 hover:text-zinc-500 transition-colors">
-                    Clear
-                  </button>
-                )}
-              </div>
-            </div>
-          )
-        })()}
-
-      </div>
+            ) : null
+          )}
+        </div>
+      )}
 
       {loading ? (
         <div className="text-center py-16">
@@ -298,7 +218,7 @@ export default function Page() {
         <div className="text-center py-16 bg-white rounded-xl border border-zinc-100">
           <p className="text-sm font-light text-zinc-400">No spaces match your filters.</p>
           <button
-            onClick={clearFilters}
+            onClick={() => setFilters(DEFAULT_PRIVATE_HIRE_FILTERS)}
             className="mt-3 text-xs font-light text-zinc-500 hover:text-zinc-800 transition-colors underline underline-offset-2"
           >
             Clear filters
@@ -367,57 +287,59 @@ export default function Page() {
                         {room.capacity_boardroom && (
                           <div>
                             <p className="text-[8px] tracking-[0.15em] text-zinc-400 uppercase font-light mb-0.5">Boardroom</p>
-                            <p className="text-xs font-light text-zinc-600">{room.capacity_boardroom} seats</p>
-                          </div>
-                        )}
-                        {room.pricing_from && (
-                          <div>
-                            <p className="text-[8px] tracking-[0.15em] text-zinc-400 uppercase font-light mb-0.5">
-                              {room.pricing_type === 'min_spend' ? 'Min spend' : room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
-                            </p>
-                            <p className="text-xs font-light text-zinc-600">
-                              £{room.pricing_from.toLocaleString()}{room.pricing_notes ? ` ${room.pricing_notes}` : ''}
-                            </p>
+                            <p className="text-xs font-light text-zinc-600">{room.capacity_boardroom} guests</p>
                           </div>
                         )}
                       </div>
                     </div>
 
                     {room.venue.logo_url && (
-                      <div className="flex items-center justify-end overflow-hidden" style={{ minHeight: '56px' }}>
+                      <div className="hidden sm:flex h-full items-start justify-end">
                         <img
                           src={room.venue.logo_url}
                           alt={room.venue.name}
-                          loading="lazy"
-                          className="block w-full h-[48px] sm:h-[56px] object-contain object-right transition-opacity duration-500"
-                          style={{ filter: 'brightness(0)', opacity: 0 }}
-                          onLoad={e => { (e.target as HTMLImageElement).style.opacity = '0.65' }}
+                          className="object-contain"
+                          style={{ maxHeight: '56px', maxWidth: '120px', width: '100%', filter: 'brightness(0)', opacity: 0.72 }}
                         />
                       </div>
                     )}
                   </div>
 
                   {room.description && (
-                    <p className="text-sm font-light text-zinc-500 leading-relaxed mb-6"
-                      style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    <p className="text-sm font-light text-zinc-500 leading-relaxed mb-5 line-clamp-3">
                       {room.description}
                     </p>
                   )}
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap gap-1.5 mb-5">
+                    {(room.best_for || []).slice(0, 4).map(tag => (
+                      <span
+                        key={tag}
+                        className="text-[10px] font-light text-zinc-500 px-2.5 py-1"
+                        style={{ border: '1px solid var(--divider)', borderRadius: '999px' }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-[8px] tracking-[0.15em] text-zinc-400 uppercase font-light mb-0.5">Pricing</p>
+                      <p className="text-sm font-light text-zinc-700">
+                        {room.pricing_from
+                          ? `From £${room.pricing_from.toLocaleString()}`
+                          : room.pricing_notes || 'On enquiry'}
+                      </p>
+                    </div>
+
                     <button
                       onClick={() => setEnquiringRoom(room)}
-                      className="h-8 px-5 text-[11px] font-light tracking-widest uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
-                      style={{ borderRadius: '3px' }}
+                      className="px-4 py-2 text-[10px] tracking-[0.16em] uppercase font-light text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
+                      style={{ borderRadius: '4px' }}
                     >
                       Enquire
                     </button>
-                    <Link
-                      href={`/venues/${room.venue_id}?tab=private_hire`}
-                      className="text-xs font-light text-zinc-400 hover:text-zinc-700 transition-colors"
-                    >
-                      View venue →
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -426,13 +348,22 @@ export default function Page() {
         </div>
       )}
 
+      <PrivateHireFilterModal
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        filters={filters}
+        onChange={setFilters}
+        availableAreas={availableAreas}
+        availableOccasions={availableOccasions}
+      />
+
       {enquiringRoom && (
         <CorporateEventsModal
           isOpen={true}
           onClose={() => setEnquiringRoom(null)}
-          venueName={enquiringRoom.venue.name}
-          venueId={enquiringRoom.venue_id}
-          roomName={enquiringRoom.name}
+          prefilledVenueId={enquiringRoom.venue_id}
+          prefilledVenueName={enquiringRoom.venue.name}
+          prefilledRoomName={enquiringRoom.name}
         />
       )}
     </div>
