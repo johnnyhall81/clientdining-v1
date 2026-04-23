@@ -21,7 +21,7 @@ export default async function MapPage() {
     // Break out of the layout's px and py padding on all sides
     // Nav is h-16 (64px), so map fills exactly the remaining viewport height
     <div className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-8" style={{ height: 'calc(100vh - 64px)' }}>
-      <VenueMap venues={venues || []} />
+      <VenueMap venues={(venues || []) as any} />
     </div>
   )
 }
