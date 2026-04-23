@@ -17,8 +17,8 @@ export default function DinerLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-zinc-50 flex flex-col">
-      <Suspense fallback={<div className="h-16 bg-white border-b border-zinc-200" />}>
+    <div style={{ backgroundColor: 'var(--canvas)' }} className="flex flex-col">
+      <Suspense fallback={<div className="h-16 bg-white" style={{ borderBottom: '1px solid var(--divider)' }} />}>
         <TopNav />
       </Suspense>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-8 w-full">

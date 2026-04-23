@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="bg-zinc-50 border-t border-zinc-200 mt-16">
+    <footer className="mt-16" style={{ backgroundColor: 'var(--canvas)', borderTop: '1px solid var(--divider)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
 
@@ -26,7 +26,7 @@ export default function Footer() {
 
         </div>
 
-        <div className="border-t border-zinc-200 mt-8 pt-6">
+        <div className="mt-8 pt-6" style={{ borderTop: '1px solid var(--divider)' }}>
           <p className="text-xs font-light text-zinc-400">
             © {new Date().getFullYear()} CLIENTDINING LIMITED. All rights reserved.
           </p>

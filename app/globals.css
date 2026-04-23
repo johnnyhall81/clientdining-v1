@@ -2,8 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --canvas:   #F7F5F2;  /* warm page background */
+  --surface:  #FFFFFF;  /* card / panel surfaces */
+  --divider:  #EAE6E1;  /* borders and dividers */
+  --divider-soft: #F0EDE9; /* even quieter dividers */
+}
+
 body {
-  background-color: white;
+  background-color: var(--canvas);
 }
 
 @layer components {
@@ -12,10 +19,12 @@ body {
   }
 
   .btn-secondary {
-    @apply bg-white text-zinc-900 px-4 py-2 rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-colors font-light;
+    @apply bg-white text-zinc-900 px-4 py-2 rounded-lg border hover:bg-zinc-50 transition-colors font-light;
+    border-color: var(--divider);
   }
 
   .input-field {
-    @apply w-full px-4 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400 font-light text-zinc-900 placeholder:text-zinc-400;
+    @apply w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-400 font-light text-zinc-900 placeholder:text-zinc-400;
+    border: 1px solid var(--divider);
   }
 }

@@ -136,7 +136,7 @@ export default function TopNav() {
   const isAdmin = profile?.role === 'platform_admin'
 
   return (
-    <header className="bg-white border-b border-zinc-200 sticky top-0 z-50">
+    <header className="bg-white sticky top-0 z-50" style={{ borderBottom: "1px solid var(--divider)" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Venue page layout: back | tabs | user */}
@@ -194,7 +194,7 @@ export default function TopNav() {
                     </div>
                   )}
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                   <Link href="/account" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">Account</Link>
                   <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-b-lg">Sign Out</button>
                 </div>
@@ -308,7 +308,7 @@ export default function TopNav() {
                   )}
                   <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                   {!isAdmin && <Link href="/account" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">Account</Link>}
                   {isAdmin && <Link href="/admin" className="block px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-t-lg">Admin Dashboard</Link>}
                   <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm font-light text-zinc-900 hover:bg-zinc-50 rounded-b-lg">Sign Out</button>
