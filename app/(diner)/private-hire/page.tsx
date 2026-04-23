@@ -2,7 +2,7 @@
 // v2
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase-client'
@@ -42,12 +42,17 @@ const GUEST_RANGES = [
   { label: '80+', max: Infinity },
 ]
 
-const pillStyle = (active: boolean) => ({
+const pillStyle = (active: boolean): React.CSSProperties => ({
   borderRadius: '20px',
   border: '1px solid',
-  borderColor: active ? '#18181B' : '#E4E4E7',
+  borderColor: active ? '#18181B' : 'var(--divider)',
   backgroundColor: active ? '#18181B' : 'transparent',
-  color: active ? 'white' : '#71717A',
+  color: active ? 'white' : '#A1A1AA',
+  fontSize: '11px',
+  fontWeight: 300,
+  lineHeight: 1,
+  padding: '4px 12px',
+  whiteSpace: 'nowrap' as const,
 })
 
 const DEFAULT_VISIBLE = 4 // chips shown before "+ more"
@@ -160,14 +165,14 @@ export default function Page() {
           return (
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 mt-1.5" style={{ minWidth: '4.5rem' }}>
-                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Group size</span>
+                <span className="text-[10px] font-light text-zinc-400">Group size</span>
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {GUEST_RANGES.map(r => (
                   <button
                     key={r.label}
                     onClick={() => setFilterGuest(filterGuest === r.label ? '' : r.label)}
-                    className="px-3 py-1 text-xs font-light transition-colors"
+                    className="transition-colors"
                     style={pillStyle(filterGuest === r.label)}
                   >
                     {r.label}
@@ -192,7 +197,7 @@ export default function Page() {
                 className="flex items-center gap-1.5 flex-shrink-0 mt-1.5"
                 style={{ minWidth: '4.5rem' }}
               >
-                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Location</span>
+                <span className="text-[10px] font-light text-zinc-400">Location</span>
                 {selected.length > 0 && (
                   <span className="bg-zinc-900 text-white rounded-full flex items-center justify-center text-[9px]"
                     style={{ minWidth: '1rem', height: '1rem', padding: '0 3px' }}>
@@ -202,12 +207,12 @@ export default function Page() {
               </button>
               <div className="flex flex-wrap gap-1.5">
                 {selected.map(a => (
-                  <button key={a} onClick={() => toggleArea(a)} className="px-3 py-1 text-xs font-light transition-colors" style={pillStyle(true)}>
+                  <button key={a} onClick={() => toggleArea(a)} className="transition-colors" style={pillStyle(true)}>
                     {a}
                   </button>
                 ))}
                 {visibleUnselected.map(a => (
-                  <button key={a} onClick={() => toggleArea(a)} className="px-3 py-1 text-xs font-light transition-colors" style={pillStyle(false)}>
+                  <button key={a} onClick={() => toggleArea(a)} className="transition-colors" style={pillStyle(false)}>
                     {a}
                   </button>
                 ))}
@@ -245,7 +250,7 @@ export default function Page() {
                 className="flex items-center gap-1.5 flex-shrink-0 mt-1.5"
                 style={{ minWidth: '4.5rem' }}
               >
-                <span className="text-[9px] tracking-[0.1em] text-zinc-400 uppercase font-light">Occasion</span>
+                <span className="text-[10px] font-light text-zinc-400">Occasion</span>
                 {filterOccasion && (
                   <span className="bg-zinc-900 text-white rounded-full flex items-center justify-center text-[9px]"
                     style={{ minWidth: '1rem', height: '1rem', padding: '0 3px' }}>
@@ -255,12 +260,12 @@ export default function Page() {
               </button>
               <div className="flex flex-wrap gap-1.5">
                 {selected.map(o => (
-                  <button key={o} onClick={() => setFilterOccasion('')} className="px-3 py-1 text-xs font-light transition-colors" style={pillStyle(true)}>
+                  <button key={o} onClick={() => setFilterOccasion('')} className="transition-colors" style={pillStyle(true)}>
                     {o}
                   </button>
                 ))}
                 {visibleUnselected.map(o => (
-                  <button key={o} onClick={() => setFilterOccasion(o)} className="px-3 py-1 text-xs font-light transition-colors" style={pillStyle(false)}>
+                  <button key={o} onClick={() => setFilterOccasion(o)} className="transition-colors" style={pillStyle(false)}>
                     {o}
                   </button>
                 ))}
@@ -328,45 +333,45 @@ export default function Page() {
                   )}
                 </Link>
 
-                <div className="px-5 py-5">
-                  <p className="text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-light mb-2">
+                <div className="px-6 py-6">
+                  <p className="text-[9px] tracking-[0.15em] text-zinc-400 uppercase font-light mb-2.5">
                     {room.venue.name} · {room.venue.area}
                   </p>
 
                   <div
-                    className={`grid gap-4 sm:gap-5 mb-4 pb-4 items-start ${room.venue.logo_url ? 'grid-cols-[minmax(0,1fr)_120px] sm:grid-cols-[minmax(0,1fr)_160px] lg:grid-cols-[minmax(0,1fr)_220px]' : 'grid-cols-1'}`}
-                    style={{ borderBottom: '1px solid #F0EDE9' }}
+                    className={`grid gap-4 sm:gap-5 mb-5 pb-5 items-start ${room.venue.logo_url ? 'grid-cols-[minmax(0,1fr)_100px] sm:grid-cols-[minmax(0,1fr)_140px]' : 'grid-cols-1'}`}
+                    style={{ borderBottom: '1px solid var(--divider-soft)' }}
                   >
                     <div className="min-w-0">
                       <h3 className="text-lg font-light text-zinc-900 tracking-tight mb-3">
                         {room.name}
                       </h3>
 
-                      <div className="flex flex-wrap gap-x-5 gap-y-2">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1.5">
                         {room.capacity_dining && (
                           <div>
-                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Dining</p>
-                            <p className="text-xs font-light text-zinc-700">{room.capacity_dining} seated</p>
+                            <p className="text-[8px] tracking-[0.15em] text-zinc-400 uppercase font-light mb-0.5">Dining</p>
+                            <p className="text-xs font-light text-zinc-600">{room.capacity_dining} seated</p>
                           </div>
                         )}
                         {room.capacity_standing && (
                           <div>
-                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Standing</p>
-                            <p className="text-xs font-light text-zinc-700">{room.capacity_standing} guests</p>
+                            <p className="text-[8px] tracking-[0.15em] text-zinc-400 uppercase font-light mb-0.5">Standing</p>
+                            <p className="text-xs font-light text-zinc-600">{room.capacity_standing} guests</p>
                           </div>
                         )}
                         {room.capacity_boardroom && (
                           <div>
-                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">Boardroom</p>
-                            <p className="text-xs font-light text-zinc-700">{room.capacity_boardroom} seats</p>
+                            <p className="text-[8px] tracking-[0.15em] text-zinc-400 uppercase font-light mb-0.5">Boardroom</p>
+                            <p className="text-xs font-light text-zinc-600">{room.capacity_boardroom} seats</p>
                           </div>
                         )}
                         {room.pricing_from && (
                           <div>
-                            <p className="text-[8px] tracking-[0.18em] text-zinc-400 uppercase font-light mb-0.5">
+                            <p className="text-[8px] tracking-[0.15em] text-zinc-400 uppercase font-light mb-0.5">
                               {room.pricing_type === 'min_spend' ? 'Min spend' : room.pricing_type === 'hire_fee' ? 'Hire fee' : 'From'}
                             </p>
-                            <p className="text-xs font-light text-zinc-700">
+                            <p className="text-xs font-light text-zinc-600">
                               £{room.pricing_from.toLocaleString()}{room.pricing_notes ? ` ${room.pricing_notes}` : ''}
                             </p>
                           </div>
@@ -375,39 +380,30 @@ export default function Page() {
                     </div>
 
                     {room.venue.logo_url && (
-                      <div className="flex min-h-[88px] items-center justify-start sm:justify-end overflow-hidden">
+                      <div className="flex items-center justify-end overflow-hidden" style={{ minHeight: '56px' }}>
                         <img
                           src={room.venue.logo_url}
                           alt={room.venue.name}
                           loading="lazy"
-                          className="block w-full max-w-none h-[56px] sm:h-[72px] lg:h-[80px] object-contain object-left sm:object-right transition-opacity duration-500"
+                          className="block w-full h-[48px] sm:h-[56px] object-contain object-right transition-opacity duration-500"
                           style={{ filter: 'brightness(0)', opacity: 0 }}
-                          onLoad={e => { (e.target as HTMLImageElement).style.opacity = '0.72' }}
+                          onLoad={e => { (e.target as HTMLImageElement).style.opacity = '0.65' }}
                         />
                       </div>
                     )}
                   </div>
 
                   {room.description && (
-                    <p className="text-sm font-light text-zinc-500 leading-relaxed mb-4">
+                    <p className="text-sm font-light text-zinc-500 leading-relaxed mb-6"
+                      style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                       {room.description}
                     </p>
-                  )}
-
-                  {room.best_for?.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mb-5">
-                      {room.best_for.map(tag => (
-                        <span key={tag} className="text-[11px] font-light text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
                   )}
 
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setEnquiringRoom(room)}
-                      className="h-9 px-5 text-xs font-light tracking-widest uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
+                      className="h-8 px-5 text-[11px] font-light tracking-widest uppercase text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
                       style={{ borderRadius: '3px' }}
                     >
                       Enquire
