@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Venue } from '@/lib/supabase'
@@ -39,6 +39,8 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
   const [activeIndex, setActiveIndex] = useState(0)
   const [filterAreas, setFilterAreas] = useState<string[]>([])
+  const [venueMode, setVenueMode] = useState<'all' | 'tables' | 'spaces'>('all')
+  const [showAllAreas, setShowAllAreas] = useState(false)
 
   const [workCoords, setWorkCoords] = useState<{ lat: number; lng: number } | null>(null)
 
@@ -81,12 +83,13 @@ export default function VenueMap({ venues }: VenueMapProps) {
     ]
   }, [geocoded])
 
-  const filteredGeocoded = useMemo(() =>
-    filterAreas.length === 0
-      ? geocoded
-      : geocoded.filter(v => filterAreas.includes(v.area)),
-    [geocoded, filterAreas]
-  )
+  const filteredGeocoded = useMemo(() => {
+    let result = geocoded
+    if (venueMode === 'tables') result = result.filter(v => !(v as any).hire_only)
+    if (venueMode === 'spaces') result = result.filter(v => (v as any).private_hire_available || (v as any).hire_only)
+    if (filterAreas.length > 0) result = result.filter(v => filterAreas.includes(v.area))
+    return result
+  }, [geocoded, filterAreas, venueMode])
 
   const [visibleVenues, setVisibleVenues] = useState<VenueWithCoords[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -366,12 +369,12 @@ export default function VenueMap({ venues }: VenueMapProps) {
         filteredGeocoded.forEach((v: VenueWithCoords) => bounds.extend([v.lng, v.lat]))
         map.fitBounds(bounds, {
           padding: { top: 80, bottom: 80, left: 60, right: 60 },
-          maxZoom: filterAreas.length > 0 ? 15 : 13,
+          maxZoom: (filterAreas.length > 0 || venueMode !== 'all') ? 15 : 13,
           duration: 600,
         })
       })
     }
-  }, [filteredGeocoded, updateVisible, filterAreas.length])
+  }, [filteredGeocoded, updateVisible, filterAreas.length, venueMode])
 
   // Card tapped — highlight its dot, pan map
   const handleCardClick = (venue: VenueWithCoords) => {
@@ -421,18 +424,18 @@ export default function VenueMap({ venues }: VenueMapProps) {
       {/* Map — full height */}
       <div ref={mapContainer} className="cd-map flex-1 rounded-xl overflow-hidden" />
 
-      {/* Area chips — overlaid on map top edge */}
-      {allAreas.length > 0 && (
-        <div
-          className="absolute top-3 left-3 right-3 z-10 flex items-center gap-1.5 overflow-x-auto"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {allAreas.map(a => {
-            const active = filterAreas.includes(a)
+      {/* Map controls — overlaid on map top edge */}
+      <div className="absolute top-3 left-3 right-3 z-10 flex flex-col gap-2">
+
+        {/* Row 1: All · Tables · Spaces mode toggle */}
+        <div className="flex items-center gap-1.5">
+          {(['all', 'tables', 'spaces'] as const).map(mode => {
+            const active = venueMode === mode
+            const label = mode === 'all' ? 'All' : mode === 'tables' ? 'Tables' : 'Spaces'
             return (
               <button
-                key={a}
-                onClick={() => toggleArea(a)}
+                key={mode}
+                onClick={() => setVenueMode(mode)}
                 className="flex-shrink-0 transition-all duration-150"
                 style={{
                   borderRadius: '20px',
@@ -444,38 +447,73 @@ export default function VenueMap({ venues }: VenueMapProps) {
                   color: active ? 'white' : '#3F3F46',
                   fontSize: '11px',
                   fontWeight: 300,
-                  padding: '5px 13px',
+                  padding: '5px 14px',
                   whiteSpace: 'nowrap',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
                 }}
               >
-                {a}
+                {label}
               </button>
             )
           })}
-          {filterAreas.length > 0 && (
-            <button
-              onClick={() => setFilterAreas([])}
-              className="flex-shrink-0 transition-colors"
-              style={{
-                borderRadius: '20px',
-                border: '1px solid rgba(255,255,255,0.7)',
-                backgroundColor: 'rgba(255,255,255,0.85)',
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)',
-                color: '#A1A1AA',
-                fontSize: '11px',
-                fontWeight: 300,
-                padding: '5px 13px',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-              }}
-            >
-              Clear
-            </button>
-          )}
         </div>
-      )}
+
+        {/* Row 2: Area chips — 6 surface + more */}
+        {allAreas.length > 0 && (() => {
+          const SURFACE = 6
+          const selected = filterAreas
+          const unselected = allAreas.filter(a => !selected.includes(a))
+          const visibleUnselected = showAllAreas ? unselected : unselected.slice(0, Math.max(0, SURFACE - selected.length))
+          const hiddenCount = showAllAreas ? 0 : unselected.length - visibleUnselected.length
+          const chipStyle = (active: boolean): React.CSSProperties => ({
+            borderRadius: '20px',
+            border: '1px solid',
+            borderColor: active ? '#18181B' : 'rgba(255,255,255,0.7)',
+            backgroundColor: active ? '#18181B' : 'rgba(255,255,255,0.85)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            color: active ? 'white' : '#3F3F46',
+            fontSize: '11px',
+            fontWeight: 300,
+            padding: '5px 13px',
+            whiteSpace: 'nowrap' as const,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+          })
+          const mutedStyle: React.CSSProperties = {
+            ...chipStyle(false),
+            color: '#A1A1AA',
+          }
+          return (
+            <div
+              className="flex items-center gap-1.5 overflow-x-auto"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {selected.map(a => (
+                <button key={a} onClick={() => toggleArea(a)} className="flex-shrink-0 transition-all duration-150" style={chipStyle(true)}>{a}</button>
+              ))}
+              {visibleUnselected.map(a => (
+                <button key={a} onClick={() => toggleArea(a)} className="flex-shrink-0 transition-all duration-150" style={chipStyle(false)}>{a}</button>
+              ))}
+              {hiddenCount > 0 && (
+                <button onClick={() => setShowAllAreas(true)} className="flex-shrink-0 transition-colors" style={mutedStyle}>
+                  + {hiddenCount} more
+                </button>
+              )}
+              {showAllAreas && (
+                <button onClick={() => setShowAllAreas(false)} className="flex-shrink-0 transition-colors" style={mutedStyle}>
+                  Less
+                </button>
+              )}
+              {selected.length > 0 && (
+                <button onClick={() => setFilterAreas([])} className="flex-shrink-0 transition-colors" style={mutedStyle}>
+                  Clear
+                </button>
+              )}
+            </div>
+          )
+        })()}
+
+      </div>
 
       {/* Bottom card strip */}
       {visibleVenues.length > 0 && (
