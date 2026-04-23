@@ -39,7 +39,6 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
   const [activeIndex, setActiveIndex] = useState(0)
   const [filterAreas, setFilterAreas] = useState<string[]>([])
-  const [showAllAreas, setShowAllAreas] = useState(false)
 
   const [workCoords, setWorkCoords] = useState<{ lat: number; lng: number } | null>(null)
 
@@ -409,54 +408,64 @@ export default function VenueMap({ venues }: VenueMapProps) {
         </div>
       )}
 
-      {/* Area filter chips — above the map */}
-      {allAreas.length > 0 && (() => {
-        const SURFACE = 6
-        const selected = filterAreas
-        const unselected = allAreas.filter(a => !selected.includes(a))
-        const visibleUnselected = showAllAreas ? unselected : unselected.slice(0, Math.max(0, SURFACE - selected.length))
-        const hiddenCount = showAllAreas ? 0 : unselected.length - visibleUnselected.length
-        return (
-          <div
-            className="flex items-center gap-1.5 flex-wrap pb-3"
-            style={{ flexShrink: 0 }}
-          >
-            {selected.map(a => (
-              <button key={a} onClick={() => toggleArea(a)} className="transition-colors"
-                style={{ borderRadius: '20px', border: '1px solid #18181B', backgroundColor: '#18181B', color: 'white', fontSize: '11px', fontWeight: 300, padding: '3px 11px', whiteSpace: 'nowrap' }}>
-                {a}
-              </button>
-            ))}
-            {visibleUnselected.map(a => (
-              <button key={a} onClick={() => toggleArea(a)} className="transition-colors"
-                style={{ borderRadius: '20px', border: '1px solid var(--divider)', backgroundColor: 'transparent', color: '#A1A1AA', fontSize: '11px', fontWeight: 300, padding: '3px 11px', whiteSpace: 'nowrap' }}>
-                {a}
-              </button>
-            ))}
-            {hiddenCount > 0 && (
-              <button onClick={() => setShowAllAreas(true)} className="text-zinc-400 hover:text-zinc-700 transition-colors"
-                style={{ fontSize: '11px', fontWeight: 300, padding: '3px 8px' }}>
-                + {hiddenCount} more
-              </button>
-            )}
-            {showAllAreas && (
-              <button onClick={() => setShowAllAreas(false)} className="text-zinc-400 hover:text-zinc-700 transition-colors"
-                style={{ fontSize: '11px', fontWeight: 300, padding: '3px 8px' }}>
-                Less
-              </button>
-            )}
-            {selected.length > 0 && (
-              <button onClick={() => setFilterAreas([])} className="text-zinc-300 hover:text-zinc-500 transition-colors"
-                style={{ fontSize: '11px', fontWeight: 300, padding: '3px 8px' }}>
-                Clear
-              </button>
-            )}
-          </div>
-        )
-      })()}
-
-      {/* Map */}
+      {/* Map — full height */}
       <div ref={mapContainer} className="flex-1 rounded-xl overflow-hidden" />
+
+      {/* Area chips — overlaid on map top edge */}
+      {allAreas.length > 0 && (
+        <div
+          className="absolute top-3 left-3 right-3 z-10 flex items-center gap-1.5 overflow-x-auto"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {allAreas.map(a => {
+            const active = filterAreas.includes(a)
+            return (
+              <button
+                key={a}
+                onClick={() => toggleArea(a)}
+                className="flex-shrink-0 transition-all duration-150"
+                style={{
+                  borderRadius: '20px',
+                  border: '1px solid',
+                  borderColor: active ? '#18181B' : 'rgba(255,255,255,0.7)',
+                  backgroundColor: active ? '#18181B' : 'rgba(255,255,255,0.85)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  color: active ? 'white' : '#3F3F46',
+                  fontSize: '11px',
+                  fontWeight: 300,
+                  padding: '5px 13px',
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+                }}
+              >
+                {a}
+              </button>
+            )
+          })}
+          {filterAreas.length > 0 && (
+            <button
+              onClick={() => setFilterAreas([])}
+              className="flex-shrink-0 transition-colors"
+              style={{
+                borderRadius: '20px',
+                border: '1px solid rgba(255,255,255,0.7)',
+                backgroundColor: 'rgba(255,255,255,0.85)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                color: '#A1A1AA',
+                fontSize: '11px',
+                fontWeight: 300,
+                padding: '5px 13px',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+              }}
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Bottom card strip */}
       {visibleVenues.length > 0 && (
