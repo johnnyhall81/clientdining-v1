@@ -42,26 +42,6 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
   const [workCoords, setWorkCoords] = useState<{ lat: number; lng: number } | null>(null)
 
-  // Priority areas to surface as chips
-  const PRIORITY_AREAS = ['Mayfair', 'The City', 'Soho', 'Marylebone', 'Covent Garden', 'Canary Wharf']
-
-  // All unique areas from geocoded venues, priority first
-  const allAreas = useMemo(() => {
-    const areas = Array.from(new Set(geocoded.map(v => v.area))).sort()
-    return [
-      ...PRIORITY_AREAS.filter(a => areas.includes(a)),
-      ...areas.filter(a => !PRIORITY_AREAS.includes(a)),
-    ]
-  }, [geocoded])
-
-  // Venues filtered by selected areas
-  const filteredGeocoded = useMemo(() =>
-    filterAreas.length === 0
-      ? geocoded
-      : geocoded.filter(v => filterAreas.includes(v.area)),
-    [geocoded, filterAreas]
-  )
-
   const toggleArea = (area: string) =>
     setFilterAreas(prev => prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area])
 
@@ -89,6 +69,23 @@ export default function VenueMap({ venues }: VenueMapProps) {
           typeof (v as any).lng === 'number'
       ) as VenueWithCoords[],
     [venues]
+  )
+
+  const PRIORITY_AREAS = ['Mayfair', 'The City', 'Soho', 'Marylebone', 'Covent Garden', 'Canary Wharf']
+
+  const allAreas = useMemo(() => {
+    const areas = Array.from(new Set(geocoded.map(v => v.area))).sort()
+    return [
+      ...PRIORITY_AREAS.filter(a => areas.includes(a)),
+      ...areas.filter(a => !PRIORITY_AREAS.includes(a)),
+    ]
+  }, [geocoded])
+
+  const filteredGeocoded = useMemo(() =>
+    filterAreas.length === 0
+      ? geocoded
+      : geocoded.filter(v => filterAreas.includes(v.area)),
+    [geocoded, filterAreas]
   )
 
   const [visibleVenues, setVisibleVenues] = useState<VenueWithCoords[]>([])
