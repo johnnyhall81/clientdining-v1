@@ -37,8 +37,33 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const { user } = useAuth()
 
   const [activeIndex, setActiveIndex] = useState(0)
+  const [filterAreas, setFilterAreas] = useState<string[]>([])
+  const [showAllAreas, setShowAllAreas] = useState(false)
 
   const [workCoords, setWorkCoords] = useState<{ lat: number; lng: number } | null>(null)
+
+  // Priority areas to surface as chips
+  const PRIORITY_AREAS = ['Mayfair', 'The City', 'Soho', 'Marylebone', 'Covent Garden', 'Canary Wharf']
+
+  // All unique areas from geocoded venues, priority first
+  const allAreas = useMemo(() => {
+    const areas = Array.from(new Set(geocoded.map(v => v.area))).sort()
+    return [
+      ...PRIORITY_AREAS.filter(a => areas.includes(a)),
+      ...areas.filter(a => !PRIORITY_AREAS.includes(a)),
+    ]
+  }, [geocoded])
+
+  // Venues filtered by selected areas
+  const filteredGeocoded = useMemo(() =>
+    filterAreas.length === 0
+      ? geocoded
+      : geocoded.filter(v => filterAreas.includes(v.area)),
+    [geocoded, filterAreas]
+  )
+
+  const toggleArea = (area: string) =>
+    setFilterAreas(prev => prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area])
 
   // Fetch and geocode the user's work postcode once
   useEffect(() => {
@@ -69,7 +94,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
   const [visibleVenues, setVisibleVenues] = useState<VenueWithCoords[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
 
-  // Update visible venues based on map bounds
+  // Update visible venues based on map bounds + area filter
   const updateVisible = useCallback((map: any, all: VenueWithCoords[]) => {
     const bounds = map.getBounds()
     const visible = all.filter(v =>
@@ -274,7 +299,7 @@ export default function VenueMap({ venues }: VenueMapProps) {
         map.on('mouseleave', 'venues-dots', () => { map.getCanvas().style.cursor = '' })
 
         // Update strip on move
-        map.on('moveend', () => updateVisible(map, geocoded))
+        map.on('moveend', () => updateVisible(map, filteredGeocodedRef.current))
 
         // Initial visible set
         updateVisible(map, geocoded)
@@ -320,6 +345,26 @@ export default function VenueMap({ venues }: VenueMapProps) {
         .addTo(mapRef.current)
     })
   }, [workCoords])
+
+  // Keep ref in sync so moveend always uses latest filtered set
+  useEffect(() => { filteredGeocodedRef.current = filteredGeocoded }, [filteredGeocoded])
+
+  // When area filter changes, update map source data + strip
+  useEffect(() => {
+    if (!mapRef.current) return
+    const map = mapRef.current
+    const source = map.getSource('venues') as any
+    if (!source) return
+    source.setData({
+      type: 'FeatureCollection',
+      features: filteredGeocoded.map((v: VenueWithCoords) => ({
+        type: 'Feature',
+        properties: { id: v.id, name: v.name, area: v.area },
+        geometry: { type: 'Point', coordinates: [v.lng, v.lat] }
+      }))
+    })
+    updateVisible(map, filteredGeocoded)
+  }, [filteredGeocoded, updateVisible])
 
   // Card tapped — highlight its dot, pan map
   const handleCardClick = (venue: VenueWithCoords) => {
@@ -368,6 +413,49 @@ export default function VenueMap({ venues }: VenueMapProps) {
 
       {/* Map */}
       <div ref={mapContainer} className="flex-1 rounded-xl overflow-hidden" />
+
+      {/* Area filter chips — between map and strip */}
+      {allAreas.length > 0 && (() => {
+        const SURFACE = 6
+        const selected = filterAreas
+        const unselected = allAreas.filter(a => !selected.includes(a))
+        const visibleUnselected = showAllAreas ? unselected : unselected.slice(0, Math.max(0, SURFACE - selected.length))
+        const hiddenCount = showAllAreas ? 0 : unselected.length - visibleUnselected.length
+        return (
+          <div className="flex items-center gap-1.5 pt-3 flex-wrap" style={{ flexShrink: 0 }}>
+            {selected.map(a => (
+              <button key={a} onClick={() => toggleArea(a)} className="transition-colors"
+                style={{ borderRadius: '20px', border: '1px solid #18181B', backgroundColor: '#18181B', color: 'white', fontSize: '11px', fontWeight: 300, padding: '3px 11px', whiteSpace: 'nowrap' }}>
+                {a}
+              </button>
+            ))}
+            {visibleUnselected.map(a => (
+              <button key={a} onClick={() => toggleArea(a)} className="transition-colors"
+                style={{ borderRadius: '20px', border: '1px solid var(--divider)', backgroundColor: 'transparent', color: '#A1A1AA', fontSize: '11px', fontWeight: 300, padding: '3px 11px', whiteSpace: 'nowrap' }}>
+                {a}
+              </button>
+            ))}
+            {hiddenCount > 0 && (
+              <button onClick={() => setShowAllAreas(true)} className="text-zinc-400 hover:text-zinc-700 transition-colors"
+                style={{ fontSize: '11px', fontWeight: 300, padding: '3px 8px' }}>
+                + {hiddenCount} more
+              </button>
+            )}
+            {showAllAreas && (
+              <button onClick={() => setShowAllAreas(false)} className="text-zinc-400 hover:text-zinc-700 transition-colors"
+                style={{ fontSize: '11px', fontWeight: 300, padding: '3px 8px' }}>
+                Less
+              </button>
+            )}
+            {selected.length > 0 && (
+              <button onClick={() => setFilterAreas([])} className="text-zinc-300 hover:text-zinc-500 transition-colors"
+                style={{ fontSize: '11px', fontWeight: 300, padding: '3px 8px' }}>
+                Clear
+              </button>
+            )}
+          </div>
+        )
+      })()}
 
       {/* Bottom card strip */}
       {visibleVenues.length > 0 && (
