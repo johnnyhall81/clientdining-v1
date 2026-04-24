@@ -355,11 +355,11 @@ export default function VenueMap({ venues }: VenueMapProps) {
             },
             maxZoom:
               filters.areas.length === 1
-                ? 17
+                ? 16
                 : filters.areas.length === 2
-                  ? 16
+                  ? 15
                   : filters.mode !== 'all'
-                    ? 15
+                    ? 14
                     : 13,
             duration: 0,
           })
@@ -444,11 +444,11 @@ export default function VenueMap({ venues }: VenueMapProps) {
         },
         maxZoom:
           filters.areas.length === 1
-            ? 17
+            ? 16
             : filters.areas.length === 2
-              ? 16
+              ? 15
               : filters.mode !== 'all'
-                ? 15
+                ? 14
                 : 13,
         duration: 600,
       })
@@ -696,9 +696,11 @@ export default function VenueMap({ venues }: VenueMapProps) {
                       fontWeight: 500,
                       color: '#18181B',
                       margin: 0,
-                      whiteSpace: 'nowrap',
+                      lineHeight: 1.25,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
-                      textOverflow: 'ellipsis',
                     }}
                   >
                     {venue.name}
