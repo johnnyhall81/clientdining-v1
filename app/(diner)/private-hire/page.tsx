@@ -294,12 +294,14 @@ function PrivateHirePageContent() {
                     </div>
 
                     {room.venue.logo_url && (
-                      <div className="hidden sm:flex h-full items-start justify-end">
+                      <div className="flex items-center justify-end overflow-hidden" style={{ minHeight: '56px' }}>
                         <img
                           src={room.venue.logo_url}
                           alt={room.venue.name}
-                          className="object-contain"
-                          style={{ maxHeight: '56px', maxWidth: '120px', width: '100%', filter: 'brightness(0)', opacity: 0.72 }}
+                          loading="lazy"
+                          className="block w-full h-[48px] sm:h-[56px] object-contain object-right transition-opacity duration-500"
+                          style={{ filter: 'brightness(0)', opacity: 0 }}
+                          onLoad={e => { (e.target as HTMLImageElement).style.opacity = '0.65' }}
                         />
                       </div>
                     )}
@@ -323,16 +325,7 @@ function PrivateHirePageContent() {
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-[8px] tracking-[0.15em] text-zinc-400 uppercase font-light mb-0.5">Pricing</p>
-                      <p className="text-sm font-light text-zinc-700">
-                        {room.pricing_from
-                          ? `From £${room.pricing_from.toLocaleString()}`
-                          : room.pricing_notes || 'On enquiry'}
-                      </p>
-                    </div>
-
+                  <div className="flex items-center justify-end">
                     <button
                       onClick={() => setEnquiringRoom(room)}
                       className="px-4 py-2 text-[10px] tracking-[0.16em] uppercase font-light text-white bg-zinc-900 hover:bg-zinc-700 transition-colors"
