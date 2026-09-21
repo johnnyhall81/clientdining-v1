@@ -605,7 +605,10 @@ export default function VenueMap({ venues }: VenueMapProps) {
                 }}
                 onClick={() => {
                   handleCardClick(venue)
-                  user
+                  const usesExternalWidget =
+                    (!!(venue as any).use_sevenrooms_widget && !!(venue as any).booking_widget_url) ||
+                    !!(venue as any).opentable_rid
+                  user || usesExternalWidget
                     ? router.push(`/venues/${venue.id}`)
                     : router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)
                 }}

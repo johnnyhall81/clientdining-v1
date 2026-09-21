@@ -18,8 +18,16 @@ export default function VenueTile({ venue, availableSlots = 0, priority = false 
   const { user } = useAuth()
   const imageSrc = venue.image_hero || venue.image
 
+  // Venues booked through an external widget (SevenRooms or OpenTable)
+  // don't need our LinkedIn login to browse or book — the widget handles
+  // its own capture. Everything else (our internal slot system) keeps the
+  // existing LinkedIn gate.
+  const usesExternalWidget =
+    (!!(venue as any).use_sevenrooms_widget && !!(venue as any).booking_widget_url) ||
+    !!(venue as any).opentable_rid
+
   const handleClick = () => {
-    if (!user) {
+    if (!user && !usesExternalWidget) {
       router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)
     } else {
       router.push(`/venues/${venue.id}`)
