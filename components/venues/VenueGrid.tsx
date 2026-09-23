@@ -120,7 +120,7 @@ export default function VenueGrid({ venues, showHero = false }: VenueGridProps) 
                 className="inline-block mt-6 text-xs font-light text-zinc-400 hover:text-zinc-900 transition-colors"
                 style={{ letterSpacing: '0.02em' }}
               >
-                About ClientDining &rarr;
+                About &rarr;
               </Link>
             </div>
           )}
