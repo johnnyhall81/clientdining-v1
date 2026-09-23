@@ -605,7 +605,15 @@ export default function VenueMap({ venues }: VenueMapProps) {
                 }}
                 onClick={() => {
                   handleCardClick(venue)
-                  router.push(`/venues/${venue.id}`)
+                  // Venues without SevenRooms/OpenTable are slot-based and still require login
+                  const requiresAuth =
+                    !(venue as any).use_sevenrooms_widget &&
+                    !(venue as any).opentable_rid
+                  if (requiresAuth && !user) {
+                    router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)
+                  } else {
+                    router.push(`/venues/${venue.id}`)
+                  }
                 }}
                 className="cd-strip-card flex-shrink-0 bg-white overflow-hidden cursor-pointer transition-all duration-200"
                 style={{

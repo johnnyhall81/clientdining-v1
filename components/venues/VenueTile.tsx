@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Venue } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface VenueTileProps {
   venue: Venue & { image?: string }
@@ -14,10 +15,21 @@ const BLUR_DATA_URL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA
 
 export default function VenueTile({ venue, availableSlots = 0, priority = false }: VenueTileProps) {
   const router = useRouter()
+  const { user } = useAuth()
   const imageSrc = venue.image_hero || venue.image
 
+  // Venues without SevenRooms/OpenTable integration are slot-based (Home House, Aragawa)
+  // and still require login. Everything else is a straight passthrough to the venue page.
+  const requiresAuth =
+    !(venue as any).use_sevenrooms_widget &&
+    !(venue as any).opentable_rid
+
   const handleClick = () => {
-    router.push(`/venues/${venue.id}`)
+    if (requiresAuth && !user) {
+      router.push(`/login?next=${encodeURIComponent('/venues/' + venue.id)}`)
+    } else {
+      router.push(`/venues/${venue.id}`)
+    }
   }
 
   return (
